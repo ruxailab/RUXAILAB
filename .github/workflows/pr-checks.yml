@@ -44,10 +44,14 @@ jobs:
                 }
               );
 
-              changed = files.map(f => f.filename);
+              changed = files
+                .filter(f => f.status !== 'removed')
+                .map(f => f.filename);
             } else {
               const { execSync } = require('child_process');
-              const diff = execSync('git diff --name-only HEAD~1 HEAD').toString();
+              const diff = execSync(
+                'git diff --name-only --diff-filter=d HEAD~1 HEAD'
+              ).toString();
               changed = diff.split('\n').filter(Boolean);
             }
 

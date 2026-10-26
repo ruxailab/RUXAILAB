@@ -18,6 +18,8 @@ export function useChangePassword() {
   const showPassword = ref(false)
   const showConfirmPassword = ref(false)
   const valid = ref(false)
+  const passwordTouched = ref(false)
+  const confirmTouched = ref(false)
 
   const isGoogleUser = computed(() => {
     const auth = getAuth()
@@ -67,6 +69,8 @@ export function useChangePassword() {
     showPassword.value = false
     showConfirmPassword.value = false
     valid.value = false
+    passwordTouched.value = false
+    confirmTouched.value = false
   }
 
   const changePassword = async () => {
@@ -130,6 +134,8 @@ export function useChangePassword() {
     showPassword,
     showConfirmPassword,
     valid,
+    passwordTouched,
+    confirmTouched,
     isGoogleUser,
     currentPasswordRules,
     passwordRules,

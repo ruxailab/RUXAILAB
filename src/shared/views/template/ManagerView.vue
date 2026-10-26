@@ -3,12 +3,16 @@
     <Snackbar />
     <Loading />
 
-    <v-row v-if="test" class="nav pa-0 ma-0" dense>
+    <v-row class="nav pa-0 ma-0" dense>
       <Drawer :items="navigator" />
 
       <!-- View -->
       <v-col class="background pa-0 ma-0">
-        <div v-if="$route.path.includes('manager')">
+        <div
+          v-if="
+            $route.path.includes('dashboard') || $route.path.includes('manager')
+          "
+        >
           <slot>
             <div>
               <ManagerBanner :title="test.testTitle" />
@@ -35,7 +39,7 @@
           </slot>
         </div>
 
-        <router-view />
+        <router-view :key="routerViewKey" />
       </v-col>
     </v-row>
   </v-container>
@@ -48,7 +52,7 @@ import Drawer from '@/shared/components/Drawer.vue'
 import ManagerBanner from '@/shared/components/ManagerBanner.vue'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import CardsManager from '@/shared/components/CardsManager.vue'
 
 defineProps({
@@ -71,10 +75,14 @@ defineProps({
 
 // Store
 const store = useStore()
+const route = useRoute()
 const router = useRouter()
 
 // Computed
 const test = computed(() => store.getters.test)
+const routerViewKey = computed(() =>
+  route.name === 'HeuristicAnswerView' ? route.path : route.fullPath,
+)
 
 // Methods
 const go = (item) => {

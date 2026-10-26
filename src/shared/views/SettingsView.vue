@@ -379,12 +379,12 @@ import AccessNotAllowed from '@/shared/views/AccessNotAllowed'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import TemplateHeader from '@/shared/models/TemplateHeader'
 import TemplateAuthor from '@/shared/models/TemplateAuthor'
-import TemplateBody from '@/shared/models/TemplateBody'
 import Template from '@/shared/models/Template'
 import { useI18n } from 'vue-i18n'
 import { instantiateStudyByType } from '../constants/methodDefinitions'
 import StudyAdmin from '@/shared/models/StudyAdmin'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 import {
   capturePendingLeaveRoute,
   clearPendingLeaveRoute,
@@ -394,6 +394,7 @@ import {
 const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
+const { intlLocale } = useDateLocale()
 
 const props = defineProps({
   id: {
@@ -474,7 +475,7 @@ const formattedEndDate = computed(() => {
       if (Number.isNaN(date.getTime())) {
         return ''
       }
-      return date.toLocaleDateString()
+      return date.toLocaleDateString(intlLocale.value)
     } catch (error) {
       return error
     }
@@ -610,6 +611,11 @@ const submit = async () => {
   const title = object.value.testTitle
   let localDraft = null
 
+  if ((object.value.testDescription || '').length > 150) {
+    showWarning('studyCreation.details.validation.max150Characters')
+    return false
+  }
+
   if (title.length > 0 && title.length < 200) {
     loading.value = true
     isSubmitting.value = true
@@ -672,9 +678,6 @@ const preventNav = (event) => {
 const deleteStudy = async (item) => {
   loading.value = true
   try {
-    const auxUser = { ...user.value }
-    delete auxUser.myTests[item.id]
-    item.auxUser = auxUser
     await store.dispatch('deleteStudy', item)
     showSuccess('alerts.genericSuccess')
     router.push({ name: 'Admin' })
@@ -710,7 +713,10 @@ const createTemplate = async () => {
       }),
     })
 
-    const tempBody = new TemplateBody(test.value)
+    const tempBody = instantiateStudyByType(
+      test.value.testType,
+      test.value,
+    ).toFirestore()
     const templateObj = new Template({
       id: null,
       header: tempHeader,

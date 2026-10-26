@@ -59,34 +59,34 @@ export class TamAnswer {
   }
 
   toFirestore() {
-    // Helper function to filter out undefined values from arrays
-    const filterUndefined = (arr) => {
+    // Firestore cannot store undefined; retain every response position.
+    const preservePositions = (arr) => {
       if (!arr || !Array.isArray(arr)) return [];
-      return arr.filter(val => val !== undefined && val !== null);
+      return Array.from(arr, (value) => value ?? null);
     };
 
     return {
       tamVersion: this.tamVersion,
-      perceivedUsefulness: filterUndefined(this.perceivedUsefulness),
-      perceivedEaseOfUse: filterUndefined(this.perceivedEaseOfUse),
-      attitudeTowardUsing: filterUndefined(this.attitudeTowardUsing),
-      actualSystemUse: filterUndefined(this.actualSystemUse),
-      intentionToUse: filterUndefined(this.intentionToUse),
-      behavioralIntention: filterUndefined(this.behavioralIntention),
-      usePatterns: filterUndefined(this.usePatterns),
-      subjectiveNorm: filterUndefined(this.subjectiveNorm),
-      voluntariness: filterUndefined(this.voluntariness),
-      image: filterUndefined(this.image),
-      jobRelevance: filterUndefined(this.jobRelevance),
-      outputQuality: filterUndefined(this.outputQuality),
-      resultDemonstrability: filterUndefined(this.resultDemonstrability),
-      computerSelfEfficacy: filterUndefined(this.computerSelfEfficacy),
-      perceptionsOfExternalControl: filterUndefined(this.perceptionsOfExternalControl),
-      computerAnxiety: filterUndefined(this.computerAnxiety),
-      computerPlayfulness: filterUndefined(this.computerPlayfulness),
-      perceivedEnjoyment: filterUndefined(this.perceivedEnjoyment),
-      objectiveUsability: filterUndefined(this.objectiveUsability),
-      experience: filterUndefined(this.experience)
+      perceivedUsefulness: preservePositions(this.perceivedUsefulness),
+      perceivedEaseOfUse: preservePositions(this.perceivedEaseOfUse),
+      attitudeTowardUsing: preservePositions(this.attitudeTowardUsing),
+      actualSystemUse: preservePositions(this.actualSystemUse),
+      intentionToUse: preservePositions(this.intentionToUse),
+      behavioralIntention: preservePositions(this.behavioralIntention),
+      usePatterns: preservePositions(this.usePatterns),
+      subjectiveNorm: preservePositions(this.subjectiveNorm),
+      voluntariness: preservePositions(this.voluntariness),
+      image: preservePositions(this.image),
+      jobRelevance: preservePositions(this.jobRelevance),
+      outputQuality: preservePositions(this.outputQuality),
+      resultDemonstrability: preservePositions(this.resultDemonstrability),
+      computerSelfEfficacy: preservePositions(this.computerSelfEfficacy),
+      perceptionsOfExternalControl: preservePositions(this.perceptionsOfExternalControl),
+      computerAnxiety: preservePositions(this.computerAnxiety),
+      computerPlayfulness: preservePositions(this.computerPlayfulness),
+      perceivedEnjoyment: preservePositions(this.perceivedEnjoyment),
+      objectiveUsability: preservePositions(this.objectiveUsability),
+      experience: preservePositions(this.experience)
     };
   }
 

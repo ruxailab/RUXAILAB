@@ -13,6 +13,7 @@ Thank you for your interest in contributing to RUXAILAB! This document provides 
 - [Reporting Issues](#reporting-issues)
 - [Issue Labeling Guide](#issue-labeling-guide)
 - [Pre-commit Hooks](#pre-commit-hooks)
+- [Getting Help](#getting-help)
 
 ## Code of Conduct
 
@@ -32,20 +33,21 @@ RUXAILAB is a Vue.js-based platform for usability testing and heuristic evaluati
 
 ### Prerequisites
 
-- **Node.js** ≤ 24.12.0
+- **Node.js** ≥ 22.22.1 (Active LTS 22 or current 24). Required by `lint-staged` on pre-commit; Node 20 is not supported.
 - **Python** 3.11.8
 - **npm** (comes with Node.js)
+- **Git** ≥ 2.32.0
 - **Docker** (optional, for Firebase Emulators)
 
 ### Option 1: Docker with Firebase Emulators (Recommended for Local Development)
 
-This approach runs the entire application with Firebase emulators in Docker containers.
+This approach runs the application with Firebase emulators in Docker containers.
 
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/uramakilab/remote-usability-lab.git
-   cd remote-usability-lab
+   git clone https://github.com/ruxailab/ruxailab.git
+   cd ruxailab
    ```
 
 2. **Set up environment variables**
@@ -54,22 +56,9 @@ This approach runs the entire application with Firebase emulators in Docker cont
    cp .env.example .env
    ```
 
-   Update `.env` with the following for local emulator development:
+   Update `.env` with the configuration required for your local development environment. Refer to `.env.example` and the project README for the available environment variables.
 
-   ```ini
-   DEBUG=true
-   PORT=8000
-
-   VUE_APP_FIREBASE_API_KEY=YOUR_API_KEY
-   VUE_APP_FIREBASE_AUTH_DOMAIN=YOUR_PROJECT_ID.firebaseapp.com
-   VUE_APP_FIREBASE_STORAGE_BUCKET=YOUR_PROJECT_ID.appspot.com
-   VUE_APP_FIREBASE_DB_URL=http://localhost:9000
-   VUE_APP_FIREBASE_PROJECT_ID=YOUR_PROJECT_ID
-   VUE_APP_FIREBASE_MESSAGING_SENDER_ID=YOUR_SENDER_ID
-   VUE_APP_FIREBASE_APP_ID=YOUR_APP_ID
-   VUE_APP_I18N_LOCALE=en
-   VUE_APP_I18N_FALLBACK_LOCALE=en
-   ```
+   For Firebase Emulator development, make sure your Firebase configuration points to the local emulator services where required.
 
 3. **Build and run with Docker**
 
@@ -79,6 +68,7 @@ This approach runs the entire application with Firebase emulators in Docker cont
    ```
 
 4. **Access the application**
+
    - Application: http://localhost:8080
    - Firebase Emulator UI: http://localhost:4000
 
@@ -89,22 +79,26 @@ For development with a real Firebase project:
 1. **Clone and install dependencies**
 
    ```bash
-   git clone https://github.com/uramakilab/remote-usability-lab.git
-   cd remote-usability-lab
+   git clone https://github.com/ruxailab/ruxailab.git
+   cd ruxailab
    npm install
    ```
 
 2. **Create Firebase project**
+
    - Go to [Firebase Console](https://console.firebase.google.com/)
    - Create a new project
    - Enable Realtime Database, Firestore, Authentication, and Storage
 
 3. **Configure environment**
+
    - Get your Firebase config from Project Settings
    - Copy `.env.example` to `.env`
-   - Fill in your Firebase credentials
+   - Fill in your Firebase credentials and the other environment variables required by the application
+   - For Cloud Functions, check `functions/.env.example` and configure the appropriate environment file as described in the README
 
 4. **Run development server**
+
    ```bash
    npm run serve
    ```
@@ -116,8 +110,8 @@ For development with a real Firebase project:
 Fork the repository and clone your fork:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/remote-usability-lab.git
-cd remote-usability-lab
+git clone https://github.com/YOUR_USERNAME/ruxailab.git
+cd ruxailab
 ```
 
 ### 2. Create a Feature Branch
@@ -189,7 +183,7 @@ We use **Prettier** for code formatting. Prettier is automatically applied throu
 npx prettier --write src/your-file.vue
 ```
 
-See [Code Formatting Rules](#code-formatting-rules) section below for detailed information about formatting standards.
+See the [Code Formatting Rules](#code-formatting-rules) section below for detailed information about formatting standards.
 
 ### Linting
 
@@ -203,7 +197,7 @@ npm run lint
 npm run lint:fix
 ```
 
-See [Code Formatting Rules](#code-formatting-rules) section below for detailed ESLint configuration information.
+See the [Code Formatting Rules](#code-formatting-rules) section below for detailed ESLint configuration information.
 
 ### Vue.js Best Practices
 
@@ -215,17 +209,73 @@ See [Code Formatting Rules](#code-formatting-rules) section below for detailed E
 
 ### File Organization
 
-```
-src/
-├── app/
-│   ├── components/    # Reusable components
-│   ├── plugins/       # Vue plugins (Firebase, etc.)
-│   ├── router/        # Vue Router configuration
-│   └── views/         # Page components
-├── features/          # Feature-specific modules
-├── shared/            # Shared utilities and constants
-└── store/             # State management
-```
+The following directory structure provides a general overview of the application's organization. It is intended as a reference and may not reflect the complete or most up-to-date project structure.
+
+````text
+### File Organization
+
+The project is organized into frontend application code, Firebase Cloud Functions, tests, and supporting configuration files.
+
+```text
+ruxailab/
+├── docs/                       # Project documentation
+├── firebase-emulator/          # Firebase Emulator configuration
+├── functions/
+│   ├── src/
+│   │   ├── ai/
+│   │   ├── core/
+│   │   ├── features/
+│   │   ├── helpers/
+│   │   ├── https/
+│   │   ├── repositories/
+│   │   ├── scheduled/
+│   │   ├── shared/
+│   │   ├── templates/
+│   │   ├── triggers/
+│   │   └── utils/
+│   └── tests/                  # Cloud Functions tests
+├── public/                     # Static assets
+├── src/
+│   ├── ai/                     # AI-related modules
+│   ├── app/
+│   │   ├── layouts/
+│   │   ├── plugins/
+│   │   ├── router/
+│   │   └── services/
+│   ├── assets/                 # Images, icons, and other assets
+│   ├── composables/            # Reusable Vue composables
+│   ├── features/               # Feature-specific modules
+│   ├── router/
+│   │   └── modules/
+│   ├── shared/
+│   │   ├── components/
+│   │   ├── composables/
+│   │   ├── constants/
+│   │   ├── controllers/
+│   │   ├── directives/
+│   │   ├── models/
+│   │   ├── services/
+│   │   ├── store/
+│   │   ├── styles/
+│   │   ├── utils/
+│   │   └── views/
+│   ├── store/
+│   │   └── modules/
+│   ├── ux/
+│   │   ├── CardSorting/
+│   │   ├── FocusGroup/
+│   │   ├── Heuristic/
+│   │   ├── UserTest/
+│   │   └── accessibility/
+│   └── views/
+│       └── public/
+└── tests/
+    ├── mocks/
+    ├── rules/
+    └── unit/
+````
+
+When adding new files, follow the existing project conventions and place them in the appropriate directory. This structure will be reviewed and updated as the project evolves.
 
 ## Testing
 
@@ -240,16 +290,6 @@ npm run test:unit:watch
 
 # Run with coverage
 npm run test:unit:coverage
-```
-
-### End-to-End Tests (Playwright)
-
-```bash
-# Run E2E tests
-npm run test:e2e
-
-# Run in headed mode (see browser)
-npm run test:e2e:headed
 ```
 
 ### Writing Tests
@@ -274,7 +314,7 @@ When reporting bugs, please include:
 - **Screenshots** if applicable
 - **Error messages** or console logs
 
-Use the [Bug Report template](https://github.com/uramakilab/remote-usability-lab/issues/new?template=bug.yml)
+Use the [Bug Report template](https://github.com/ruxailab/ruxailab/issues/new?template=bug.yml).
 
 ### Feature Requests
 
@@ -284,11 +324,11 @@ For feature requests, include:
 - **Proposed solution** - How should it work?
 - **Alternatives considered** - Other approaches you've thought about
 
-Use the [Feature Request template](https://github.com/uramakilab/remote-usability-lab/issues/new?template=feature.yml)
+Use the [Feature Request template](https://github.com/ruxailab/ruxailab/issues/new?template=feature.yml).
 
 ### Questions and Discussions
 
-For questions or general discussion, use [GitHub Discussions](https://github.com/uramakilab/remote-usability-lab/discussions).
+For questions or general discussion, use [GitHub Discussions](https://github.com/ruxailab/ruxailab/discussions).
 
 ## Issue Labeling Guide
 
@@ -352,7 +392,7 @@ To ensure your issue gets the correct labels:
 
 1. **Use conventional commit format** for the title:
 
-   ```
+   ```text
    <type>(<scope>): <description>
    ```
 
@@ -361,24 +401,31 @@ To ensure your issue gets the correct labels:
    - `description`: Brief description
 
    Examples:
+
    - `feat(auth): add social login providers`
    - `fix(ux-creation): resolve template duplication bug`
    - `docs(api): update Firebase setup instructions`
 
-2. **Use issue templates**: GitHub provides templates for bug reports and feature requests that auto-apply some labels
+2. **Use issue templates**: GitHub provides templates for bug reports and feature requests that auto-apply some labels.
 
-3. **Be clear and descriptive**: This helps maintainers understand the issue scope and apply additional labels correctly
+3. **Be clear and descriptive**: This helps maintainers understand the issue scope and apply additional labels correctly.
 
 ## Pre-commit Hooks
 
 This project uses **Husky** and **lint-staged** to automatically format and lint code before each commit. This ensures code quality standards are maintained.
+
+`lint-staged` v17 requires **Node.js ≥ 22.22.1**. If you see an `engines` error when committing, upgrade Node (do not use 20.x or 22.22.0 and below). Check with `node -v`.
+
+The hook does **not** affect `npm run serve`, production builds, or `npm test` in CI. It only runs locally on `git commit`.
 
 ### How It Works
 
 When you commit changes, the following automatically runs:
 
 1. **Husky** intercepts the commit
-2. **lint-staged** runs linting and formatting on staged files:
+2. `i18n-diff-guard.mjs` checks locale files
+3. `npm test` runs the unit suite
+4. **lint-staged** runs linting and formatting on staged files:
    - **ESLint** checks for code quality issues
    - **Prettier** formats code for consistency
 
@@ -440,14 +487,12 @@ npx prettier --write src/your-file.vue
 
 #### Prettier Configuration
 
-RUXAILAB uses Prettier for consistent code formatting. While there's no `.prettierrc` file, Prettier uses sensible defaults:
+RUXAILAB uses Prettier for consistent code formatting. The configuration is defined in the `.prettierrc` file at the project root:
 
-- **Print Width**: 80 characters
-- **Tabs**: 2 spaces (no tabs)
-- **Quotes**: Double quotes for strings
-- **Semicolons**: Enabled
-- **Trailing Commas**: ES5 style (where valid in older JS)
-- **Arrow Functions**: Always add parentheses around parameters
+- **Quotes**: Single quotes for strings (`singleQuote: true`)
+- **Trailing Commas**: All trailing commas (`trailingComma: "all"`)
+- **Semicolons**: Disabled (`semi: false`)
+- **Arrow Functions**: Always add parentheses around parameters (`arrowParens: "always"`)
 
 #### ESLint Configuration
 
@@ -563,8 +608,8 @@ async function fetchUserData(userId) {
 
 ## Getting Help
 
-- **General Questions**: [GitHub Discussions](https://github.com/uramakilab/remote-usability-lab/discussions)
-- **Bug Reports**: [GitHub Issues](https://github.com/uramakilab/remote-usability-lab/issues)
+- **General Questions**: [GitHub Discussions](https://github.com/ruxailab/ruxailab/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/ruxailab/ruxailab/issues)
 - **Security Issues**: Contact the maintainers privately
 
 Thank you for contributing to RUXAILAB! 🎉

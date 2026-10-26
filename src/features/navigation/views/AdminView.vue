@@ -25,15 +25,15 @@
               activeSection === 'studies'
                 ? $t('pages.navigation.studiesSubtitle')
                 : activeSection === 'templates'
-                ? $t('pages.navigation.templatesSubtitle')
-                : ''
+                  ? $t('pages.navigation.templatesSubtitle')
+                  : ''
             }}
           </p>
         </div>
 
         <!-- 🔸 Dynamic rendering of sections -->
         <div v-if="activeSection === 'dashboard'">
-          <DashboardView :items="tests" :sessions="filteredModeratedSessions" />
+          <DashboardView :items="tests" :sessions="sessions" />
         </div>
 
         <div v-if="activeSection === 'studies'">
@@ -41,7 +41,7 @@
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <SessionsSection :sessions="filteredModeratedSessions" />
+          <SessionsSection :sessions="sessions" />
         </div>
 
         <div v-if="activeSection === 'templates'">
@@ -50,6 +50,10 @@
 
         <div v-if="activeSection === 'storage'">
           <StorageSection />
+        </div>
+
+        <div v-if="activeSection === 'agents'">
+          <AgentsSection />
         </div>
 
         <div
@@ -68,6 +72,15 @@
           "
         >
           <CommunityTemplatesSection />
+        </div>
+
+        <div
+          v-if="
+            activeSection === 'community' &&
+            activeSubSection === 'community-agents'
+          "
+        >
+          <CommunityAgentsSection />
         </div>
 
         <div v-if="activeSection === 'notifications'">
@@ -106,9 +119,8 @@ import StudiesSection from '../components/navbarSections/StudiesSection.vue'
 import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue'
 import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue'
 import StorageSection from '../components/navbarSections/StorageSection.vue'
-
-// Utilities and constants
-import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
+import AgentsSection from '../components/navbarSections/AgentsSection.vue'
+import CommunityAgentsSection from '../components/navbarSections/CommunityAgentsSection.vue'
 
 // 🔹 State management
 const store = useStore()
@@ -124,6 +136,9 @@ const activeSubSection = ref(null)
 // 🔸 Data
 
 let unsubscribeTests = null // Unsub function for real-time tests
+let unsubscribeUserSessions = null
+
+const sessions = computed(() => store.getters.sessions || [])
 
 // 🔹 Dynamic page title
 const currentPageTitle = computed(() => {
@@ -138,11 +153,15 @@ const currentPageTitle = computed(() => {
       return t('pages.navigation.templates')
     case 'storage':
       return t('navigation.storage')
+    case 'agents':
+      return t('navigation.agents')
     case 'notifications':
       return t('pages.navigation.notifications')
     case 'profile':
       return t('pages.navigation.profile')
     case 'community':
+      if (activeSubSection.value === 'community-agents')
+        return t('navigation.communityAgents')
       return activeSubSection.value === 'community-templates'
         ? t('pages.navigation.communityTemplates')
         : t('pages.navigation.communityStudies')
@@ -164,11 +183,15 @@ const currentPageIcon = computed(() => {
       return 'mdi-clipboard-text'
     case 'storage':
       return 'mdi-database'
+    case 'agents':
+      return 'mdi-robot-outline'
     case 'notifications':
       return 'mdi-bell'
     case 'profile':
       return 'mdi-account-circle'
     case 'community':
+      if (activeSubSection.value === 'community-agents')
+        return 'mdi-robot-outline'
       return activeSubSection.value === 'community-templates'
         ? 'mdi-file-document'
         : 'mdi-flask-outline'
@@ -179,59 +202,6 @@ const currentPageIcon = computed(() => {
 
 // 🔸 Vuex getters
 const tests = computed(() => store.getters.tests || [])
-const user = computed(() => store.getters.user)
-
-/**
- * 🧮 Filters moderated sessions
- * Creates a list of sessions where the user is either the test admin
- * or a cooperator in a moderated session.
- */
-const filteredModeratedSessions = computed(() => {
-  const cooperatorArray = []
-  if (!tests.value) return []
-
-  tests.value.forEach((testObj) => {
-    if (!testObj) return
-
-    // User as cooperator
-    const cooperatorObj = testObj.cooperators?.find(
-      (coop) => coop.userDocId === user.value?.id,
-    )
-    if (cooperatorObj && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
-      cooperatorArray.push({
-        ...cooperatorObj,
-        testTitle: testObj.testTitle,
-        testAdmin: testObj.testAdmin,
-        id: testObj.id,
-        testType: testObj.testType,
-        subType: testObj.subType,
-        testDescription: testObj.testDescription,
-        evaluator: cooperatorObj.email,
-      })
-    }
-
-    // User as test admin
-    if (
-      testObj.testAdmin?.userDocId === user.value?.id &&
-      testObj.subType === USER_STUDY_SUBTYPES.MODERATED
-    ) {
-      testObj.cooperators?.forEach((coop) => {
-        cooperatorArray.push({
-          ...coop,
-          testTitle: testObj.testTitle,
-          testAdmin: testObj.testAdmin,
-          id: testObj.id,
-          testType: testObj.testType,
-          subType: testObj.subType,
-          evaluator: coop.email,
-          testDescription: testObj.testDescription,
-        })
-      })
-    }
-  })
-
-  return cooperatorArray
-})
 
 /**
  * 🧭 Navigation logic
@@ -260,18 +230,26 @@ const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser')
 const getPublicStudies = () => store.dispatch('getPublicStudies')
 const getMyTemplates = () => store.dispatch('getTemplatesOfUser')
 const getPublicTemplates = () => store.dispatch('getPublicTemplates')
+const loadSessions = () => store.dispatch('fetchUserSessions')
 
 /**
  * 🧭 Route watcher
  * Loads data depending on the current section.
  */
 watch([activeSection, activeSubSection], async ([section, sub]) => {
+  if (section !== 'sessions' && unsubscribeUserSessions) {
+    unsubscribeUserSessions()
+    unsubscribeUserSessions = null
+  }
+
   switch (section) {
     case 'studies':
       await getMyPersonalTests()
       break
     case 'sessions':
-      // filterModeratedSessions()
+      await loadSessions()
+      unsubscribeUserSessions?.()
+      unsubscribeUserSessions = await store.dispatch('subscribeUserSessions')
       break
     case 'templates':
       await getMyTemplates()
@@ -291,7 +269,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
  */
 onMounted(async () => {
   // unsubscribeTests = await store.dispatch('bindMyTests');
-  await getMyPersonalTests()
+  await Promise.all([getMyPersonalTests(), loadSessions()])
 
   // Load navigation state from query params
   if (route.query.section) {
@@ -312,6 +290,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (unsubscribeTests) unsubscribeTests()
+  if (unsubscribeUserSessions) unsubscribeUserSessions()
   window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer)
 })
 

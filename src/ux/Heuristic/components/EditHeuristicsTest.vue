@@ -10,33 +10,45 @@
         <v-icon v-if="index === 0" class="tab-icon"> mdi-chevron-down </v-icon>
       </v-tab>
 
-      <v-tab class="tab-content" @click="tabClicked(1)">
-        {{ $t('HeuristicsEditTest.titles.options') }}
-        <v-icon v-if="index === 1" class="tab-icon"> mdi-chevron-down </v-icon>
+      <v-tab
+        v-if="showOptionsTab"
+        class="tab-content"
+        @click="tabClicked(optionsTabIndex)"
+      >
+        {{ optionsTabTitle }}
+        <v-icon v-if="index === optionsTabIndex" class="tab-icon">
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
 
-      <v-tab class="tab-content" @click="tabClicked(2)">
+      <v-tab class="tab-content" @click="tabClicked(weightsTabIndex)">
         {{ $t('HeuristicsEditTest.titles.weights') }}
-        <v-icon v-if="index === 2" class="tab-icon"> mdi-chevron-down </v-icon>
+        <v-icon v-if="index === weightsTabIndex" class="tab-icon">
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
 
-      <v-tab class="tab-content" @click="tabClicked(3)">
+      <v-tab class="tab-content" @click="tabClicked(settingsTabIndex)">
         {{ $t('HeuristicsEditTest.titles.settings') }}
-        <v-icon v-if="index === 3" class="tab-icon"> mdi-chevron-down </v-icon>
+        <v-icon v-if="index === settingsTabIndex" class="tab-icon">
+          mdi-chevron-down
+        </v-icon>
       </v-tab>
     </v-tabs>
 
     <div class="mt-responsive">
       <HeuristicsTable v-if="index == 0" @change="emit('change')" />
-      <OptionsTable v-if="index == 1" />
-      <WeightTable v-if="index == 2" />
-      <HeuristicsSettings v-if="index == 3" />
+      <OptionsTable v-if="showOptionsTab && index == optionsTabIndex" />
+      <WeightTable v-if="index == weightsTabIndex" />
+      <HeuristicsSettings v-if="index == settingsTabIndex" />
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import HeuristicsTable from '@/ux/Heuristic/components/HeuristicsTable.vue'
 import OptionsTable from '@/ux/Heuristic/components/OptionsTable.vue'
 import HeuristicsSettings from '@/ux/Heuristic/components/HeuristicsSettings.vue'
@@ -58,6 +70,21 @@ defineProps({
 })
 
 const emit = defineEmits(['tabClicked', 'change'])
+const { t } = useI18n()
+const store = useStore()
+const test = computed(() => store.getters.test)
+const showWeightsTab = computed(() => test.value?.useWeights ?? false)
+const showOptionsTab = computed(
+  () =>
+    !showWeightsTab.value &&
+    !(test.value?.useFrequency !== false && test.value?.useSeverity !== false),
+)
+const optionsTabIndex = computed(() => 1)
+const weightsTabIndex = computed(() => (showOptionsTab.value ? 2 : 1))
+const settingsTabIndex = computed(() => weightsTabIndex.value + 1)
+const optionsTabTitle = computed(() =>
+  t('HeuristicsEditTest.titles.heuristicAnswers'),
+)
 
 const tabClicked = (index) => {
   emit('tabClicked', index)

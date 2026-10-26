@@ -1,4 +1,4 @@
-import { functions } from '../f.firebase.js'
+import { functions } from '../core/firebase/f.firebase.js'
 import UserRepository from '../repositories/UserRepository.js'
 import logger from "../utils/logger.js";
 

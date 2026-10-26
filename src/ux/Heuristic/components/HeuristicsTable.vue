@@ -50,7 +50,7 @@
           :class="{ expanded: itemSelect === index }"
         >
           <!-- Heuristic Header -->
-          <v-card-title class="d-flex align-center pa-4 heuristic-header">
+          <v-card-title class="d-flex pa-4 heuristic-header">
             <v-btn
               :icon="
                 itemSelect === index ? 'mdi-chevron-up' : 'mdi-chevron-down'
@@ -60,19 +60,23 @@
               class="me-3 toggle-btn"
               @click="toggleHeuristic(index)"
             />
-
-            <div class="flex-grow-1 heuristic-info">
+            <div class="heuristic-info">
               <h3
                 class="text-h6 font-weight-medium text-on-surface heuristic-title"
               >
                 {{ heuristic.id + 1 }} - {{ heuristic.title }}
               </h3>
+              <p
+                v-if="heuristic.description"
+                class="text-body-2 text-ternary ma-0 mt-1 heuristic-description"
+              >
+                {{ heuristic.description }}
+              </p>
               <p class="text-body-2 text-ternary ma-0 mt-1 question-count">
                 {{ heuristic.questions.length }}
                 {{ $t('HeuristicsTable.titles.questions') }}
               </p>
             </div>
-
             <div class="d-flex gap-2 heuristic-actions">
               <v-btn
                 icon="mdi-arrow-up"
@@ -227,10 +231,6 @@
                           >
                             {{ question.title }}
                           </h5>
-                          <!-- Optional: Add question description/subtitle if needed -->
-                          <!-- <p class="text-body-2 text-ternary ma-0 mt-1 question-desc">
-                                {{ question.description || 'No description' }}
-                              </p> -->
                         </div>
                       </div>
 
@@ -483,12 +483,24 @@
               class="mb-4"
               autofocus
             />
+            <v-textarea
+              v-model="heuristicForm.description"
+              :label="
+                $t('HeuristicsTable.placeholders.descriptionYourHeuristic')
+              "
+              variant="outlined"
+              density="comfortable"
+              rows="3"
+              auto-grow
+              class="mb-4"
+            />
             <v-text-field
-              v-model="heuristicForm.questions[0].title"
+              v-model="heuristicForm.questionTitle"
               :label="$t('HeuristicsTable.placeholders.titleYourQuestion')"
               variant="outlined"
               density="comfortable"
-              :rules="questionRequired"
+              :hint="$t('HeuristicsTable.messages.optionalFirstQuestion')"
+              persistent-hint
             />
           </v-form>
         </v-card-text>
@@ -569,6 +581,17 @@
               :rules="itemEdit ? itemEdit.rule : []"
               autofocus
             />
+            <v-textarea
+              v-if="itemEdit?.type === 'heuristic' && !isDialogClosing"
+              v-model="itemEdit.descriptionEdit"
+              :label="
+                $t('HeuristicsTable.placeholders.descriptionYourHeuristic')
+              "
+              variant="outlined"
+              density="comfortable"
+              rows="3"
+              auto-grow
+            />
             <v-alert v-else-if="dialogEdit" type="error" class="mt-4">
               {{ $t('HeuristicsTable.errors.failedToLoadEditForm') }}
             </v-alert>
@@ -638,8 +661,10 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { getHeuristicStateForStudy } from '../store/Heuristic'
 import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue'
 import { showError, showWarning } from '@/shared/utils/toast'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const emit = defineEmits(['change'])
 const props = defineProps({
@@ -700,9 +725,10 @@ const questionRequired = ref([
 const test = computed(() => store.getters.test)
 
 const heuristics = computed(() => {
-  const source = store.getters.heuristics?.length
-    ? store.getters.heuristics
-    : store.state.Tests?.Test?.testStructure || []
+  const source = getHeuristicStateForStudy(
+    test.value,
+    store.state.Heuristic,
+  ).heuristics
 
   return Array.isArray(source)
     ? source.map((h) => ({
@@ -719,14 +745,33 @@ const heuristics = computed(() => {
     : []
 })
 
+watch(
+  test,
+  (currentTest) => {
+    if (!currentTest) return
+
+    const heuristicState = getHeuristicStateForStudy(
+      currentTest,
+      store.state.Heuristic,
+    )
+    if (heuristicState.isCurrentStudy) return
+
+    store.commit('SET_HEURISTIC_STUDY', {
+      studyId: currentTest.id ?? null,
+      heuristics: heuristicState.heuristics,
+      testWeights: heuristicState.testWeights,
+    })
+  },
+  { immediate: true },
+)
+
 const filteredHeuristics = computed(() => {
-  const searchLower = search.value.toLowerCase()
+  const searchQuery = search.value
   return heuristics.value.filter((item) => {
     const idString = item.id.toString()
     return (
-      item.title.toLowerCase().includes(searchLower) ||
-      idString.includes(searchLower) ||
-      idString === searchLower
+      matchesSearch(item.title, searchQuery) ||
+      matchesSearch(idString, searchQuery)
     )
   })
 })
@@ -751,8 +796,10 @@ watch(dialogHeuris, (newVal) => {
     heuristicForm.value = {
       id: heuristics.value[heuristics.value.length - 1].id + 1,
       title: '',
+      description: '',
       total: 0,
-      questions: [{ id: 0, title: '', comparison: [], descriptions: [] }],
+      questionTitle: '',
+      questions: [],
     }
     heuristicForm.value.total = heuristicForm.value.questions.length
   }
@@ -775,7 +822,9 @@ onMounted(() => {
       : 0,
     total: 0,
     title: '',
-    questions: [{ id: 0, title: '', descriptions: [], comparison: [] }],
+    description: '',
+    questionTitle: '',
+    questions: [],
   }
   store.commit('SET_HEURISTICS', heuristics.value)
   heuristicForm.value.total = heuristicForm.value.questions.length
@@ -878,6 +927,8 @@ const editHeuris = (item) => {
     titleEdit: item.title || '',
     rule: nameRequired.value,
     id: item.id,
+    type: 'heuristic',
+    descriptionEdit: item.description || '',
   }
   itemSelect.value = heuristicIndex
   dialogEdit.value = true
@@ -953,7 +1004,27 @@ const addHeuris = () => {
   if (props.isTemplate) return
   if (formHeurisRef.value.validate()) {
     dialogHeuris.value = false
-    const newHeuristics = [...heuristics.value, { ...heuristicForm.value }]
+    const questionTitle = heuristicForm.value.questionTitle.trim()
+    const questions = questionTitle
+      ? [
+          {
+            id: 0,
+            title: questionTitle,
+            comparison: [],
+            descriptions: [],
+          },
+        ]
+      : []
+    const newHeuristics = [
+      ...heuristics.value,
+      {
+        id: heuristicForm.value.id,
+        title: heuristicForm.value.title,
+        description: heuristicForm.value.description,
+        total: questions.length,
+        questions,
+      },
+    ]
     store.dispatch('setHeuristics', newHeuristics)
     itemSelect.value = newHeuristics.length - 1
     formHeurisRef.value.resetValidation()
@@ -1036,6 +1107,8 @@ const validateEdit = () => {
     const newHeuristics = [...heuristics.value]
     if (itemEdit.value.title === t('HeuristicsTable.titles.editHeuristic')) {
       newHeuristics[itemSelect.value].title = itemEdit.value.titleEdit
+      newHeuristics[itemSelect.value].description =
+        itemEdit.value.descriptionEdit || ''
     } else {
       const questionIndex = newHeuristics[itemSelect.value].questions.findIndex(
         (q) => q.id === itemEdit.value.id,
@@ -1066,6 +1139,59 @@ const updateDescription = () => {
 </script>
 
 <style scoped>
+/* Desktop/default layout: clamp title (1 line), description (2 lines), keep actions visible */
+.heuristic-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.heuristic-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.heuristic-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  margin: 0;
+  min-width: 0;
+}
+
+.heuristic-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  white-space: normal;
+  margin: 0;
+  min-width: 0;
+}
+
+.heuristic-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-width: max-content;
+  justify-content: flex-end;
+}
+
+.heuristic-actions .action-btn {
+  flex-shrink: 0;
+}
+
 /* Responsive styles for mobile devices */
 @media (max-width: 768px) {
   /* Make header section stack vertically */

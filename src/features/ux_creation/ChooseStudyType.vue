@@ -1,8 +1,12 @@
 <template>
   <v-container fluid class="create-study-view">
-    <v-container class="py-6">
+    <v-container class="">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="3" :steps="steps" />
+      <StepperHeader
+        :current-step="3"
+        :steps="steps"
+        @step-click="onStepperStepClick"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -61,6 +65,12 @@
 
       <v-row v-if="selectedOption === 'template'" justify="center" class="mb-8">
         <v-col cols="12" lg="10" xl="8">
+          <BackButton
+            :label="$t('studyCreation.backToStudyType')"
+            adjust="start"
+            class="mb-4"
+            @back="clearStudyTypeSelection"
+          />
           <CommunityTemplatesSection
             :selection-mode="true"
             :include-my-templates="true"
@@ -69,18 +79,15 @@
           />
         </v-col>
       </v-row>
-
-      <!-- Back Button -->
-      <BackButton :label="$t('studyCreation.backToMethods')" @back="goBack" />
     </v-container>
   </v-container>
 </template>
 
 <script setup>
-import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
+import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import CommunityTemplatesSection from '@/features/navigation/components/navbarSections/CommunityTemplatesSection.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -92,12 +99,42 @@ const store = useStore()
 const { t, tm } = useI18n()
 const selectedOption = ref('')
 const studyMethod = computed(() => store.state.Tests.studyMethod)
+const selectedStudyType = computed(
+  () => selectedOption.value || store.state.Tests.studyType,
+)
+const hasTemplateWhenNeeded = computed(() => {
+  if (selectedStudyType.value !== 'template') return true
+  return !!store.state.Tests.selectedTemplate
+})
+const canOpenStep4 = computed(
+  () => !!selectedStudyType.value && hasTemplateWhenNeeded.value,
+)
 
 const steps = computed(() => [
-  { value: 1, title: t('studyCreation.steps.category'), complete: true },
-  { value: 2, title: t('studyCreation.steps.methods'), complete: true },
-  { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
-  { value: 4, title: t('studyCreation.steps.details'), complete: false },
+  {
+    value: 1,
+    title: t('studyCreation.steps.category'),
+    complete: true,
+    enabled: true,
+  },
+  {
+    value: 2,
+    title: t('studyCreation.steps.methods'),
+    complete: true,
+    enabled: true,
+  },
+  {
+    value: 3,
+    title: t('studyCreation.steps.studyType'),
+    complete: false,
+    enabled: true,
+  },
+  {
+    value: 4,
+    title: t('studyCreation.steps.details'),
+    complete: false,
+    enabled: canOpenStep4.value,
+  },
 ])
 
 const options = computed(() => [
@@ -133,26 +170,45 @@ const selectOption = (optionId) => {
   }
 }
 
+// Selecting 'template' swaps the option cards out for the template list, so
+// without this the user cannot get back to 'blank' -- worse when the list is
+// empty, which is the case on any install with no community templates yet.
+const clearStudyTypeSelection = () => {
+  selectedOption.value = ''
+  store.commit('SET_STUDY_TYPE', null)
+  store.commit('SET_SELECTED_TEMPLATE', null)
+}
+
 const selectTemplate = (template) => {
   if (!template) return
   store.commit('SET_SELECTED_TEMPLATE', template)
   router.push({ name: 'study-create-step4' })
 }
 
-const goBack = () => {
-  const method = store.state.Tests.studyMethod
+const onStepperStepClick = (step) => {
+  if (!step?.value || step.value === 3) return
 
-  store.commit('SET_STUDY_TYPE', null)
-  store.commit('SET_SELECTED_TEMPLATE', null)
-
-  if (method) {
-    router.push({ name: 'study-create-step2' })
-  } else {
+  if (step.value === 1) {
+    store.commit('SET_STUDY_TYPE', null)
+    store.commit('SET_SELECTED_TEMPLATE', null)
     router.push({ name: 'study-create-step1' })
+    return
+  }
+
+  if (step.value === 2) {
+    store.commit('SET_STUDY_TYPE', null)
+    store.commit('SET_SELECTED_TEMPLATE', null)
+    router.push({ name: 'study-create-step2' })
+    return
+  }
+
+  if (step.value === 4) {
+    router.push({ name: 'study-create-step4' })
   }
 }
 
 onMounted(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
   selectedOption.value = store.state.Tests.studyType || ''
 })
 </script>

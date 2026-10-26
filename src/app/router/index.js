@@ -6,7 +6,13 @@ import CardSorting from '@/ux/CardSorting/router.js'
 import HeuristicRoutes from '@/ux/Heuristic/router.js'
 import accessibilityRoutes from '@/ux/accessibility/router.js'
 import UserTestRoutes from '@/ux/UserTest/router.js'
+import FocusGroupRoutes from '@/ux/FocusGroup/router.js'
 import store from '@/store'
+import {
+  getStudyFallbackPath,
+  hasStudyCapability,
+  resolveStudyAccess,
+} from '@/shared/utils/studyAccessPolicy'
 
 const routes = [
   ...Public,
@@ -16,6 +22,7 @@ const routes = [
   ...accessibilityRoutes,
   ...HeuristicRoutes,
   ...UserTestRoutes,
+  ...FocusGroupRoutes,
 ]
 
 const router = createRouter({
@@ -23,49 +30,161 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach(async (to, from, next) => {
-  const { authorize = [] } = to.meta || {}
-  let user = store.state.Auth.user
+const INVITE_TOKEN_KEY = 'pendingInviteToken'
 
-  // Special handling for accessibility preview routes - allow complete public access
-  const isAccessibilityPreview =
-    to.path.includes('/accessibility/') && to.path.includes('/preview/')
+const publicPages = [
+  '/signin',
+  '/signup',
+  '/verify-email',
+  '/forgot-password',
+  '/invite',
+]
 
-  if (isAccessibilityPreview) {
-    return next() // Allow immediate access without any checks
+function captureInviteToken(to) {
+  if (to.path === '/invite') {
+    const inviteToken = to.query?.token
+    if (typeof inviteToken === 'string' && inviteToken.length > 0) {
+      localStorage.setItem(INVITE_TOKEN_KEY, inviteToken)
+    }
+  }
+}
+
+async function restoreUserSession(currentStore, timeoutMs) {
+  const controller = new AbortController()
+  let timeoutId
+
+  try {
+    const authTimeout = new Promise((resolve) => {
+      timeoutId = setTimeout(() => {
+        controller.abort()
+        resolve(null)
+      }, timeoutMs)
+    })
+
+    return await Promise.race([
+      currentStore.dispatch('autoSignIn', { signal: controller.signal }),
+      authTimeout,
+    ])
+  } catch {
+    return null
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
+async function checkStudyAccess(to, user, currentStore) {
+  const {
+    studyCapability = null,
+    studyOwnerOnly = false,
+    studyRouteBase = '',
+  } = to.meta || {}
+  const studyId = to.params?.id
+
+  if (!studyId || (!studyCapability && !studyOwnerOnly)) {
+    return null
   }
 
-   // Allow access to public pages even if user is logged in but email not verified
-  const publicPages = ['/signin', '/signup', '/verify-email', '/forgot-password']
+  let study = currentStore.getters?.test
+  if (study?.id !== studyId) {
+    await currentStore.dispatch('getStudy', { id: studyId })
+    study = currentStore.getters?.test
+  }
+
+  const isOwner = studyOwnerOnly && resolveStudyAccess(study, user).isOwner
+  const hasCap =
+    !studyOwnerOnly && hasStudyCapability(study, user, studyCapability)
+  const isDenied = study?.id !== studyId || (!isOwner && !hasCap)
+
+  if (isDenied) {
+    currentStore.commit('SET_TOAST', {
+      message: 'AccessNotAllowed.noAccess',
+      type: 'error',
+    })
+    return getStudyFallbackPath(
+      study?.id === studyId ? study : null,
+      user,
+      studyRouteBase,
+    )
+  }
+
+  return null
+}
+
+export async function beforeEachGuard(
+  to,
+  from,
+  next,
+  currentStore = store,
+  timeoutMs = 5000,
+) {
+  const { authorize = [] } = to.meta || {}
+  captureInviteToken(to)
+
+  let user = currentStore.state?.Auth?.user
+  if (!user) {
+    const authUser = await restoreUserSession(currentStore, timeoutMs)
+    user = currentStore.state?.Auth?.user
+
+    if (
+      authUser &&
+      !authUser.isAnonymous &&
+      authUser.emailVerified === false &&
+      !publicPages.includes(to.path)
+    ) {
+      return next('/verify-email')
+    }
+  }
+
+  const isAccessibilityPreview =
+    to.path?.includes('/accessibility/') && to.path?.includes('/preview/')
+  if (isAccessibilityPreview) {
+    return next()
+  }
+
   if (publicPages.includes(to.path)) {
     return next()
   }
 
-  if (!user) {
-    const authUser = await store.dispatch('autoSignIn')
-    user = store.state.Auth.user
-    // If user is logged in but email not verified, redirect to verify-email
-    if (authUser && authUser.emailVerified === false && !publicPages.includes(to.path)) {
-      return next('/verify-email')
+  if (to.path === '/') {
+    return next(redirect(currentStore))
   }
-}
 
-  if (to.path === '/') return next(redirect())
+  if (
+    user?.isFallback &&
+    (to.meta?.studyCapability || to.meta?.studyOwnerOnly)
+  ) {
+    return next('/signin')
+  }
 
-  if (authorize.length && to.path !== '/signin' && !to.params.token) {
-    if (!user || !authorize.includes(user.accessLevel)) {
-      return next(redirect())
+  if (
+    authorize.length &&
+    (!user || user.isFallback || !authorize.includes(user.accessLevel))
+  ) {
+    return next(redirect(currentStore))
+  }
+
+  if (user) {
+    const fallbackPath = await checkStudyAccess(to, user, currentStore)
+    if (fallbackPath) {
+      return next(fallbackPath)
     }
   }
 
   next()
-})
+}
 
-function redirect() {
-  if (!store.state.Auth.user) return '/signin'
-  const level = store.state.Auth.user.accessLevel
+router.beforeEach((to, from, next) => beforeEachGuard(to, from, next))
+
+export function redirect(currentStore = store) {
+  const user = currentStore.state?.Auth?.user
+
+  if (!user || user.isFallback) return '/signin'
+
+  const level = user.accessLevel
+
   if (level === 0) return '/superadmin'
   if (level === 1) return '/admin'
+
   return '/signin'
 }
 

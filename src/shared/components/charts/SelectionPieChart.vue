@@ -1,14 +1,29 @@
 <template>
-  <v-card class="pa-6 elevation-3 rounded-xl chart-card">
+  <v-card
+    :class="['pa-6', 'elevation-3', 'rounded-xl', 'chart-card', { 'is-disabled': disabled }]"
+  >
     <div class="mb-4">
       <h4 class="text-h6 font-weight-bold mb-2">
         {{ questionTitle }}
       </h4>
     </div>
     <div class="chart-container-small mb-4">
-      <canvas :id="canvasId" width="180" height="180" />
+      <div
+        v-if="isEmpty"
+        class="empty-chart-placeholder"
+      >
+        <div class="empty-chart-ring" />
+        <div
+          v-if="emptyLabel && !disabled"
+          class="d-flex align-center justify-center ga-2 text-medium-emphasis"
+        >
+          <v-icon size="18">mdi-database-off-outline</v-icon>
+          <span class="text-caption">{{ emptyLabel }}</span>
+        </div>
+      </div>
+      <canvas v-show="!isEmpty" :id="canvasId" width="180" height="180" />
     </div>
-    <div>
+    <div v-if="!isEmpty">
       <div
         v-for="(option, idx) in options"
         :key="option"
@@ -23,7 +38,15 @@
             marginRight: '8px',
           }"
         />
-        <span>{{ option }} ({{ counts[option] || 0 }})</span>
+        <span v-if="valuesArePercentages">
+          {{ optionLabel(option) }} {{ counts[option] || 0 }}%
+        </span>
+        <span v-else>
+          {{ optionLabel(option) }} ({{ counts[option] || 0 }})
+          <template v-if="showPercentages">
+            - {{ optionPercent(option) }}%
+          </template>
+        </span>
       </div>
     </div>
   </v-card>
@@ -50,27 +73,96 @@ const props = defineProps({
       '#D4E157',
     ],
   },
+  showPercentages: {
+    type: Boolean,
+    default: false,
+  },
+  valuesArePercentages: {
+    type: Boolean,
+    default: false,
+  },
+  optionLabels: {
+    type: Object,
+    default: () => ({}),
+  },
+  isEmpty: {
+    type: Boolean,
+    default: false,
+  },
+  emptyLabel: {
+    type: String,
+    default: 'No data',
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 })
+
+const optionLabel = (option) => props.optionLabels?.[option] || option
+
+const getTotal = () =>
+  Object.values(props.counts || {}).reduce((a, b) => a + b, 0)
+
+const optionPercent = (option) => {
+  const total = getTotal()
+  if (!total) return '0.0'
+  const value = props.counts?.[option] || 0
+  return ((value * 100) / total).toFixed(1)
+}
+
+const drawPercentLabel = (ctx, option, startAngle, endAngle) => {
+  const total = getTotal()
+  if (!total) return
+
+  const value = props.counts?.[option] || 0
+  if (!value) return
+
+  const percentage = props.valuesArePercentages
+    ? Number(value) || 0
+    : (value * 100) / total
+  if (percentage < 6) return
+
+  const midAngle = (startAngle + endAngle) / 2
+  const labelRadius = 62
+  const x = 90 + Math.cos(midAngle) * labelRadius
+  const y = 90 + Math.sin(midAngle) * labelRadius
+
+  ctx.save()
+  ctx.fillStyle = '#1f2937'
+  ctx.font = '600 11px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(`${percentage.toFixed(0)}%`, x, y)
+  ctx.restore()
+}
 
 const drawChart = () => {
   nextTick(() => {
+    if (props.isEmpty) return
     const canvas = document.getElementById(props.canvasId)
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    const total = Object.values(props.counts).reduce((a, b) => a + b, 0)
+    const total = getTotal()
     if (!total) return
     let start = -0.5 * Math.PI
     props.options.forEach((opt, idx) => {
       const count = props.counts[opt] || 0
       const angle = (count / total) * 2 * Math.PI
+      const end = start + angle
       ctx.beginPath()
       ctx.moveTo(90, 90)
-      ctx.arc(90, 90, 80, start, start + angle)
+      ctx.arc(90, 90, 80, start, end)
       ctx.closePath()
       ctx.fillStyle = props.chartColors[idx % props.chartColors.length]
       ctx.fill()
-      start += angle
+
+      if (props.showPercentages || props.valuesArePercentages) {
+        drawPercentLabel(ctx, opt, start, end)
+      }
+
+      start = end
     })
     // Círculo central blanco (donut)
     ctx.beginPath()
@@ -80,7 +172,7 @@ const drawChart = () => {
   })
 }
 
-watch(() => [props.options, props.counts], drawChart, {
+watch(() => [props.options, props.counts, props.isEmpty], drawChart, {
   immediate: true,
   deep: true,
 })
@@ -100,5 +192,26 @@ onMounted(drawChart)
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.chart-card.is-disabled {
+  pointer-events: none;
+}
+
+.empty-chart-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.empty-chart-ring {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 14px solid #e2e8f0;
+  box-sizing: border-box;
 }
 </style>

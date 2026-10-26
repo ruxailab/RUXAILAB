@@ -10,7 +10,11 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn class="bg-grey-lighten-3" variant="text" @click="resetLeaveState">
+        <v-btn
+          class="bg-grey-lighten-3"
+          variant="text"
+          @click="resetLeaveState"
+        >
           {{ $t('buttons.stay') }}
         </v-btn>
         <v-btn

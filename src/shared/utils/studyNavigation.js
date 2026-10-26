@@ -1,0 +1,383 @@
+import { ICONS, createCardConfig } from '@/shared/constants/theme'
+import {
+  STUDY_TYPES,
+  USER_STUDY_SUBTYPES,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
+import {
+  STUDY_CAPABILITY,
+  STUDY_ROLE,
+  canJoinModeratedUserSession,
+  getStudyFallbackPath,
+  hasStudyCapability,
+  resolveStudyAccess,
+  usesTestViewToken,
+} from '@/shared/utils/studyAccessPolicy'
+import { buildSignInPath } from '@/shared/utils/authRedirect'
+
+const C = STUDY_CAPABILITY
+
+export function getStudyRouteBase(study) {
+  const studyType = normalizeStudyType(study?.testType)
+
+  if (studyType === STUDY_TYPES.HEURISTIC) return 'heuristic'
+  if (
+    studyType === STUDY_TYPES.USER &&
+    study?.subType === USER_STUDY_SUBTYPES.MODERATED
+  ) {
+    return 'userTest/moderated'
+  }
+  if (studyType === STUDY_TYPES.USER) return 'userTest/unmoderated'
+  if (studyType === STUDY_TYPES.FOCUS_GROUP) return 'focusGroup'
+
+  return ''
+}
+
+const isFocusGroupStudy = (study) =>
+  normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP
+
+export function getTestViewAccessRedirect({
+  study,
+  user,
+  token,
+  invitation = null,
+  redirectTo = '',
+}) {
+  if (!study) return '/admin'
+
+  const studyType = normalizeStudyType(study?.testType)
+  const routeBase = getStudyRouteBase(study)
+  const isModeratedUserStudy =
+    studyType === STUDY_TYPES.USER &&
+    study?.subType === USER_STUDY_SUBTYPES.MODERATED
+
+  const isAnonymousInvitation =
+    invitation?.requiredLogin === false && invitation?.studyId == study?.id
+
+  /*
+   * Signing in is what identifies a participant, and a study being public only
+   * says who may answer it, not that answers can be anonymous. An invitation
+   * that waives login is the one way in without an account; everybody else
+   * signs in first and is brought back to the study afterwards.
+   */
+  if (!user && !isAnonymousInvitation) {
+    return buildSignInPath(redirectTo)
+  }
+
+  if (isModeratedUserStudy && !token && !study?.isPublic) {
+    return getStudyFallbackPath(study, user, routeBase)
+  }
+
+  if (isModeratedUserStudy && token) {
+    if (
+      !isAnonymousInvitation &&
+      !canJoinModeratedUserSession(study, user, token)
+    ) {
+      return getStudyFallbackPath(study, user, routeBase)
+    }
+
+    return null
+  }
+
+  if (
+    !study?.isPublic &&
+    !isAnonymousInvitation &&
+    !hasStudyCapability(study, user, C.STUDY_ANSWER)
+  ) {
+    return getStudyFallbackPath(study, user, routeBase)
+  }
+
+  return null
+}
+
+export function getCommunityStudyDestination({ study, user }) {
+  if (!study) return null
+  const studyId = study.testDocId || study.id
+
+  if (user && hasStudyCapability(study, user, C.DASHBOARD_VIEW)) {
+    if (study.testType === STUDY_TYPES.HEURISTIC) {
+      return { name: 'HeuristicManagerView', params: { id: studyId } }
+    }
+    if (study.testType === STUDY_TYPES.FOCUS_GROUP) {
+      return { name: 'FocusGroupManagerView', params: { id: studyId } }
+    }
+    if (
+      study.testType === STUDY_TYPES.USER &&
+      study.subType === USER_STUDY_SUBTYPES.UNMODERATED
+    ) {
+      return { name: 'UserUnmoderatedManagerView', params: { id: studyId } }
+    }
+    if (
+      study.testType === STUDY_TYPES.USER &&
+      study.subType === USER_STUDY_SUBTYPES.MODERATED
+    ) {
+      return { name: 'UserModeratedManagerView', params: { id: studyId } }
+    }
+  }
+
+  // A study-level Focus Group participant invite has no session id. Route to
+  // their personal scheduled-session list; actual session invitations already
+  // carry `/focusGroup/session/{id}?session={sessionId}` directly.
+  if (
+    isFocusGroupStudy(study) &&
+    hasStudyCapability(study, user, C.STUDY_ANSWER)
+  ) {
+    // A study-level participant invitation doesn't identify a scheduled
+    // session. Sending the user to the legacy room silently opens an empty
+    // live session; their assigned sessions are available from the dashboard.
+    return { name: 'Admin', query: { section: 'sessions' } }
+  }
+
+  if (study.isPublic || hasStudyCapability(study, user, C.STUDY_ANSWER)) {
+    return { name: 'TestView', params: { id: studyId } }
+  }
+
+  return null
+}
+
+export function getAcceptedInvitationDestination({ study, user }) {
+  const access = resolveStudyAccess(study, user)
+  const studyType = normalizeStudyType(study?.testType)
+  const answersByRole =
+    studyType === STUDY_TYPES.USER && access.role === STUDY_ROLE.USER
+  const userId = usesTestViewToken(study) ? user?.id || user?.uid : null
+
+  if (answersByRole) {
+    return {
+      name: 'TestView',
+      params: {
+        id: study.testDocId || study.id,
+        ...(userId ? { token: userId } : {}),
+      },
+    }
+  }
+
+  const destination = getCommunityStudyDestination({ study, user })
+  if (!destination || destination.name !== 'TestView') return destination
+
+  return {
+    ...destination,
+    params: {
+      ...destination.params,
+      ...(userId ? { token: userId } : {}),
+    },
+  }
+}
+
+export function getInviteAcceptanceDestination({
+  study,
+  user,
+  membershipType = 'cooperator',
+}) {
+  if (membershipType === 'participant') {
+    if (normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP) {
+      // Only session-specific invitation links have a session id. A study
+      // participant invite must land somewhere useful without fabricating a
+      // legacy live-room URL.
+      return { name: 'Admin', query: { section: 'sessions' } }
+    }
+
+    // Preserve the existing participant handoff for other study types.
+    return { name: 'TestView', params: { id: study?.testDocId || study?.id } }
+  }
+
+  return getAcceptedInvitationDestination({ study, user })
+}
+
+const NAVIGATION_ITEMS = Object.freeze([
+  {
+    title: 'Dashboard',
+    group: 'overview',
+    icon: ICONS.MANAGER,
+    capability: C.DASHBOARD_VIEW,
+    path: ({ type, id }) => `/${type}/manager/${id}`,
+  },
+  {
+    title: 'Test',
+    group: 'evaluation',
+    icon: ICONS.DOCUMENT_EDIT,
+    capability: C.STUDY_EDIT,
+    path: ({ type, id }) => `/${type}/edit/${id}`,
+  },
+  {
+    title: 'Answer',
+    group: 'evaluation',
+    icon: ICONS.PREVIEW,
+    capability: C.STUDY_ANSWER,
+    path: ({ id, previewPath }) => previewPath ?? `/testview/${id}`,
+    visible: (study) =>
+      !isFocusGroupStudy(study) &&
+      !(
+        normalizeStudyType(study?.testType) == STUDY_TYPES.USER &&
+        study?.subType === USER_STUDY_SUBTYPES.MODERATED
+      ),
+  },
+  {
+    title: 'Progress',
+    group: 'evaluation',
+    icon: ICONS.BOOK,
+    capability: C.REPORTS_VIEW,
+    // No report view exists for Focus Group yet — hide until it does.
+    visible: (study) => !isFocusGroupStudy(study),
+    path: ({ type, id }) => `/${type}/report/${id}`,
+  },
+  {
+    title: 'Results',
+    group: 'analysis',
+    icon: ICONS.ORDER,
+    capability: C.ANSWERS_VIEW,
+    path: ({ type, id }) => `/${type}/answer/${id}`,
+  },
+  {
+    title: 'Analytics',
+    group: 'analysis',
+    icon: 'mdi-chart-box-outline',
+    capability: C.ANSWERS_VIEW,
+    visible: isFocusGroupStudy,
+    path: ({ id }) => `/focusGroup/analytics/${id}`,
+  },
+  {
+    title: 'Logs',
+    group: 'administration',
+    icon: 'mdi-text-box-search-outline',
+    capability: C.LOGS_VIEW,
+    path: ({ type, id }) => `/${type}/logs/${id}`,
+  },
+  {
+    title: 'Cooperators',
+    group: 'people',
+    icon: ICONS.ACCOUNT_GROUP,
+    capability: C.COOPERATORS_VIEW,
+    path: ({ type, id }) => `/${type}/cooperators/${id}`,
+  },
+  {
+    title: 'Participants',
+    group: 'people',
+    icon: ICONS.USERS,
+    capability: C.COOPERATORS_VIEW,
+    path: ({ type, id }) => `/${type}/participants/${id}`,
+  },
+  {
+    title: 'Sessions',
+    group: 'people',
+    icon: ICONS.MONITOR_DASHBOARD,
+    capability: C.SESSIONS_MANAGE,
+    // Moderated user tests pair one facilitator with one participant per
+    // session; Focus Group sessions gather a facilitator with many. Both
+    // define who takes part through the same sessions surface.
+    visible: (study) =>
+      (normalizeStudyType(study?.testType) === STUDY_TYPES.USER &&
+        study?.subType === USER_STUDY_SUBTYPES.MODERATED) ||
+      isFocusGroupStudy(study),
+    path: ({ type, id }) => `/${type}/sessions/${id}`,
+  },
+  {
+    title: 'Settings',
+    group: 'administration',
+    icon: ICONS.COG,
+    capability: C.SETTINGS_MANAGE,
+    path: ({ type, id }) => `/${type}/settings/${id}`,
+  },
+  {
+    title: 'Storage',
+    group: 'administration',
+    icon: 'mdi-database',
+    capability: C.STORAGE_ACCESS,
+    path: ({ type, id }) => `/${type}/storage/${id}`,
+  },
+  {
+    title: 'Final Report',
+    group: 'analysis',
+    icon: 'mdi-file-document',
+    capability: C.FINAL_REPORT_MANAGE,
+    visible: (study) =>
+      normalizeStudyType(study?.testType) === STUDY_TYPES.HEURISTIC,
+    path: ({ id }) => `/heuristic/finalreport/${id}`,
+  },
+  {
+    title: 'Evaluator Info',
+    group: 'people',
+    icon: 'mdi-book-information-variant',
+    capability: C.EVALUATOR_INFO_MANAGE,
+    visible: (study) =>
+      normalizeStudyType(study?.testType) === STUDY_TYPES.HEURISTIC,
+    path: ({ id }) => `/heuristic/evaluatorinfo/${id}`,
+  },
+])
+
+export function buildStudyNavigator({ study, user, type, previewPath }) {
+  if (!study || !user || !type) return []
+  if (!hasStudyCapability(study, user, C.DASHBOARD_VIEW)) return []
+
+  const context = { type, id: study.id, previewPath }
+  const items = NAVIGATION_ITEMS.filter((item) => {
+    const hasCapability = hasStudyCapability(study, user, item.capability)
+    const isVisible = item.visible ? item.visible(study) : true
+
+    return hasCapability && isVisible
+  }).map(({ title, group, icon, path }) => ({
+    title,
+    group,
+    icon,
+    path: path(context),
+  }))
+
+  if (resolveStudyAccess(study, user).isOwner) {
+    items.push({
+      title: 'Audit Trail',
+      group: 'administration',
+      icon: 'mdi-history',
+      path: `/${type}/audit/${study.id}`,
+    })
+  }
+
+  return items
+}
+
+export function buildStudyManagerCards({ study, user, type }) {
+  if (!study || !user || !type) return { topCards: [], bottomCards: [] }
+
+  const topCards = []
+  if (hasStudyCapability(study, user, C.STUDY_EDIT)) {
+    topCards.push({
+      ...createCardConfig('EDIT'),
+      title: 'test',
+      bottom: '#000',
+      description: 'edit',
+      path: `/${type}/edit/${study.id}`,
+    })
+  }
+  if (hasStudyCapability(study, user, C.COOPERATORS_VIEW)) {
+    topCards.push({
+      ...createCardConfig('CONFIG'),
+      title: 'cooperators',
+      bottom: '#000',
+      description: 'cooperators',
+      path: `/${type}/cooperators/${study.id}`,
+    })
+  }
+
+  const bottomCards = []
+  if (study.answersDocId) {
+    if (hasStudyCapability(study, user, C.REPORTS_VIEW)) {
+      bottomCards.push({
+        ...createCardConfig('PREVIEW'),
+        title: 'reports',
+        bottom: '#000',
+        description: 'reports',
+        path: `/${type}/report/${study.id}`,
+      })
+    }
+    if (hasStudyCapability(study, user, C.ANSWERS_VIEW)) {
+      bottomCards.push({
+        ...createCardConfig('ANSWERS'),
+        title: 'answers',
+        bottom: '#000',
+        description: 'answers',
+        path: `/${type}/answer/${study.id}`,
+      })
+    }
+  }
+
+  return { topCards, bottomCards }
+}

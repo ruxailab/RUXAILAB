@@ -1,16 +1,22 @@
 // Mock controllers directly
 jest.mock('@/controllers/StudyController', () => {
-  return jest.fn().mockImplementation(() => ({
+  const instance = {
     updateStudy: jest.fn(),
     acceptStudyCollaboration: jest.fn(),
-  }))
+  }
+  const MockStudyController = jest.fn().mockImplementation(() => instance)
+  MockStudyController.instance = instance
+  return MockStudyController
 })
 
 jest.mock('@/features/auth/controllers/AuthController', () => {
-  return jest.fn().mockImplementation(() => ({
-    signOut: jest.fn(),
+  const signOut = jest.fn()
+  const Controller = jest.fn().mockImplementation(() => ({
+    signOut,
     autoSignIn: jest.fn(),
   }))
+  Controller.signOut = signOut
+  return Controller
 })
 
 jest.mock('@/features/auth/controllers/UserController', () => {
@@ -19,11 +25,21 @@ jest.mock('@/features/auth/controllers/UserController', () => {
   }))
 })
 
+jest.mock('@/shared/services/studyLoggingClient', () => ({
+  cleanupStudyLoggingForOwner: jest.fn(),
+}))
+
+jest.mock('@/shared/services/studyLoggingRuntime', () => ({
+  requestStudyLoggingLogout: jest.fn(),
+}))
+
 import TestModule from '@/store/modules/Study'
 import AuthModule from '@/features/auth/store/Auth'
 
 import TestController from '@/controllers/StudyController'
 import AuthController from '@/features/auth/controllers/AuthController'
+import { cleanupStudyLoggingForOwner } from '@/shared/services/studyLoggingClient'
+import { requestStudyLoggingLogout } from '@/shared/services/studyLoggingRuntime'
 
 /**
  * This is a simplified test that verifies error handling basics in the store modules.
@@ -44,6 +60,39 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('setLoading')
     })
 
+    it('commits the rebased study returned by the controller', async () => {
+      const payload = { id: 'study-1', testType: 'CARD_SORTING' }
+      const rebasedStudy = {
+        ...payload,
+        testStructure: ['remote change', 'local change'],
+      }
+      const result = {
+        status: 'updated',
+        changedFields: ['testStructure'],
+        rebasedStudy,
+      }
+      TestController.instance.updateStudy.mockResolvedValueOnce(result)
+      const commit = jest.fn()
+
+      await expect(
+        TestModule.actions.updateStudy({ commit }, payload),
+      ).resolves.toBe(result)
+
+      expect(TestController.instance.updateStudy).toHaveBeenCalledWith(payload)
+      expect(commit).toHaveBeenCalledWith('SET_TEST', rebasedStudy)
+    })
+
+    it('commits the payload when the controller has no patch baseline', async () => {
+      const result = { status: 'updated', changedFields: ['testTitle'] }
+      TestController.instance.updateStudy.mockResolvedValueOnce(result)
+      const commit = jest.fn()
+      const payload = { id: 'study-2', testTitle: 'Updated title' }
+
+      await TestModule.actions.updateStudy({ commit }, payload)
+
+      expect(commit).toHaveBeenCalledWith('SET_TEST', payload)
+    })
+
     it('has error handling in acceptStudyCollaboration action', () => {
       expect(typeof TestModule.actions.acceptStudyCollaboration).toBe(
         'function',
@@ -57,6 +106,7 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('catch (err)')
       expect(actionStr).toContain('setError')
       expect(actionStr).toContain('setLoading')
+      expect(actionStr).toContain('throw err')
     })
   })
 
@@ -72,6 +122,36 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('catch (err)')
       expect(actionStr).toContain('SET_TOAST')
       expect(actionStr).toContain('setLoading')
+    })
+
+    it('removes the departing account logging queues on logout', async () => {
+      const commit = jest.fn()
+
+      await AuthModule.actions.logout(
+        { commit, state: { user: { id: 'participant-1' } } },
+        { silent: true },
+      )
+
+      expect(cleanupStudyLoggingForOwner).toHaveBeenCalledWith('participant-1')
+      expect(requestStudyLoggingLogout).toHaveBeenCalledWith('participant-1')
+      expect(
+        requestStudyLoggingLogout.mock.invocationCallOrder[0],
+      ).toBeLessThan(AuthController.signOut.mock.invocationCallOrder[0])
+    })
+
+    it('unsubscribes from notifications before signOut on logout', async () => {
+      const commit = jest.fn()
+      const dispatch = jest.fn().mockResolvedValue()
+
+      await AuthModule.actions.logout(
+        { commit, state: { user: { id: 'participant-1' } }, dispatch },
+        { silent: true },
+      )
+
+      expect(dispatch).toHaveBeenCalledWith('unsubscribeFromNotifications')
+      expect(dispatch.mock.invocationCallOrder[0]).toBeLessThan(
+        AuthController.signOut.mock.invocationCallOrder[0],
+      )
     })
 
     it('has error handling in autoSignIn action', () => {

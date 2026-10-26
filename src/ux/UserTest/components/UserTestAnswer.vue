@@ -8,7 +8,7 @@
           <v-tabs
             v-model="tab"
             bg-color="transparent"
-            color="#FCA326"
+            color="#FB5C6C"
             slider-size="4"
           >
             <v-tab value="0">
@@ -17,7 +17,9 @@
             <v-tab value="1">
               {{ $t('analytics.individualAnalytics') }}
             </v-tab>
-            <v-tab v-if="showSentiment" value="2"> Sentiment Analysis </v-tab>
+            <v-tab v-if="showSentiment" value="2">
+              {{ $t('analytics.sentimentAnalytics') }}
+            </v-tab>
             <v-tab v-if="showSUS" value="3">
               {{ $t('analytics.susAnalytics') }}
             </v-tab>
@@ -41,7 +43,10 @@
           <div class="ma-0 pa-0">
             <GeneralAnalytics v-if="tab === '0'" />
             <UserAnalytics v-if="tab === '1'" />
-            <SentimentAnalysisView v-if="tab === '2'" />
+            <SentimentAnalysisView
+              v-if="tab === '2'"
+              :task-definitions="testStructure.userTasks || []"
+            />
             <SusAnalytics v-if="tab === '3'" />
             <NasaTlxAnalytics v-if="tab === '4'" />
             <TamAnalytics v-if="tab === '5'" />
@@ -49,7 +54,12 @@
             <div v-if="tab === '7'" style="height: 100%; overflow-y: auto">
               <!-- Eye Tracking content would go here -->
             </div>
-            <TranscriptionTool v-if="tab === '8'" />
+            <TranscriptionTool v-if="tab === '8' && isModeratedUserStudy" />
+            <TranscriptionsOverview
+              v-if="tab === '8' && !isModeratedUserStudy"
+              :task-names="taskNames"
+              :task-definitions="testStructure.userTasks || []"
+            />
           </div>
         </template>
       </ShowInfo>
@@ -75,6 +85,7 @@ import NasaTlxAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/
 import TamAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/TamAnalytics.vue'
 import SartAnalytics from '@/ux/UserTest/components/UnmoderatedTestAnalytics/SartAnalytics.vue'
 import TranscriptionTool from '@/ux/UserTest/components/ModeratedTestAnalytics/TranscriptionTool.vue'
+import TranscriptionsOverview from '@/ux/UserTest/components/UnmoderatedTestAnalytics/TranscriptionsOverview.vue'
 import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
@@ -99,7 +110,7 @@ const tab = ref(0)
 const ind = ref(0)
 const intro = ref(null)
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+const testAnswerDocument = computed(() => store.getters.testAnswerDocument)
 const study = computed(() => store.getters.test || {})
 const testStructure = computed(() => store.getters.test?.testStructure || {})
 
@@ -137,23 +148,27 @@ const showSart = computed(() => {
 })
 
 const showSentiment = computed(() => {
-  if (
-    study.value.testType == STUDY_TYPES.USER &&
-    study.value.subType == USER_STUDY_SUBTYPES.MODERATED
-  ) {
+  if (study.value.testType == STUDY_TYPES.USER) {
     return true
   }
   return false
 })
 
 const showTranscription = computed(() => {
-  if (
-    study.value.testType == STUDY_TYPES.USER &&
-    study.value.subType == USER_STUDY_SUBTYPES.MODERATED
-  ) {
+  if (study.value.testType == STUDY_TYPES.USER) {
     return true
   }
   return false
+})
+
+const isModeratedUserStudy = computed(
+  () => study.value.subType === USER_STUDY_SUBTYPES.MODERATED,
+)
+
+const taskNames = computed(() => {
+  const tasks = testStructure.value?.userTasks
+  if (!Array.isArray(tasks)) return []
+  return tasks.map((task, index) => task?.taskName || `Task ${index + 1}`)
 })
 
 const showEye = computed(

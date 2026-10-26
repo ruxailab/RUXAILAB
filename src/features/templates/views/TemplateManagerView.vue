@@ -90,9 +90,9 @@ const navigator = computed(() => {
 
   const items = [
     {
-      title: 'Manager',
+      title: 'Dashboard',
       icon: 'mdi-view-dashboard',
-      path: `${basePath.value}/manager/${route.params.id}`,
+      path: `${basePath.value}/dashboard/${route.params.id}`,
     },
     {
       title: 'Preview',

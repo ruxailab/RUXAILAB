@@ -14,39 +14,95 @@
         </div>
       </v-col>
       <v-spacer />
-      <v-col cols="auto">
-        <v-btn variant="outlined" :disabled="isAnalyzing" @click="analyzeVideo">
+      <v-col v-if="hasResults" cols="auto" class="d-flex align-center ga-1">
+        <v-btn
+          icon="mdi-delete-outline"
+          color="error"
+          variant="text"
+          :disabled="isAnalyzing || deleting"
+          :loading="deleting"
+          title="Delete facial sentiment"
+          @click="confirmOpen = true"
+        />
+        <v-btn
+          variant="outlined"
+          :disabled="isAnalyzing || deleting"
+          :loading="isAnalyzing"
+          @click="reanalyze()"
+        >
           <span class="sr-only">Re-analyze Video</span>
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
       </v-col>
       <v-col cols="auto">
         <v-chip
-          :color="isAnalyzing ? 'grey' : 'primary'"
+          :color="statusChipColor"
           variant="flat"
           append-icon="mdi-face-recognition"
         >
-          {{ isAnalyzing ? 'Analyzing...' : 'Analysis Complete' }}
+          {{ statusLabel }}
         </v-chip>
       </v-col>
     </v-row>
 
-    <!-- Loading -->
-    <v-row v-if="isAnalyzing" justify="center" align="center" class="my-12">
-      <v-col cols="auto" class="text-center">
-        <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-3 text-body-1 font-weight-medium">
-          Analyzing emotions...
+    <!-- Idle: wait for user to start -->
+    <v-row
+      v-if="!isAnalyzing && !awaitingQueue && !hasResults"
+      justify="center"
+      align="center"
+      class="my-12"
+    >
+      <v-col cols="12" md="8" class="text-center">
+        <v-icon size="64" color="grey-darken-1" class="mb-3">
+          mdi-face-recognition
+        </v-icon>
+        <div class="text-body-1 font-weight-medium mb-1">
+          Ready to analyze facial emotions
         </div>
-        <div class="mt-1 text-body-2 text-grey-darken-1">
-          This may take 1–2 minutes
+        <div class="text-body-2 text-grey-darken-1 mb-6">
+          Processing starts only when you click the button below. This may take
+          1–2 minutes.
         </div>
+        <v-btn
+          color="primary"
+          size="large"
+          :disabled="!canStartAnalysis"
+          @click="startAnalysis()"
+        >
+          <v-icon start>mdi-play</v-icon>
+          Start Facial Sentiment Analysis
+        </v-btn>
+        <div
+          v-if="!canStartAnalysis"
+          class="mt-3 text-body-2 text-grey-darken-1"
+        >
+          Webcam recording or session identifiers are not available for this
+          task.
+        </div>
+        <v-alert
+          v-if="analysisError"
+          type="error"
+          variant="tonal"
+          class="mt-4 text-left"
+        >
+          {{ analysisError }}
+        </v-alert>
       </v-col>
     </v-row>
 
-    <!-- Result -->
+    <AnalysisProgressState
+      v-else-if="isAnalyzing || awaitingQueue"
+      title="Analyzing emotions..."
+      :show-queue-message="isAnalyzing"
+    />
+
     <!-- Result -->
     <v-row v-else>
+      <v-col v-if="analysisError" cols="12">
+        <v-alert type="error" variant="tonal">
+          {{ analysisError }}
+        </v-alert>
+      </v-col>
       <!-- Summary Metrics -->
       <v-col
         v-for="metric in summaryMetrics"
@@ -109,6 +165,21 @@
       </v-col>
     </v-row>
   </v-card>
+
+  <ConfirmDialog
+    v-model:show="confirmOpen"
+    title="Delete facial sentiment?"
+    message="This action can’t be undone. Facial sentiment for this task will be removed."
+    confirm-text="Delete"
+    cancel-text="Cancel"
+    confirm-color="error"
+    confirm-icon="mdi-delete"
+    icon="mdi-delete-outline"
+    icon-color="error"
+    type="error"
+    :loading="deleting"
+    @confirm="confirmDelete"
+  />
 </template>
 
 <script setup>
@@ -123,9 +194,18 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js'
-import axios from 'axios'
 import { useStore } from 'vuex'
-import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer'
+import SentimentController from '@/ai/sentiment/SentimentController'
+import {
+  analyzeFacialSentimentTask,
+  deleteFacialSentiment,
+} from '@/app/services/facialSentiment/FacialSentimentService'
+import { useSentimentPanel } from './useSentimentPanel'
+import { watchJobDocument } from '@/app/services/jobs/watchJobDocument'
+import { useFinishedJobWatch } from '@/app/services/jobs/useFinishedJobWatch'
+import { useInFlightTaskJob } from '@/app/services/jobs/useStudyAnalysisQueue'
+import AnalysisProgressState from '@/ux/UserTest/components/manager/AnalysisProgressState.vue'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 ChartJS.register(
   Title,
@@ -137,14 +217,74 @@ ChartJS.register(
 )
 
 const store = useStore()
+const emit = defineEmits(['saved', 'deleted'])
+const sentimentController = new SentimentController()
 const props = defineProps({
   videoElement: { type: HTMLVideoElement, default: null },
   webcamVideoUrl: { type: String, default: null },
+  sentimentDocId: { type: String, default: null },
+  legacyFacialResults: { type: Object, default: null },
   testAnswer: { type: Object, default: null },
   selectedTask: { type: Number, default: 0 },
+  answersDocId: { type: String, default: '' },
+  userDocId: { type: String, default: '' },
+  taskId: { type: [String, Number], default: null },
+  studyId: { type: String, default: null },
 })
 
-const isAnalyzing = ref(true)
+const { resolveTaskFromTestAnswer, resolveSentimentDocId, loadSentimentDocument } =
+  useSentimentPanel(props)
+
+const hasResults = ref(false)
+const deleting = ref(false)
+const confirmOpen = ref(false)
+const analysisError = ref(null)
+const {
+  running: isAnalyzing,
+  follow: watchUntilFinished,
+  stop: stopWatchingJob,
+} = useFinishedJobWatch({
+  watchJob: watchJobDocument,
+  onFailed(job) {
+    analysisError.value =
+      job.error || 'Failed to process facial sentiment analysis.'
+  },
+  async onDone(job) {
+    const sentiment = job.sentimentDocId
+      ? await sentimentController.getById(job.sentimentDocId)
+      : null
+    const emotions = sentiment?.facial
+    if (!emotions) {
+      analysisError.value = 'Facial sentiment response did not include emotions.'
+      return
+    }
+
+    updateUI(emotions)
+    hasResults.value = true
+    await store.dispatch('getCurrentTestAnswerDoc')
+    emit('saved', {
+      answersDocId: props.answersDocId,
+      userDocId: props.userDocId,
+      taskId: String(props.taskId),
+      sentimentDocId: job.sentimentDocId,
+      emotions,
+    })
+  },
+  onError(err) {
+    analysisError.value =
+      err?.message || 'Failed to process facial sentiment analysis.'
+  },
+})
+const queue = useInFlightTaskJob(
+  () => ({
+    studyId: props.studyId || store.getters.test?.id,
+    type: 'facial',
+    userDocId: props.userDocId,
+    taskId: props.taskId,
+  }),
+  (job) => followQueuedJob(job),
+)
+const awaitingQueue = queue.awaitingQueue
 const summaryMetrics = ref([])
 const insights = ref([])
 const radarData = ref({
@@ -184,11 +324,47 @@ const radarOptions = ref({
   },
 })
 
-const test = computed(() => store.getters.test)
+const canStartAnalysis = computed(
+  () =>
+    Boolean(props.webcamVideoUrl) &&
+    Boolean(props.answersDocId) &&
+    Boolean(props.userDocId) &&
+    props.taskId != null &&
+    props.taskId !== '',
+)
+
+const statusLabel = computed(() => {
+  if (isAnalyzing.value) return 'Analyzing...'
+  if (hasResults.value) return 'Analysis Complete'
+  return 'Waiting to start'
+})
+
+const statusChipColor = computed(() => {
+  if (isAnalyzing.value) return 'grey'
+  if (hasResults.value) return 'primary'
+  return 'blue-grey'
+})
 
 onMounted(() => {
-  checkExistingResults()
+  loadExistingResults()
 })
+
+watch(
+  () => [
+    props.selectedTask,
+    props.taskId,
+    props.webcamVideoUrl,
+    props.sentimentDocId,
+    props.legacyFacialResults,
+    props.testAnswer,
+  ],
+  () => {
+    if (!isAnalyzing.value) {
+      loadExistingResults()
+    }
+  },
+  { deep: true },
+)
 
 watch(
   () => radarData.value.datasets[0].data,
@@ -198,60 +374,144 @@ watch(
   },
 )
 
-function checkExistingResults() {
-  const existingResults =
-    props.testAnswer?.tasks?.[props.selectedTask]?.facialSentimentResults
-  if (existingResults) {
-    updateUI(existingResults)
-    isAnalyzing.value = false // Stop analyzing if results already exist
-  } else {
-    const videoPath = extractVideoNameFromUrl(props.webcamVideoUrl)
-    if (videoPath) {
-      analyzeVideo(videoPath)
+function resetResultsUi() {
+  hasResults.value = false
+  analysisError.value = null
+  summaryMetrics.value = []
+  insights.value = []
+  radarData.value.datasets[0].data = [0, 0, 0, 0, 0, 0, 0]
+}
+
+function resolveLegacyFacialResults() {
+  if (props.legacyFacialResults) return props.legacyFacialResults
+  const task = resolveTaskFromTestAnswer()
+  return task?.facialSentimentResults || null
+}
+
+async function loadExistingResults() {
+  const sentimentDocId = resolveSentimentDocId()
+
+  if (sentimentDocId) {
+    try {
+      const sentiment = await loadSentimentDocument()
+      const existingResults = sentiment?.facial ?? null
+      if (isAnalyzing.value) return
+      if (existingResults) {
+        updateUI(existingResults)
+        hasResults.value = true
+        isAnalyzing.value = false
+        analysisError.value = null
+        return
+      }
+    } catch (err) {
+      console.error('Failed to load facial sentiment document:', err)
     }
   }
+
+  const legacyResults = resolveLegacyFacialResults()
+  if (isAnalyzing.value) return
+  if (legacyResults && typeof legacyResults === 'object') {
+    updateUI(legacyResults)
+    hasResults.value = true
+    isAnalyzing.value = false
+    analysisError.value = null
+    return
+  }
+
+  if (isAnalyzing.value) return
+  resetResultsUi()
 }
 
-function extractVideoNameFromUrl(url) {
+async function confirmDelete() {
+  const sentimentDocId = resolveSentimentDocId()
+  if (!sentimentDocId) {
+    analysisError.value = 'No facial sentiment document to delete.'
+    confirmOpen.value = false
+    return
+  }
+
+  deleting.value = true
   try {
-    const path = url.split('/o/')[1].split('?')[0]
-    return decodeURIComponent(path)
-  } catch {
-    console.warn('URL inválida:', url)
-    return null
+    const result = await deleteFacialSentiment({
+      sentimentDocId,
+      studyId: props.studyId || undefined,
+    })
+    resetResultsUi()
+    confirmOpen.value = false
+    await store.dispatch('getCurrentTestAnswerDoc')
+    emit('deleted', result)
+  } catch (err) {
+    analysisError.value =
+      err?.message || 'Failed to delete facial sentiment analysis.'
+    confirmOpen.value = false
+  } finally {
+    deleting.value = false
   }
 }
 
-const analyzeVideo = async (videoPath) => {
+function followQueuedJob(job) {
+  hasResults.value = false
+  analysisError.value = null
+  watchUntilFinished(job.id, job.jobId)
+}
+
+async function reanalyze() {
+  if (!canStartAnalysis.value) {
+    analysisError.value =
+      'Missing session identifiers or webcam recording for this task.'
+    return
+  }
+
+  isAnalyzing.value = true
+  analysisError.value = null
+  stopWatchingJob()
+
   try {
-    isAnalyzing.value = true
-    const res = await axios.post(
-      process.env.VUE_APP_FACIAL_SENTIMENT_API_BASE_URL + '/process_video',
-      {
-        video_name: videoPath,
-      },
-    )
-
-    const data = res.data.emotions
-    updateUI(data)
-
-    // clone the full testAnswer and insert sentiment for the selected task
-    const clonedTestAnswer = JSON.parse(JSON.stringify(props.testAnswer || {}))
-    clonedTestAnswer.tasks = clonedTestAnswer.tasks || []
-    clonedTestAnswer.tasks[props.selectedTask] =
-      clonedTestAnswer.tasks[props.selectedTask] || {}
-    clonedTestAnswer.tasks[props.selectedTask].facialSentimentResults = data
-
-    await store.dispatch('saveTestAnswer', {
-      data: new UserStudyEvaluatorAnswer(clonedTestAnswer),
-      answersDocId: test.value.answersDocId,
-      testType: test.value.testType,
-    })
-    await store.dispatch('getCurrentTestAnswerDoc')
+    const sentimentDocId = resolveSentimentDocId()
+    if (sentimentDocId) {
+      await deleteFacialSentiment({
+        sentimentDocId,
+        studyId: props.studyId || undefined,
+      })
+      resetResultsUi()
+      await store.dispatch('getCurrentTestAnswerDoc')
+    }
   } catch (err) {
-    console.error('❌ Erro ao enviar caminho do vídeo:', err.message || err)
-  } finally {
     isAnalyzing.value = false
+    analysisError.value =
+      err?.message || 'Failed to delete facial sentiment analysis.'
+    return
+  }
+
+  await startAnalysis()
+}
+
+async function startAnalysis() {
+  if (!canStartAnalysis.value) {
+    analysisError.value =
+      'Missing session identifiers or webcam recording for this task.'
+    return
+  }
+
+  isAnalyzing.value = true
+  analysisError.value = null
+  stopWatchingJob()
+
+  try {
+    const queued = await analyzeFacialSentimentTask({
+      answersDocId: props.answersDocId,
+      userDocId: props.userDocId,
+      taskId: String(props.taskId),
+      studyId: props.studyId || undefined,
+    })
+
+    queue.claim(queued.jobDocId)
+    watchUntilFinished(queued.jobDocId, queued.jobId)
+  } catch (err) {
+    isAnalyzing.value = false
+    console.error('Facial sentiment analysis failed:', err.message || err)
+    analysisError.value =
+      err?.message || 'Failed to process facial sentiment analysis.'
   }
 }
 

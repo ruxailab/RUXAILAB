@@ -15,27 +15,25 @@ export default class User {
     id,
     accessLevel,
     email,
-    notifications = [],
     myAnswers = [],
     myTests = [],
     username = null,
     contactNo = null,
     country = null,
     profileImage = '',
-    calibrationId = null,
+    lastCalibrationId = null,
     storageUsageMB = 0,
   } = {}) {
     this.id = id
     this.accessLevel = accessLevel
     this.email = email
-    this.notifications = notifications
     this.myAnswers = myAnswers
     this.myTests = myTests
     this.username = username
     this.contactNo = contactNo
     this.country = country
     this.profileImage = profileImage
-    this.calibrationId = calibrationId
+    this.lastCalibrationId = lastCalibrationId
     this.storageUsageMB = storageUsageMB
   }
 
@@ -49,23 +47,14 @@ export default class User {
     return {
       accessLevel: this.accessLevel,
       email: this.email,
-      notifications: this.notifications,
       myAnswers: this.myAnswers,
       myTests: this.myTests,
       username: this.username, // Include username in Firestore representation
       contactNo: this.contactNo, // Include contactNo in Firestore representation
       country: this.country, // Include country in Firestore representation
       profileImage: this.profileImage, // Include profileImage in Firestore representation
-      calibrationId: this.calibrationId,
+      lastCalibrationId: this.lastCalibrationId,
       storageUsageMB: this.storageUsageMB,
     }
-  }
-
-  /**
-   * Move all current notifications to the inbox.
-   */
-  archiveNotifications() {
-    this.inbox = [...this.inbox, ...this.notifications] // Add notifications to inbox
-    this.notifications = [] // Clear current notifications
   }
 }

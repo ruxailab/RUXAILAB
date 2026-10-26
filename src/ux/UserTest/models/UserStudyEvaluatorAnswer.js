@@ -12,11 +12,13 @@ export default class UserStudyEvaluatorAnswer {
     tasks,
     progress,
     total,
+    totalTestTimeMs,
     submitted,
     userDocId,
     lastUpdate,
     invited,
-    hidden
+    hidden,
+    sessionNotes,
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
@@ -28,13 +30,13 @@ export default class UserStudyEvaluatorAnswer {
     this.tasks = tasks ?? {}
     this.progress = progress ?? null
     this.total = total ?? 0
+    this.totalTestTimeMs = totalTestTimeMs ?? 0
     this.submitted = submitted ?? false
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
     this.invited = invited ?? false
-    this.invited = invited ?? false
     this.hidden = hidden ?? false
-    this.sessionNotes = [] // [{ text, timestamp, taskIndex, authorId }]
+    this.sessionNotes = sessionNotes ?? [] // [{ text, timestamp, taskIndex, authorId }]
   }
   static toModel(data) {
     return new UserStudyEvaluatorAnswer({
@@ -47,6 +49,32 @@ export default class UserStudyEvaluatorAnswer {
       ),
     })
   }
+
+  static mergeProgress(saved = {}, current = {}) {
+    return UserStudyEvaluatorAnswer.toModel({
+      ...saved,
+      consent: current.consent,
+      consentCompleted: current.consentCompleted,
+      preTestCompleted: current.preTestCompleted,
+      preTestAnswer: current.preTestAnswer,
+      postTestCompleted: current.postTestCompleted,
+      postTestAnswer: current.postTestAnswer,
+      submitted: current.submitted,
+      progress: current.progress,
+      totalTestTimeMs: Math.max(
+        Number(saved.totalTestTimeMs) || 0,
+        Number(current.totalTestTimeMs) || 0,
+      ),
+      fullName: current.fullName,
+      userDocId: current.userDocId ?? saved.userDocId,
+      invited: current.invited || saved.invited,
+      tasks: {
+        ...(saved.tasks || {}),
+        ...(current.tasks || {}),
+      },
+    })
+  }
+
   toFirestore() {
     return {
       preTestAnswer: this.preTestAnswer,
@@ -59,17 +87,21 @@ export default class UserStudyEvaluatorAnswer {
       tasks: Object.fromEntries(
         Object.entries(this.tasks).map(([key, value]) => [
           key,
-          (value instanceof TaskAnswer ? value : new TaskAnswer(value)).toFirestore(),
+          (value instanceof TaskAnswer
+            ? value
+            : new TaskAnswer(value)
+          ).toFirestore(),
         ]),
       ),
       progress: this.progress,
       total: this.total,
+      totalTestTimeMs: this.totalTestTimeMs,
       submitted: this.submitted,
       userDocId: this.userDocId,
       lastUpdate: this.lastUpdate,
       invited: this.invited,
       hidden: this.hidden,
-      sessionNotes: this.sessionNotes
+      sessionNotes: this.sessionNotes,
     }
   }
 }

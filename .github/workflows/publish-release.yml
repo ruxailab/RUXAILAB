@@ -1,0 +1,116 @@
+name: Publish Release Announcement
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ---------------------------------------------------------
+      # BLOG
+      # ---------------------------------------------------------
+
+      - name: Checkout RUXAILAB blog
+        uses: actions/checkout@v4
+        with:
+          repository: ruxailab/blog
+          token: ${{ secrets.BLOG_REPO_TOKEN }}
+          path: blog
+
+      - name: Create blog post
+        env:
+          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          # Use the tag as part of the filename
+          FILE_NAME=$(echo "$RELEASE_TAG" | tr '[:upper:]' '[:lower:]')
+          FILE_PATH="blog/posts/ruxailab-${FILE_NAME}.md"
+
+          echo "Creating blog post: $FILE_PATH"
+
+          # Different introduction for pre-releases and stable releases
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            INTRO="RUXAILAB ${RELEASE_NAME} is now available for testing. This pre-release includes the latest features, improvements, and fixes contributed to the platform and is intended for community validation before the final release."
+          else
+            INTRO="RUXAILAB ${RELEASE_NAME} is now available. This release includes the latest features, improvements, and fixes contributed by the RUXAILAB community."
+          fi
+
+          # Generate Markdown post
+          cat > "$FILE_PATH" <<EOF
+          ---
+
+          ${INTRO}
+
+          ---
+
+          ${RELEASE_BODY}
+
+          ## Try It
+
+          You can find the complete release, source code, and additional information on GitHub.
+
+          **Release**: [${RELEASE_NAME}](${RELEASE_URL})
+
+          ---
+
+          Thanks to everyone who contributed to this release.
+          EOF
+
+      - name: Commit and push blog post
+        working-directory: blog
+        run: |
+          git config user.name "RUXAILAB Bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add posts/
+
+          if git diff --cached --quiet; then
+            echo "No blog changes to commit."
+          else
+            git commit -m "Add blog post for ${{ github.event.release.tag_name }}"
+            git push
+          fi
+
+      # ---------------------------------------------------------
+      # DISCORD
+      # ---------------------------------------------------------
+
+      - name: Announce release on Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            MESSAGE="🧪 **${RELEASE_NAME} is now available for testing!**
+
+          We're preparing the next version of RUXAILAB and would love your help testing it.
+
+          🔗 ${RELEASE_URL}"
+          else
+            MESSAGE="🚀 **${RELEASE_NAME} is now available!**
+
+          A new version of RUXAILAB has been released.
+
+          🔗 ${RELEASE_URL}"
+          fi
+
+          jq -n \
+            --arg content "$MESSAGE" \
+            '{content: $content}' > payload.json
+
+          curl \
+            --fail \
+            -H "Content-Type: application/json" \
+            -d @payload.json \
+            "$DISCORD_WEBHOOK"
+
+          echo "Discord announcement sent."

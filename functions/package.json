@@ -5,9 +5,15 @@
   "scripts": {
     "lint": "eslint .",
     "serve": "firebase emulators:start --only functions",
+    "serve:dev": "cross-env NODE_ENV=development ENV_FILE=.env.develop firebase emulators:start --only functions --project develop",
+    "serve:emulators": "cross-env NODE_ENV=development ENV_FILE=.env.develop firebase emulators:start --project develop",
+    "serve:heuristic": "cross-env NODE_ENV=development ENV_FILE=.env.develop firebase emulators:start --only functions --project develop",
+    "serve:prod": "cross-env NODE_ENV=production ENV_FILE=.env.production firebase emulators:start --only functions --project prod",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
+    "deploy:dev": "cross-env NODE_ENV=development ENV_FILE=.env.develop firebase deploy --only functions --project develop",
+    "deploy:prod": "cross-env NODE_ENV=production ENV_FILE=.env.production firebase deploy --only functions --project prod",
     "logs": "firebase functions:log",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
@@ -15,15 +21,21 @@
     "node": "22"
   },
   "dependencies": {
+    "@sparticuz/chromium": "^147.0.0",
     "@types/nodemailer": "^6.4.17",
+    "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "firebase-admin": "^13.2.0",
     "firebase-functions": "^6.3.2",
-    "nodemailer": "^6.9.5"
+    "nodemailer": "^6.9.5",
+    "openai": "^6.48.0",
+    "puppeteer-core": "^24.43.1",
+    "stopwords-iso": "^1.1.0"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
     "firebase-functions-test": "^0.2.0",
+    "firebase-tools": "^15.23.0",
     "jest": "^30.2.0"
   },
   "private": true

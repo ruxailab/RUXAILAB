@@ -2,11 +2,19 @@ import ManagerView from '@/ux/CardSorting/views/ManagerView.vue'
 import EditTestView from '@/ux/CardSorting/views/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
-import TestView from '@/ux/CardSorting/views/TestView.vue'
+import ParticipantsView from '@/shared/views/ParticipantsView.vue'
+import ReportView from '@/shared/views/ReportView.vue'
+import StorageView from '@/shared/views/StorageView.vue'
+import AuditTrailView from '@/shared/views/AuditTrailView.vue'
+import TestView from '@/views/public/TestView.vue'
+import CardSortingAnswerView from '@/ux/CardSorting/views/CardSortingAnswerView.vue'
+import LogsView from '@/shared/views/LogsView.vue'
+import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
 
 export default [
   {
-    path: '/cardSorting/manager/:id',
+    path: '/cardSorting/dashboard/:id',
+    alias: '/cardSorting/manager/:id',
     name: 'CardSortingManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerView,
@@ -20,6 +28,33 @@ export default [
         component: EditTestView,
       },
       {
+        path: '/cardSorting/report/:id',
+        alias: '/cardSorting/progress/:id',
+        name: 'CardSortingReportView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: ReportView,
+      },
+      {
+        path: '/cardSorting/answer/:id',
+        alias: '/cardSorting/results/:id',
+        name: 'CardSortingAnswerView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: CardSortingAnswerView,
+      },
+      {
+        path: '/cardSorting/logs/:id',
+        name: 'CardSortingLogsView',
+        props: true,
+        meta: {
+          authorize: [0, 1],
+          studyCapability: C.LOGS_VIEW,
+          studyRouteBase: 'cardSorting',
+        },
+        component: LogsView,
+      },
+      {
         path: '/cardSorting/settings/:id',
         name: 'CardSortingSettingsView',
         props: true,
@@ -30,8 +65,36 @@ export default [
         path: '/cardSorting/cooperators/:id',
         name: 'CardSortingCooperatorsView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: {
+          authorize: [0, 1],
+          studyCapability: C.COOPERATORS_VIEW,
+          studyRouteBase: 'cardSorting',
+        },
         component: CooperatorsView,
+      },
+      {
+        path: '/cardSorting/participants/:id',
+        name: 'CardSortingParticipantsView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: ParticipantsView,
+      },
+      {
+        path: '/cardSorting/storage/:id/:token?',
+        name: 'CardSortingStorageView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: StorageView,
+      },
+      {
+        path: '/cardSorting/audit/:id/:token?',
+        name: 'CardSortingAuditTrailView',
+        props: true,
+        meta: {
+          authorize: [0, 1],
+          studyOwnerOnly: true,
+        },
+        component: AuditTrailView,
       },
     ],
   },

@@ -28,8 +28,8 @@ export const STUDY_CATEGORIES = [
       'Gather insights through surveys, interviews, and other research methods.',
     icon: 'mdi-comment-question-outline',
     color: 'warning',
-    hasSubMethods: false,
-    comingSoon: true,
+    hasSubMethods: true,
+    comingSoon: false,
   },
   {
     id: 'inspection',

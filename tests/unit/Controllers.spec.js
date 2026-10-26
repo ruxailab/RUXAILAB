@@ -1,6 +1,16 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import TestController from '@/controllers/StudyController'
 import { doc, updateDoc, collection, getDocs } from 'firebase/firestore'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+
+jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
+  FirebaseFunctionsController: {
+    callHttpsCallableFunction: jest.fn(),
+  },
+}))
+
+const mockCallHttpsCallableFunction =
+  FirebaseFunctionsController.callHttpsCallableFunction
 
 // Mock Firebase Firestore
 jest.mock('firebase/firestore', () => {
@@ -35,6 +45,7 @@ describe('Controller Error Handling', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    mockCallHttpsCallableFunction.mockResolvedValue({ data: {} })
 
     baseController = new Controller()
     testController = new TestController()
@@ -57,8 +68,7 @@ describe('Controller Error Handling', () => {
   describe('TestController', () => {
     it('should rethrow errors in updateStudy method', async () => {
       const mockError = new Error('Update test failed')
-      doc.mockReturnValue('doc-ref')
-      updateDoc.mockRejectedValue(mockError)
+      mockCallHttpsCallableFunction.mockRejectedValue(mockError)
 
       const payload = {
         id: 'test-id',
@@ -78,4 +88,4 @@ describe('Controller Error Handling', () => {
         .rejects.toThrow(mockError)
     })
   })
-}) 
+})

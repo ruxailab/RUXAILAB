@@ -7,12 +7,15 @@ import {
   query,
   where,
   getDocs,
+  getDocsFromServer,
   deleteDoc,
   collection,
   orderBy,
   limit,
   setDoc,
   deleteField,
+  collectionGroup,
+  writeBatch,
 } from 'firebase/firestore'
 
 /**
@@ -77,6 +80,7 @@ export default class Controller {
    *                                          (e.g., '==', '>=', '<=', '!=', etc.).
    * @param {*} conditions[].value - The value to compare against the specified field.
    *
+   * @param {{ source?: 'default'|'server' }} [options] - `server` skips the local cache.
    * @returns {Promise<QuerySnapshot>} - A Promise that resolves to a QuerySnapshot containing
    *                                     the documents that match all the specified conditions.
    *
@@ -93,14 +97,15 @@ export default class Controller {
    *   console.log(doc.id, " => ", doc.data());
    * });
    */
-  async queryWithMultipleConditions(col, conditions) {
+  async queryWithMultipleConditions(col, conditions, options = {}) {
     const conditionArray = conditions.map((condition) =>
       where(condition.field, condition.condition, condition.value),
     )
 
     const q = query(collection(db, col), ...conditionArray)
+    const read = options.source === 'server' ? getDocsFromServer : getDocs
 
-    return getDocs(q)
+    return read(q)
   }
 
   /**
@@ -164,6 +169,51 @@ export default class Controller {
 
   async delete(col, docId) {
     return deleteDoc(doc(db, col, docId))
+  }
+
+  /**
+   * Reads documents from a Firestore collection group.
+   *
+   * @param {string} collectionName
+   * @param {Array<Object>} conditions
+   * @returns {Promise<any[]>}
+   *
+   * @example
+   * await controller.readCollectionGroup('sessions', [
+   *   {
+   *     field: 'participantEmails',
+   *     operator: 'array-contains',
+   *     value: email,
+   *   },
+   * ])
+   */
+  async readCollectionGroup(collectionName, conditions = []) {
+    const constraints = conditions.map((condition) =>
+      where(condition.field, condition.operator, condition.value),
+    )
+
+    const q = query(collectionGroup(db, collectionName), ...constraints)
+
+    const snapshot = await getDocs(q)
+
+    return snapshot.docs.map((document) => ({
+      id: document.id,
+      ref: document.ref,
+      path: document.ref.path,
+      parentId: document.ref.parent.parent?.id,
+      ...document.data(),
+    }))
+  }
+
+  async batchUpdate(updates) {
+    const batch = writeBatch(db)
+
+    updates.forEach(({ col, docId, payload }) => {
+      const ref = doc(db, `${col}/${docId}`)
+      batch.update(ref, payload)
+    })
+
+    return batch.commit()
   }
 
   // Utility method to get deleteField for field removal

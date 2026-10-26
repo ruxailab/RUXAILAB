@@ -80,12 +80,12 @@ const distributionData = computed(() => {
 
   const maxCount = Math.max(
     ...ranges.map(range =>
-      props.scores.filter(score => score >= range.min && score <= range.max).length
+      props.scores.filter(score => score >= range.min && Math.floor(score) <= range.max).length
     )
   )
 
   return ranges.map(range => {
-    const count = props.scores.filter(score => score >= range.min && score <= range.max).length
+    const count = props.scores.filter(score => score >= range.min && Math.floor(score) <= range.max).length
     return {
       ...range,
       count,

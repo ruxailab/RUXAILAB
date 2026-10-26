@@ -89,10 +89,17 @@
 
           <!-- ⚙️ Status -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">
+            <label
+              class="filter-label"
+              for="status-select"
+              style="cursor: pointer"
+            >
               {{ $t('pages.studies.statusLabel') }}
-            </div>
+            </label>
+
+            <!-- status-select id ties this to the label above for accessibility -->
             <v-select
+              id="status-select"
               v-model="selectedStatusFilter"
               :items="statusOptions"
               item-title="text"
@@ -102,6 +109,8 @@
               density="compact"
               variant="outlined"
               hide-details
+              class="status-select"
+              :aria-label="$t('pages.studies.statusLabel')"
             />
           </v-col>
 
@@ -191,6 +200,14 @@ import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
+import { matchesSearch } from '@/shared/utils/searchUtils'
+import {
+  getTestViewPath,
+  hasStudyCapability,
+  STUDY_CAPABILITY,
+  STUDY_ROLE,
+} from '@/shared/utils/studyAccessPolicy'
+import { showInfo } from '@/shared/utils/toast'
 
 // ===== Setup =====
 const store = useStore()
@@ -281,9 +298,9 @@ const filteredTests = computed(() => {
   if (!tests.value) return []
 
   return tests.value.filter((test) => {
-    const title = (test.testTitle || test.title || '').toLowerCase()
-    const query = (search.value || '').toLowerCase()
-    const matchesSearch = !query || title.includes(query)
+    const title = test.testTitle || test.title || ''
+    const query = search.value || ''
+    const matchesSearchQuery = matchesSearch(title, query)
 
     // 🔹 Method
     let matchesMethod = true
@@ -302,6 +319,8 @@ const filteredTests = computed(() => {
         (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
           testType === STUDY_TYPES.USER &&
           subType === USER_STUDY_SUBTYPES.MODERATED) ||
+        (method === METHOD_DEFINITIONS.CARD_SORTING.id &&
+          testType === STUDY_TYPES.CARD_SORTING) ||
         (method === 'MANUAL' && testType === 'MANUAL') ||
         (method === 'AUTOMATIC' && testType === 'AUTOMATIC')
     }
@@ -356,7 +375,7 @@ const filteredTests = computed(() => {
     }
 
     return (
-      matchesSearch &&
+      matchesSearchQuery &&
       matchesMethod &&
       matchesStatus &&
       matchesVisibility &&
@@ -369,6 +388,28 @@ const filteredTests = computed(() => {
 
 // ===== Navigation =====
 const goTo = (test) => {
+  const userId = user.value?.id
+  const studyId = test.id
+  const userRole = test.studyRoleMap?.[userId]
+  const hasStaffDashboard = hasStudyCapability(
+    test,
+    user.value,
+    STUDY_CAPABILITY.DASHBOARD_VIEW,
+  )
+
+  if (userRole === STUDY_ROLE.USER && !hasStaffDashboard) {
+    if (
+      test.testType == STUDY_TYPES.USER &&
+      test.subType == USER_STUDY_SUBTYPES.MODERATED
+    ) {
+      showInfo(t('UserTestView.messages.useSessionLink'))
+      return
+    } else {
+      router.push(getTestViewPath(test, studyId, userId))
+      return
+    }
+  }
+
   // Handle manual/automatic studies
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
     router.push(`/accessibility/manual/${test.testDocId || test.id}`)
@@ -404,5 +445,9 @@ const goTo = (test) => {
 }
 .filter-field :deep(.v-field__input) {
   min-height: 36px;
+}
+
+.status-select :deep(.v-chip) {
+  pointer-events: none;
 }
 </style>

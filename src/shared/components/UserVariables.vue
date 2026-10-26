@@ -72,26 +72,23 @@
                           density="comfortable"
                           :rules="[(v) => !!v || $t('errors.fieldRequired')]"
                           color="primary"
-                          class="mr-2"
+                          class="mr-2 flex-grow-1"
                           @update:model-value="markDirty"
+                        />
+                        <v-icon
+                          color="accent"
+                          class="mr-2"
+                          @click="newSelection(i)"
                         >
-                          <template #append>
-                            <v-icon
-                              color="accent"
-                              class="mr-2"
-                              @click="newSelection(i)"
-                            >
-                              mdi-plus-circle
-                            </v-icon>
-                            <v-icon
-                              v-if="item.selectionFields.length > 1"
-                              color="error"
-                              @click="deleteSelection(i, index)"
-                            >
-                              mdi-trash-can-outline
-                            </v-icon>
-                          </template>
-                        </v-text-field>
+                          mdi-plus-circle
+                        </v-icon>
+                        <v-icon
+                          v-if="item.selectionFields.length > 2"
+                          color="error"
+                          @click="deleteSelection(i, index)"
+                        >
+                          mdi-trash-can-outline
+                        </v-icon>
                       </div>
                       <div
                         v-if="item.selectionFields.length === 0"
@@ -112,7 +109,7 @@
                       </div>
                     </div>
                     <v-row align="center" class="mt-2">
-                      <v-col cols="12" sm="6">
+                      <v-col cols="12" sm="5">
                         <v-checkbox
                           v-model="item.selectionField"
                           :label="$t('UserTestTable.checkboxes.selectionField')"
@@ -128,7 +125,7 @@
                           @update:model-value="selectText(i), markDirty()"
                         />
                       </v-col>
-                      <v-col cols="12" sm="1" class="text-right">
+                      <v-col cols="12" sm="auto" class="text-right">
                         <v-btn icon color="error" @click="deleteItem(i)">
                           <v-icon>mdi-trash-can-outline</v-icon>
                         </v-btn>
@@ -273,7 +270,7 @@ const selectField = (i) => {
     items.value[i].selectionField &&
     items.value[i].selectionFields.length === 0
   ) {
-    items.value[i].selectionFields.push('')
+    items.value[i].selectionFields.push('', '')
   }
   if (!items.value[i].selectionField) {
     items.value[i].selectionFields = []

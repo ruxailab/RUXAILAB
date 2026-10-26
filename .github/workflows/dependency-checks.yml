@@ -130,9 +130,12 @@ jobs:
 
           echo "Checking for prohibited or unknown licenses..."
           # Running npx with loglevel error to hide install noise of the checker itself
+          # gsap ships under GSAP's own "Standard No Charge" license (reported as
+          # a Custom URL), which the allowlist can't express; it is a vetted,
+          # already-installed dependency, so exclude it like the repo package.
           npx --loglevel error license-checker \
             --production \
-            --excludePackages "ruxailab@0.1.0" \
+            --excludePackages "ruxailab@0.1.0;gsap@3.15.0" \
             --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;CC0-1.0;Unlicense;Python-2.0;CC-BY-3.0;CC-BY-4.0;BlueOak-1.0.0" \
             --summary
 

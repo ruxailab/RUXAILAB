@@ -21,7 +21,7 @@ import UserTestAnswer from '../components/UserTestAnswer.vue'
 const store = useStore()
 
 const testAnswerDocument = computed(
-  () => store.state.Answer.testAnswerDocument || {},
+  () => store.getters.testAnswerDocument || {},
 )
 
 // Evaluar si hay respuestas disponibles

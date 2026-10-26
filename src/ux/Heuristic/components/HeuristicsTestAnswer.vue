@@ -18,8 +18,8 @@
           <v-tabs
             v-model="tab"
             bg-color="transparent"
-            color="#FCA326"
-            class="ml-4"
+            color="#FB5C6C"
+            slider-size="4"
           >
             <v-tab @click="setTab(0)">
               {{ $t('HeuristicsTestAnswer.titles.statistics') }}
@@ -40,12 +40,22 @@
         <template #content>
           <div class="ma-0 pa-0">
             <!-- Tab 1 - Statistics -->
-            <StatisticsSummaryCard v-if="tab == 0" :result="showFinalResult" />
+            <StatisticsSummaryCard
+              v-if="tab == 0"
+              :result="showFinalResult"
+              :traditional-metrics="traditionalMetrics"
+              :image-totals-by-heuristic="imageTotalsByHeuristic"
+              :evaluation-overview="evaluationOverview"
+              :option-response-totals="optionResponseTotals"
+              :evaluator-identity="singleEvaluatorIdentity"
+            />
 
             <!-- Tab 2 - Evaluators -->
             <EvaluatorsAndGraphicsCard
               v-if="tab == 1"
               :statistics="evaluatorStatistics"
+              :is-traditional="Boolean(traditionalMetrics)"
+              :traditional-statistics="traditionalEvaluatorStatistics"
               :loading="loading"
               @download-csv="DownloadEvaluatorCsv"
             />
@@ -57,6 +67,7 @@
               :heuristics-evaluator="heuristicsEvaluator"
               :heuristics-statistics="heuristicsStatistics"
               :time-by-heuristics="timeByHeuristics"
+              :track-time="trackTime"
               :weights-statistics="weightsStatistics"
               :relative="relative"
               :usability-total-fix="usabilityTotalFix"
@@ -74,9 +85,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeMount } from 'vue'
+import { ref, computed, watch, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue'
 import RadarChart from '@/shared/components/charts/RadarChart.vue'
@@ -93,16 +104,21 @@ import {
   standardDeviation,
   finalResult,
   statistics,
+  calcFinalResult,
   formatTimeSpentFromMs,
+  buildHeuristicTestBundlePayload,
+  downloadHeuristicTestBundlePayload,
 } from '@/ux/Heuristic/utils/statistics'
 import {
   heuristicsStatisticsHeaders,
   weightsStatisticsHeader,
   heuristicsEvaluatorHeader,
 } from '@/ux/Heuristic/utils/headers.js'
+import { findSelectedTestOption } from '@/ux/Heuristic/utils/heuristicOptionMatch'
 
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 
 const props = defineProps({
@@ -114,7 +130,7 @@ const props = defineProps({
 
 const emit = defineEmits(['goToCoops'])
 
-const tab = ref(0)
+const tab = ref(route.query.heuristic !== undefined ? 3 : 0)
 const ind = ref(0)
 const resultEvaluator = ref(statistics())
 let intro = ref(null)
@@ -125,7 +141,30 @@ const usability_total = ref(0)
 const loading = ref(false) // Note: Check if Vuex getter 'loading' is needed
 const array_scores = ref([])
 
-const showFinalResult = computed(() => finalResult())
+const showFinalResult = computed(() => finalResult(resultEvaluator.value))
+
+const imageTotalsByHeuristic = computed(() => {
+  const totals = {}
+
+  if (!Array.isArray(resultEvaluator.value)) return []
+
+  resultEvaluator.value.forEach((evaluator) => {
+    if (!Array.isArray(evaluator.heuristics)) return
+
+    evaluator.heuristics.forEach((heuristic) => {
+      totals[heuristic.id] =
+        (totals[heuristic.id] || 0) + Number(heuristic.totalImages || 0)
+    })
+  })
+
+  return Object.entries(totals)
+    .map(([heuristic, totalImages]) => ({ heuristic, totalImages }))
+    .sort(
+      (a, b) =>
+        Number(a.heuristic.replace(/\D/g, '')) -
+        Number(b.heuristic.replace(/\D/g, '')),
+    )
+})
 
 const evaluatorStatistics = computed(
   () => store.state.Answer.evaluatorStatistics || { header: [], items: [] },
@@ -149,16 +188,21 @@ const heuristicsEvaluator = computed(() => {
     let evaluatorIndex = 1
     resultEvaluator.value.forEach((evaluator) => {
       evaluator.id = `Ev${evaluatorIndex}`
-      const header = table.header.find((h) => h.text === evaluator.id)
+      const header = table.header.find((h) => h.value === evaluator.id)
       if (!header) {
         table.header.push({
-          text: evaluator.id,
+          title: t('HeuristicsTestAnswer.titles.evaluatorNumber', {
+            n: evaluatorIndex,
+          }),
           align: 'center',
           value: evaluator.id,
         })
       }
       if (evaluator.heuristics && Array.isArray(evaluator.heuristics)) {
         evaluator.heuristics.forEach((heuristic) => {
+          const totalQuestions = Number(
+            heuristic.totalQuestionsValues ?? heuristic.totalQuestions ?? 0,
+          )
           const item = table.items.find((i) => i.heuristic === heuristic.id)
           if (item) {
             Object.assign(item, {
@@ -167,8 +211,8 @@ const heuristicsEvaluator = computed(() => {
           } else {
             table.items.push({
               heuristic: heuristic.id,
-              max: max * (heuristic.totalQuestions || 0),
-              min: min * (heuristic.totalQuestions || 0),
+              max: max * totalQuestions,
+              min: min * totalQuestions,
               [evaluator.id]: heuristic.result,
             })
           }
@@ -196,7 +240,9 @@ const timeByHeuristics = computed(() => {
   resultEvaluator.value.forEach((evaluator, evaluatorPosition) => {
     const evaluatorKey = `Ev${evaluatorPosition + 1}`
     table.header.push({
-      title: evaluatorKey,
+      title: t('HeuristicsTestAnswer.titles.evaluatorNumber', {
+        n: evaluatorPosition + 1,
+      }),
       value: evaluatorKey,
       align: 'center',
     })
@@ -218,17 +264,17 @@ const timeByHeuristics = computed(() => {
   })
 
   table.header.push({
-    title: 'Total',
+    title: t('HeuristicsTestAnswer.titles.totalTime'),
     value: 'totalTime',
     align: 'center',
   })
   table.header.push({
-    title: 'Average Time',
+    title: t('HeuristicsTestAnswer.titles.averageTime'),
     value: 'averageTime',
     align: 'center',
   })
   table.header.push({
-    title: 'Standard deviation',
+    title: t('HeuristicsTestAnswer.titles.timeStdDev'),
     value: 'timeSd',
     align: 'center',
   })
@@ -271,7 +317,9 @@ const heuristicsStatistics = computed(() => {
           .toFixed(2)
       : '0.00'
     const convertedValue =
-      item.max && item.min && item.max !== item.min
+      item.max !== undefined &&
+      item.min !== undefined &&
+      Number(item.max) !== Number(item.min)
         ? ((valueToConvert - item.min) / (item.max - item.min)) * 100
         : 0
     table.items.push({
@@ -332,7 +380,9 @@ const maxValue = computed(() => {
   return parseFloat(maxValue).toFixed(1)
 })
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+const testAnswerDocument = computed(() => store.getters.testAnswerDocument)
+
+const trackTime = computed(() => store.getters.test?.trackTime !== false)
 
 const answers = computed(() => {
   if (testAnswerDocument.value && testAnswerDocument.value.heuristicAnswers) {
@@ -351,6 +401,257 @@ const test = computed(() => {
     percentage: percentages,
   })
   return store.getters.test || {}
+})
+
+const metricAverage = (values) =>
+  values.length
+    ? (
+        values.reduce((total, value) => total + value, 0) / values.length
+      ).toFixed(2)
+    : '-'
+
+const heuristicTimeToMs = (timeSpent) => {
+  if (typeof timeSpent !== 'string') return 0
+  const [minutes = 0, seconds = 0] = timeSpent.split(':').map(Number)
+  return (minutes * 60 + seconds) * 1000
+}
+
+const formatDuration = (timeMs) => {
+  const totalSeconds = Math.floor(timeMs / 1000)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+const metricSummary = (values) => {
+  if (!values.length) {
+    return { average: '0.00', max: '0.00', min: '0.00', sd: '0.00' }
+  }
+
+  const average = values.reduce((sum, value) => sum + value, 0) / values.length
+  const variance =
+    values.reduce((sum, value) => sum + (value - average) ** 2, 0) /
+    values.length
+
+  return {
+    average: average.toFixed(2),
+    max: Math.max(...values).toFixed(2),
+    min: Math.min(...values).toFixed(2),
+    sd: Math.sqrt(variance).toFixed(2),
+  }
+}
+
+const traditionalMetrics = computed(() => {
+  const isTraditional =
+    !test.value?.testOptions?.length &&
+    test.value?.useFrequency !== false &&
+    test.value?.useSeverity !== false
+
+  if (!isTraditional) return null
+
+  const values = { frequency: [], severity: [] }
+  answers.value.forEach((evaluator) => {
+    evaluator?.heuristicQuestions?.forEach((heuristic) => {
+      heuristic?.heuristicQuestions?.forEach((question) => {
+        const answer = question?.heuristicAnswer
+        const frequency = Number(answer?.frequency)
+        const severity = Number(answer?.severity)
+        if (Number.isFinite(frequency)) values.frequency.push(frequency)
+        if (Number.isFinite(severity)) values.severity.push(severity)
+      })
+    })
+  })
+
+  return {
+    frequency: metricSummary(values.frequency),
+    severity: metricSummary(values.severity),
+    evaluators: showFinalResult.value.evaluators,
+    comments: showFinalResult.value.totalComments,
+    images: showFinalResult.value.totalImages,
+  }
+})
+
+const traditionalEvaluatorStatistics = computed(() => {
+  const header = [
+    { title: 'Evaluator', value: 'evaluator', align: 'start' },
+    {
+      title: t('HeuristicsTestView.answer.frequency'),
+      value: 'frequencyAverage',
+      align: 'center',
+    },
+    {
+      title: t('HeuristicsTestView.answer.severity'),
+      value: 'severityAverage',
+      align: 'center',
+    },
+    {
+      title: t('HeuristicsTestAnswer.titles.totalTime'),
+      value: 'totalTime',
+      align: 'center',
+    },
+    { title: t('common.comments'), value: 'comments', align: 'center' },
+    { title: t('common.images'), value: 'images', align: 'center' },
+    {
+      title: t('HeuristicsTestAnswer.titles.lastUpdate'),
+      value: 'lastUpdate',
+      align: 'center',
+    },
+  ]
+
+  if (!traditionalMetrics.value) return { header, items: [] }
+
+  const items = answers.value
+    .filter((evaluator) => evaluator?.submitted)
+    .map((evaluator, index) => {
+      const frequencyValues = []
+      const severityValues = []
+      let totalTimeMs = 0
+      let comments = 0
+      let images = 0
+
+      evaluator.heuristicQuestions?.forEach((heuristic) => {
+        totalTimeMs += heuristicTimeToMs(heuristic?.timeSpent)
+        heuristic.heuristicQuestions?.forEach((question) => {
+          const answer = question?.heuristicAnswer || {}
+          const frequency = Number(answer.frequency)
+          const severity = Number(answer.severity)
+          if (Number.isFinite(frequency)) frequencyValues.push(frequency)
+          if (Number.isFinite(severity)) severityValues.push(severity)
+          comments += Array.isArray(question.comments)
+            ? question.comments.length
+            : question.heuristicComment?.trim()
+              ? 1
+              : 0
+          images += Array.isArray(question.images)
+            ? question.images.length
+            : question.answerImageUrl
+              ? 1
+              : 0
+        })
+      })
+
+      return {
+        evaluator: evaluator.userDocId || `Ev${index + 1}`,
+        frequencyAverage: metricAverage(frequencyValues),
+        severityAverage: metricAverage(severityValues),
+        totalTime: formatDuration(totalTimeMs),
+        comments,
+        images,
+        lastUpdate: evaluator.lastUpdate
+          ? new Date(evaluator.lastUpdate).toLocaleString()
+          : '-',
+      }
+    })
+
+  return { header, items }
+})
+
+const optionResponseTotals = computed(() => {
+  const options = Array.isArray(test.value?.testOptions)
+    ? test.value.testOptions
+    : []
+  const totals = options.map((option, index) => ({
+    key: option.timestamp ?? `option-${index}`,
+    value: option.value,
+    text: option.text || (option.value == null ? '' : String(option.value)),
+    total: 0,
+  }))
+  const totalsByKey = new Map(totals.map((item) => [item.key, item]))
+
+  answers.value.forEach((evaluator) => {
+    evaluator?.heuristicQuestions?.forEach((heuristic) => {
+      heuristic?.heuristicQuestions?.forEach((question) => {
+        const matched = findSelectedTestOption(
+          options,
+          question?.heuristicAnswer,
+        )
+        if (!matched) return
+
+        const key = matched.timestamp ?? `option-${options.indexOf(matched)}`
+        const total = totalsByKey.get(key)
+        if (total) total.total += 1
+      })
+    })
+  })
+
+  return totals
+})
+
+const evaluationOverview = computed(() => {
+  const totalHeuristics = Array.isArray(test.value?.testStructure)
+    ? test.value.testStructure.length
+    : 0
+  const totalResponses = answers.value.reduce(
+    (total, evaluator) =>
+      total +
+      (evaluator?.heuristicQuestions || []).reduce(
+        (heuristicTotal, heuristic) =>
+          heuristicTotal + (heuristic?.heuristicQuestions?.length || 0),
+        0,
+      ),
+    0,
+  )
+  const answeredResponses = answers.value.reduce(
+    (total, evaluator) =>
+      total +
+      (evaluator?.heuristicQuestions || []).reduce(
+        (heuristicTotal, heuristic) =>
+          heuristicTotal +
+          (heuristic?.heuristicQuestions || []).filter((question) => {
+            const answer = question?.heuristicAnswer
+            return answer?.text || answer?.custom?.text || answer?.value != null
+          }).length,
+        0,
+      ),
+    0,
+  )
+
+  return {
+    totalHeuristics,
+    totalResponses,
+    answeredResponses,
+    pendingResponses: Math.max(totalResponses - answeredResponses, 0),
+    coverage: totalResponses
+      ? Math.round((answeredResponses / totalResponses) * 100)
+      : 0,
+  }
+})
+
+const testTitle = computed(
+  () => test.value?.testTitle || test.value?.title || test.value?.name || '',
+)
+
+const testBundlePayload = computed(() =>
+  buildHeuristicTestBundlePayload({
+    test: test.value,
+    testAnswerDocument: testAnswerDocument.value,
+    evaluatorItems: evaluatorStatistics.value?.items || [],
+  }),
+)
+
+const singleEvaluatorIdentity = computed(() => {
+  if (Number(showFinalResult.value?.evaluators) !== 1) return ''
+
+  const evaluatorUserDocId =
+    resultEvaluator.value?.find((item) => item?.userDocId)?.userDocId || ''
+
+  if (!evaluatorUserDocId) return ''
+
+  const participants = [
+    test.value?.testAdmin,
+    ...(test.value?.cooperators || []),
+  ]
+  const evaluator = participants.find(
+    (item) => item?.userDocId === evaluatorUserDocId,
+  )
+
+  return (
+    evaluator?.fullName ||
+    evaluator?.name ||
+    evaluator?.displayName ||
+    evaluator?.email ||
+    evaluatorUserDocId
+  )
 })
 
 const checkIfNan = (value) => {
@@ -383,18 +684,16 @@ const getColorPorcentage = (value) => {
   else return 'green'
 }
 
-const goToDataHeuristic = (item) => {
-  const selectHeuristic =
-    heuristicsEvaluator.value && heuristicsEvaluator.value.items
-      ? heuristicsEvaluator.value.items.findIndex((h) => h.heuristic === item)
-      : -1
-  if (selectHeuristic >= 0) {
-    router
-      .push(`/analyticsview/${props.id}/${selectHeuristic}`)
-      .catch((err) => {
-        if (err.name !== 'NavigationDuplicated') {
-        }
-      })
+const goToDataHeuristic = async (item) => {
+  const selectHeuristic = (test.value?.testStructure || []).findIndex(
+    (_, index) => `H${index + 1}` === item,
+  )
+  if (selectHeuristic < 0) return
+  const navigationFailure = await router.replace({
+    query: { ...route.query, heuristic: selectHeuristic },
+  })
+  if (!navigationFailure || Number(route.query.heuristic) === selectHeuristic) {
+    setTab(3)
   }
 }
 
@@ -417,8 +716,11 @@ const usuability_percentage_array = () => {
 }
 
 const pythonFunction = async () => {
-  const caminhoTestStructure = store.state.Tests.Test.testStructure || []
-  const caminhoTestWeights = store.state.Tests.Test.testWeights || []
+  const currentTest = store.getters.test
+  if (!currentTest) return
+
+  const caminhoTestStructure = currentTest.testStructure || []
+  const caminhoTestWeights = currentTest.testWeights || []
   const caminhoTestScore = store.state.Tests.scoresPercentage || []
 
   try {
@@ -497,11 +799,12 @@ watch(
 )
 
 onBeforeMount(async () => {
+  const studyId = props.id || route.params.id
+  if (studyId && !store.getters.test?.id) {
+    await store.dispatch('getStudy', { id: studyId })
+  }
   await store.dispatch('getCurrentTestAnswerDoc')
-})
-
-onMounted(() => {
-  pythonFunction()
+  await pythonFunction()
 })
 </script>
 

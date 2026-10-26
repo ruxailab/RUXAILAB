@@ -126,6 +126,7 @@ import {
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 import { getTemplateManagerPath } from '@/shared/utils/templateRouting'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const store = useStore()
 const router = useRouter()
@@ -147,6 +148,10 @@ const methodOptions = computed(() => [
   {
     title: t('pages.templates.filters.userModerated'),
     value: METHOD_DEFINITIONS.USER_MODERATED.id,
+  },
+  {
+    title: t('methods.definitions.CARD_SORTING'),
+    value: METHOD_DEFINITIONS.CARD_SORTING.id,
   },
   { title: t('pages.templates.filters.manualAccessibility'), value: 'MANUAL' },
   {
@@ -179,9 +184,10 @@ const hasActiveFilters = computed(
 // ===== Filtered templates =====
 const filteredTemplates = computed(() =>
   templates.value?.filter((temp) => {
-    const matchesSearch = temp.header.templateTitle
-      .toLowerCase()
-      .includes(search.value.toLowerCase())
+    const matchesSearchQuery = matchesSearch(
+      temp.header.templateTitle,
+      search.value,
+    )
 
     const method = selectedMethodFilter.value
     const testType = temp.header.templateType
@@ -197,6 +203,8 @@ const filteredTemplates = computed(() =>
       (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
         testType === STUDY_TYPES.USER &&
         subType === USER_STUDY_SUBTYPES.MODERATED) ||
+      (method === METHOD_DEFINITIONS.CARD_SORTING.id &&
+        testType === STUDY_TYPES.CARD_SORTING) ||
       (method === 'MANUAL' && testType === 'MANUAL') ||
       (method === 'AUTOMATIC' && testType === 'AUTOMATIC')
 
@@ -211,7 +219,7 @@ const filteredTemplates = computed(() =>
       inDateRange = date >= start && date <= end
     }
 
-    return matchesSearch && matchesMethod && inDateRange
+    return matchesSearchQuery && matchesMethod && inDateRange
   }),
 )
 

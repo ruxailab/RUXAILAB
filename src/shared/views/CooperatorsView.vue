@@ -3,17 +3,42 @@
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
   >
     <!-- Actions Slot -->
-    <template v-if="!showIntroView" #actions>
-      <v-btn
-        color="primary"
-        size="large"
-        prepend-icon="mdi-account-plus"
-        variant="flat"
-        class="px-6"
-        @click="openDialog()"
-      >
-        {{ $t('HeuristicsCooperators.actions.send_invitation') }}
-      </v-btn>
+    <template v-if="!showIntroView && canManageCooperators" #actions>
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn
+            color="primary"
+            size="large"
+            prepend-icon="mdi-account-plus"
+            variant="flat"
+            class="px-6"
+            v-bind="props"
+          >
+            {{ $t('HeuristicsCooperators.actions.send_invitation') }}
+            <v-icon end>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+            prepend-icon="mdi-email-outline"
+            @click="showInviteDialog = true"
+          >
+            <v-list-item-title>
+              {{ $t('cooperators.invite.byEmail') }}
+            </v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            prepend-icon="mdi-link-variant"
+            @click="showLinkInviteDialog = true"
+          >
+            <v-list-item-title>
+              {{ $t('cooperators.invite.generateLink') }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </template>
 
     <!-- Subtitle Slot -->
@@ -22,8 +47,10 @@
         {{ $t('HeuristicsCooperators.subtitles.manage_participants') }}
       </p>
     </template>
+
     <!-- Main Content -->
-    <Intro v-if="showIntroView" @close-intro="showIntroComponent = false" />
+    <Intro v-if="showIntroView" @close-intro="dismissIntro" />
+
     <CooperatorTable
       v-else
       :has-role-column="hasRoleColumn"
@@ -31,6 +58,12 @@
       :loading="loading"
       :show-date-columns="showDateColumns"
       :show-session-column="showSessionColumn"
+      :role-options="supportedRoleOptions"
+      :assignable-role-options="assignableRoleOptions"
+      :can-change-role="canChangeRole"
+      :can-remove="canRemoveCooperator"
+      :can-cancel-invitation="canCancelCooperatorInvitation"
+      :show-actions="canManageCooperators"
       :message-text="$t('HeuristicsCooperators.actions.send_message')"
       :reinvite-text="$t('HeuristicsCooperators.actions.reinvite')"
       :remove-text="$t('HeuristicsCooperators.actions.remove_cooperator')"
@@ -65,6 +98,10 @@
     <InviteDialog
       v-model:show="showInviteDialog"
       :users="users"
+      :role-options="assignableRoleOptions"
+      :existing-cooperators="cooperatorsEdit"
+      :current-user-email="userAuth?.email"
+      :study-owner-email="test?.testAdmin?.email"
       :show-date-time-selection="false"
       :title="$t('HeuristicsCooperators.actions.send_invitation')"
       :select-label="$t('HeuristicsCooperators.actions.select_cooperator')"
@@ -72,7 +109,18 @@
       :role-label="$t('HeuristicsCooperators.headers.role')"
       :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
       :send-text="$t('HeuristicsCooperators.actions.send')"
+      :loading="loading"
       @send-invitations="handleSendInvitations"
+    />
+
+    <!-- Generate Invite Link -->
+    <GenerateInviteLinkDialog
+      v-model:show="showLinkInviteDialog"
+      :study-id="test?.id"
+      :study-title="test?.testTitle"
+      :required-login="true"
+      :membership-type="'cooperator'"
+      :role-options="assignableRoleOptions"
     />
 
     <!-- Confirmation Dialog -->
@@ -91,7 +139,57 @@
       :loading="confirmDialog.loading"
       @confirm="handleConfirmAction"
       @cancel="handleCancelAction"
-    />
+    >
+      <template v-if="confirmDialog.action === 'changeRole'" #content>
+        <v-row class="align-center ma-2">
+          <v-chip
+            :color="
+              getRoleColor(
+                assignableRoleOptions.find(
+                  (r) => r.value === roleDialog.item?.accessLevel,
+                )?.title,
+              )
+            "
+            size="small"
+            variant="flat"
+          >
+            <v-icon start size="16">
+              {{
+                getRoleIcon(
+                  assignableRoleOptions.find(
+                    (r) => r.value === roleDialog.item?.accessLevel,
+                  )?.title,
+                )
+              }}
+            </v-icon>
+
+            {{
+              assignableRoleOptions.find(
+                (r) => r.value === roleDialog.item?.accessLevel,
+              )?.title
+            }}
+          </v-chip>
+
+          <v-icon class="mx-2">mdi-arrow-right</v-icon>
+
+          <v-select
+            v-model="roleDialog.newRole"
+            :items="
+              assignableRoleOptions.filter(
+                (r) => r.value !== roleDialog.item?.accessLevel,
+              )
+            "
+            item-title="title"
+            item-value="value"
+            return-object
+            density="compact"
+            variant="outlined"
+            hide-details
+            style="max-width: 220px"
+          />
+        </v-row>
+      </template>
+    </ConfirmDialog>
 
     <AccessNotAllowed v-if="!loading && verified" />
 
@@ -104,7 +202,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, useSlots } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import Intro from '@/shared/components/introduction_cards/IntroCoops.vue'
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
@@ -113,19 +211,23 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import CooperatorTable from '@/shared/components/CooperatorTable.vue'
 import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
+import GenerateInviteLinkDialog from '@/shared/components/dialogs/GenerateInviteLinkDialog.vue'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
-import UIDGenerator from 'uid-generator'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
-import { useCooperatorActions } from '@/shared/composables/useCooperatorActions'
-import Cooperators from '../models/Cooperators'
-import { getMethodManagerView } from '../constants/methodDefinitions'
 import { useRouter, useRoute } from 'vue-router'
-import Notification from '@/shared/models/Notification'
-import EmailController from '../controllers/EmailController'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+import {
+  canManageCooperator,
+  getAssignableRoleOptions,
+  getSupportedRoleOptions,
+  hasStudyCapability,
+  STUDY_CAPABILITY,
+  MEMBERSHIP_STATUS,
+} from '@/shared/utils/studyAccessPolicy'
+import { manageStudyMembership } from '@/shared/services/studyMembershipService'
+import { STUDY_ROLE } from '../utils/studyAccessPolicy'
 
-const uidgen = new UIDGenerator()
 const router = useRouter()
 
 const props = defineProps({
@@ -151,14 +253,10 @@ defineEmits(['open-invite-dialog'])
 
 const store = useStore()
 const route = useRoute()
-const slots = useSlots()
 const { t } = useI18n()
 
-const { roleOptions } = useCooperatorUtils()
+const { getRoleColor, getRoleIcon } = useCooperatorUtils()
 
-useCooperatorActions() // Keep the hook call in case it has side effects
-
-// Confirmation dialog state
 const confirmDialog = ref({
   show: false,
   title: '',
@@ -172,6 +270,11 @@ const confirmDialog = ref({
   loading: false,
   action: null,
   data: null,
+})
+
+const roleDialog = ref({
+  item: null,
+  newRole: null,
 })
 
 const resetConfirmDialog = () => {
@@ -189,7 +292,26 @@ const resetConfirmDialog = () => {
     action: null,
     data: null,
   }
+
+  roleDialog.value = {
+    item: null,
+    newRole: null,
+  }
 }
+
+/**
+ * New memberships use `status`.
+ *
+ * Legacy memberships do not have `status` and still rely on `accepted`.
+ * These helpers preserve compatibility with both data structures.
+ */
+const isPendingCooperator = (cooperator) =>
+  cooperator?.status === MEMBERSHIP_STATUS.PENDING ||
+  (!cooperator?.status && cooperator?.accepted !== true)
+
+const isAcceptedCooperator = (cooperator) =>
+  cooperator?.status === MEMBERSHIP_STATUS.ACCEPTED ||
+  (!cooperator?.status && cooperator?.accepted === true)
 
 const handleConfirmAction = async () => {
   const { action, data } = confirmDialog.value
@@ -197,7 +319,7 @@ const handleConfirmAction = async () => {
 
   try {
     if (action === 'changeRole') {
-      await executeRoleChange(data.item, data.newValue)
+      await executeRoleChange(roleDialog.value.item, roleDialog.value.newRole)
       showSuccess('Role updated successfully!')
     } else if (action === 'removeCooperator') {
       await executeCooperatorRemoval(data.coop)
@@ -206,11 +328,16 @@ const handleConfirmAction = async () => {
       await executeInvitationCancellation(data.guest)
       showSuccess('Invitation cancelled successfully!')
     }
-  } catch (error) {
+  } catch {
     showError(
-      `Failed to ${action === 'changeRole' ? 'update role' : action === 'removeCooperator' ? 'remove cooperator' : 'cancel invitation'}.`,
+      `Failed to ${
+        action === 'changeRole'
+          ? 'update role'
+          : action === 'removeCooperator'
+            ? 'remove cooperator'
+            : 'cancel invitation'
+      }.`,
     )
-    console.error('Confirm action error:', error)
   } finally {
     resetConfirmDialog()
   }
@@ -220,343 +347,238 @@ const handleCancelAction = () => {
   resetConfirmDialog()
 }
 
-const sendNotification = async ({
-  userId,
-  title,
-  titleTemplate,
-  titleParams,
-  description,
-  descriptionTemplate,
-  descriptionParams,
-  redirectsTo = '/',
-  testId = null,
-  author,
-  type,
-  accessLevel,
-} = {}) => {
-  const notification = new Notification({
-    title,
-    titleTemplate,
-    titleParams,
-    description,
-    descriptionTemplate,
-    descriptionParams,
-    redirectsTo,
-    author,
-    read: false,
-    testId,
-    type,
-    accessLevel,
-  })
-
-  try {
-    await store.dispatch('addNotification', {
-      userId,
-      notification,
-    })
-    return true
-  } catch (error) {
-    throw error
-  }
-}
-
-let showIntroComponent = ref(true)
-const inviteMessages = ref('')
+const introDismissed = ref(false)
 const verified = ref(false)
 const messageModel = ref(false)
 const selectedUser = ref([])
-const cooperatorsUpdate = ref([])
 const showInviteDialog = ref(false)
+const showLinkInviteDialog = ref(false)
 const drawerOpen = ref(false)
-
-const showIntroView = computed(() => {
-  return cooperatorsEdit.value.length <= 0 && showIntroComponent.value
-})
 
 const dialog = computed(() => store.getters.getDialogLeaveStatus)
 const test = computed(() => store.getters.test)
 const userAuth = computed(() => store.getters.user)
 const users = computed(() => store.state.Users?.users || [])
+
 const cooperatorsEdit = computed(() =>
   test.value?.cooperators ? [...test.value.cooperators] : [],
 )
+
+const showIntroView = computed(() => {
+  return cooperatorsEdit.value.length <= 0 && !introDismissed.value
+})
+
 const loading = computed(() => store.getters.loading)
 
+const supportedRoleOptions = computed(() => getSupportedRoleOptions(test.value))
+
+const assignableRoleOptions = computed(() =>
+  getAssignableRoleOptions(test.value, userAuth.value).filter(
+    ({ value }) => value !== STUDY_ROLE.USER && value !== STUDY_ROLE.EVALUATOR,
+  ),
+)
+
+const canManageCooperators = computed(() =>
+  hasStudyCapability(
+    test.value,
+    userAuth.value,
+    STUDY_CAPABILITY.COOPERATORS_INVITE,
+  ),
+)
+
+/**
+ * Role changes are allowed for accepted members and pending invitations.
+ *
+ * This preserves the previous behavior, where invited cooperators could
+ * still have their role changed before accepting the invitation.
+ */
+const canChangeRole = (cooperator) => {
+  if (!isAcceptedCooperator(cooperator) && !isPendingCooperator(cooperator)) {
+    return false
+  }
+
+  return assignableRoleOptions.value.some((role) =>
+    canManageCooperator(test.value, userAuth.value, cooperator, {
+      action: 'assignRole',
+      role: role.value,
+    }),
+  )
+}
+
+const canRemoveCooperator = (cooperator) => {
+  if (!isAcceptedCooperator(cooperator)) {
+    return false
+  }
+
+  return canManageCooperator(test.value, userAuth.value, cooperator, {
+    action: 'remove',
+  })
+}
+
+const canCancelCooperatorInvitation = (cooperator) => {
+  return canManageCooperator(test.value, userAuth.value, cooperator, {
+    action: 'cancelInvitation',
+  })
+}
+
 const openMessageDialog = (item) => {
+  if (!canManageCooperators.value) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
+
   selectedUser.value = item
   messageModel.value = true
 }
 
+const dismissIntro = () => {
+  introDismissed.value = true
+}
+
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
-  if (user.userDocId && test.value) {
-    const author = userAuth.value.email
-    try {
-      await sendNotification({
-        userId: user.userDocId,
-        title: title,
-        author: author,
-        description: content,
-        redirectsTo: null,
-        testId: test.value.id,
-        type: 'Message',
-      })
-      showSuccess('HeuristicsCooperators.messages.message_sent_success')
-    } catch {
-      showError('HeuristicsCooperators.messages.message_sent_error')
-    }
-  } else {
+
+  if (!user.userDocId || !test.value) {
     showWarning('HeuristicsCooperators.messages.user_not_registered')
+    return
+  }
+
+  try {
+    await store.dispatch('sendMemberMessage', {
+      user,
+      study: test.value,
+      title,
+      content,
+      author: userAuth.value?.email,
+    })
+
+    showSuccess('HeuristicsCooperators.messages.message_sent_success')
+  } catch {
+    showError('HeuristicsCooperators.messages.message_sent_error')
   }
 }
 
-const handleSendEmail = async (guest, customMessage = null) => {
-  const emailController = new EmailController()
-  const inviteMessage =
-    customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
+const resolveUserByEmail = async (email) => {
+  if (!email) return null
 
-  await emailController.send({
-    to: guest.email,
-    subject: t('HeuristicsCooperators.actions.send_invitation'),
-    attachments: [],
-    template: 'invite',
-    data: {
-      message: inviteMessage,
-      testTitle: test.value.testTitle,
-      testDescription: test.value.testDescription,
-      adminEmail: test.value.testAdmin.email,
-      adminName: userAuth.value.name || userAuth.value.email,
-    },
-  })
+  try {
+    const response = await store.dispatch('findUserByEmail', {
+      email,
+    })
+
+    return response || null
+  } catch {
+    return null
+  }
 }
 
-const handleSendInvitations = async (invitationData) => {
-  if (!test.value) return
+const handleSendInvitations = async ({
+  selectedCoops,
+  selectedRole,
+  inviteMessage,
+}) => {
+  try {
+    showInviteDialog.value = false
+    introDismissed.value = true
+    const newInvites = await store.dispatch('sendInvitations', {
+      study: test.value,
+      user: userAuth.value,
+      selectedCoops,
+      selectedRole,
+      inviteMessage,
+      users: users.value,
+      router,
+      resolveUserByEmail,
+    })
 
-  const { selectedCoops, selectedRole, inviteMessage } = invitationData
-  const tokens = {}
-  const newInvites = []
-  const updatedRoles = []
+    await store.dispatch('getStudy', {
+      id: test.value.id,
+    })
 
-  inviteMessages.value = inviteMessage
-  cooperatorsUpdate.value = [...cooperatorsEdit.value]
-
-  selectedCoops.forEach((coop) => {
-    const coopEmail = coop.email || coop // Handle both object and string formats
-
-    // Check if this email already exists in cooperators list
-    const existingIndex = cooperatorsEdit.value.findIndex(
-      (c) => c.email === coopEmail,
-    )
-
-    if (existingIndex === -1) {
-      // New email - create new cooperator entry
-      const token = uidgen.generateSync()
-      if (!coop.id) {
-        cooperatorsEdit.value.push({
-          userDocId: null,
-          email: coop,
-          invited: true,
-          accepted: false,
-          accessLevel: roleOptions.value[selectedRole].value,
-          inviteMessage: inviteMessage || null,
-          token,
-          progress: 0,
-          updateDate: test.value?.updateDate || new Date().toISOString(),
-          testAuthorEmail: test.value?.testAdmin?.email || '',
-        })
-      } else {
-        cooperatorsEdit.value.push({
-          userDocId: coop.id,
-          email: coop.email,
-          invited: true,
-          accepted: false,
-          accessLevel: roleOptions.value[selectedRole].value,
-          inviteMessage: inviteMessage || null,
-          token,
-          progress: 0,
-          updateDate: test.value?.updateDate || new Date().toISOString(),
-          testAuthorEmail: test.value?.testAdmin?.email || '',
-        })
-      }
-      tokens[coop.id || coop] = token
-      newInvites.push(coopEmail)
-    } else {
-      // Email already exists - update their role instead of creating duplicate
-      const existing = cooperatorsEdit.value[existingIndex]
-      const newRole = roleOptions.value[selectedRole].value
-
-      if (existing.accessLevel !== newRole || existing.inviteMessage !== inviteMessage) {
-        // Update the existing entry's role
-        cooperatorsEdit.value[existingIndex] = {
-          ...existing,
-          accessLevel: newRole,
-          inviteMessage: inviteMessage || existing.inviteMessage || null,
-          updateDate: new Date().toISOString(),
-        }
-        updatedRoles.push(coopEmail)
-      }
-      // Keep existing token so their invite link still works
-      tokens[coop.id || coop] = existing.token
+    if (newInvites.length > 0) {
+      showSuccess(
+        t('cooperators.inviteSent', {
+          users: newInvites.map((guest) => guest.email).join(', '),
+        }),
+      )
     }
-  })
-
-  await submit()
-  showInviteDialog.value = false
-
-  // Show appropriate feedback
-  if (updatedRoles.length > 0) {
-    showSuccess(
-      t('cooperators.updatedRole', {
-        role: roleOptions.value[selectedRole].title,
-        users: updatedRoles.join(', '),
-      }),
-    )
-  }
-  if (newInvites.length > 0) {
-    showSuccess(t('cooperators.inviteSent', { users: newInvites.join(', ') }))
+  } catch {
+    showError('errors.sendError')
   }
 }
 
-const changeRole = async (item, newValue) => {
-  const currentAccessLevelText = roleOptions.value.find(
-    (r) => r.value === item.accessLevel,
-  )?.title
-  const newAccessLevelText = newValue.title
+const changeRole = (item) => {
+  roleDialog.value = {
+    item,
+    newRole: assignableRoleOptions.value.find(
+      (r) => r.value !== item.accessLevel,
+    ),
+  }
 
-  if (item.accessLevel !== newValue.value) {
-    confirmDialog.value = {
-      show: true,
-      title:
-        t('HeuristicsCooperators.messages.change_role_title') || 'Change Role',
-      subtitle:
-        t('pages.settings.action_cannot_be_undone') ||
-        "This action will update the user's permissions",
-      message: t('HeuristicsCooperators.messages.change_role', {
-        email: item.email,
-        old: currentAccessLevelText,
-        new: newAccessLevelText,
-      }),
-      confirmColor: 'primary',
-      confirmIcon: 'mdi-check',
-      icon: 'mdi-account-convert',
-      iconColor: 'primary',
-      type: 'info',
-      loading: false,
-      action: 'changeRole',
-      data: { item, newValue },
-    }
+  confirmDialog.value = {
+    show: true,
+    title:
+      t('HeuristicsCooperators.messages.change_role_title') || 'Change Role',
+    subtitle:
+      t('pages.settings.action_cannot_be_undone') ||
+      "This action will update the user's permissions",
+    message: '',
+    confirmColor: 'primary',
+    confirmIcon: 'mdi-check',
+    icon: 'mdi-account-convert',
+    iconColor: 'primary',
+    type: 'info',
+    loading: false,
+    action: 'changeRole',
   }
 }
 
 const executeRoleChange = async (item, newValue) => {
-  const index = cooperatorsEdit.value.indexOf(item)
-  const newCoop = { ...item, accessLevel: newValue.value }
-  test.value.cooperators[index] = newCoop
-  await store.dispatch('updateStudy', test.value)
-  await store.dispatch('updateUserAnswer', {
-    testDocId: test.value.id,
-    cooperatorId: newCoop.userDocId,
-    data: { accessLevel: newCoop.accessLevel },
+  if (
+    !canManageCooperator(test.value, userAuth.value, item, {
+      action: 'assignRole',
+      role: newValue.value,
+    })
+  ) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
+
+  await manageStudyMembership({
+    studyId: test.value.id,
+    action: 'assignRole',
+    targetUserId: item.userDocId || null,
+    targetEmail: item.email,
+    role: newValue.value,
+  })
+
+  await store.dispatch('getStudy', {
+    id: test.value.id,
   })
 }
 
-const submit = async () => {
-  if (!test.value) return
-
-  const coops = cooperatorsEdit.value.map(
-    (coop) =>
-      new Cooperators({ ...coop, userDocId: coop.userDocId || coop.id }),
-  )
-  test.value.cooperators = [...coops]
-
-  const newCooperators = cooperatorsEdit.value.filter(
-    (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email),
-  )
-
+const reinvite = async (guest) => {
   try {
-    await store.dispatch('updateStudy', test.value)
-
-    await Promise.all([
-      store.dispatch('getStudy', { id: test.value.id }),
-      ...newCooperators.map((guest) => sendMenssages(guest, guest.inviteMessage)),
-    ])
-  } catch {
-    // console.error('Error updating study:', error)
-  }
-}
-
-const sendMenssages = async (guest, customMessage = null) => {
-  const messageToSend =
-    customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
-
-  try {
-    await notifyCooperator(guest, messageToSend)
-    // Email is optional - don't let it block the notification
-    try {
-      await handleSendEmail(guest, messageToSend)
-    } catch {
-      // console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
-    }
-    showSuccess('pages.cooperators.invitationSent')
-  } catch {
-    // console.error('sendMenssages error:', error)
-    showError('errors.sendError')
-    return error
-  }
-}
-
-const notifyCooperator = async (guest, customMessage = null) => {
-  if (guest.userDocId) {
-    // Check if it's an accessibility test (MANUAL or AUTOMATIC)
-    //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
-    //  notifyCooperatorAccessibility(guest);
-    //  return;
-    //}
-
-    // admin - 0, evaluator -1, guest - 2
-    const managerViewByMethod = getMethodManagerView(
-      test.value.testType,
-      test.value.subType,
-    )
-    const managerRoute = router.resolve({
-      name: managerViewByMethod,
-      params: { id: test.value.id },
+    await store.dispatch('reinviteCooperator', {
+      study: test.value,
+      user: userAuth.value,
+      guest,
+      router,
+      resolveUserByEmail,
     })
 
-    const path =
-      guest.accessLevel == 0
-        ? managerRoute.href
-        : `/testview/${test.value.id}/${guest.userDocId}`
-
-    const payload = {
-      userId: guest.userDocId,
-      author: test.value.testAdmin.email,
-      testId: test.value.id,
-      redirectsTo: path,
-      type: 'Collaboration',
-      accessLevel: roleOptions.value.find((r) => r.value === guest.accessLevel)
-        ?.value,
-      titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
-    }
-
-    if (customMessage) {
-      payload.description = customMessage
-    } else {
-      payload.descriptionTemplate =
-        'HeuristicsCooperators.messages.invite_message'
-      payload.descriptionParams = { testTitle: test.value.testTitle || 'Test' }
-    }
-
-    await sendNotification(payload)
+    showSuccess('pages.cooperators.invitationSent')
+  } catch {
+    showError('errors.sendError')
   }
-}
-
-const reinvite = async (guest) => {
-  await sendMenssages(guest, guest?.inviteMessage ?? null)
 }
 
 const removeCoop = async (coop) => {
+  if (!canRemoveCooperator(coop)) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
+
   confirmDialog.value = {
     show: true,
     title:
@@ -580,17 +602,28 @@ const removeCoop = async (coop) => {
 }
 
 const executeCooperatorRemoval = async (coop) => {
-  const index = cooperatorsEdit.value.indexOf(coop)
-  cooperatorsEdit.value.splice(index, 1)
-  test.value.cooperators = cooperatorsEdit.value
-  await store.dispatch('updateStudy', test.value)
-  await store.dispatch('removeTestFromCooperator', {
-    test: test.value,
-    cooperator: coop,
+  if (!canRemoveCooperator(coop)) {
+    throw new Error('STUDY_ROLE_FORBIDDEN')
+  }
+
+  await manageStudyMembership({
+    studyId: test.value.id,
+    action: 'remove',
+    targetUserId: coop.userDocId || null,
+    targetEmail: coop.email,
+  })
+
+  await store.dispatch('getStudy', {
+    id: test.value.id,
   })
 }
 
 const cancelInvitation = async (guest) => {
+  if (!canCancelCooperatorInvitation(guest)) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
+
   confirmDialog.value = {
     show: true,
     title:
@@ -614,31 +647,30 @@ const cancelInvitation = async (guest) => {
 }
 
 const executeInvitationCancellation = async (guest) => {
-  const index = cooperatorsEdit.value.indexOf(guest)
-  cooperatorsEdit.value.splice(index, 1)
-  test.value.cooperators = cooperatorsEdit.value
-  await store.dispatch('updateStudy', test.value)
-}
-
-const openDialog = async () => {
-  if (slots.dialog) drawerOpen.value = true
-  else showInviteDialog.value = true
-}
-
-watch(loading, (newVal) => {
-  if (!newVal) {
-    showIntroComponent.value = cooperatorsEdit.value.length === 0
+  if (!canCancelCooperatorInvitation(guest)) {
+    throw new Error('STUDY_ROLE_FORBIDDEN')
   }
-})
+
+  await manageStudyMembership({
+    studyId: test.value.id,
+    action: 'cancelInvitation',
+    targetUserId: guest.userDocId || null,
+    targetEmail: guest.email,
+  })
+
+  await store.dispatch('getStudy', {
+    id: test.value.id,
+  })
+}
 
 onMounted(async () => {
-  store.dispatch('getAllUsers')
-
   const testId = props.id || route.params.id
 
   if (testId) {
     try {
-      await store.dispatch('getStudy', { id: testId })
+      await store.dispatch('getStudy', {
+        id: testId,
+      })
     } catch (error) {
       return error
     }

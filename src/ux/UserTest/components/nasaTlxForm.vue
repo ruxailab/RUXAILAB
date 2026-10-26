@@ -20,6 +20,11 @@
             </div>
             <v-slider
               v-model="localNasaTlx[key]"
+              @start="emitSlider('start', key, $event)"
+              @update:model-value="emitSlider('change', key, $event)"
+              @end="emitSlider('end', key, $event)"
+              @focus="emitSlider('focus', key)"
+              @blur="emitSlider('blur', key)"
               :max="100"
               :step="5"
               track-color="grey-lighten-2"
@@ -47,7 +52,14 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:nasaTlx']);
+const emit = defineEmits([
+  'update:nasaTlx',
+  'slider-start',
+  'slider-change',
+  'slider-end',
+  'slider-focus',
+  'slider-blur',
+]);
 
 const localNasaTlx = reactive({ ...props.nasaTlx });
 
@@ -72,6 +84,10 @@ const labels = {
   performance: { title: "Performance", left: "Good", right: "Poor", subtitle: "How successful were you in accomplishing the task?" },
   effort: { title: "Effort", left: "Low", right: "High", subtitle: "How hard did you have to work to accomplish it?" },
   frustration: { title: "Frustration", left: "Low", right: "High", subtitle: "How stressed, annoyed, or irritated were you?" }
+};
+
+const emitSlider = (phase, itemRef, value = localNasaTlx[itemRef]) => {
+  emit(`slider-${phase}`, { itemRef, value });
 };
 </script>
 

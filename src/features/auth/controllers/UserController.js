@@ -5,7 +5,6 @@ import {
   reauthenticateWithCredential,
   updatePassword,
 } from 'firebase/auth'
-import { documentId } from 'firebase/firestore'
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {
@@ -21,7 +20,6 @@ export default class UserController extends Controller {
       accessLevel: 1,
       myTests: {},
       myAnswers: {},
-      notifications: [],
       storageUsageMB: 0,
     }).toFirestore()
     return super.set(COLLECTION, payload.id, user)
@@ -41,6 +39,27 @@ export default class UserController extends Controller {
     return new User(Object.assign({ id: res.id }, res.data()))
   }
 
+  async findByEmail(email) {
+    const normalizedEmail = email?.trim().toLowerCase()
+
+    if (!normalizedEmail) {
+      return null
+    }
+
+    const res = await super.query(COLLECTION, {
+      field: 'email',
+      condition: '==',
+      value: normalizedEmail,
+    })
+
+    if (res.empty) {
+      return null
+    }
+
+    const doc = res.docs[0]
+    return new User(Object.assign({ id: doc.id }, doc.data()))
+  }
+
   async getUserWithStudies(docId) {
     const res = await super.readOne(COLLECTION, docId)
     const user = new User({ id: res.id, ...res.data() })
@@ -49,8 +68,8 @@ export default class UserController extends Controller {
     const myAnswersIds = Object.keys(user.myAnswers || {})
 
     const [testsDocs, answersDocs] = await Promise.all([
-      this._fetchStudiesByIds(myTestsIds),
-      this._fetchStudiesByIds(myAnswersIds),
+      this._fetchAccessibleStudiesByIds(myTestsIds),
+      this._fetchAccessibleStudiesByIds(myAnswersIds),
     ])
 
     const myTests = {}
@@ -75,34 +94,31 @@ export default class UserController extends Controller {
     return user
   }
 
-  async _fetchStudiesByIds(ids) {
-    if (!ids || ids.length === 0) return []
+  /**
+   * A user's study lists can point to studies they can no longer read: a
+   * deleted study left in myTests, or answer-history entries whose access is
+   * scoped to a scheduled session (the session list loads those through the
+   * session-member callable instead). Skip each such study on its own; one
+   * denied study must not break the whole dashboard.
+   */
+  async _fetchAccessibleStudiesByIds(ids) {
+    if (!Array.isArray(ids) || ids.length === 0) return []
 
-    try {
-      // If there are few (<= 10), use "in" query (faster and more direct)
-      if (ids.length <= 10) {
-        const q = {
-          field: documentId(),
-          condition: 'in',
-          value: ids,
+    const results = await Promise.all(
+      ids.map(async (id) => {
+        try {
+          const doc = await super.readOne('tests', id)
+          return doc.exists()
+            ? Object.assign({ id: doc.id }, doc.data())
+            : null
+        } catch (error) {
+          if (error?.code === 'permission-denied') return null
+          throw error
         }
-        const res = await super.query('tests', q)
-        return res.docs.map((doc) => {
-          return Object.assign({ id: doc.id }, doc.data())
-        })
-      }
+      }),
+    )
 
-      // If there are many (>10), parallelize individual gets
-      const promises = ids.map((id) => super.readOne('tests', id))
-      const results = await Promise.all(promises)
-      return results
-        .filter((r) => r.exists())
-        .map((r) => {
-          return Object.assign({ id: r.id }, r.data())
-        })
-    } catch (error) {
-      throw error
-    }
+    return results.filter(Boolean)
   }
 
   async updateProfile(docId, payload) {
@@ -136,91 +152,6 @@ export default class UserController extends Controller {
     await reauthenticateWithCredential(user, credential)
   }
 
-  async addNotification(payload) {
-    const userToUpdate = await this.getById(payload.userId)
-    userToUpdate.notifications.push(payload.notification.toFirestore())
-    return this.update(payload.userId, userToUpdate.toFirestore())
-  }
-
-  async markNotificationAsRead(payload) {
-    const userToUpdate = new User(payload.user)
-
-    // Find the notification in the notifications array
-    const notificationIndex = userToUpdate.notifications.findIndex(
-      (n) => n.createdDate === payload.notification.createdDate,
-    )
-
-    if (notificationIndex !== -1) {
-      // Mark notification as read
-      userToUpdate.notifications[notificationIndex].read = true
-      userToUpdate.notifications[notificationIndex].readAt = Date.now()
-
-      // Save updated user data to Firestore
-      await this.update(
-        userToUpdate.id,
-        userToUpdate.toFirestore(),
-      )
-      return userToUpdate
-    } else {
-      // Notification was not found in the array
-      throw new Error('Notification not found.')
-    }
-  }
-
-  async markAllNotificationsAsRead(user) {
-    const userToUpdate = new User(user)
-
-    let hasUnread = false
-    userToUpdate.notifications.forEach((n) => {
-      if (!n.read) {
-        n.read = true
-        n.readAt = Date.now()
-        hasUnread = true
-      }
-    })
-
-    if (!hasUnread) return userToUpdate
-
-    await this.update(
-      userToUpdate.id,
-      userToUpdate.toFirestore(),
-    )
-    // Return the updated user object (in memory) so the store can commit it immediately
-    return userToUpdate
-  }
-
-  async removeNotificationsForTest(testId, cooperators) {
-    try {
-      for (let cooperator = 0; cooperator < cooperators.length; cooperator++) {
-        const userDocID = cooperators[cooperator].userDocId
-
-        // Lê o documento do usuário diretamente
-        const userDoc = await super.readOne('users', userDocID)
-
-        // Verifica se o documento do usuário existe
-        if (userDoc.exists()) {
-          const userData = userDoc.data()
-          const userId = userDoc.id
-
-          // Verificar se o usuário tem notificações
-          if (userData.notifications && userData.notifications.length > 0) {
-            // Filtrar notificações que têm o testId correspondente
-            userData.notifications = userData.notifications.filter(
-              (notification) => notification.testId !== testId,
-            )
-            // Atualizar o documento do usuário com as notificações filtradas
-            await super.update('users', userId, {
-              notifications: userData.notifications,
-            })
-          }
-        } else {
-        }
-      }
-    } catch (error) {
-      throw error
-    }
-  }
-
   async removeTestFromUser(userId, testIdToRemove) {
     try {
       const userDoc = await super.readOne('users', userId)
@@ -230,10 +161,10 @@ export default class UserController extends Controller {
       }
       const userData = userDoc.data()
 
-      if (userData.myTests[testIdToRemove]) {
+      if (userData.myTests?.[testIdToRemove]) {
         delete userData.myTests[testIdToRemove]
       }
-      if (userData.myAnswers[testIdToRemove]) {
+      if (userData.myAnswers?.[testIdToRemove]) {
         delete userData.myAnswers[testIdToRemove]
       }
 

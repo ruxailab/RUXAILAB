@@ -1,212 +1,380 @@
+# RUXAILAB
+
 <div align="center">
-  <h1>Welcome to UX Remote LAB</h1>
-  <p><strong>UX Remote LAB</strong> is a user-friendly platform for usability testing and heuristic evaluation. Designed and provided by UX Remote LAB, it is a web application developed to assist project creators in gathering valuable insights from their users.</p>
+
+![Tests](https://github.com/ruxailab/RUXAILAB/actions/workflows/test.yml/badge.svg?branch=develop)
+![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A522.22.1-339933?logo=nodedotjs&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/ruxailab/RUXAILAB)](https://github.com/ruxailab/RUXAILAB/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/ruxailab/RUXAILAB)](https://github.com/ruxailab/RUXAILAB/forks)
+
+**An open-source platform for user research, usability testing, and accessibility evaluation.**
+
+Plan studies, collect participant feedback, and turn research data into actionable insights.
+
+[Features](#features) · [Getting Started](#getting-started) · [Integrations](#optional-integrations) · [Contributing](#contributing)
 </div>
 
-<hr />
-<div align="center">
-  <table >
-    <tr>
-      <td><img src="public/HomePic.png" alt="User Friendly" width="600"/></td>
-      <td>User Friendly</td>
-    </tr>
-    <tr>
-      <td><img src="public/TestPic.png" alt="Heuristics Tests" width="600"/></td>
-      <td>Heuristics Tests</td>
-    </tr>
-    <tr>
-      <td><img src="public/AnswersPic.png" alt="Answers Views" width="600"/></td>
-      <td>Answers Views</td>
-    </tr>
-    <tr>
-      <td><img src="public/AnalyticsPic.png" alt="Analytics Graphs" width="600"/></td>
-      <td>Analytics Graphs</td>
-    </tr>
-  </table>
-</div>
+## Overview
 
-## About
+RUXAILAB is an open-source platform designed to support user experience (UX) research, usability testing, and accessibility evaluation. It provides tools for creating studies, collecting participant responses, and analyzing research results.
 
-UX Remote LAB is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles.
+The platform integrates with Firebase and optional external services to support its core functionality and additional research capabilities.
 
-### Community & Experience
+## Features
 
-UX Remote LAB provides a collaborative environment for creators to share their projects and receive voluntary assistance with usability reviews. You can communicate with evaluators and send them invitations for testing your applications.
+- **Study management:** Create and manage user research studies.
+- **Usability testing:** Collect participant responses and evaluate user interactions.
+- **Accessibility evaluation:** Support accessibility assessment and heuristic evaluation.
+- **Data collection:** Store and manage research data using Firebase services.
+- **Data visualization:** Explore research results through dashboards and charts.
+- **External integrations:** Connect to services for eye tracking, sentiment analysis, PDF generation, and video calls.
+- **Internationalization:** Support multiple languages through the application's localization configuration.
 
-### Support
+## Tech Stack
 
-- [Contributing Guide 📝](CONTRIBUTING.md)
-- [Report a Bug 🐛](https://github.com/uramakilab/remote-usability-lab/issues/new)
-- [Request a Feature 🚀](https://github.com/uramakilab/remote-usability-lab/issues/new)
-- [Ask a Question 🤗](https://github.com/uramakilab/remote-usability-lab/discussions)
+| Technology                 | Purpose                                 |
+| -------------------------- | --------------------------------------- |
+| Vue.js                     | Frontend framework                      |
+| Vuetify                    | UI components and application interface |
+| Firebase Authentication    | User authentication                     |
+| Cloud Firestore            | Document database                       |
+| Firebase Realtime Database | Real-time data storage                  |
+| Firebase Storage           | File storage                            |
+| Firebase Cloud Functions   | Server-side functionality               |
+| Firebase Emulator Suite    | Local development and testing           |
 
-For commercial support, academic collaborations, and answers to common questions, please contact us by one of our communications channels:
+Additional services may use their own technology stacks. Refer to their respective repositories for implementation details and setup instructions.
 
-- [Discord Server](https://discord.gg/YnkDk9BNYK)
-- [Discussions](https://github.com/ruxailab/RUXAILAB/discussions)
-- Email: `ruxailab@gmail.com`
+## Getting Started
 
-### Development Environment
+### Prerequisites
 
-- Node.js version: ≤ 24.12.0
-- Vue.js version: 3.5.26
-- Vue CLI version: 5.0.8
-- Vuetify version: 3.11.6
-- Python version: 3.11.8
-- Recommended formatter: Prettier - Code formatter
+Before setting up RUXAILAB, ensure that you have installed:
 
-## Quick Start
+- [Node.js](https://nodejs.org/) — version `22.22.1` as specified for this project.
+- npm, included with Node.js.
+- [Git](https://git-scm.com/).
+- A Firebase project, or the Firebase Emulator Suite for local development.
 
-### For End Users
+Some optional integrations require additional runtimes, dependencies, or services. Consult their repositories if you plan to use them.
 
-```bash
-# Clone the repository
-git clone https://github.com/uramakilab/remote-usability-lab.git
-cd remote-usability-lab
+### Installation
 
-# Install dependencies
-npm install
+1. Clone the repository:
 
-# Run development server
-npm run serve
+   ```bash
+   git clone https://github.com/ruxailab/ruxailab.git
+   cd ruxailab
+   ```
+
+2. Install the project dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create a local environment configuration file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Configure the required environment variables in `.env`. For Firebase development, provide the appropriate project configuration or enable the local emulators.
+
+5. Start the development server:
+
+   ```bash
+   npm run serve
+   ```
+
+The application should now be available at the local URL displayed in your terminal.
+
+> **Note:** Do not commit your `.env` file or any private credentials to version control.
+
+## Environment Configuration
+
+RUXAILAB uses environment variables to configure Firebase, localization, Cloud Functions, external services, and local emulators.
+
+The root `.env.example` file documents the supported configuration variables. Copy it to `.env` and set the values required by your development environment.
+
+**Environment-specific configuration**
+
+RUXAILAB supports environment-specific configuration files. You can use different environment variables for development, testing, and production environments.
+
+For example:
+
+```text
+.env                  # Default environment variables
+.env.development      # Development-specific variables
+.env.production       # Production-specific variables
+.env.test             # Test-specific variables
 ```
 
-### For Contributors & Developers
+Create the files you need and configure the appropriate values for each environment. Environment-specific files should contain only the variables that need to differ from the default configuration.
 
-**Want to contribute or set up a complete development environment?**
+Do not commit files containing private credentials or environment-specific secrets to version control.
 
-Please see our [**CONTRIBUTING.md**](CONTRIBUTING.md) guide for:
+### Firebase Configuration
 
-- 🐳 Docker setup with Firebase Emulators (recommended)
-- 🔧 Production Firebase configuration
-- 📋 Contribution workflow and guidelines
-- ✅ Code standards and testing
-- 🐛 Issue reporting
+Configure the Firebase project used by the application:
 
-### Video Tutorial
-
-For a visual walkthrough of running RUXAILAB with Firebase Emulators, check out:
-[Tutorial - Running RUXAILAB with Firebase Emulators 🖥️](https://youtu.be/dAf4LRxITCc)
-
-- Add `firebase.json` file with the following code snippet:
-
-```javascript
-    {
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
-  "functions": [
-    {
-      "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run lint"],
-      "source": "functions",
-      "codebase": "functions"
-    },
-    {
-      "source": "weight_function",
-      "codebase": "weight_function",
-      "ignore": ["venv", ".git", "firebase-debug.log", "firebase-debug.*.log"]
-    }
-  ],
-  "hosting": {
-    "site": "ruxailab-dev",
-    "public": "dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  },
-  "emulators": {
-    "auth": {
-      "port": 9099
-    },
-    "functions": {
-      "port": 5001
-    },
-    "firestore": {
-      "port": 8081
-    },
-    "hosting": {
-      "port": 5000
-    },
-    "ui": {
-      "enabled": true
-    },
-    "singleProjectMode": true,
-    "storage": {
-      "port": 9199
-    }
-  },
-  "storage": {
-    "rules": "storage.rules"
-  }
-}
-
+```env
+VUE_APP_FIREBASE_API_KEY=
+VUE_APP_FIREBASE_AUTH_DOMAIN=
+VUE_APP_FIREBASE_STORAGE_BUCKET=
+VUE_APP_FIREBASE_DB_URL=
+VUE_APP_FIREBASE_PROJECT_ID=
+VUE_APP_FIREBASE_MESSAGING_SENDER_ID=
+VUE_APP_FIREBASE_APP_ID=
 ```
 
-Setup your Firebase Emulators by uncommenting the lines under 'emulators if running locally' in src/index.js.
+These variables identify the Firebase project and its associated services. Use the values provided by your Firebase project configuration.
 
-Run:
+### Internationalization (i18n)
+
+Set the default language and fallback language:
+
+```env
+VUE_APP_I18N_LOCALE="en"
+VUE_APP_I18N_FALLBACK_LOCALE="en"
+```
+
+Both variables default to English.
+
+### Firebase Cloud Functions URL
+
+Configure the URL used to access Firebase Cloud Functions:
+
+```env
+VUE_APP_CLOUD_FUNCTIONS_URL=
+```
+
+For local development with the Firebase Functions Emulator, the example configuration is:
+
+```env
+VUE_APP_CLOUD_FUNCTIONS_URL="http://127.0.0.1:5002/{PROJECT_ID}/{REGION}"
+```
+
+Adjust the project identifier and URL to match your environment.
+
+## Firebase Emulator Suite
+
+RUXAILAB supports local Firebase emulators for development and testing. The available emulator settings allow you to enable services independently.
+
+### Emulator Configuration
+
+```env
+VUE_APP_USE_EMULATORS="false"
+VUE_APP_USE_AUTH_EMULATOR="false"
+VUE_APP_USE_FIRESTORE_EMULATOR="false"
+VUE_APP_USE_FUNCTIONS_EMULATOR="false"
+VUE_APP_USE_STORAGE_EMULATOR="false"
+VUE_APP_USE_DATABASE_EMULATOR="false"
+```
+
+Enable the appropriate settings when using the local emulators. The general emulator flag and individual service flags should be configured consistently with the application's emulator initialization logic.
+
+### Emulator Host and Ports
+
+```env
+VUE_APP_FIREBASE_EMULATOR_HOST="localhost"
+VUE_APP_FIRESTORE_EMULATOR_PORT="8081"
+VUE_APP_AUTH_EMULATOR_PORT="9099"
+VUE_APP_FUNCTIONS_EMULATOR_PORT="5002"
+VUE_APP_STORAGE_EMULATOR_PORT="9199"
+VUE_APP_DATABASE_EMULATOR_PORT="9000"
+```
+
+These values define the host and ports used by the application to connect to local Firebase services. If your emulator configuration uses different ports, update the environment variables accordingly.
+
+For installation and configuration instructions, refer to the [Firebase Emulator Suite documentation](https://firebase.google.com/docs/emulator-suite).
+
+## Optional Integrations
+
+RUXAILAB can connect to external services for eye tracking, sentiment analysis, PDF generation, and video-call functionality. These integrations may require separate repositories and services to be configured and running.
+
+### External Services and Repositories
+
+| Integration                       | Repository                                                                                 | Environment Variable                           |
+| --------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| Eye tracking frontend             | [web-eye-tracker-front](https://github.com/ruxailab/web-eye-tracker-front)                 | `VUE_APP_EYE_LAB_FRONTEND_URL`                 |
+| Eye tracking backend              | [eye-tracker-api](https://github.com/ruxailab/eye-tracker-api)                             | `VUE_APP_EYE_LAB_BACKEND_URL`                  |
+| Speech-to-text sentiment analysis | [sentiment-analysis-api](https://github.com/ruxailab/sentiment-analysis-api)               | `VUE_APP_TRANSCRIPTION_SENTIMENT_API_BASE_URL` |
+| Speech-to-text Transcriptions     | [transcription-api](https://github.com/ruxailab/transcription-api)                         | `VUE_APP_TRANSCRIPTION_API_BASE_URL`           |
+| Facial sentiment analysis         | [facial-sentiment-analysis-api](https://github.com/ruxailab/facial-sentiment-analysis-api) | `VUE_APP_FACIAL_SENTIMENT_API_BASE_URL`        |
+| PDF generation                    | [laravel-pdf-generator](https://github.com/ruxailab/laravel-pdf-generator)                 | `VUE_APP_LARAVEL_PDF`                          |
+| Video-call token server           | [video-call-server](https://github.com/ruxailab/video-call-server)                         | `VUE_APP_LIVEKIT_TOKEN_SERVER_URL`             |
+
+### Eye Tracking
+
+The eye tracking integration uses a frontend application that serves as calibration tool and a backend API to process data.
+
+Configure their URLs in `.env`:
+
+```env
+VUE_APP_EYE_LAB_BACKEND_URL=
+VUE_APP_EYE_LAB_FRONTEND_URL=
+```
+
+For local development, the example values are:
+
+```env
+VUE_APP_EYE_LAB_BACKEND_URL="http://127.0.0.1:3000"
+VUE_APP_EYE_LAB_FRONTEND_URL="http://localhost:8080"
+```
+
+Repositories:
+
+- [Eye tracking frontend](https://github.com/ruxailab/web-eye-tracker-front)
+- [Eye tracking backend](https://github.com/ruxailab/eye-tracker-api)
+
+Follow the setup instructions in each repository to run the services.
+
+### Transcription API
+
+The transcription API provides the integration endpoint for speech-to-text functionality.
+
+Configure the base URL:
+
+```env
+VUE_APP_TRANSCRIPTION_API_BASE_URL=
+```
+
+Repository: [transcription-api](https://github.com/ruxailab/transcription-api).
+
+### Transcription and Sentiment Analysis
+
+The transcription and sentiment analysis API provides the integration endpoint for audio transcription and related sentiment analysis functionality.
+
+Configure the base URL:
+
+```env
+VUE_APP_TRANSCRIPTION_SENTIMENT_API_BASE_URL=
+```
+
+Repository: [sentiment-analysis-api](https://github.com/ruxailab/sentiment-analysis-api).
+
+### Facial Sentiment Analysis
+
+The facial sentiment analysis integration uses a separate API from the transcription and sentiment analysis service.
+
+Configure the base URL:
+
+```env
+VUE_APP_FACIAL_SENTIMENT_API_BASE_URL=
+```
+
+Set this variable to the URL of the facial sentiment analysis API in your environment.
+
+Repository: [facial-sentiment-analysis-api](https://github.com/ruxailab/facial-sentiment-analysis-api).
+
+### PDF Generation
+
+RUXAILAB supports an external Laravel-based PDF generation service.
+
+Configure the relevant URL:
+
+```env
+VUE_APP_LARAVEL_PDF=
+```
+
+The example configuration in `.env.example` uses:
+
+```env
+VUE_APP_LARAVEL_PDF=http://localhost:8000/api
+```
+
+Repository: [laravel-pdf-generator](https://github.com/ruxailab/laravel-pdf-generator).
+
+### LiveKit Video Calls
+
+RUXAILAB can use LiveKit for video-call functionality. The configuration includes the LiveKit server endpoint and a separate token server.
+
+```env
+VUE_APP_LIVEKIT_ENABLED=true
+VUE_APP_LIVEKIT_URL=ws://localhost:7880
+VUE_APP_LIVEKIT_TOKEN_SERVER_URL=http://localhost:3001
+```
+
+The variables serve different purposes:
+
+- `VUE_APP_LIVEKIT_ENABLED`: enables or disables the integration.
+- `VUE_APP_LIVEKIT_URL`: specifies the LiveKit server endpoint.
+- `VUE_APP_LIVEKIT_TOKEN_SERVER_URL`: specifies the URL of the service responsible for providing LiveKit tokens.
+
+The LiveKit server and the token server are separate services. The `video-call-server` repository contains the token server implementation.
+
+Repository: [video-call-server](https://github.com/ruxailab/video-call-server).
+
+### Integration Notes
+
+- External integrations are optional unless a feature you intend to use depends on them.
+- Configure only the services required for your development environment.
+- Start each external service according to its repository instructions.
+- Ensure the configured URLs are reachable from the application.
+- Use the correct endpoints and ports for your environment.
+- Do not commit secrets, private tokens, or production credentials to version control.
+
+## Firebase Cloud Functions
+
+RUXAILAB uses Firebase Cloud Functions for server-side functionality.
+
+If you need to work on the Cloud Functions, navigate to the directory containing the Functions project and follow its dependency and deployment instructions.
+
+Common Firebase CLI commands include:
 
 ```bash
-
-firebase use (choose your option)
 firebase emulators:start
-
+firebase deploy --only functions
 ```
 
-## Running Python Function
+The first command starts the configured local emulators. The second deploys Cloud Functions to the selected Firebase project.
 
-To calculate heuristic weights, run:
+> **Warning:** Deploying functions can affect a shared or production environment. Verify the active Firebase project before deploying.
 
-```bash
-# Run locally
- firebase init functions
- firebase use weight_function
- firebase emulators:start --only functions
+### Environment Configuration
+
+Cloud Functions have their own environment variables, configured separately from the frontend variables. The example configuration file is located at functions/.env.example.
+
+Before running the functions locally, copy the example file to create your local environment configuration:
+
+```
+cp functions/.env.example functions/.env
 ```
 
-Then get the url, go to the .env file and add the following sentence:
+Update functions/.env with the values required for your local development environment.
 
-```javascript
-// Your previous code
-VUE_APP_FIREBASE_PYTHON_FUNCTION = 'url'
-```
+**Important:** Do not commit .env files containing private credentials, API keys, or other sensitive values to version control.
 
-If you want to deply the fuction, change your account from spark to blaze, run:
+For additional information, see the [Firebase Cloud Functions documentation](https://firebase.google.com/docs/functions).
 
-```bash
-   firebase deploy --only functions
-```
+## Useful Commands
 
-Go to firebase panel -> functions -> on the right side of the function press "detailed usage statistics".
-There you can get the url and replace on .env file.
+The following commands are commonly used during development. Refer to the project's `package.json` for the definitive list of available scripts.
 
-## Docker Setup
+| Command              | Description                                       |
+| -------------------- | ------------------------------------------------- |
+| `npm install`        | Installs project dependencies.                    |
+| `npm run serve`      | Starts the local development server.              |
+| `npm run build-dev`  | Builds the application using development mode.    |
+| `npm run build-prod` | Builds the application using production mode.     |
+| `npm run lint`       | Runs the configured linting checks, if available. |
 
-### Building the Docker Image
+## Contributing
 
-To build the Docker image for UX Remote LAB, navigate to the project's root directory and run the following command:
+Contributions to RUXAILAB are welcome.
 
-```bash
-docker build -t uxremotelab .
-```
+Before submitting a pull request:
 
-### Running the Application using Docker
+1. Fork the repository and create a feature branch.
+2. Install the dependencies and configure your development environment.
+3. Make your changes following the existing project conventions.
+4. Run the relevant tests and checks available for the project.
+5. Submit a pull request describing the changes and their purpose.
 
-After building the image, you can run the application in a Docker container using:
-
-Note: Ensure you have created the .env file and filled it with all required variables before running the following command:
-
-```bash
-docker run -d --env-file .env -p 5000:5000 uxremotelab
-```
-
-Visit `http://localhost:5000` in your browser to access the UX Remote LAB platform.
+For larger changes, consider opening an issue first to discuss the proposed implementation.
 
 ## License
 
-MIT © [RUXAILAB](https://github.com/ruxailab/RUXAILAB)
+See the repository's `LICENSE` file for the applicable license and terms of use.

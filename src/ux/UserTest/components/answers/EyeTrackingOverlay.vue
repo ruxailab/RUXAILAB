@@ -15,69 +15,88 @@ const props = defineProps({
 
 const canvas = ref(null)
 let ctx = null
-let animationFrame = null
 let i = 0
-let tStart = null
 let normalized = []
 let resizeObs = null
-let heatmapData = []
-
-const DURATION = 450
+let rafId = null
 
 function lerp(a, b, t) {
   return a + (b - a) * t
 }
 
+function findPointIndex(currentMs) {
+  let left = 0
+  let right = normalized.length - 1
+
+  while (left <= right) {
+    const mid = (left + right) >> 1
+
+    if (normalized[mid].t <= currentMs) {
+      left = mid + 1
+    } else {
+      right = mid - 1
+    }
+  }
+
+  return Math.max(0, Math.min(right, normalized.length - 1))
+}
+
 function drawFreeEye(cx, cy) {
+  const W = canvas.value.width
+  const H = canvas.value.height
+
   ctx.beginPath()
-  ctx.arc(cx * canvas.value.width, cy * canvas.value.height, 8, 0, 2 * Math.PI)
-  ctx.fillStyle = 'rgba(255,0,0,0.8)'
+  ctx.arc(cx * W, cy * H, 8, 0, 2 * Math.PI)
+  ctx.fillStyle = 'rgba(255,0,0,0.85)'
   ctx.fill()
 }
 
 function drawPrecisionPoints(cx, cy) {
+  const W = canvas.value.width
+  const H = canvas.value.height
+
+  const visiblePoints = normalized.slice(0, i + 1)
+
   ctx.lineWidth = 2
-  ctx.strokeStyle = 'rgba(0, 200, 255, 0.6)'
+  ctx.strokeStyle = 'rgba(0,200,255,0.6)'
   ctx.beginPath()
 
-  for (let j = 0; j < i; j++) {
-    const a = normalized[j]
-    const b = normalized[j + 1] || a
-    ctx.moveTo(a.x * canvas.value.width, a.y * canvas.value.height)
-    ctx.lineTo(b.x * canvas.value.width, b.y * canvas.value.height)
+  for (let j = 0; j < visiblePoints.length - 1; j++) {
+    const a = visiblePoints[j]
+    const b = visiblePoints[j + 1]
+
+    ctx.moveTo(a.x * W, a.y * H)
+    ctx.lineTo(b.x * W, b.y * H)
   }
 
-  const prev = normalized[i]
-  ctx.moveTo(prev.x * canvas.value.width, prev.y * canvas.value.height)
-  ctx.lineTo(cx * canvas.value.width, cy * canvas.value.height)
+  if (visiblePoints.length > 0) {
+    const last = visiblePoints[visiblePoints.length - 1]
+    ctx.moveTo(last.x * W, last.y * H)
+    ctx.lineTo(cx * W, cy * H)
+  }
+
   ctx.stroke()
 
-  normalized.slice(0, i + 1).forEach((p, idx) => {
+  visiblePoints.forEach((p) => {
     ctx.beginPath()
-    ctx.arc(
-      p.x * canvas.value.width,
-      p.y * canvas.value.height,
-      idx === i ? 7 : 4,
-      0,
-      2 * Math.PI,
-    )
-    ctx.fillStyle =
-      idx === i ? 'rgba(0, 255, 255, 1)' : 'rgba(0, 200, 255, 0.7)'
+    ctx.arc(p.x * W, p.y * H, 4, 0, 2 * Math.PI)
+    ctx.fillStyle = 'rgba(0,200,255,0.7)'
     ctx.fill()
   })
 
+  // Current interpolated gaze head
   ctx.beginPath()
-  ctx.arc(cx * canvas.value.width, cy * canvas.value.height, 6, 0, 2 * Math.PI)
-  ctx.fillStyle = 'rgba(255,255,255,0.9)'
+  ctx.arc(cx * W, cy * H, 7, 0, 2 * Math.PI)
+  ctx.fillStyle = 'rgba(0,255,255,1)'
   ctx.fill()
 }
 
 function drawHeatmapPoint(x, y) {
-  const radius = 20
+  const radius = 24
   const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius)
-  gradient.addColorStop(0, 'rgba(255,0,0,0.03)')
-  gradient.addColorStop(0.6, 'rgba(255,150,0,0.06)')
-  gradient.addColorStop(1, 'rgba(255,255,0,0.0012)')
+  gradient.addColorStop(0, 'rgba(255,0,0,0.06)')
+  gradient.addColorStop(0.5, 'rgba(255,150,0,0.04)')
+  gradient.addColorStop(1, 'rgba(255,255,0,0.001)')
   ctx.fillStyle = gradient
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, 2 * Math.PI)
@@ -85,162 +104,185 @@ function drawHeatmapPoint(x, y) {
 }
 
 function drawHeatmap() {
-  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
-  heatmapData.forEach((p) =>
-    drawHeatmapPoint(p.x * canvas.value.width, p.y * canvas.value.height),
-  )
+  const W = canvas.value.width
+  const H = canvas.value.height
+  const visible = normalized.slice(0, i + 1)
+  const step = Math.max(1, Math.floor(visible.length / 400))
+  for (let idx = 0; idx < visible.length; idx += step) {
+    drawHeatmapPoint(visible[idx].x * W, visible[idx].y * H)
+  }
 }
 
-function animateSmooth(timestamp) {
-  if (!ctx || !normalized.length) return
-  if (!tStart) tStart = timestamp
+function renderFrame() {
+  if (!ctx || !normalized.length || !canvas.value) return
+
+  const video = props.videoRef
+  const timeInSeconds =
+    video && !video.paused ? video.currentTime : props.currentTime
+  const currentMs = timeInSeconds * 1000
+
+  i = findPointIndex(currentMs)
+
   const current = normalized[i]
-  const next = normalized[i + 1] || normalized[0]
-  const t = Math.min((timestamp - tStart) / DURATION, 1)
+  const next = normalized[i + 1] || current
+
+  const duration = next.t - current.t
+  const rawT = duration > 0 ? (currentMs - current.t) / duration : 0
+  const t = Math.max(0, Math.min(1, rawT))
+
   const cx = lerp(current.x, next.x, t)
   const cy = lerp(current.y, next.y, t)
 
-  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
+  const W = canvas.value.width
+  const H = canvas.value.height
+  ctx.clearRect(0, 0, W, H)
 
-  if (props.viewMode === 'free') drawFreeEye(cx, cy)
-  else if (props.viewMode === 'precision') drawPrecisionPoints()
-  else if (props.viewMode === 'heatmap') {
-    heatmapData.push({ x: cx, y: cy })
+  if (props.viewMode === 'free') {
+    drawFreeEye(cx, cy)
+  } else if (props.viewMode === 'precision') {
+    drawPrecisionPoints(cx, cy)
+  } else {
     drawHeatmap()
   }
+}
 
-  if (t >= 1) {
-    i = (i + 1) % normalized.length
-    tStart = timestamp
+function startAnimationLoop() {
+  if (rafId) return
+  const loop = () => {
+    renderFrame()
+    if (props.isPlaying || (props.videoRef && !props.videoRef.paused)) {
+      rafId = requestAnimationFrame(loop)
+    } else {
+      rafId = null
+    }
   }
+  rafId = requestAnimationFrame(loop)
+}
 
-  if (props.isPlaying) animationFrame = requestAnimationFrame(animateSmooth)
+function stopAnimationLoop() {
+  if (rafId) {
+    cancelAnimationFrame(rafId)
+    rafId = null
+  }
 }
 
 async function resizeCanvas() {
   await nextTick()
-  const video = props.videoRef?.value
-  if (!video || !canvas.value) return
 
-  const wrapper = video.parentElement
-  const rect = wrapper.getBoundingClientRect()
-  const dpr = window.devicePixelRatio || 1
+  const video = props.videoRef
+  if (!video || !canvas.value) return
+  const rect = video.getBoundingClientRect()
 
   canvas.value.style.width = `${rect.width}px`
   canvas.value.style.height = `${rect.height}px`
 
-  canvas.value.width = rect.width * dpr
-  canvas.value.height = rect.height * dpr
+  canvas.value.width = rect.width
+  canvas.value.height = rect.height
 
-  ctx.setTransform(1, 0, 0, 1, 0, 0)
-  ctx.scale(dpr, dpr)
-
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = 'high'
-  console.log(
-    dpr,
-    rect.width,
-    rect.height,
-    canvas.value.width,
-    canvas.value.height,
-  )
+  if (ctx) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    renderFrame()
+  }
 }
 
 onMounted(() => {
-  ctx = canvas.value.getContext('2d')
-  const video = props.videoRef?.value
-  if (video) {
-    resizeCanvas()
+  ctx = canvas.value?.getContext ? canvas.value.getContext('2d') : null
+
+  const video = props.videoRef
+  if (!video) return
+
+  if (typeof ResizeObserver !== 'undefined') {
     resizeObs = new ResizeObserver(resizeCanvas)
-    resizeObs.observe(video.parentElement)
+    resizeObs.observe(video.parentElement || video)
   }
+
   window.addEventListener('resize', resizeCanvas)
   resizeCanvas()
+
+  if (props.isPlaying) {
+    startAnimationLoop()
+  } else {
+    renderFrame()
+  }
 })
 
 watch(
   () => props.predictedData,
   (val) => {
-    if (!val?.length) return
+    if (!val?.length) {
+      normalized = []
+      if (ctx && canvas.value) {
+        ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
+      }
+      return
+    }
 
-    console.log('[Overlay] typeof:', typeof val, 'Array?', Array.isArray(val))
+    const t0 = val[0].timestamp
 
-    const t0 = val[0].timestamp // timestamp inicial absoluto
-    normalized = val.map((p) => ({
-      x: (p.predicted_x ?? p.x) / (p.screen_width || 1),
-      y: (p.predicted_y ?? p.y) / (p.screen_height || 1),
-      t: p.timestamp - t0, // tempo relativo em ms
-    }))
+    normalized = val.map((p) => {
+      const rawX = p.predicted_x ?? p.x
+      const rawY = p.predicted_y ?? p.y
 
-    heatmapData = []
-    console.log(
-      '[Overlay] Normalização concluída:',
-      normalized.length,
-      'pontos. Último t =',
-      normalized.at(-1)?.t,
-    )
+      return {
+        x: rawX / (p.screen_width || 1),
+        y: rawY / (p.screen_height || 1),
+        t: p.timestamp - t0,
+      }
+    })
+
+    renderFrame()
   },
   { immediate: true },
 )
 
 watch(
-  () => props.isPlaying,
-  (playing) => {
-    if (!ctx) return
-    cancelAnimationFrame(animationFrame)
-    tStart = null
-    if (playing) animationFrame = requestAnimationFrame(animateSmooth)
+  () => props.videoRef,
+  (video) => {
+    if (!video || !canvas.value) return
+
+    resizeCanvas()
+
+    if (resizeObs) resizeObs.disconnect()
+
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObs = new ResizeObserver(resizeCanvas)
+      resizeObs.observe(video.parentElement || video)
+    }
   },
+  { immediate: true },
 )
 
 watch(
   () => props.currentTime,
-  (time) => {
-    if (!ctx || !normalized.length) return
-
-    const currentMs = time * 1000
-    const nextIdx = normalized.findIndex((p) => p.t > currentMs)
-    i = nextIdx === -1 ? normalized.length - 1 : Math.max(0, nextIdx - 1)
-
-    console.log(
-      '[Overlay] currentTime →',
-      time.toFixed(2),
-      's | currentMs =',
-      currentMs,
-      '| index =',
-      i,
-    )
-
-    // Loga o timestamp real do ponto
-    const currentPoint = props.predictedData[i]
-    if (currentPoint) {
-      console.log('[Overlay] ponto atual:', {
-        timestamp: currentPoint.timestamp,
-        x: currentPoint.predicted_x,
-        y: currentPoint.predicted_y,
-      })
-    } else {
-      console.warn('[Overlay] Nenhum ponto encontrado pra esse tempo!')
-    }
-
-    const visiblePoints = normalized.slice(0, i + 1)
-    console.log('[Overlay] total de pontos desenhados:', visiblePoints.length)
-
-    ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
-
-    if (props.viewMode === 'free') {
-      visiblePoints.forEach((p) => drawFreeEye(p.x, p.y))
-    } else if (props.viewMode === 'precision') {
-      visiblePoints.forEach((p) => drawPrecisionPoints(p.x, p.y))
-    } else if (props.viewMode === 'heatmap') {
-      heatmapData = visiblePoints
-      drawHeatmap()
+  () => {
+    if (!props.isPlaying) {
+      renderFrame()
     }
   },
 )
 
+watch(
+  () => props.isPlaying,
+  (playing) => {
+    if (playing) {
+      startAnimationLoop()
+    } else {
+      stopAnimationLoop()
+      renderFrame()
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => props.viewMode,
+  () => {
+    renderFrame()
+  },
+)
+
 onBeforeUnmount(() => {
-  cancelAnimationFrame(animationFrame)
+  stopAnimationLoop()
   window.removeEventListener('resize', resizeCanvas)
   if (resizeObs) resizeObs.disconnect()
 })

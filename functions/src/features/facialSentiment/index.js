@@ -1,0 +1,8 @@
+export { facialSentimentTask } from './interface/facialSentimentTask.js'
+export { facialSentimentTaskWorker } from './interface/facialSentimentTaskWorker.js'
+export { sentimentDelete } from './interface/sentimentDelete.js'
+export { sentimentDeleteByUser } from './interface/sentimentDeleteByUser.js'
+export { UpsertSentimentAnalyticsService } from './service/UpsertSentimentAnalyticsService.js'
+export { RebuildSentimentAnalyticsService } from './service/RebuildSentimentAnalyticsService.js'
+export { DeleteUserSentimentsService } from './service/DeleteUserSentimentsService.js'
+export { FirestoreSentimentAnalyticsRepository } from './repositories/FirestoreSentimentAnalyticsRepository.js'

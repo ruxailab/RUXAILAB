@@ -6,17 +6,26 @@ jest.mock('firebase/firestore', () => ({
   getDoc: jest.fn(),
   addDoc: jest.fn(),
   deleteDoc: jest.fn(),
-  increment: jest.fn((val) => ({ _increment: val })),
+  deleteField: jest.fn(() => 'DELETE_FIELD'),
 }))
 
 jest.mock('@/app/plugins/firebase', () => ({
   db: {},
 }))
 
+jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
+  FirebaseFunctionsController: {
+    callHttpsCallableFunction: jest.fn(),
+  },
+}))
+
+const mockGetById = jest.fn()
+const mockUpdate = jest.fn()
+
 jest.mock('../../src/features/auth/controllers/UserController', () => {
   return jest.fn().mockImplementation(() => ({
-    getById: jest.fn(),
-    update: jest.fn(),
+    getById: mockGetById,
+    update: mockUpdate,
   }))
 })
 
@@ -37,18 +46,29 @@ jest.mock('@/ux/UserTest/models/UserStudyEvaluatorAnswer', () => {
 
 const AnswerController =
   require('@/shared/controllers/AnswerController').default
+const {
+  FirebaseFunctionsController,
+} = require('@/app/plugins/firebase/FirebaseFunctionsService')
+const {
+  instantiateStudyAnswerByType,
+} = require('@/shared/constants/methodDefinitions')
 
 describe('AnswerController', () => {
   let answerController
 
   beforeEach(() => {
     jest.clearAllMocks()
+    instantiateStudyAnswerByType.mockImplementation((type, data) => data)
     answerController = new AnswerController()
   })
 
   describe('Structure', () => {
     it('should have getAnswerById method', () => {
       expect(typeof answerController.getAnswerById).toBe('function')
+    })
+
+    it('should have getMyStudyAnswer method', () => {
+      expect(typeof answerController.getMyStudyAnswer).toBe('function')
     })
 
     it('should have createAnswer method', () => {
@@ -119,6 +139,151 @@ describe('AnswerController', () => {
     })
   })
 
+  describe('getMyStudyAnswer', () => {
+    it('should call getMyStudyAnswer callable and instantiate the response', async () => {
+      FirebaseFunctionsController.callHttpsCallableFunction.mockResolvedValue({
+        data: {
+          id: 'answer-123',
+          type: 'USER',
+          taskAnswers: {
+            'user-123': { userDocId: 'user-123' },
+          },
+        },
+      })
+
+      const result = await answerController.getMyStudyAnswer('study-123')
+
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).toHaveBeenCalledWith('getMyStudyAnswer', { studyId: 'study-123' })
+      expect(instantiateStudyAnswerByType).toHaveBeenCalledWith('USER', {
+        id: 'answer-123',
+        type: 'USER',
+        taskAnswers: {
+          'user-123': { userDocId: 'user-123' },
+        },
+      })
+      expect(result).toEqual({
+        id: 'answer-123',
+        type: 'USER',
+        taskAnswers: {
+          'user-123': { userDocId: 'user-123' },
+        },
+      })
+    })
+  })
+
+  describe('updateUserAnswer', () => {
+    beforeEach(() => {
+      mockGetById.mockClear()
+      mockUpdate.mockClear()
+    })
+
+    it('should return null if payload is missing required fields', async () => {
+      const result1 = await answerController.updateUserAnswer({})
+      const result2 = await answerController.updateUserAnswer({
+        cooperatorId: '1',
+      })
+      const result3 = await answerController.updateUserAnswer({
+        cooperatorId: '1',
+        testDocId: '2',
+      })
+      expect(result1).toBeNull()
+      expect(result2).toBeNull()
+      expect(result3).toBeNull()
+    })
+
+    it('should return null if user does not exist', async () => {
+      mockGetById.mockResolvedValue(null)
+      const result = await answerController.updateUserAnswer({
+        cooperatorId: 'invalid-id',
+        testDocId: 'test-123',
+        data: { accessLevel: 1 },
+      })
+      expect(result).toBeNull()
+    })
+
+    it('should return null if user does not have answers for the test yet', async () => {
+      mockGetById.mockResolvedValue({
+        id: 'user-123',
+        myAnswers: {},
+      })
+      const result = await answerController.updateUserAnswer({
+        cooperatorId: 'user-123',
+        testDocId: 'test-123',
+        data: { accessLevel: 1 },
+      })
+      expect(result).toBeNull()
+    })
+
+    it('should merge data correctly and update only the study membership entry', async () => {
+      const mockUserToUpdate = {
+        id: 'user-123',
+        email: 'collaborator@example.com',
+        myAnswers: {
+          'test-123': {
+            testDocId: 'test-123',
+            accessLevel: 0,
+            progress: 50,
+          },
+        },
+        toFirestore: jest.fn().mockReturnValue({ myAnswers: 'updated' }),
+      }
+      mockGetById.mockResolvedValue(mockUserToUpdate)
+      mockUpdate.mockResolvedValue(true)
+
+      const payload = {
+        cooperatorId: 'user-123',
+        testDocId: 'test-123',
+        data: { accessLevel: 1, progress: 100 },
+      }
+
+      const result = await answerController.updateUserAnswer(payload)
+
+      expect(mockUpdate).toHaveBeenCalledWith('user-123', {
+        'myAnswers.test-123': {
+          testDocId: 'test-123',
+          accessLevel: 1,
+          progress: 100,
+        },
+      })
+      // The collaborator's profile fields must not ride along on this write.
+      expect(mockUserToUpdate.toFirestore).not.toHaveBeenCalled()
+      expect(result).toBe(true)
+    })
+  })
+
+  describe('removeUserAnswer', () => {
+    beforeEach(() => {
+      mockGetById.mockClear()
+      mockUpdate.mockClear()
+      // jest.config.js sets resetMocks, so re-arm the module mock here.
+      require('firebase/firestore').deleteField.mockReturnValue('DELETE_FIELD')
+    })
+
+    it('should delete only the study membership entry', async () => {
+      const mockUserToUpdate = {
+        id: 'user-123',
+        email: 'collaborator@example.com',
+        myAnswers: { 'test-123': { testDocId: 'test-123' } },
+        toFirestore: jest.fn().mockReturnValue({ myAnswers: 'updated' }),
+      }
+      mockGetById.mockResolvedValue(mockUserToUpdate)
+      mockUpdate.mockResolvedValue(true)
+
+      const result = await answerController.removeUserAnswer({
+        cooperatorId: 'user-123',
+        testDocId: 'test-123',
+      })
+
+      expect(mockUpdate).toHaveBeenCalledWith('user-123', {
+        'myAnswers.test-123': 'DELETE_FIELD',
+      })
+      expect(mockUserToUpdate.toFirestore).not.toHaveBeenCalled()
+      expect(result).toBe(true)
+    })
+  })
+
   describe('updateTaskTranscriptionMeta', () => {
     it('should call update with correct field paths', async () => {
       const updateSpy = jest
@@ -133,14 +298,13 @@ describe('AnswerController', () => {
         userDocId: 'user-456',
         taskId: 'task-1',
         latestId: 'transcription-789',
-        inc: 1,
       })
 
       expect(updateSpy).toHaveBeenCalledWith(
         'answers',
         'answer-123',
         expect.objectContaining({
-          'taskAnswers.user-456.tasks.task-1.latestTranscriptionDocId':
+          'taskAnswers.user-456.tasks.task-1.transcriptionDocId':
             'transcription-789',
         }),
       )
@@ -161,17 +325,15 @@ describe('AnswerController', () => {
         answersDocId: 'answer-123',
         userDocId: 'user-456',
         taskId: 'task-1',
-        latestTranscriptionDocId: 'transcription-789',
-        transcriptionsCount: 5,
+        transcriptionDocId: 'transcription-789',
       })
 
       expect(updateSpy).toHaveBeenCalledWith(
         'answers',
         'answer-123',
         expect.objectContaining({
-          'taskAnswers.user-456.tasks.task-1.latestTranscriptionDocId':
+          'taskAnswers.user-456.tasks.task-1.transcriptionDocId':
             'transcription-789',
-          'taskAnswers.user-456.tasks.task-1.transcriptionsCount': 5,
         }),
       )
 

@@ -204,6 +204,7 @@ import { useI18n } from 'vue-i18n'
 import { formatDateLong } from '@/shared/utils/dateUtils'
 import AnswerController from '@/shared/controllers/AnswerController'
 import { showError } from '@/shared/utils/toast'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const store = useStore()
 const { t, locale } = useI18n()
@@ -253,12 +254,11 @@ const customSort = {
 // Custom filter so search works on displayed values (e.g. dateFormatted, studyName)
 const customFilter = (value, query, item) => {
   if (!query) return true
-  const q = query.toLowerCase()
   const raw = item?.raw || item
   return (
-    (raw.studyName || '').toLowerCase().includes(q) ||
-    (raw.dateFormatted || '').toLowerCase().includes(q) ||
-    (raw.type || '').toLowerCase().includes(q)
+    matchesSearch(raw.studyName, query) ||
+    matchesSearch(raw.dateFormatted, query) ||
+    matchesSearch(raw.type, query)
   )
 }
 
@@ -279,7 +279,7 @@ const fetchAllAnswers = async () => {
           }))
         }
       } catch {
-        showError(t('storage.fetchAnswersError', { testTitle: test.testTitle }))
+        showError('Error fetching answers', { testTitle: test.testTitle })
       }
     }
   }
@@ -437,13 +437,9 @@ const executeDelete = async () => {
   const file = fileToDelete.value
   if (!file) return
 
-  try {
-    await store.dispatch('Storage/deleteFile', file)
-    deleteDialog.value = false
-    fileToDelete.value = null
-  } catch (error) {
-    // Error is already handled in the store
-  }
+  await store.dispatch('Storage/deleteFile', file)
+  deleteDialog.value = false
+  fileToDelete.value = null
 }
 
 const openPreview = (item) => {

@@ -6,7 +6,7 @@
     @update:model-value="$emit('update:show', $event)"
   >
     <v-card class="rounded-xl">
-      <v-card-title class="d-flex align-start ga-4 pa-6 pb-0">
+      <v-card-title class="d-flex align-start ga-4 pa-6 pb-0 dialog-header">
         <div
           :class="[
             'dialog-icon rounded-lg d-flex align-center justify-center',
@@ -15,21 +15,43 @@
         >
           <v-icon :color="iconColor" size="28">{{ icon }}</v-icon>
         </div>
-        <div>
-          <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
+        <div class="dialog-copy">
+          <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1 dialog-title">
             {{ title }}
           </h3>
-          <p v-if="subtitle" class="text-subtitle-2 text-grey-darken-1">
+          <p
+            v-if="subtitle"
+            class="text-subtitle-2 text-grey-darken-1 dialog-subtitle"
+          >
             {{ subtitle }}
           </p>
         </div>
       </v-card-title>
       <v-card-text class="py-4 px-6">
-        <p class="text-body-2 text-grey-darken-1">
+        <p v-if="message" class="text-body-2 text-grey-darken-1 dialog-message">
           {{ message }}
         </p>
+
+        <slot name="content" />
       </v-card-text>
-      <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
+      <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3 dialog-actions">
+        <!-- Optional third action -->
+        <v-btn
+          v-if="thirdText"
+          variant="text"
+          color="primary"
+          :disabled="loading"
+          class="text-none rounded-lg px-6"
+          height="44"
+          @click="handleThird"
+        >
+          <v-icon v-if="thirdIcon" start size="16">
+            {{ thirdIcon }}
+          </v-icon>
+
+          {{ thirdText }}
+        </v-btn>
+        <!----->
         <v-btn
           variant="outlined"
           color="grey-darken-2"
@@ -58,9 +80,6 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 const props = defineProps({
   show: {
@@ -84,6 +103,14 @@ const props = defineProps({
     default: '',
   },
   cancelText: {
+    type: String,
+    default: '',
+  },
+  thirdText: {
+    type: String,
+    default: '',
+  },
+  thirdIcon: {
     type: String,
     default: '',
   },
@@ -114,7 +141,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:show', 'confirm', 'cancel'])
+const emit = defineEmits(['update:show', 'confirm', 'cancel', 'third'])
 
 const iconBackgroundClass = computed(() => {
   const classes = {
@@ -133,6 +160,10 @@ const handleCancel = () => {
   emit('update:show', false)
   emit('cancel')
 }
+
+const handleThird = () => {
+  emit('third')
+}
 </script>
 
 <style scoped>
@@ -140,5 +171,30 @@ const handleCancel = () => {
   width: 48px;
   height: 48px;
   min-width: 48px;
+}
+
+.dialog-header {
+  white-space: normal;
+}
+
+.dialog-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.dialog-title,
+.dialog-subtitle,
+.dialog-message {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.dialog-title {
+  line-height: 1.3;
+}
+
+.dialog-actions {
+  flex-wrap: wrap;
 }
 </style>

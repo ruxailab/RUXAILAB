@@ -7,6 +7,7 @@ import StudyController from '@/controllers/StudyController'
 import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { buildUserStudyList } from '@/shared/utils/userStudyList'
 
 const studyController = new StudyController()
 
@@ -22,6 +23,8 @@ export default {
     studyMethod: null,
     studyType: null,
     selectedTemplate: null,
+    aiStudyDraft: null,
+    participants: [],
   },
   getters: {
     tests(state) {
@@ -38,6 +41,9 @@ export default {
     },
     coops(state) {
       return state.Test.coop
+    },
+    participants(state) {
+      return state.participants
     },
   },
   mutations: {
@@ -91,11 +97,18 @@ export default {
     SET_SELECTED_TEMPLATE(state, payload) {
       state.selectedTemplate = payload
     },
+    SET_AI_STUDY_DRAFT(state, payload) {
+      state.aiStudyDraft = payload
+    },
+    CLEAR_AI_STUDY_DRAFT(state) {
+      state.aiStudyDraft = null
+    },
     RESET_STUDY_DETAILS(state) {
-      ;((state.studyCategory = null),
-        (state.studyMethod = null),
-        (state.studyType = null),
-        (state.selectedTemplate = null))
+      state.studyCategory = null
+      state.studyMethod = null
+      state.studyType = null
+      state.selectedTemplate = null
+      state.aiStudyDraft = null
     },
     SET_CALIBRATION_CONFIG(state, payload) {
       if (state.Test) {
@@ -105,8 +118,13 @@ export default {
     CLEAN_TEST(state) {
       state.Test = null
       state.testStructure = null
+      state.heuristics = null
+      state.testWeights = null
       state.answersId = null
       state.module = 'test'
+    },
+    SET_PARTICIPANTS(state, payload) {
+      state.participants = payload
     },
   },
   actions: {
@@ -161,13 +179,15 @@ export default {
     async updateStudy({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await studyController.updateStudy(payload)
-        commit('SET_TEST', payload)
+        const result = await studyController.updateStudy(payload)
+        commit('SET_TEST', result?.rebasedStudy ?? payload)
+        return result
       } catch (err) {
         commit('setError', {
           errorCode: 'studyError',
           message: err,
         })
+        return null
       } finally {
         commit('setLoading', false)
       }
@@ -182,6 +202,9 @@ export default {
           errorCode: 'studyError',
           message: err,
         })
+        // Callers (notably invite acceptance) must be able to distinguish a
+        // completed membership update from a failed callable request.
+        throw err
       } finally {
         commit('setLoading', false)
       }
@@ -192,11 +215,23 @@ export default {
       try {
         const res = await studyController.getStudy(payload)
         commit('SET_TEST', res)
+        return res
       } catch (err) {
         commit('setError', {
           errorCode: 'studyError',
           message: err,
         })
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async getStudyForSession({ commit }, payload) {
+      commit('setLoading', true)
+      try {
+        const study = await studyController.getStudyForSession(payload)
+        if (study) commit('SET_TEST', study)
+        return study
       } finally {
         commit('setLoading', false)
       }
@@ -243,10 +278,10 @@ export default {
           const userDoc = await userController.getUserWithStudies(user.uid)
 
           if (userDoc) {
-            const tests = [
-              ...Object.values(userDoc.myTests || {}),
-              ...Object.values(userDoc.myAnswers || {}),
-            ]
+            // Study Memberships (`myTests`) and participation records
+            // (`myAnswers`) are merged per study: a user who is a member and
+            // a participant of the same study sees it once.
+            const tests = buildUserStudyList(userDoc.myTests, userDoc.myAnswers)
             commit('SET_TESTS', tests)
           }
         }
@@ -258,6 +293,33 @@ export default {
       } finally {
         commit('setLoading', false)
       }
+    },
+
+    async getStudyParticipants({ commit }, { studyId }) {
+      commit('setLoading', true)
+      try {
+        const participants = await studyController.getStudyParticipants({
+          studyId,
+        })
+
+        commit('SET_PARTICIPANTS', participants)
+
+        return participants
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'getParticipantsError',
+          message: err,
+        })
+
+        throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async getAcceptedStudyParticipant(_, { studyId, userId }) {
+      if (!studyId || !userId) return null
+      return studyController.getAcceptedParticipant({ studyId, userId })
     },
   },
 }

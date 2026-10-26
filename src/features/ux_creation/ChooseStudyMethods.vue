@@ -1,8 +1,12 @@
 <template>
   <v-container fluid class="create-study-view">
-    <v-container class="py-6">
+    <v-container class="">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="2" :steps="steps" />
+      <StepperHeader
+        :current-step="2"
+        :steps="steps"
+        @step-click="onStepperStepClick"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -41,18 +45,11 @@
           />
         </v-col>
       </v-row>
-
-      <!-- Back Button -->
-      <BackButton
-        :label="$t('studyCreation.backToCategories')"
-        @back="goBack"
-      />
     </v-container>
   </v-container>
 </template>
 
 <script setup>
-import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
@@ -61,17 +58,64 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions'
+import { getCategoryById } from '@/shared/constants/studyCategories.js'
 
 const router = useRouter()
 const store = useStore()
 const { t } = useI18n()
 const selectedMethod = ref('')
 
+const currentCategory = computed(() => store.state.Tests.studyCategory)
+const selectedCategoryMeta = computed(() =>
+  currentCategory.value ? getCategoryById(currentCategory.value) : null,
+)
+const requiresMethodSelection = computed(
+  () => !!selectedCategoryMeta.value?.hasSubMethods,
+)
+const hasMethodSelected = computed(
+  () => !!selectedMethod.value || !!store.state.Tests.studyMethod,
+)
+const hasStudyTypeSelected = computed(() => !!store.state.Tests.studyType)
+const hasTemplateWhenNeeded = computed(() => {
+  if (store.state.Tests.studyType !== 'template') return true
+  return !!store.state.Tests.selectedTemplate
+})
+
+const canOpenStep3 = computed(
+  () => !requiresMethodSelection.value || hasMethodSelected.value,
+)
+const canOpenStep4 = computed(
+  () =>
+    canOpenStep3.value &&
+    hasStudyTypeSelected.value &&
+    hasTemplateWhenNeeded.value,
+)
+
 const steps = computed(() => [
-  { value: 1, title: t('studyCreation.steps.category'), complete: true },
-  { value: 2, title: t('studyCreation.steps.methods'), complete: false },
-  { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
-  { value: 4, title: t('studyCreation.steps.details'), complete: false },
+  {
+    value: 1,
+    title: t('studyCreation.steps.category'),
+    complete: true,
+    enabled: true,
+  },
+  {
+    value: 2,
+    title: t('studyCreation.steps.methods'),
+    complete: false,
+    enabled: true,
+  },
+  {
+    value: 3,
+    title: t('studyCreation.steps.studyType'),
+    complete: false,
+    enabled: canOpenStep3.value,
+  },
+  {
+    value: 4,
+    title: t('studyCreation.steps.details'),
+    complete: false,
+    enabled: canOpenStep4.value,
+  },
 ])
 
 const methodsByCategory = {
@@ -100,8 +144,7 @@ const methodsByCategory = {
         'studyCreation.methods.test.card_sorting_unmoderated.description',
       icon: 'mdi-card-multiple',
       color: 'error',
-      available: false,
-      comingSoon: true,
+      available: true,
     },
     {
       id: 'ab-testing',
@@ -109,6 +152,34 @@ const methodsByCategory = {
       descKey: 'studyCreation.methods.test.ab_testing.description',
       icon: 'mdi-compare',
       color: 'warning',
+      available: false,
+      comingSoon: true,
+    },
+  ],
+  inquiry: [
+    {
+      id: METHOD_DEFINITIONS.FOCUS_GROUP.id,
+      nameKey: 'studyCreation.methods.inquiry.focus_group.name',
+      descKey: 'studyCreation.methods.inquiry.focus_group.description',
+      icon: 'mdi-account-group',
+      color: 'secondary',
+      available: true,
+    },
+    {
+      id: METHOD_DEFINITIONS.SURVEY.id,
+      nameKey: 'studyCreation.methods.inquiry.survey.name',
+      descKey: 'studyCreation.methods.inquiry.survey.description',
+      icon: 'mdi-clipboard-text',
+      color: 'primary',
+      available: false,
+      comingSoon: true,
+    },
+    {
+      id: METHOD_DEFINITIONS.INTERVIEW.id,
+      nameKey: 'studyCreation.methods.inquiry.interview.name',
+      descKey: 'studyCreation.methods.inquiry.interview.description',
+      icon: 'mdi-microphone',
+      color: 'info',
       available: false,
       comingSoon: true,
     },
@@ -164,7 +235,6 @@ const methodsByCategory = {
   ],
 }
 
-const currentCategory = computed(() => store.state.Tests.studyCategory)
 const availableMethods = computed(() => {
   return (methodsByCategory[currentCategory.value] || []).map((m) => ({
     ...m,
@@ -180,11 +250,22 @@ const selectMethod = (methodId, available) => {
   router.push({ name: 'study-create-step3' })
 }
 
-const goBack = () => {
-  router.push({ name: 'study-create-step1' })
+const onStepperStepClick = (step) => {
+  if (!step?.value || step.value === 2) return
+
+  const routeByStep = {
+    1: 'study-create-step1',
+    3: 'study-create-step3',
+    4: 'study-create-step4',
+  }
+
+  const targetRoute = routeByStep[step.value]
+  if (!targetRoute) return
+  router.push({ name: targetRoute })
 }
 
 onMounted(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
   if (!currentCategory.value) {
     router.push({ name: 'study-create-step1' })
   }

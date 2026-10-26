@@ -169,7 +169,6 @@ const playPause = () => {
 }
 
 function playSegment(start, end) {
-  console.log(`Playing segment from ${start} to ${end}`)
   if (!wave_surfer.value) return
   wave_surfer.value.play(start, end)
 }

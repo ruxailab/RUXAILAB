@@ -17,6 +17,10 @@ export default class Cooperators {
     token,
     testDate,
     inviteMessage,
+    acceptedDate,
+    rejectedDate,
+    expirationDate,
+    status,
   } = {}) {
     /**
      * Defines the user document id.
@@ -94,6 +98,34 @@ export default class Cooperators {
      * @type {string}
      */
     this.inviteMessage = inviteMessage
+
+    /**
+     * Accepted date
+     *
+     * @type {number}
+     */
+    this.acceptedDate = acceptedDate
+
+    /**
+     * Defines the reject date.
+     *
+     * @type {number}
+     */
+    this.rejectedDate = rejectedDate
+
+    /**
+     * Defines the expiration date.
+     *
+     * @type {number}
+     */
+    this.expirationDate = expirationDate
+
+    /**
+     * Defines status
+     *
+     * @type {string}
+     */
+    this.status = status
   }
 
   /**
@@ -123,6 +155,10 @@ export default class Cooperators {
       token: this.token ?? null,
       testDate: this.testDate ?? null,
       inviteMessage: this.inviteMessage ?? null,
+      acceptedDate: this.acceptedDate ?? null,
+      rejectedDate: this.rejectedDate ?? null,
+      expirationDate: this.expirationDate ?? null,
+      status: this.status ?? 'pending',
     }
   }
 }

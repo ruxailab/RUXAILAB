@@ -1,5 +1,5 @@
 <template>
-  <div v-if="Array.isArray(user.notifications)">
+  <div v-if="Array.isArray(notifications)">
     <v-menu
       v-model="menuOpen"
       location="bottom end"
@@ -23,21 +23,29 @@
             class="notification-bell"
             :class="{ pulse: unreadCount > 0 }"
             v-bind="props"
+            :aria-label="$t('common.notificationBell')"
           >
             <v-icon>mdi-bell-ring</v-icon>
           </v-btn>
         </v-badge>
 
-        <v-btn v-else icon size="small" v-bind="props">
+        <v-btn
+          v-else
+          icon
+          size="small"
+          v-bind="props"
+          :aria-label="$t('common.notificationBell')"
+        >
           <v-icon>mdi-bell-outline</v-icon>
         </v-btn>
       </template>
 
-      <!-- 📬 Dropdown -->
+      <!-- Dropdown -->
       <v-card class="notification-dropdown" elevation="6">
-        <!-- Header -->
         <div class="dropdown-header">
-          <span class="text-h6">{{ $t('common.notifications') }}</span>
+          <span class="text-h6">
+            {{ $t('common.notifications') }}
+          </span>
 
           <div class="actions">
             <v-btn
@@ -63,7 +71,6 @@
 
         <v-divider />
 
-        <!-- Content -->
         <div class="dropdown-content">
           <template v-if="unreadNotifications.length">
             <NotificationItem
@@ -73,14 +80,17 @@
               :class="{ active: index === activeIndex }"
               style="margin-bottom: 10px"
               @go-to-redirect="goToNotificationRedirect"
-              @mark-as-read="goToNotificationRedirect"
+              @toggle-read="toggleRead"
             />
           </template>
 
-          <!-- Empty -->
           <div v-else class="empty-state">
-            <v-icon size="40" color="grey">mdi-bell-check</v-icon>
-            <div class="empty-title">{{ $t('common.caughtUp') }}</div>
+            <v-icon size="40" color="grey"> mdi-bell-check </v-icon>
+
+            <div class="empty-title">
+              {{ $t('common.caughtUp') }}
+            </div>
+
             <div class="empty-subtitle">
               {{ $t('common.noNewNotifications') }}
             </div>
@@ -92,6 +102,8 @@
     <!-- Dialog -->
     <AcceptInvitationDialog
       v-model="dialogVisible"
+      :title="$t('invite.pendingTitle')"
+      :subtitle="`${$t('invite.pendingSubtitle')}: ${invite?.studyTitle ?? ''}`"
       @cancel="onReject"
       @submit="onAccept"
     />
@@ -99,13 +111,15 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, onUnmounted } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
-import StudyController from '@/controllers/StudyController'
+import { getInviteAcceptanceDestination } from '@/shared/utils/studyNavigation'
 import { showError } from '@/shared/utils/toast'
+import { NOTIFICATION_TYPES } from '../../notifications/utils/notificationUtils'
 
 const store = useStore()
 const router = useRouter()
@@ -113,127 +127,263 @@ const router = useRouter()
 const menuOpen = ref(false)
 const activeIndex = ref(-1)
 
+const invite = ref(null)
+const dialogVisible = ref(false)
+
+let resolveDialog
+
 const user = computed(() => store.getters.user)
 
+const notifications = computed(() => store.getters.notifications ?? [])
+
 const unreadNotifications = computed(() =>
-  [...user.value.notifications]
-    .filter((n) => !n.read)
-    .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
-    .slice(0, 6),
+  notifications.value?.filter((notification) => !notification.read),
 )
 
 const unreadCount = computed(
-  () => user.value.notifications.filter((n) => !n.read).length,
+  () =>
+    notifications.value?.filter((notification) => !notification.read).length,
 )
 
-/* Dialog  */
-const dialogVisible = ref(false)
-let resolveDialog
+/**
+ * Notification type
+ *
+ * The notification itself should keep its original type string.
+ * The visual configuration is handled by NotificationItem.
+ */
+const isCollaborationNotification = (notification) => {
+  if (!notification) return false
+
+  if (
+    notification.type === NOTIFICATION_TYPES.COLLABORATION ||
+    notification.type === NOTIFICATION_TYPES.PARTICIPANT
+  ) {
+    return true
+  }
+  return false
+}
+
+/* Dialog */
 
 const onAccept = () => {
   dialogVisible.value = false
-  resolveDialog(true)
+  resolveDialog?.(true)
+  resolveDialog = null
 }
 
 const onReject = () => {
   dialogVisible.value = false
-  resolveDialog(false)
+  resolveDialog?.(false)
+  resolveDialog = null
 }
 
 const showAcceptDialog = () => {
   dialogVisible.value = true
-  return new Promise((resolve) => (resolveDialog = resolve))
+
+  return new Promise((resolve) => {
+    resolveDialog = resolve
+  })
 }
 
-/* actions */
+/* Actions */
+
+const markNotificationAsRead = async (notification) => {
+  if (!notification) return
+
+  await store.dispatch('markNotificationAsRead', {
+    notificationId: notification.id,
+    userId: user.value?.id,
+  })
+}
+
+const markNotificationAsUnread = async (notification) => {
+  if (!notification) return
+
+  await store.dispatch('markNotificationAsUnread', {
+    notificationId: notification.id,
+    userId: user.value?.id,
+  })
+}
+
 const goToNotificationRedirect = async (notification) => {
-  // Only show dialog for Collaboration type invitations
-  if (notification.type === 'Collaboration') {
+  if (!notification) return
+
+  invite.value = null
+  const isCollaboration = isCollaborationNotification(notification)
+  let acceptedInvite = false
+  let acceptedStudy = null
+
+  let redirectTo = notification.redirectsTo
+
+  const inviteToken =
+    notification.inviteToken ?? localStorage.getItem('pendingInviteToken')
+
+  /*
+   * Collaboration notifications require accepting/rejecting
+   * the invitation before following the redirect.
+  */
+  if (isCollaboration && inviteToken) {
+    let result
+    try {
+      result = await store.dispatch('loadInvite', { token: inviteToken })
+    } catch (error) {
+      showError(error?.message || 'errors.globalError')
+      menuOpen.value = false
+      return
+    }
+
+    if (!result?.invite || result.unauthorized) {
+      showError('errors.globalError')
+      menuOpen.value = false
+      return
+    }
+
+    invite.value = result.invite
+  }
+
+  if (isCollaboration && invite.value) {
     const accepted = await showAcceptDialog()
 
     if (!accepted) {
-      await store.dispatch('markNotificationAsRead', {
+      await store.dispatch('rejectInvite', {
         notification,
         user: user.value,
+        membershipType: invite.value.membershipType,
+        studyId: invite.value.studyId,
       })
+
       return
     }
 
-    if (notification.testId) {
-      try {
-        const study = await new StudyController().getStudy({
-          id: notification.testId,
-        })
-        await store.dispatch('acceptStudyCollaboration', {
-          test: study,
-          cooperator: user.value,
-        })
-      } catch {
-        showError('notifications.errors.acceptCollaborationFailed')
-        return
-      }
-    } else {
-      // Missing testId - cannot process collaboration
-      showError('notifications.errors.invalidCollaboration')
+    let result
+    try {
+      result = await store.dispatch('acceptInvite', {
+        token: notification.inviteToken,
+        user: user.value,
+        studyId: notification.testId || invite.value.studyId,
+        notification,
+        membershipType: invite.value.membershipType,
+      })
+    } catch (error) {
+      showError(error?.message || 'errors.globalError')
+      menuOpen.value = false
       return
     }
+
+    acceptedInvite = true
+    acceptedStudy = result.study
   }
 
-  await store.dispatch('markNotificationAsRead', {
-    notification,
-    user: user.value,
-  })
+  await markNotificationAsRead(notification)
 
-  if (notification.redirectsTo && notification.redirectsTo !== '/') {
-    globalThis.open(
-      globalThis.location.origin + notification.redirectsTo,
-      '_blank',
-    )
+  if (acceptedInvite && acceptedStudy) {
+    const destination =
+      invite.value.membershipType === 'participant'
+        ? getInviteAcceptanceDestination({
+            study: acceptedStudy,
+            user: user.value,
+            membershipType: 'participant',
+          })
+        : redirectTo
+
+    menuOpen.value = false
+    if (destination) await router.push(destination)
+    return
+  }
+
+  if (!redirectTo) {
+    menuOpen.value = false
+    return
+  }
+
+  let url = redirectTo
+
+  if (!url.startsWith('http')) {
+    const baseUrl = globalThis.location.origin
+    const path = url.startsWith('/') ? url : `/${url}`
+
+    url = baseUrl + path
+  }
+
+  try {
+    globalThis.open(url, '_blank')
+  } catch {
+    // Ignore browser popup errors for ordinary notifications.
   }
 
   menuOpen.value = false
 }
 
-const markAllAsRead = async () => {
-  const unread = user.value.notifications.filter((n) => !n.read)
-  if (unread.length === 0) return
+const toggleRead = async (notification) => {
+  if (notification.read) {
+    await markNotificationAsUnread(notification)
+  } else {
+    await markNotificationAsRead(notification)
+  }
+}
 
-  await store.dispatch('markAllNotificationsAsRead', user.value)
+const markAllAsRead = async () => {
+  const unread = notifications.value?.filter((n) => !n.read)
+  if (!unread?.length) return
+
+  await store.dispatch('markAllNotificationsAsRead', {
+    userId: user.value.id,
+    notifications: notifications.value,
+  })
 }
 
 const goToNotificationPage = () => {
   menuOpen.value = false
-  router.push({ path: '/admin', query: { section: 'notifications' } })
+
+  router.push({
+    path: '/admin',
+    query: {
+      section: 'notifications',
+    },
+  })
 }
 
-/* keyboard  */
-const handleKey = (e) => {
+/* Keyboard */
+
+const handleKey = (event) => {
   if (!menuOpen.value) return
 
-  if (e.key === 'j')
+  if (event.key === 'j') {
     activeIndex.value = Math.min(
       activeIndex.value + 1,
       unreadNotifications.value.length - 1,
     )
-  if (e.key === 'k') activeIndex.value = Math.max(activeIndex.value - 1, 0)
-  if (e.key === 'Enter' && unreadNotifications.value[activeIndex.value]) {
+  }
+
+  if (event.key === 'k') {
+    activeIndex.value = Math.max(activeIndex.value - 1, 0)
+  }
+
+  if (event.key === 'Enter' && unreadNotifications.value[activeIndex.value]) {
     goToNotificationRedirect(unreadNotifications.value[activeIndex.value])
   }
-  if (e.key === 'Escape') menuOpen.value = false
+
+  if (event.key === 'Escape') {
+    menuOpen.value = false
+  }
 }
+
+onMounted(() => {
+  globalThis.addEventListener('keydown', handleKey)
+})
 
 onUnmounted(() => {
   globalThis.removeEventListener('keydown', handleKey)
 })
 
-/* Reset keyboard index on open */
 watch(menuOpen, (open) => {
-  if (open) activeIndex.value = 0
+  if (open) {
+    activeIndex.value = unreadNotifications.value.length ? 0 : -1
+  }
 })
 </script>
 
 <style scoped>
-/* Pulse animation */
 .notification-bell.pulse {
   position: relative;
   z-index: 1;
@@ -254,13 +404,13 @@ watch(menuOpen, (open) => {
     transform: scale(1);
     opacity: 1;
   }
+
   100% {
     transform: scale(1.8);
     opacity: 0;
   }
 }
 
-/* Dropdown */
 .notification-dropdown {
   border-radius: 14px;
   max-height: 70vh;
@@ -274,11 +424,6 @@ watch(menuOpen, (open) => {
   padding: 12px 16px;
 }
 
-.dropdown-header .title {
-  font-weight: 600;
-  font-size: 15px;
-}
-
 .dropdown-header .actions {
   display: flex;
   gap: 6px;
@@ -290,7 +435,6 @@ watch(menuOpen, (open) => {
   padding: 8px;
 }
 
-/* Empty */
 .empty-state {
   text-align: center;
   padding: 24px 12px;

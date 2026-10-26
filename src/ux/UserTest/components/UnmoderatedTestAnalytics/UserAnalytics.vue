@@ -1,7 +1,7 @@
 <template>
   <div class="analytics-dashboard">
     <!-- Filtros dinámicos Pre-Test -->
-    <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
+    <v-card class="mb-4 pa-4 elevation-0 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field
           v-model="searchTerm"
@@ -136,35 +136,81 @@
           :key="'col-task-' + i"
           #[`item.task_${i}`]="{ item }"
         >
-          <div class="d-flex flex-column align-center py-2">
+          <div class="task-result-cell d-flex flex-column align-center py-2">
             <v-chip
               size="x-small"
-              :color="item[`task_${i}`]?.completed ? 'success' : 'error'"
+              :color="
+                item[`task_${i}`]?.completed
+                  ? 'success'
+                  : item[`task_${i}`]?.attempted
+                    ? 'error'
+                    : 'grey'
+              "
               variant="tonal"
-              class="mb-2 text-uppercase font-weight-medium"
+              class="task-status-chip text-uppercase font-weight-medium"
               :prepend-icon="
                 item[`task_${i}`]?.completed
                   ? 'mdi-check-circle'
-                  : 'mdi-close-circle'
+                  : item[`task_${i}`]?.attempted
+                    ? 'mdi-progress-close'
+                    : 'mdi-minus-circle-outline'
               "
             >
               {{
                 item[`task_${i}`]?.completed
                   ? $t('analytics.completed')
-                  : $t('analytics.notCompleted')
+                  : item[`task_${i}`]?.attempted
+                    ? $t('analytics.couldNotFinish')
+                    : $t('analytics.notStarted')
               }}
             </v-chip>
-            <span
-              class="text-caption"
-              :class="{ 'text-grey-500': !item[`task_${i}`]?.timeSeconds }"
-            >
-              {{ $t('analytics.timeTaken') }}:
-              {{
-                item[`task_${i}`]?.timeSeconds
-                  ? formatTime(item[`task_${i}`].timeSeconds)
-                  : '-'
-              }}
-            </span>
+            <div class="task-time-cell d-flex flex-column align-center">
+              <div class="task-time-line">
+                <span class="text-caption text-medium-emphasis">
+                  {{ $t('analytics.timeTaken') }}:
+                </span>
+                <span class="text-caption font-weight-medium">
+                  {{
+                    item[`task_${i}`]?.timeSeconds
+                      ? formatTime(item[`task_${i}`].timeSeconds)
+                      : '-'
+                  }}
+                </span>
+              </div>
+              <div class="task-time-line">
+                <span class="text-caption text-medium-emphasis">
+                  {{ $t('analytics.estimatedTime') }}:
+                </span>
+                <span class="text-caption font-weight-medium">
+                  {{
+                    item[`task_${i}`]?.estimatedTimeSeconds != null
+                      ? formatTime(item[`task_${i}`].estimatedTimeSeconds)
+                      : '-'
+                  }}
+                </span>
+              </div>
+              <div class="task-comparison-slot">
+                <v-chip
+                  v-if="item[`task_${i}`]?.timeComparison"
+                  size="x-small"
+                  :color="
+                    item[`task_${i}`].timeComparison === 'over'
+                      ? 'error'
+                      : 'primary'
+                  "
+                  variant="tonal"
+                >
+                  {{
+                    $t(
+                      item[`task_${i}`].timeComparison === 'over'
+                        ? 'analytics.overEstimate'
+                        : 'analytics.withinEstimate',
+                    )
+                  }}
+                </v-chip>
+                <span v-else class="text-caption text-medium-emphasis">-</span>
+              </div>
+            </div>
           </div>
         </template>
 
@@ -174,19 +220,26 @@
               <div class="d-flex align-center mb-1">
                 <v-chip
                   size="x-small"
-                  color="primary"
+                  :color="getEffectivenessColor(item.effectiveness)"
                   variant="tonal"
                   class="mr-2 font-weight-medium"
                 >
                   {{ $t('analytics.effectiveness') }}: {{ item.effectiveness }}%
                 </v-chip>
+              </div>
+              <div class="d-flex align-center mb-1">
                 <v-chip
                   size="x-small"
-                  color="secondary"
+                  :color="getEfficiencyColor(item.efficiency)"
                   variant="tonal"
                   class="font-weight-medium"
                 >
-                  {{ $t('analytics.efficiency') }}: {{ item.efficiency }} t/min
+                  {{ $t('analytics.efficiency') }}:
+                  {{
+                    item.efficiency === null
+                      ? $t('analytics.noData')
+                      : `${item.efficiency.toFixed(1)}%`
+                  }}
                 </v-chip>
               </div>
               <div class="text-caption text-grey-600">
@@ -199,7 +252,7 @@
           </div>
         </template>
 
-        <template #item.invited="{ item }">
+        <!-- <template #item.invited="{ item }">
           <v-chip
             :color="item.invited ? 'success' : 'grey'"
             :prepend-icon="item.invited ? 'mdi-check' : 'mdi-close'"
@@ -208,7 +261,7 @@
           >
             {{ item.invited ? $t('analytics.yes') : $t('analytics.no') }}
           </v-chip>
-        </template>
+        </template> -->
 
         <template #item.actions="{ item }">
           <v-menu location="bottom end" transition="fade-transition">
@@ -225,19 +278,10 @@
             </template>
             <v-list density="compact" class="py-0">
               <v-list-item prepend-icon="mdi-eye" @click="viewAnswers(item)">
-                <v-list-item-title>Test detail</v-list-item-title>
+                <v-list-item-title>
+                  {{ $t('analytics.testDetails.taskDetail') }}
+                </v-list-item-title>
               </v-list-item>
-              <v-list-item
-                prepend-icon="mdi-clipboard-list"
-                @click="showTaskDetails(item)"
-              >
-                <v-list-item-title>Task Details</v-list-item-title>
-              </v-list-item>
-              <!--
-              <v-list-item @click="toggleHideSession(item)" :prepend-icon="item.hidden ? 'mdi-eye' : 'mdi-eye-off'">
-                <v-list-item-title>{{ item.hidden ? 'Show' : 'Hide' }}</v-list-item-title>
-              </v-list-item>
-              -->
             </v-list>
           </v-menu>
         </template>
@@ -252,12 +296,17 @@
       transition="dialog-bottom-transition"
     >
       <v-card>
-        <v-toolbar color="orange" class="pl-3">
-          <span class="text-h5">Test Details</span>
+        <v-toolbar color="primary" class="pl-3">
+          <span class="text-h5">{{ $t('analytics.testDetails.title') }}</span>
           <v-spacer />
-          <v-btn icon @click="showDialog = false"
-            ><v-icon>mdi-close</v-icon></v-btn
+          <v-btn
+            color="white"
+            variant="text"
+            prepend-icon="mdi-close"
+            @click="showDialog = false"
           >
+            {{ $t('buttons.close') }}
+          </v-btn>
         </v-toolbar>
         <v-card-text class="dialog-body">
           <v-container fluid class="py-0">
@@ -289,7 +338,7 @@
                 class="section-col"
               >
                 <div class="section-card">
-                  <div class="section-title">Pre-Test</div>
+                  <div class="section-title">{{ $t('analytics.preTest') }}</div>
                   <v-divider class="my-2" />
                   <div class="qa-grid">
                     <div
@@ -325,7 +374,9 @@
                 class="section-col"
               >
                 <div class="section-card">
-                  <div class="section-title">Post-Test</div>
+                  <div class="section-title">
+                    {{ $t('analytics.postTest') }}
+                  </div>
                   <v-divider class="my-2" />
                   <div class="qa-grid">
                     <div
@@ -361,180 +412,239 @@
               >
                 <div class="section-card">
                   <div class="section-title d-flex align-center">
-                    Tasks
-                    <span class="text-caption font-weight-regular ml-2"
-                      >({{ testStructure.userTasks.length }})</span
-                    >
+                    <span>
+                      {{ $t('analytics.tasks') }}
+                      <span class="text-caption font-weight-regular ml-2"
+                        >({{ testStructure.userTasks.length }})</span
+                      >
+                    </span>
                   </div>
                   <v-divider class="my-2" />
-                  <div class="d-flex flex-wrap gap-2 mb-3">
-                    <v-chip
-                      v-for="(t, i) in testStructure.userTasks"
-                      :key="'task-chip-' + i"
-                      :color="taskSelect === i ? 'primary' : 'grey'"
-                      variant="tonal"
-                      size="small"
-                      class="cursor-pointer"
-                      @click="taskSelect = i"
-                    >
-                      {{ i + 1 }}. {{ t.taskName }}
-                    </v-chip>
-                  </div>
-
-                  <div
-                    v-if="dialogItem.tasks?.[taskSelect]"
-                    class="task-detail"
+                  <v-data-table
+                    :headers="[
+                      {
+                        title: '#',
+                        key: 'taskNumber',
+                        sortable: false,
+                        width: 72,
+                      },
+                      {
+                        title: $t('analytics.taskLabel'),
+                        key: 'taskName',
+                        sortable: false,
+                      },
+                      {
+                        title: $t('analytics.testDetails.answerType'),
+                        key: 'taskTypeLabel',
+                        sortable: false,
+                        width: 170,
+                      },
+                      {
+                        title: $t('analytics.testDetails.tip'),
+                        key: 'tipUsage',
+                        sortable: false,
+                        width: 130,
+                      },
+                      {
+                        title: $t('analytics.testDetails.completion'),
+                        key: 'statusLabel',
+                        sortable: false,
+                        width: 150,
+                      },
+                      {
+                        title: $t('analytics.testDetails.answer'),
+                        key: 'answerPreview',
+                        sortable: false,
+                      },
+                      {
+                        title: $t('analytics.testDetails.observations'),
+                        key: 'observationPreview',
+                        sortable: false,
+                      },
+                      {
+                        title: $t('analytics.testDetails.recordings'),
+                        key: 'recordings',
+                        sortable: false,
+                        width: 180,
+                      },
+                      {
+                        title: $t('analytics.testDetails.time'),
+                        key: 'timeLabel',
+                        sortable: false,
+                        width: 110,
+                      },
+                      {
+                        title: $t('analytics.estimatedTime'),
+                        key: 'estimatedTimeLabel',
+                        sortable: false,
+                        width: 140,
+                      },
+                      {
+                        title: $t('analytics.timeComparison'),
+                        key: 'timeComparisonLabel',
+                        sortable: false,
+                        width: 160,
+                      },
+                    ]"
+                    :items="taskSummaryRows"
+                    :items-per-page="10"
+                    class="elevation-0"
+                    hide-default-footer
+                    item-value="taskIndex"
+                    @click:row="
+                      (_, row) => selectTask(row.item.taskIndex, true)
+                    "
                   >
-                    <div class="mb-2 d-flex flex-wrap gap-2">
-                      <v-chip
-                        v-if="dialogItem.tasks[taskSelect].completed"
-                        size="x-small"
-                        color="success"
-                        variant="tonal"
-                      >
-                        <v-icon size="14" start>mdi-check-circle</v-icon>
-                        Completed
+                    <template #item.taskNumber="{ item }">
+                      <v-chip size="small" variant="tonal" color="primary">
+                        {{ item.taskNumber }}
                       </v-chip>
-                      <v-chip
-                        v-else
-                        size="x-small"
-                        color="error"
-                        variant="tonal"
-                      >
-                        <v-icon size="14" start>mdi-close-circle</v-icon> Not
-                        Completed
-                      </v-chip>
-                      <v-chip
-                        v-if="dialogItem.tasks[taskSelect].taskTime"
-                        size="x-small"
-                        color="info"
-                        variant="tonal"
-                      >
-                        <v-icon size="14" start>mdi-timer-outline</v-icon>
-                        {{
-                          formatTime(
-                            Math.floor(
-                              (dialogItem.tasks[taskSelect].taskTime || 0) /
-                                1000,
-                            ),
-                          )
-                        }}
-                      </v-chip>
-                    </div>
+                    </template>
 
-                    <div
-                      v-if="testStructure.userTasks?.[taskSelect]?.postQuestion"
-                      class="mb-4"
-                    >
-                      <div class="qa-question mb-1">Post Question</div>
-                      <div class="qa-answer">
-                        {{ dialogItem.tasks[taskSelect].postAnswer || '-' }}
+                    <template #item.taskName="{ item }">
+                      <button
+                        class="task-row-button"
+                        type="button"
+                        @click.stop="selectTask(item.taskIndex, true)"
+                      >
+                        <div class="font-weight-medium text-grey-900">
+                          {{ item.taskName }}
+                        </div>
+                        <div class="text-caption text-grey-600">
+                          {{ item.taskType || $t('analytics.taskLabel') }}
+                        </div>
+                      </button>
+                    </template>
+
+                    <template #item.taskTypeLabel="{ item }">
+                      <v-chip size="small" variant="tonal" color="secondary">
+                        <v-icon size="14" start>{{ item.taskTypeIcon }}</v-icon>
+                        {{ item.taskTypeLabel }}
+                      </v-chip>
+                    </template>
+
+                    <template #item.tipUsage="{ item }">
+                      <v-chip
+                        v-if="item.hasTipAvailable"
+                        size="small"
+                        variant="tonal"
+                        :color="item.tipPressCount > 0 ? 'warning' : 'grey'"
+                      >
+                        <v-icon size="14" start>
+                          {{
+                            item.tipPressCount > 0
+                              ? 'mdi-lightbulb-on-outline'
+                              : 'mdi-lightbulb-outline'
+                          }}
+                        </v-icon>
+                        {{ item.tipUsage }}
+                      </v-chip>
+                      <span v-else class="text-grey-500 text-body-2">-</span>
+                    </template>
+
+                    <template #item.statusLabel="{ item }">
+                      <v-chip
+                        size="small"
+                        variant="tonal"
+                        :color="item.statusColor"
+                      >
+                        <v-icon size="14" start>
+                          {{
+                            item.completed
+                              ? 'mdi-check-circle'
+                              : 'mdi-progress-close'
+                          }}
+                        </v-icon>
+                        {{ item.statusLabel }}
+                      </v-chip>
+                    </template>
+
+                    <template #item.answerPreview="{ item }">
+                      <div class="table-preview text-grey-900">
+                        {{ item.answerPreview }}
                       </div>
-                    </div>
+                    </template>
 
-                    <!-- Media -->
-                    <v-expansion-panels multiple class="media-panels">
-                      <v-expansion-panel
-                        v-if="
-                          dialogItem.tasks[taskSelect].webcamRecordURL ||
-                          dialogItem.tasks[taskSelect].irisTrackingData > 0
+                    <template #item.observationPreview="{ item }">
+                      <div class="d-flex flex-column gap-1">
+                        <v-chip
+                          v-if="item.hasObservations"
+                          size="x-small"
+                          color="warning"
+                          variant="tonal"
+                          class="align-self-start"
+                        >
+                          Observations added
+                        </v-chip>
+                        <span class="table-preview text-grey-900">
+                          {{ item.observationPreview }}
+                        </span>
+                      </div>
+                    </template>
+
+                    <template #item.recordings="{ item }">
+                      <div class="d-flex flex-wrap gap-1 recording-chip-wrap">
+                        <v-chip
+                          v-for="recording in item.recordings"
+                          :key="`${item.taskIndex}-${recording.key}`"
+                          size="x-small"
+                          color="info"
+                          variant="tonal"
+                        >
+                          <v-icon size="13" start>{{ recording.icon }}</v-icon>
+                          {{ recording.label }}
+                        </v-chip>
+                        <span
+                          v-if="!item.recordings.length"
+                          class="text-grey-500 text-body-2"
+                        >
+                          -
+                        </span>
+                      </div>
+                    </template>
+
+                    <template #item.timeLabel="{ item }">
+                      <div class="font-weight-medium text-grey-900">
+                        {{ item.timeLabel }}
+                      </div>
+                    </template>
+
+                    <template #item.estimatedTimeLabel="{ item }">
+                      <div class="font-weight-medium text-grey-900">
+                        {{ item.estimatedTimeLabel }}
+                      </div>
+                    </template>
+
+                    <template #item.timeComparisonLabel="{ item }">
+                      <v-chip
+                        v-if="item.timeComparison"
+                        size="small"
+                        variant="tonal"
+                        :color="
+                          item.timeComparison === 'over' ? 'error' : 'primary'
                         "
-                        readonly
-                        hide-actions
-                        class="cursor-pointer"
-                        @click.stop="openSessionAnalyticsDialog"
                       >
-                        <v-expansion-panel-title>
-                          Task Analytics
-                        </v-expansion-panel-title>
-                      </v-expansion-panel>
+                        {{ item.timeComparisonLabel }}
+                      </v-chip>
+                      <span v-else class="text-medium-emphasis">-</span>
+                    </template>
+                  </v-data-table>
 
-                      <v-expansion-panel
-                        v-if="dialogItem.tasks[taskSelect].webcamRecordURL"
-                      >
-                        <v-expansion-panel-title expand-icon="mdi-chevron-down"
-                          >Webcam Recording</v-expansion-panel-title
-                        >
-                        <v-expansion-panel-text>
-                          <video
-                            :src="dialogItem.tasks[taskSelect].webcamRecordURL"
-                            controls
-                            class="media-video"
-                            aria-label="Webcam recording"
-                          >
-                            <track
-                              v-if="
-                                dialogItem.tasks[taskSelect].webcamCaptionsURL
-                              "
-                              kind="captions"
-                              srclang="en"
-                              label="English"
-                              :src="
-                                dialogItem.tasks[taskSelect].webcamCaptionsURL
-                              "
-                            />
-                          </video>
-                        </v-expansion-panel-text>
-                      </v-expansion-panel>
-                      <v-expansion-panel
-                        v-if="dialogItem.tasks[taskSelect].screenRecordURL"
-                      >
-                        <v-expansion-panel-title expand-icon="mdi-chevron-down"
-                          >Screen Recording</v-expansion-panel-title
-                        >
-                        <v-expansion-panel-text>
-                          <video
-                            :src="dialogItem.tasks[taskSelect].screenRecordURL"
-                            controls
-                            class="media-video"
-                            aria-label="Screen recording"
-                          >
-                            <track
-                              v-if="
-                                dialogItem.tasks[taskSelect].screenCaptionsURL
-                              "
-                              kind="captions"
-                              srclang="en"
-                              label="English"
-                              :src="
-                                dialogItem.tasks[taskSelect].screenCaptionsURL
-                              "
-                            />
-                          </video>
-                        </v-expansion-panel-text>
-                      </v-expansion-panel>
-                      <v-expansion-panel
-                        v-if="dialogItem.tasks[taskSelect].audioRecordURL"
-                      >
-                        <v-expansion-panel-title expand-icon="mdi-chevron-down"
-                          >Audio Recording</v-expansion-panel-title
-                        >
-                        <v-expansion-panel-text>
-                          <audio
-                            :src="dialogItem.tasks[taskSelect].audioRecordURL"
-                            controls
-                            class="w-100"
-                          />
-                        </v-expansion-panel-text>
-                      </v-expansion-panel>
-                    </v-expansion-panels>
-                    <!-- Diálogo que chama o componente em tela cheia -->
-                    <v-dialog v-model="showSessionAnalytics" fullscreen>
-                      <SessionAnalytics
-                        :tasks="dialogItem.tasks"
-                        :task-select="taskSelect"
-                        @close="showSessionAnalytics = false"
-                      />
-                    </v-dialog>
-                    <SessionAnalyticsDialog
-                      v-model="showSessionAnalyticsDialog"
-                      :user-id="dialogItem.userDocId"
-                      :task-answer="dialogItem.tasks[taskSelect]"
-                      :selected-task="taskSelect"
-                      :test-answer="answers[dialogItem.userDocId]"
-                      :from-eye-tracking="true"
-                    />
-                  </div>
+                  <SessionAnalyticsDialog
+                    v-model="showSessionAnalyticsDialog"
+                    :user-id="dialogItem.userDocId"
+                    :task-answer="taskSummaryRows[taskSelect]?.rawTaskAnswer"
+                    :selected-task="taskSelect"
+                    :selected-task-name="taskSummaryRows[taskSelect]?.taskName"
+                    :task-id="taskSummaryRows[taskSelect]?.taskId"
+                    :has-audio-record="
+                      taskSummaryRows[taskSelect]?.hasAudioRecord
+                    "
+                    :answers-doc-id="answersDocId"
+                    :task-definitions="testStructure.userTasks || []"
+                    :test-answer="answers[dialogItem.userDocId]"
+                    :from-eye-tracking="true"
+                  />
                 </div>
               </v-col>
             </v-row>
@@ -556,16 +666,25 @@ import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { formatTime } from '@/shared/utils/timeUtils'
 import TaskDetailsModal from './TaskDetailsModal.vue'
-import SessionAnalytics from '../SessionAnalytics.vue'
 import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { useFilterDefinitions } from './useFilterDefinitions'
+import {
+  getAverageTaskEfficiencyPercentage,
+  getTimeEfficiencyPercentage,
+} from '../../utils/taskAnalytics'
 
 const { t } = useI18n()
 
 const store = useStore()
 const testStructure = computed(() => store.state.Tests.Test.testStructure || {})
 const answers = computed(() => store.getters.visibleUserAnswers || {})
+const answersDocId = computed(
+  () =>
+    store.getters.test?.answersDocId ||
+    store.state.Answer.testAnswerDocument?.id ||
+    '',
+)
 
 const showDialog = ref(false)
 const dialogItem = ref(null)
@@ -574,7 +693,6 @@ const testTasks = ref([])
 const taskAnswers = ref([])
 const showTaskDetailsModal = ref(false)
 const selectedUserSession = ref(null)
-const showSessionAnalytics = ref(false)
 const showSessionAnalyticsDialog = ref(false)
 
 // Búsqueda por nombre / email
@@ -648,6 +766,237 @@ const filteredSessions = computed(() => {
 // Dynamic task columns + headers + table data
 const taskColumns = computed(() => testStructure.value?.userTasks || [])
 
+const getTaskTypeLabel = (taskType) => {
+  const labels = {
+    'no-answer': t('analytics.testDetails.noAnswer'),
+    'text-area': t('switches.textArea'),
+    'post-test': t('switches.postTest'),
+    'post-form': t('switches.postForm'),
+    'nasa-tlx': t('switches.nasa'),
+    sus: t('switches.sus'),
+    'tam-1': 'TAM-1',
+    'tam-2': 'TAM-2',
+    'tam-3': 'TAM-3',
+    sart: t('switches.sart'),
+  }
+
+  return labels[taskType] || taskType || '-'
+}
+
+const getTaskTypeIcon = (taskType) => {
+  const icons = {
+    'no-answer': 'mdi-minus-circle-outline',
+    'text-area': 'mdi-text-box-outline',
+    'post-test': 'mdi-clipboard-check-outline',
+    'post-form': 'mdi-form-select',
+    'nasa-tlx': 'mdi-rocket-launch-outline',
+    sus: 'mdi-account-check-outline',
+    'tam-1': 'mdi-chart-line',
+    'tam-2': 'mdi-chart-box-outline',
+    'tam-3': 'mdi-chart-donut-outline',
+    sart: 'mdi-chart-areaspline',
+  }
+
+  return icons[taskType] || 'mdi-help-circle-outline'
+}
+
+const resolveTaskKey = (sessionTasks, index, taskDefinition) => {
+  if (!sessionTasks) return String(index)
+  if (sessionTasks[index] != null) return String(index)
+  if (sessionTasks[`${index}`] != null) return String(index)
+  if (
+    taskDefinition?.taskId != null &&
+    sessionTasks[taskDefinition.taskId] != null
+  ) {
+    return String(taskDefinition.taskId)
+  }
+  return String(index)
+}
+
+const resolveTaskAnswer = (sessionTasks, index, taskDefinition) => {
+  if (!sessionTasks) return null
+  return (
+    sessionTasks[index] ??
+    sessionTasks[`${index}`] ??
+    sessionTasks[taskDefinition?.taskId] ??
+    null
+  )
+}
+
+const getQuestionnairePreview = (taskAnswer, taskType) => {
+  if (!taskAnswer) return '-'
+
+  const questionnaireValueMap = {
+    'nasa-tlx': taskAnswer.nasaTlxAnswers,
+    sus: taskAnswer.susAnswers,
+    'tam-1': taskAnswer.tamAnswers,
+    'tam-2': taskAnswer.tamAnswers,
+    'tam-3': taskAnswer.tamAnswers,
+    sart: taskAnswer.sartAnswers,
+  }
+
+  const questionnaireValue = questionnaireValueMap[taskType]
+  if (!questionnaireValue) return '-'
+
+  if (Array.isArray(questionnaireValue)) {
+    const answered = questionnaireValue.filter(
+      (value) => value !== undefined && value !== null && value !== '',
+    ).length
+    return answered > 0 ? `${answered} answered` : '-'
+  }
+
+  if (typeof questionnaireValue === 'object') {
+    return Object.keys(questionnaireValue).length > 0
+      ? 'Questionnaire captured'
+      : '-'
+  }
+
+  return 'Questionnaire captured'
+}
+
+const getTaskAnswerPreview = (taskAnswer, taskDefinition) => {
+  if (!taskAnswer) return '-'
+
+  if (taskDefinition?.postQuestion) {
+    return taskAnswer.postAnswer || '-'
+  }
+
+  if (taskDefinition?.taskType === 'text-area') {
+    return taskAnswer.taskAnswer || '-'
+  }
+
+  if (
+    ['sus', 'nasa-tlx', 'tam-1', 'tam-2', 'tam-3', 'sart'].includes(
+      taskDefinition?.taskType,
+    )
+  ) {
+    return getQuestionnairePreview(taskAnswer, taskDefinition?.taskType)
+  }
+
+  if (taskDefinition?.taskType === 'post-form') {
+    return taskAnswer.postAnswer || taskAnswer.taskAnswer || '-'
+  }
+
+  return taskAnswer.taskAnswer || taskAnswer.postAnswer || '-'
+}
+
+const getTaskObservationPreview = (taskAnswer) => {
+  const observation = String(taskAnswer?.taskObservations || '').trim()
+  return observation || '-'
+}
+
+const getTaskRecordings = (taskAnswer, taskDefinition) => {
+  const recordings = [
+    {
+      key: 'audio',
+      label: 'Audio',
+      icon: 'mdi-microphone',
+      active:
+        !!taskDefinition?.hasAudioRecord ||
+        !!taskAnswer?.audioRecordURL ||
+        !!taskAnswer?.moderatorAudioURL,
+    },
+    {
+      key: 'screen',
+      label: t('analytics.testDetails.screen'),
+      icon: 'mdi-monitor-screenshot',
+      active:
+        !!taskDefinition?.hasScreenRecord || !!taskAnswer?.screenRecordURL,
+    },
+    {
+      key: 'webcam',
+      label: t('analytics.testDetails.webcam'),
+      icon: 'mdi-camera',
+      active: !!taskDefinition?.hasCamRecord || !!taskAnswer?.webcamRecordURL,
+    },
+    {
+      key: 'eye',
+      label: 'Eye',
+      icon: 'mdi-eye',
+      active:
+        !!taskDefinition?.hasEye ||
+        (Array.isArray(taskAnswer?.irisTrackingData) &&
+          taskAnswer.irisTrackingData.length > 0),
+    },
+    {
+      key: 'transcript',
+      label: 'Transcript',
+      icon: 'mdi-text-to-speech',
+      active: !!taskAnswer?.transcriptionDocId,
+    },
+  ]
+
+  return recordings.filter((recording) => recording.active)
+}
+
+const taskSummaryRows = computed(() => {
+  const userTasks = testStructure.value?.userTasks || []
+  const liveTasks = answers.value?.[dialogItem.value?.userDocId]?.tasks || null
+  const sessionTasks = liveTasks || dialogItem.value?.tasks || {}
+
+  return userTasks.map((taskDefinition, index) => {
+    const taskAnswer = resolveTaskAnswer(sessionTasks, index, taskDefinition)
+    const observationText = getTaskObservationPreview(taskAnswer)
+    const completed = !!taskAnswer?.completed
+    const attempted = !!taskAnswer?.attempted
+    const taskTimeSeconds = Math.floor((taskAnswer?.taskTime || 0) / 1000)
+    const estimatedMinutes = Number(taskDefinition?.estimatedTime)
+    const estimatedTimeSeconds =
+      Number.isFinite(estimatedMinutes) && estimatedMinutes > 0
+        ? estimatedMinutes * 60
+        : null
+    const timeComparison =
+      taskTimeSeconds > 0 && estimatedTimeSeconds !== null
+        ? taskTimeSeconds > estimatedTimeSeconds
+          ? 'over'
+          : 'within'
+        : null
+    const tipPressCount = Number(taskAnswer?.tipPressCount || 0)
+    const hasTipAvailable = !!taskDefinition?.taskTip
+
+    return {
+      taskIndex: index,
+      taskId: resolveTaskKey(sessionTasks, index, taskDefinition),
+      taskNumber: index + 1,
+      taskName: taskDefinition?.taskName || `Task ${index + 1}`,
+      taskType: taskDefinition?.taskType || '',
+      taskTypeLabel: getTaskTypeLabel(taskDefinition?.taskType),
+      taskTypeIcon: getTaskTypeIcon(taskDefinition?.taskType),
+      answerPreview: getTaskAnswerPreview(taskAnswer, taskDefinition),
+      observationPreview: observationText,
+      hasObservations: observationText !== '-',
+      hasAudioRecord: !!taskDefinition?.hasAudioRecord,
+      tipPressCount,
+      hasTipAvailable,
+      tipUsage:
+        tipPressCount > 0
+          ? `${tipPressCount} press${tipPressCount === 1 ? '' : 'es'}`
+          : t('analytics.testDetails.notUsed'),
+      recordings: getTaskRecordings(taskAnswer, taskDefinition),
+      completed,
+      attempted,
+      statusLabel: completed
+        ? t('analytics.completed')
+        : attempted
+          ? t('analytics.couldNotFinish')
+          : t('analytics.notStarted'),
+      statusColor: completed ? 'success' : attempted ? 'warning' : 'grey',
+      timeSeconds: taskTimeSeconds,
+      timeLabel: formatTime(taskTimeSeconds),
+      estimatedTimeLabel:
+        estimatedTimeSeconds !== null ? formatTime(estimatedTimeSeconds) : '-',
+      timeComparison,
+      timeComparisonLabel:
+        timeComparison === 'over'
+          ? t('analytics.overEstimate')
+          : timeComparison === 'within'
+            ? t('analytics.withinEstimate')
+            : '-',
+      rawTaskAnswer: taskAnswer,
+    }
+  })
+})
+
 const tableHeaders = computed(() => {
   const dynamicTaskHeaders = taskColumns.value.map((t, i) => ({
     title: `T${i + 1}`,
@@ -660,12 +1009,12 @@ const tableHeaders = computed(() => {
     { title: t('analytics.user'), key: 'user', sortable: false },
     { title: t('analytics.summary'), key: 'tasks', sortable: false },
     ...dynamicTaskHeaders,
-    {
-      title: t('analytics.invite'),
-      key: 'invited',
-      sortable: false,
-      width: 90,
-    },
+    // {
+    //   title: t('analytics.invite'),
+    //   key: 'invited',
+    //   sortable: false,
+    //   width: 90,
+    // },
     {
       title: t('analytics.actions'),
       key: 'actions',
@@ -680,6 +1029,7 @@ const tableData = computed(() => {
     const userTasks = testStructure.value?.userTasks || []
     let completedCount = 0
     let totalTimeSeconds = 0
+    const taskEfficiencies = []
     const row = {
       identifier: idx + 1,
       fullName: session.fullName || 'Sin nombre',
@@ -699,21 +1049,46 @@ const tableData = computed(() => {
         session.tasks?.[userTasks[i]?.taskId] ||
         {}
       const completed = !!task.completed
+      const attempted = !!task.attempted
       const timeMs = task.taskTime || 0
       const timeSeconds = Math.floor(timeMs / 1000)
+      const estimatedMinutes = Number(userTasks[i]?.estimatedTime)
+      const estimatedTimeSeconds =
+        Number.isFinite(estimatedMinutes) && estimatedMinutes > 0
+          ? estimatedMinutes * 60
+          : null
       if (completed) completedCount += 1
       totalTimeSeconds += timeSeconds
-      row[`task_${i}`] = { completed, timeSeconds }
+      if (
+        completed &&
+        task.success !== false &&
+        estimatedTimeSeconds !== null
+      ) {
+        const taskEfficiency = getTimeEfficiencyPercentage(
+          timeSeconds / 60,
+          estimatedTimeSeconds / 60,
+        )
+        if (taskEfficiency !== null) taskEfficiencies.push(taskEfficiency)
+      }
+      row[`task_${i}`] = {
+        completed,
+        attempted,
+        timeSeconds,
+        estimatedTimeSeconds,
+        timeComparison:
+          timeSeconds > 0 && estimatedTimeSeconds !== null
+            ? timeSeconds > estimatedTimeSeconds
+              ? 'over'
+              : 'within'
+            : null,
+      }
     })
 
     const totalTasks = userTasks.length || 0
     const effectiveness = totalTasks
       ? Math.round((completedCount / totalTasks) * 100)
       : 0
-    const efficiency =
-      totalTimeSeconds > 0
-        ? (completedCount / (totalTimeSeconds / 60)).toFixed(2)
-        : '0.00'
+    const efficiency = getAverageTaskEfficiencyPercentage(taskEfficiencies)
 
     return {
       ...row,
@@ -726,8 +1101,29 @@ const tableData = computed(() => {
   })
 })
 
+const getEffectivenessColor = (effectiveness) => {
+  if (effectiveness >= 80) return 'success'
+  if (effectiveness >= 50) return 'warning'
+  return 'error'
+}
+
+const getEfficiencyColor = (efficiency) => {
+  if (!Number.isFinite(efficiency)) return 'grey'
+  if (efficiency >= 100) return 'success'
+  if (efficiency >= 80) return 'warning'
+  return 'error'
+}
+
 const openSessionAnalyticsDialog = () => {
   showSessionAnalyticsDialog.value = true
+}
+
+const selectTask = (selectedTaskIndex, openAnalytics = false) => {
+  taskSelect.value = selectedTaskIndex
+
+  if (openAnalytics) {
+    openSessionAnalyticsDialog()
+  }
 }
 
 const viewAnswers = (item) => {
@@ -784,11 +1180,11 @@ watch(
 <style scoped>
 .analytics-dashboard {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: transparent;
 }
 
 .dialog-body {
-  background: #f5f7fa;
+  background: transparent;
 }
 
 .section-col {
@@ -796,9 +1192,9 @@ watch(
 }
 
 .section-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   padding: 16px 20px;
 }
 
@@ -834,6 +1230,39 @@ watch(
   word-break: break-word;
 }
 
+.task-result-cell {
+  min-width: 128px;
+}
+
+.task-status-chip {
+  width: 120px;
+  min-height: 24px;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.task-time-cell {
+  min-height: 62px;
+  justify-content: flex-start;
+  line-height: 14px;
+}
+
+.task-time-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 16px;
+  white-space: nowrap;
+}
+
+.task-comparison-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 20px;
+}
+
 .task-detail {
   background: #f9fafb;
   border: 1px dashed #d1d5db;
@@ -866,22 +1295,22 @@ watch(
 }
 
 :deep(.v-data-table) {
-  background: white !important;
-  border-radius: 12px !important;
+  background: transparent !important;
+  border-radius: 0 !important;
 }
 
 :deep(.v-data-table__wrapper) {
-  border-radius: 12px !important;
+  border-radius: 0 !important;
 }
 
 :deep(.v-data-table-header) {
-  background: #f8fafc !important;
+  background: transparent !important;
 }
 
 :deep(.v-data-table-header th) {
   font-weight: 600 !important;
   color: #374151 !important;
-  border-bottom: 1px solid #e5e7eb !important;
+  border-bottom: 0 !important;
   padding: 16px !important;
 }
 
@@ -890,7 +1319,7 @@ watch(
 }
 
 :deep(.v-data-table__tr) {
-  border-bottom: 1px solid #f1f5f9 !important;
+  border-bottom: 0 !important;
 }
 
 :deep(.v-data-table__td) {
@@ -935,5 +1364,29 @@ watch(
   height: 40px;
   font-weight: 600;
   letter-spacing: 0.3px;
+}
+
+.task-row-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.table-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.recording-chip-wrap {
+  min-height: 28px;
 }
 </style>

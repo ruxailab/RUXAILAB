@@ -5,8 +5,11 @@
 
 import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
+import User from '@/features/auth/models/UserModel'
 import i18n from '@/app/plugins/i18n'
 import { showError } from '@/shared/utils/toast'
+import { cleanupStudyLoggingForOwner } from '@/shared/services/studyLoggingClient'
+import { requestStudyLoggingLogout } from '@/shared/services/studyLoggingRuntime'
 
 const authController = new AuthController()
 const userController = new UserController()
@@ -26,6 +29,7 @@ export default {
 
       // Check if the user is defined
       if (!user) return 1
+      if (user.isFallback) return null
 
       // If the user is a superadmin
       if (user.accessLevel === 0) return 0
@@ -93,7 +97,7 @@ export default {
       }
     },
 
-    async signin({ commit }, payload) {
+    async signin({ commit, dispatch }, payload) {
       commit('setLoading', true)
 
       try {
@@ -114,13 +118,14 @@ export default {
         }
 
         const dbUser = await userController.getById(user.uid)
-
         commit('SET_USER', dbUser)
 
         commit('SET_TOAST', {
           message: i18n.global.t('auth.loginSuccess'),
           type: 'success',
         })
+
+        dispatch('subscribeToNotifications', user.uid)
       } catch (err) {
         if (err.message === 'EMAIL_NOT_VERIFIED') {
           throw err
@@ -137,7 +142,7 @@ export default {
      * @action signInWithGoogle
      * @returns {void}
      */
-    async signInWithGoogle({ commit }, payload) {
+    async signInWithGoogle({ commit, dispatch }, payload) {
       try {
         const { user } = await authController.signInWithGoogle(
           payload.rememberMe,
@@ -169,22 +174,36 @@ export default {
           message: i18n.global.t('auth.loginSuccess'),
           type: 'success',
         })
+        dispatch('subscribeToNotifications', user.uid)
       } catch (err) {
-        if (err.message === 'EMAIL_NOT_VERIFIED') {
-          throw err
+        const silentErrors = [
+          'auth/popup-closed-by-user',
+          'auth/cancelled-popup-request',
+        ]
+        if (!silentErrors.includes(err.code)) {
+          commit('SET_TOAST', {
+            message: i18n.global.t('errors.globalError'),
+            type: 'error',
+          })
         }
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
         throw err
+      } finally {
+        commit('setLoading', false)
       }
     },
 
-    async logout({ commit }, { silent = false } = {}) {
+    async logout({ commit, state, dispatch }, { silent = false } = {}) {
       try {
+        const ownerUid = state.user?.id
+        requestStudyLoggingLogout(ownerUid)
+        if (dispatch) {
+          await dispatch('unsubscribeFromNotifications')
+        }
         await authController.signOut()
-        commit('SET_USER', null)
+        await cleanupStudyLoggingForOwner(ownerUid)
+        if (!state.user || state.user.id === ownerUid) {
+          commit('SET_USER', null)
+        }
 
         if (!silent) {
           commit('SET_TOAST', {
@@ -205,10 +224,17 @@ export default {
       }
     },
 
-    async autoSignIn({ commit }) {
+    async autoSignIn({ commit, state, dispatch }, { signal } = {}) {
       try {
         const user = await authController.autoSignIn()
-        if (!user) return
+        if (signal?.aborted || !user) return
+
+        // Anonymous participants (links without login) have no profile in
+        // Firestore. Return the Firebase user so the router guard can
+        // distinguish "anonymous but authenticated" from "not authenticated".
+        if (user.isAnonymous) {
+          return user
+        }
 
         // Check if email is verified
         if (!user.emailVerified) {
@@ -217,14 +243,63 @@ export default {
           return user
         }
 
-        const dbUser = await userController.getById(user.uid)
+        // Fetch the Firestore profile, retrying once on transient failure.
+        // A permission-denied error is permanent and must not be retried.
+        let dbUser = null
+        try {
+          dbUser = await userController.getById(user.uid)
+        } catch (error) {
+          if (signal?.aborted) return null
+          if (error?.code === 'permission-denied') {
+            commit('SET_USER', null)
+            commit('SET_TOAST', {
+              message: i18n.global.t('errors.globalError'),
+              type: 'error',
+            })
+            await authController.signOut()
+            return null
+          }
+
+          // One retry: transient network issues (Wi-Fi reconnect after laptop
+          // sleep, mobile connectivity blip) resolve within a few seconds.
+          try {
+            await new Promise((r) => setTimeout(r, 1500))
+            if (signal?.aborted) return null
+            dbUser = await userController.getById(user.uid)
+          } catch {
+            if (signal?.aborted) return null
+            // Still failing — do NOT clear the store.
+            // Preserve the existing profile state if already loaded for this user.
+            // Otherwise, keep the session recognizable but unverified and
+            // unauthorized until the Firestore profile can be loaded.
+            if (state?.user?.id !== user.uid) {
+              const fallbackUser = new User({
+                id: user.uid,
+                email: user.email,
+                username: user.displayName || '',
+                accessLevel: 1,
+              })
+              fallbackUser.isFallback = true
+              commit('SET_USER', fallbackUser)
+            }
+            return user
+          }
+        }
+
+        if (signal?.aborted) return null
         commit('SET_USER', dbUser)
+        dispatch('subscribeToNotifications', user.uid)
+        return user
       } catch (e) {
+        if (signal?.aborted) return null
+        // Only toast if autoSignIn itself fails (e.g., persistent listener
+        // unexpected failure). Don't return e: callers must not treat an
+        // Error object as a truthy user.
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
         })
-        return e
+        throw e
       }
     },
 
@@ -251,14 +326,13 @@ export default {
     },
 
     async deleteAuth({ commit }, payload) {
+      const { user } = payload
       commit('setLoading', true)
       try {
-        await authController.deleteAuth(payload)
-        // Store handles state management
-        await authController.signOut()
-        commit('SET_USER', null)
-      } catch (err) {
-        throw err
+        // Server-side function deletes Firestore data + Firebase Auth user.
+        // If this throws, do not proceed — state is unchanged.
+        await authController.deleteUserData(user.uid)
+        // State (SET_USER null) is handled by the logout action called after this.
       } finally {
         commit('setLoading', false)
       }
@@ -278,6 +352,10 @@ export default {
         })
         throw err
       }
+    },
+
+    async findUserByEmail(_, { email }) {
+      return userController.findByEmail(email)
     },
   },
 }

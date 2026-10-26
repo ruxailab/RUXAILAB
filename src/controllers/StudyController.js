@@ -3,14 +3,34 @@ import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '@/app/plugins/firebase'
 import AnswerController from '../shared/controllers/AnswerController'
-import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import StudyAnswer from '@/shared/models/StudyAnswer'
+import { getAuth } from 'firebase/auth'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import Participant from '../shared/models/Participant'
+import {
+  applyStudyUpdatePatch,
+  cloneStudyData,
+  createStudyUpdatePatch,
+} from '@/shared/utils/studyUpdatePatch'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
 const userController = new UserController()
+const studySnapshots = new Map()
+
+const studyData = (study) =>
+  typeof study?.toFirestore === 'function' ? study.toFirestore() : study
+
+const rememberStudy = (study) => {
+  if (study?.id) {
+    const snapshot = cloneStudyData(studyData(study))
+    delete snapshot.id
+    studySnapshots.set(study.id, snapshot)
+  }
+  return study
+}
 
 export default class StudyController extends Controller {
   constructor() {
@@ -18,25 +38,50 @@ export default class StudyController extends Controller {
   }
 
   async createStudy(payload) {
+    const createdBy = getAuth().currentUser?.uid ?? null
     // Create answers doc for test
     const answerDoc = await answerController.createAnswer(
-      new StudyAnswer({ type: payload.testType }),
+      new StudyAnswer({ type: payload.testType, createdBy }),
     )
     payload.answersDocId = answerDoc.id
 
-    return await super.create(COLLECTION, payload.toFirestore())
+    const studyDoc = await super.create(COLLECTION, payload.toFirestore())
+    try {
+      await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
+    } catch (error) {
+      await Promise.allSettled([
+        super.delete(COLLECTION, studyDoc.id),
+        answerController.delete('answers', answerDoc.id),
+      ])
+      throw error
+    }
+    return studyDoc
   }
   async duplicateStudy(payload) {
     try {
+      const createdBy = getAuth().currentUser?.uid ?? null
       const answerDoc = await answerController.createAnswer(
-        new StudyAnswer({ type: payload.test.testType }),
+        new StudyAnswer({ type: payload.test.testType, createdBy }),
       )
 
       // Use the correct study type from the payload (already instantiated correctly in SettingsView)
       const duplicatedStudy = payload.test
       duplicatedStudy.answersDocId = answerDoc.id
 
-      return await super.create(COLLECTION, duplicatedStudy.toFirestore())
+      const studyDoc = await super.create(
+        COLLECTION,
+        duplicatedStudy.toFirestore(),
+      )
+      try {
+        await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
+      } catch (error) {
+        await Promise.allSettled([
+          super.delete(COLLECTION, studyDoc.id),
+          answerController.delete('answers', answerDoc.id),
+        ])
+        throw error
+      }
+      return studyDoc
     } catch (error) {
       throw error
     }
@@ -60,13 +105,16 @@ export default class StudyController extends Controller {
             userController.removeTestFromUser(cooperator.userDocId, payload.id),
           )
         }
-        promises.push(
-          userController.removeNotificationsForTest(payload.id, cooperators),
-        )
         await Promise.all(promises)
       }
-      await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
+      // Remove only the deleted test from the admin's myTests/myAnswers via a
+      // fresh read, instead of overwriting the whole user doc with a stale copy.
+      await userController.removeTestFromUser(
+        payload.testAdmin.userDocId,
+        payload.id,
+      )
       await super.delete(COLLECTION, payload.id)
+      studySnapshots.delete(payload.id)
     } catch (error) {
       throw error
     }
@@ -74,45 +122,66 @@ export default class StudyController extends Controller {
 
   async updateStudy(payload) {
     try {
-      return await super.update(COLLECTION, payload.id, payload.toFirestore())
+      const { id, ...partialStudy } = payload
+      const isFullStudy = typeof payload.toFirestore === 'function'
+      const study = isFullStudy ? payload.toFirestore() : partialStudy
+      const previousStudy = studySnapshots.get(id)
+      const studyPatch = previousStudy
+        ? isFullStudy
+          ? createStudyUpdatePatch(previousStudy, study)
+          : Object.entries(study)
+              .filter(([field]) => field !== 'id')
+              .map(([field, value]) =>
+                value === undefined
+                  ? { path: [field], delete: true }
+                  : { path: [field], value: cloneStudyData(value) },
+              )
+        : null
+
+      const response =
+        await FirebaseFunctionsController.callHttpsCallableFunction(
+          'updateStudyWithAudit',
+          {
+            studyId: id,
+            study: studyPatch ? {} : study,
+            ...(studyPatch ? { studyPatch } : {}),
+          },
+        )
+
+      let rebasedStudy
+      if (studyPatch) {
+        const latestStudy = studySnapshots.get(id) ?? previousStudy
+        const updatedStudy = applyStudyUpdatePatch(latestStudy, studyPatch)
+        studySnapshots.set(id, updatedStudy)
+        rebasedStudy = instantiateStudyByType(updatedStudy.testType, {
+          ...updatedStudy,
+          id,
+        })
+      }
+
+      return {
+        ...response.data,
+        ...(rebasedStudy ? { rebasedStudy } : {}),
+      }
     } catch (e) {
       throw e
     }
   }
 
-  //ToDo: It seems an action from User Testing
   async acceptStudyCollaboration(payload) {
-    const userAnswer = new UserAnswer({
-      answersDocId: payload.test.answersDocId,
-      accessLevel: payload.cooperator.accessLevel,
-      progress: 0,
-      testAuthorEmail: payload.test.testAdmin.email,
-      testDocId: payload.test.id,
-      testType: payload.test.testType,
-      subType: payload.test.subType,
-      testTitle: payload.test.testTitle,
-      total: 0,
-      updateDate: Date.now(),
-    })
-
-    // Update answers inside collaborator
-    const userToUpdate = payload.cooperator
-    userToUpdate.myAnswers[`${userAnswer.testDocId}`] = userAnswer.toFirestore()
-    await userController.update(userToUpdate.id, userToUpdate.toFirestore())
-
-    const testToUpdate = payload.test
-    const index = testToUpdate.cooperators.findIndex(
-      (c) => c.email === userToUpdate.email,
-    )
-    testToUpdate.cooperators[index].accepted = true
-    testToUpdate.cooperators[index].userDocId = userToUpdate.id
-
-    // Update invitation on test to accepted
-    return await super.update(
-      COLLECTION,
-      testToUpdate.id,
-      testToUpdate.toFirestore(),
-    )
+    const response =
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'manageStudyMembership',
+        {
+          studyId: payload.studyId ?? payload.test?.id,
+          action: 'accept',
+          membershipType: payload.membershipType,
+          targetUserId: payload?.cooperator?.id,
+          targetEmail: payload?.cooperator?.email,
+          ...(payload.inviteToken ? { inviteToken: payload.inviteToken } : {}),
+        },
+      )
+    return response.data
   }
 
   async getStudy(parameter) {
@@ -120,7 +189,17 @@ export default class StudyController extends Controller {
     if (!res.exists()) return null
 
     const rawData = Object.assign({ id: res.id }, res.data())
-    return instantiateStudyByType(rawData.testType, rawData)
+    return rememberStudy(instantiateStudyByType(rawData.testType, rawData))
+  }
+
+  async getStudyForSession({ studyId, sessionId }) {
+    const response =
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'getStudyForSession',
+        { studyId, sessionId },
+      )
+    const study = response.data?.study
+    return study ? instantiateStudyByType(study.testType, study) : null
   }
 
   async getPublicStudies() {
@@ -132,7 +211,7 @@ export default class StudyController extends Controller {
     const res = await super.query(COLLECTION, q)
     return res.docs.map((t) => {
       const rawData = Object.assign({ id: t.id }, t.data())
-      return instantiateStudyByType(rawData.testType, rawData)
+      return rememberStudy(instantiateStudyByType(rawData.testType, rawData))
     })
   }
 
@@ -140,12 +219,40 @@ export default class StudyController extends Controller {
     try {
       const response = await super.readAll('tests')
       const res = response.map((data) => {
-        return instantiateStudyByType(data.testType, data)
+        return rememberStudy(instantiateStudyByType(data.testType, data))
       })
       return res
     } catch (err) {
       throw err
     }
+  }
+
+  async getStudyParticipants({ studyId }) {
+    const response = await super.readAll(`tests/${studyId}/participants`)
+    return response.map((data) => Participant.toParticipant(data))
+  }
+
+  async getAcceptedParticipant({ studyId, userId }) {
+    if (!studyId || !userId) {
+      return null
+    }
+
+    const response = await super.query(`tests/${studyId}/participants`, {
+      field: 'userDocId',
+      value: userId,
+      condition: '==',
+    })
+
+    const participant = response.docs[0]
+
+    if (!participant || participant.data()?.accepted !== true) {
+      return null
+    }
+
+    return Participant.toParticipant({
+      id: participant.id,
+      ...participant.data(),
+    })
   }
 
   subscribeToStudy(studyId, callback) {
@@ -154,6 +261,7 @@ export default class StudyController extends Controller {
       if (doc.exists()) {
         const rawData = Object.assign({ id: doc.id }, doc.data())
         const study = instantiateStudyByType(rawData.testType, rawData)
+        rememberStudy(study)
         callback(study)
       }
     })

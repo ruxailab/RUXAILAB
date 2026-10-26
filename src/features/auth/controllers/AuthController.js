@@ -2,19 +2,20 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  signInAnonymously,
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
-  reauthenticateWithCredential,
-  reauthenticateWithPopup,
-  EmailAuthProvider,
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios'
 import EmailController from '@/shared/controllers/EmailController'
+import {
+  waitForInitialAuth,
+  getFirebaseUser,
+} from '@/features/auth/services/authStateManager'
 
 /**
  * Controller for authentication operations
@@ -26,8 +27,36 @@ export default class AuthController {
    * @param {string} password - User password
    * @returns {Promise} - Firebase auth user credential
    */
-  async signUp(email, password) {
+  async signUp(email, password, rememberMe = true) {
+    await setPersistence(
+      auth,
+      rememberMe ? browserLocalPersistence : browserSessionPersistence,
+    )
     return createUserWithEmailAndPassword(auth, email, password)
+  }
+
+  /**
+   * Returns the anonymous account used to answer a study from a link that
+   * does not require login, signing in anonymously if needed. Returns null
+   * when a real account is already signed in.
+   * @returns {Promise<import('firebase/auth').User|null>}
+   */
+  async anonymousParticipant() {
+    if (auth.currentUser) {
+      return auth.currentUser.isAnonymous ? auth.currentUser : null
+    }
+
+    const resolved = getFirebaseUser()
+    const currentUser =
+      resolved !== undefined ? resolved : await this.autoSignIn()
+
+    if (currentUser) {
+      return currentUser.isAnonymous ? currentUser : null
+    }
+    // Per-tab session, like a sign-in without "Remember me".
+    await setPersistence(auth, browserSessionPersistence)
+    const credential = await signInAnonymously(auth)
+    return credential.user
   }
 
   /**
@@ -36,7 +65,7 @@ export default class AuthController {
    * @param {string} password - User password
    * @returns {Promise} - Firebase auth user credential
    */
-  async signIn(email, password, rememberMe) {
+  async signIn(email, password, rememberMe = true) {
     await setPersistence(
       auth,
       rememberMe ? browserLocalPersistence : browserSessionPersistence,
@@ -48,7 +77,7 @@ export default class AuthController {
    * Signs in a user with Google
    * @returns {Promise} - Firebase auth user credential
    */
-  async signInWithGoogle(rememberMe) {
+  async signInWithGoogle(rememberMe = true) {
     await setPersistence(
       auth,
       rememberMe ? browserLocalPersistence : browserSessionPersistence,
@@ -74,23 +103,15 @@ export default class AuthController {
   }
 
   /**
-   * Auto sign in with Firebase observer
-   * @returns {Promise} - Current user or null
+   * Auto sign in with Firebase observer.
+   *
+   * Delegates to the centralised auth-state manager so that the app always
+   * reuses the single persistent auth listener.
+   *
+   * @returns {Promise<import('firebase/auth').User | null>}
    */
   async autoSignIn() {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(
-        auth,
-        (user) => {
-          unsubscribe()
-          resolve(user)
-        },
-        (error) => {
-          unsubscribe()
-          reject(error)
-        },
-      )
-    })
+    return waitForInitialAuth()
   }
   // Reset Password
   async resetPassword(email) {
@@ -104,29 +125,17 @@ export default class AuthController {
   }
 
   /**
-   * Delete user account - consolidated method
+   * Deletes the authenticated user account and cleans up backend data.
+   * @precondition Caller must reauthenticate the user before invoking
+   * this method. This is handled by useDeleteAccount.js composable.
    * @param {Object} payload - Deletion payload
-   * @param {Object} payload.user - Firebase auth user
-   * @param {string} payload.password - User password for reauthentication (optional)
+   * @param {Object} payload.user - Firebase auth user (already reauthenticated)
    * @returns {Promise}
    */
   async deleteAuth(payload) {
-    const { user, password } = payload
+    const { user } = payload
 
     if (!user) throw new Error('No user provided')
-
-    const hasGoogle = user.providerData.some(
-      (p) => p.providerId === 'google.com',
-    )
-
-    // Reauthenticate based on provider
-    if (hasGoogle) {
-      await reauthenticateWithPopup(user, new GoogleAuthProvider())
-    } else {
-      if (!password) throw new Error('Password required')
-      const cred = EmailAuthProvider.credential(user.email, password)
-      await reauthenticateWithCredential(user, cred)
-    }
 
     // Delete user from Firebase Auth
     await user.delete()

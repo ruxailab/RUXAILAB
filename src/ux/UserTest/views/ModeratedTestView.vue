@@ -1,5 +1,16 @@
 <template>
-  <div>
+  <div
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+  >
+    <StepAnnouncementOverlay
+      v-if="showStepAnnouncement"
+      ref="stepAnnouncementOverlay"
+      :kicker="nextStepAnnouncementKicker"
+      :title="nextStepAnnouncementTitle"
+    />
+
     <v-container fluid class="pa-0">
       <!-- Start Screen -->
       <v-row
@@ -7,6 +18,7 @@
         class="start-screen background-img pa-0 ma-0"
         align="center"
       >
+        <SessionBackdropMark position="absolute" />
         <v-col md="8" class="ma-5 pa-5">
           <img
             src="@/assets/logo_full_white.png"
@@ -18,7 +30,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ test.testDescription }}
+            {{ truncateDescription(test.testDescription) }}
           </p>
           <v-btn
             color="white"
@@ -175,8 +187,11 @@
               <v-icon color="white"> mdi-wifi-off </v-icon>
             </template>
             <span class="text-white">
-              <strong>Moderator Disconnected</strong><br />
-              The moderator seems to be offline. Please wait or contact support.
+              <strong>{{
+                $t('UserTestView.alerts.moderatorDisconnected')
+              }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.moderatorOfflineWaitOrContact') }}
             </span>
           </v-alert>
         </v-col>
@@ -197,20 +212,24 @@
               <v-icon size="small">mdi-wifi-off</v-icon>
             </template>
             <div class="text-caption">
-              <strong>Moderator Disconnected:</strong>
-              The moderator seems to be offline. Please wait.
+              <strong
+                >{{ $t('UserTestView.alerts.moderatorDisconnected') }}:</strong
+              >
+              {{ $t('UserTestView.alerts.moderatorOfflineWait') }}
             </div>
           </v-alert>
 
           <!--Sticky Stepper to follow Progress-->
           <v-row
-            v-if="globalIndex >= 1 || displayVideoCallComponent"
+            v-if="
+              !isModerator && (globalIndex >= 1 || displayVideoCallComponent)
+            "
             class="stepper-row sticky-stepper"
           >
             <v-col cols="12">
               <v-stepper
                 :model-value="stepperValue"
-                class="main-stepper rounded-xl elevation-3"
+                class="main-stepper test-progress-stepper rounded-xl elevation-3"
                 :class="{
                   'stepper-animate':
                     globalIndex === 4 &&
@@ -222,71 +241,48 @@
                   <v-stepper-item
                     :value="1"
                     :title="$t('UserTestView.stepper.consent')"
-                    :complete="stepperValue > 1"
-                    :color="
-                      stepperValue == 1
-                        ? 'warning'
-                        : stepperValue < 1
-                          ? 'primary'
-                          : 'success'
-                    "
+                    :complete="completedSteps.consent && !isCurrentMainStep(1)"
+                    :icon="isCurrentMainStep(1) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(1) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="2"
                     :title="$t('UserTestView.stepper.preTest')"
-                    :complete="stepperValue > 2"
-                    :color="
-                      stepperValue == 2
-                        ? 'warning'
-                        : stepperValue < 1
-                          ? 'primary'
-                          : 'success'
-                    "
+                    :complete="completedSteps.preTest && !isCurrentMainStep(2)"
+                    :icon="isCurrentMainStep(2) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(2) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="3"
                     :title="$t('UserTestView.stepper.tasks')"
-                    :complete="stepperValue > 3"
-                    :color="
-                      stepperValue == 3
-                        ? 'warning'
-                        : stepperValue < 3
-                          ? 'primary'
-                          : 'success'
-                    "
+                    :complete="completedSteps.tasks && !isCurrentMainStep(3)"
+                    :icon="isCurrentMainStep(3) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(3) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="4"
                     :title="$t('UserTestView.stepper.postTest')"
-                    :complete="stepperValue > 4"
-                    :color="
-                      stepperValue == 4
-                        ? 'warning'
-                        : stepperValue < 4
-                          ? 'primary'
-                          : 'success'
-                    "
+                    :complete="completedSteps.postTest && !isCurrentMainStep(4)"
+                    :icon="isCurrentMainStep(4) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(4) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="5"
                     :title="$t('UserTestView.stepper.completion')"
-                    :complete="stepperValue > 5"
-                    :color="
-                      stepperValue == 5
-                        ? 'warning'
-                        : stepperValue < 5
-                          ? 'primary'
-                          : 'success'
+                    :complete="
+                      completedSteps.completion && !isCurrentMainStep(5)
                     "
+                    :icon="isCurrentMainStep(5) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(5) }"
                   />
                 </v-stepper-header>
               </v-stepper>
@@ -296,7 +292,9 @@
           <!-- Stepper secundario para tareas -->
           <v-row
             v-if="
-              globalIndex === 4 && test?.testStructure?.userTasks?.length > 1
+              !isModerator &&
+              globalIndex === 4 &&
+              test?.testStructure?.userTasks?.length > 1
             "
             class="task-stepper-row"
             justify="center"
@@ -304,7 +302,7 @@
             <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
               <v-stepper
                 :model-value="taskIndex + 1"
-                class="task-stepper rounded-xl elevation-2"
+                class="task-stepper test-progress-stepper rounded-xl elevation-2"
                 style="max-width: 100%"
               >
                 <v-stepper-header>
@@ -316,16 +314,14 @@
                       :value="index + 1"
                       :title="task.taskName"
                       :complete="
-                        localTestAnswer.tasks[index]?.completed || false
+                        (localTestAnswer.tasks[index]?.completed || false) &&
+                        taskIndex !== index
                       "
-                      :color="
-                        taskIndex == index
-                          ? 'warning'
-                          : taskIndex < index
-                            ? 'primary'
-                            : 'success'
-                      "
+                      :icon="taskIndex === index ? 'mdi-pencil' : undefined"
                       complete-icon="mdi-check"
+                      :class="{
+                        'stepper-item--current': taskIndex === index,
+                      }"
                     />
                     <v-divider
                       v-if="index < test.testStructure.userTasks.length - 1"
@@ -337,75 +333,58 @@
           </v-row>
 
           <!-- Observator Notes Drawer -->
-          <v-navigation-drawer
-            v-if="isObservator"
-            v-model="notesDrawerOpen"
-            location="right"
-            persistent
-            width="400"
-            elevation="3"
-            style="
-              position: fixed;
-              top: 0;
-              right: 0;
-              height: 100%;
-              z-index: 1005;
-            "
+          <VideoToolDrawer
+            v-if="isObservator || isModerator"
+            :model-value="notesDrawerOpen"
+            :title="t('observatorNotes.title')"
+            close-label="Close notes"
+            @close="closeNotesDrawer"
           >
+            <template #header-actions>
+              <v-chip size="small" color="white" variant="outlined">
+                {{
+                  t('observatorNotes.count', {
+                    count: localTestAnswer.sessionNotes?.length || 0,
+                  })
+                }}
+              </v-chip>
+            </template>
             <ObservatorNotes
               v-if="localTestAnswer"
               v-model="localTestAnswer.sessionNotes"
               :current-task-index="taskIndex"
               :test="test"
-              @save="saveAnswer"
+              :show-header="false"
+              @save="saveSessionNotes"
             />
-          </v-navigation-drawer>
-
-          <!-- Notes Toggle Button (for Observators) -->
-          <v-btn
-            v-if="isObservator"
-            icon
-            size="large"
-            color="primary"
-            elevation="4"
-            class="notes-toggle-btn"
-            :style="{
-              position: 'fixed',
-              top: '80px',
-              right: notesDrawerOpen ? '420px' : '20px',
-              zIndex: 1006,
-              transition: 'right 0.3s ease',
-            }"
-            @click="notesDrawerOpen = !notesDrawerOpen"
-          >
-            <v-badge
-              :content="localTestAnswer.sessionNotes?.length || 0"
-              :model-value="(localTestAnswer.sessionNotes?.length || 0) > 0"
-              color="error"
-            >
-              <v-icon>
-                {{
-                  notesDrawerOpen ? 'mdi-notebook-edit' : 'mdi-notebook-outline'
-                }}
-              </v-icon>
-            </v-badge>
-          </v-btn>
+          </VideoToolDrawer>
 
           <!-- Video Call Component -->
-          <div v-show="displayVideoCallComponent" v-if="test">
-            <VideoCall
+          <div
+            v-show="displayVideoCallComponent || showParticipantCallPip"
+            v-if="test"
+            :class="{ 'participant-call-pip': showParticipantCallPip }"
+          >
+            <VideoCallFactory
               :room-id="roomId"
-              :is-moderator="isUserTestAdmin"
+              :is-moderator="isModerator"
+              :is-observator="isObservator"
               :user="user"
               :access-level="currentUserAccessLevel"
               :current-global-index="globalIndex"
               :current-task-index="taskIndex"
               :test="test"
               :local-test-answer="localTestAnswer"
+              :session-staff="sessionStaffMembers"
+              :session-participants="sessionParticipantsMembers"
+              :notes-drawer-open="notesDrawerOpen"
+              :notes-count="localTestAnswer.sessionNotes?.length || 0"
+              :toggle-notes-drawer="toggleNotesDrawer"
+              :completed-steps="completedSteps"
               @set-remote-stream="remoteStream = $event"
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
-              @call-ended="displayVideoCallComponent = false"
+              @call-ended="handleCallEnded"
               @moderator-status-change="handleModeratorStatusChange"
             />
           </div>
@@ -414,25 +393,15 @@
           <div v-show="!displayVideoCallComponent">
             <!--Step 0: Welcome - Different for Moderator vs Participant -->
             <ModeratorWelcomeStep
-              v-if="globalIndex === 0 && isUserTestAdmin"
+              v-if="globalIndex === 0 && isModerator"
               :stepper-value="stepperValue"
-              @start="
-                () => {
-                  displayVideoCallComponent = true
-                  globalIndex = 1
-                }
-              "
+              @start="handleWelcomeStart"
             />
             <WelcomeStep
-              v-else-if="globalIndex === 0 && !isUserTestAdmin"
+              v-else-if="globalIndex === 0 && !isModerator"
               :stepper-value="stepperValue"
               :welcome-message="test?.testStructure?.welcomeMessage"
-              @start="
-                () => {
-                  displayVideoCallComponent = true
-                  globalIndex = 1
-                }
-              "
+              @start="handleWelcomeStart"
             />
 
             <!--Step 1: Consent -->
@@ -459,6 +428,7 @@
               :pre-test="test.testStructure.preTest"
               :pre-test-answer="localTestAnswer.preTestAnswer"
               :pre-test-completed="localTestAnswer.preTestCompleted"
+              @selection-changed="handleStructuredSelectionChanged"
               @done="completeStep(taskIndex, 'preTest')"
             />
 
@@ -466,12 +436,8 @@
             <PreTasksStep
               v-if="globalIndex === 3 && taskIndex === 0"
               :num-tasks="test?.testStructure?.userTasks?.length || 0"
-              @start-tasks="
-                () => {
-                  taskIndex = 0
-                  globalIndex = 4
-                }
-              "
+              :has-recording="hasRecording"
+              @start-tasks="handleStartTasks"
             />
 
             <!-- Step 4: Task Step -->
@@ -490,10 +456,12 @@
               :nasa-tlx-answers="
                 localTestAnswer.tasks[taskIndex].nasaTlxAnswers
               "
+              :tam-answers="localTestAnswer.tasks[taskIndex].tamAnswers"
+              :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
               :submitted="localTestAnswer.submitted"
               :done-task-disabled="doneTaskDisabled"
               :remote-stream="remoteStream"
-              :should-record-moderator="!isUserTestAdmin"
+              :should-record-moderator="!isModerator"
               @update:sus-answers="
                 (val) => {
                   localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(
@@ -508,12 +476,42 @@
                   localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
                 }
               "
+              @update:tam-answers="
+                (val) => {
+                  localTestAnswer.tasks[taskIndex].tamAnswers = { ...val }
+                }
+              "
+              @update:sart-answers="
+                (val) => {
+                  localTestAnswer.tasks[taskIndex].sartAnswers = { ...val }
+                }
+              "
               @done="() => handleTaskFinish(true)"
               @could-not-finish="() => handleTaskFinish(false)"
               @show-loading="isLoading = true"
               @stop-show-loading="isLoading = false"
               @recording-started="isVisualizerVisible = $event"
+              @tip-pressed="handleTipPressed"
               @timer-stopped="handleTimerStopped"
+              @task-started="handleTaskStarted"
+              @recording-result="handleRecordingResult"
+              @structured-response-changed="handleStructuredResponseChanged"
+              @structured-slider-focus="
+                (event) => handleStructuredSliderEvent('focus', event)
+              "
+              @structured-slider-start="
+                (event) => handleStructuredSliderEvent('start', event)
+              "
+              @structured-slider-change="
+                (event) => handleStructuredSliderEvent('change', event)
+              "
+              @structured-slider-end="
+                (event) => handleStructuredSliderEvent('end', event)
+              "
+              @structured-slider-blur="
+                (event) => handleStructuredSliderEvent('blur', event)
+              "
+              @task-questionnaire-entered="handleTaskQuestionnaireEntered"
             />
 
             <PostTestStep
@@ -523,9 +521,10 @@
               :post-test="test.testStructure.postTest"
               :post-test-answer="localTestAnswer.postTestAnswer"
               :post-test-completed="localTestAnswer.postTestCompleted"
+              @selection-changed="handleStructuredSelectionChanged"
               @done="
-                () => {
-                  completeStep(taskIndex, 'postTest')
+                async () => {
+                  await completeStep(taskIndex, 'postTest')
                   taskIndex = 3
                 }
               "
@@ -602,16 +601,7 @@
 </template>
 
 <script setup>
-import {
-  ref as dbRef,
-  onValue,
-  off,
-  update,
-  set,
-  get,
-  onDisconnect,
-  serverTimestamp,
-} from 'firebase/database'
+import { ref as dbRef, onValue, update, get, remove } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -627,19 +617,110 @@ import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue'
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
-import VideoCall from '@/ux/UserTest/components/VideoCall.vue'
+import StepAnnouncementOverlay from '@/shared/components/StepAnnouncementOverlay.vue'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
+import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue'
+import VideoToolDrawer from '@/shared/components/videoCall/VideoToolDrawer.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import {
+  ACCESS_LEVEL,
+  isObserverAccessLevel,
+  normalizeAccessLevel,
+} from '@/shared/utils/accessLevel'
+import { isModeratedSessionViewer } from '@/shared/utils/studyAccessPolicy'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
 import { calculateProgress } from '../utils/testProgress'
+import { accumulateTotalTestTime, hasTestActivity } from '../utils/testDuration'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { createRecordingOutcomeTracker } from '@/ux/UserTest/utils/recordingOutcome'
+import {
+  createStructuredActivityHandlers,
+  structuredValuesForStage,
+  structuredValuesForTask,
+} from '@/ux/UserTest/utils/structuredActivity'
+import {
+  normalizeSessionMember as normalizePresenceSessionMember,
+  removeStaffDuplicates,
+} from '@/ux/UserTest/utils/sessionPresence'
+import { moderatedSessionTimingReason } from '@/ux/UserTest/utils/moderatedSessionAvailability'
 
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+let studyLogging = null
+
+const initializeStudyLogging = () => {
+  if (studyLogging || isModerator.value || !user.value?.id || !test.value?.id) {
+    return studyLogging
+  }
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: test.value.id,
+    consentRequired: true,
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (localTestAnswer.consentCompleted) void studyLogging.resumeAfterConsent()
+  return studyLogging
+}
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
+const {
+  seedStructuredScope,
+  handleStructuredResponseChanged,
+  handleStructuredSelectionChanged,
+  handleStructuredSliderEvent,
+} = createStructuredActivityHandlers(initializeStudyLogging)
+const recordingOutcomes = createRecordingOutcomeTracker((details) =>
+  initializeStudyLogging()?.recordingOutcome(details),
+)
+const handleRecordingResult = (details) => {
+  if (user.value?.id && localTestAnswer.consentCompleted)
+    recordingOutcomes.observe(details)
+}
+const handleTaskStarted = (occurredAt) => {
+  void initializeStudyLogging()?.taskStarted(taskIndex.value, occurredAt)
+}
+const structuredScopeForCurrentStage = () => {
+  if (globalIndex.value === 2 && taskIndex.value === 0) return 'preTest'
+  if (
+    globalIndex.value === 4 &&
+    test.value?.testStructure?.userTasks?.[taskIndex.value]
+  ) {
+    return `task:${taskIndex.value}`
+  }
+  if (globalIndex.value === 5) return 'postTest'
+  return null
+}
+const structuredValuesForScope = (scopeRef) => {
+  if (scopeRef === 'preTest' || scopeRef === 'postTest') {
+    return structuredValuesForStage(
+      scopeRef,
+      test.value?.testStructure?.[scopeRef],
+      localTestAnswer[`${scopeRef}Answer`],
+    )
+  }
+  const index = Number(scopeRef.split(':')[1])
+  return structuredValuesForTask(
+    test.value?.testStructure?.userTasks?.[index],
+    localTestAnswer.tasks?.[index],
+  )
+}
+const handleTaskQuestionnaireEntered = ({ scopeRef } = {}) => {
+  const taskRef = scopeRef || `task:${taskIndex.value}`
+  seedStructuredScope(taskRef, structuredValuesForScope(taskRef))
+}
+let activeStructuredScope = null
 // Data variables
 
 onBeforeUnmount(() => {
@@ -656,6 +737,15 @@ const start = ref(true)
 const globalIndex = ref(null)
 const taskIndex = ref(0)
 const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
+const totalTestTimeStartedAt = ref(null)
+
+const accumulateTestTime = () => {
+  totalTestTimeStartedAt.value = accumulateTotalTestTime(
+    localTestAnswer,
+    totalTestTimeStartedAt.value,
+  )
+}
+
 const rightView = ref(null) // For scroll effect
 const fullName = ref('') // For consent form component
 const items = ref([])
@@ -665,9 +755,35 @@ const preTestIndex = ref(null)
 const taskStepComponent = ref(null)
 const allTasksCompleted = ref(false)
 const submitDialog = ref(false)
-const notesDrawerOpen = ref(true)
+const notesDrawerOpen = ref(false)
+
+function toggleNotesDrawer() {
+  notesDrawerOpen.value = !notesDrawerOpen.value
+}
+
+function closeNotesDrawer() {
+  notesDrawerOpen.value = false
+}
 const moderatorInactive = ref(false)
 const moderatorDisconnectTimeout = ref(null)
+const {
+  showStepAnnouncement,
+  stepAnnouncementOverlay,
+  nextStepAnnouncementTitle,
+  nextStepAnnouncementKicker,
+  safelyAnnounce: safelyShowNextStepAnnouncement,
+} = useStepAnnouncement()
+const isProcessingRemoteStepAnnouncement = ref(false)
+const lastAnnouncedRemoteStepKey = ref(null)
+const lastWaitingParticipantsNotificationCount = ref(0)
+const hasSeenRoomState = ref(false)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
+
+const sessionId = computed(() => route.params.token || null)
 
 // From video call to be used by recorders
 const remoteStream = ref(null)
@@ -675,6 +791,17 @@ const remoteStream = ref(null)
 // Computed properties
 const mediaUrls = computed(() => store.getters.mediaUrls)
 const test = computed(() => store.getters.test)
+const hasRecording = computed(() =>
+  Boolean(
+    test.value?.testStructure?.userTasks?.some(
+      (task) =>
+        task.hasScreenRecord ||
+        task.hasCamRecord ||
+        task.hasAudioRecord ||
+        task.hasEye,
+    ),
+  ),
+)
 const testId = computed(() => store.getters.test?.id || null)
 const user = computed(() => {
   return store.getters.user
@@ -683,15 +810,215 @@ const isUserTestAdmin = computed(() => {
   return test.value?.testAdmin?.userDocId === user.value?.id
 })
 
-const currentUserAccessLevel = computed(() => {
-  if (isUserTestAdmin.value) return 0 // Admin implicit
-  const cooperator = test.value.cooperators?.find(
-    (c) => c.userDocId === user.value?.id,
-  )
-  return cooperator?.accessLevel ?? 2 // Default to Guest/Participant (2) if not found, but typically should be found
+const normalizeSessionRole = (role) => {
+  if (role === 'FACILITATOR' || role === ACCESS_LEVEL.ADMIN) return 'moderator'
+  if (role === 'OBSERVER' || role === ACCESS_LEVEL.OBSERVATOR) {
+    return 'observator'
+  }
+  return 'participant'
+}
+
+const normalizeMemberKey = (member) => {
+  if (!member) return []
+
+  const rawValues = [
+    member.userDocId,
+    member.id,
+    member.email,
+    member.name,
+    member.displayName,
+  ]
+
+  const normalized = new Set()
+
+  rawValues.forEach((value) => {
+    if (value == null || !String(value).trim()) return
+
+    const str = String(value).trim().toLowerCase()
+    normalized.add(str)
+    normalized.add(str.replace(/[^a-z0-9]/g, ''))
+
+    const localPart = str.includes('@') ? str.split('@')[0] : str
+    if (localPart) {
+      normalized.add(localPart)
+      normalized.add(localPart.replace(/[^a-z0-9]/g, ''))
+    }
+  })
+
+  return [...normalized]
+}
+
+const hasSharedMemberKey = (left, right) => {
+  const rightKeys = new Set(normalizeMemberKey(right))
+  return normalizeMemberKey(left).some((key) => rightKeys.has(key))
+}
+
+const setMemberByIdentity = (map, member) => {
+  const keys = normalizeMemberKey(member)
+  if (!keys.length) return
+
+  const existingKey = keys.find((key) => map.has(key))
+  const mapKey = existingKey || keys[0]
+  map.set(mapKey, member)
+}
+
+const normalizeSessionMember = (member, fallbackType = 'participant') => {
+  if (!member) return null
+
+  const memberId = member.userDocId || member.id || member.email
+  if (!memberId) return null
+
+  const isStaffMember = fallbackType === 'staff'
+  const presenceStatus =
+    member.presenceStatus ??
+    member.status ??
+    (isStaffMember ? 'disconnected' : null)
+
+  return {
+    id: memberId,
+    userDocId: member.userDocId || member.id || member.email,
+    email: member.email,
+    name:
+      member.name ||
+      member.displayName ||
+      member.email?.split('@')[0] ||
+      fallbackType,
+    role: normalizeSessionRole(member.role || member.accessLevel),
+    connected: member.connected ?? (isStaffMember ? false : null),
+    presenceStatus,
+    presenceUpdatedAt: member.presenceUpdatedAt ?? null,
+    isStaff: isStaffMember,
+    accessLevel: member.accessLevel ?? member.role,
+  }
+}
+
+const callState = ref({ staff: {}, participants: {} })
+let callStateUnsubscribe = null
+let waitingParticipantsUnsubscribe = null
+let roomUnsubscribe = null
+
+function stopRealtimeListeners() {
+  callStateUnsubscribe?.()
+  waitingParticipantsUnsubscribe?.()
+  roomUnsubscribe?.()
+  callStateUnsubscribe = null
+  waitingParticipantsUnsubscribe = null
+  roomUnsubscribe = null
+  lastWaitingParticipantsNotificationCount.value = 0
+}
+
+const sessionStaffMembers = computed(() => {
+  const staffMembers = [
+    ...(session.value?.staff || []),
+    ...Object.values(callState.value.staff || {}),
+  ]
+  const staffById = new Map()
+
+  staffMembers.forEach((member) => {
+    setMemberByIdentity(staffById, member)
+  })
+
+  return [...staffById.values()]
+    .map((member) => normalizeSessionMember(member, 'staff'))
+    .filter(Boolean)
 })
 
-const isObservator = computed(() => currentUserAccessLevel.value === 3)
+const sessionParticipantsMembers = computed(() => {
+  const participantMembers = [
+    ...(session.value?.participants || []),
+    ...Object.values(callState.value.participants || {}),
+  ]
+  const participantsById = new Map()
+
+  participantMembers.forEach((member) => {
+    const memberId = member?.userDocId || member?.id || member?.email
+    if (memberId) participantsById.set(memberId, member)
+  })
+
+  return [...participantsById.values()]
+    .map((member) => normalizeSessionMember(member, 'participant'))
+    .filter(Boolean)
+})
+
+const isCurrentUserMember = (member) => {
+  if (member?.userDocId) return member.userDocId === user.value?.id
+  const memberEmail = member?.email?.trim().toLowerCase()
+  return Boolean(
+    memberEmail && memberEmail === user.value?.email?.trim().toLowerCase(),
+  )
+}
+
+const currentUserAccessLevel = computed(() => {
+  const cooperator = session.value?.staff?.find(isCurrentUserMember)
+
+  const participant = session.value?.participants?.find(isCurrentUserMember)
+  const normalizedParticipant = normalizePresenceSessionMember(
+    participant,
+    'participant',
+  )
+
+  // The study role is known before the session loads, so a participant is not
+  // briefly treated as an observer while the session is still being fetched.
+  const rawValue =
+    cooperator?.accessLevel ??
+    cooperator?.role ??
+    normalizedParticipant?.accessLevel ??
+    test.value?.studyRoleMap?.[user.value?.id] ??
+    (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
+
+  return (
+    normalizeAccessLevel(rawValue) ??
+    (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
+  )
+})
+
+const sessionFacilitator = computed(() => {
+  return session.value?.staff?.find((staff) => staff.role === 'FACILITATOR')
+})
+
+const sessionObserver = computed(() => {
+  const observator = session.value?.staff?.find(
+    (staff) => staff.role === 'OBSERVER',
+  )
+  return observator || null
+})
+
+const isModerator = computed(() => {
+  // If there is a FACILITATOR in the session, only they are the moderator.
+  if (sessionFacilitator.value) {
+    return sessionFacilitator.value.userDocId === user.value?.id
+  }
+
+  // Fallback: if there is no FACILITATOR, the testAdmin is the moderator.
+  return isUserTestAdmin.value
+})
+
+const isObservator = computed(() => {
+  if (isModerator.value) {
+    return false
+  }
+
+  if (sessionObserver.value) {
+    return sessionObserver.value.userDocId === user.value?.id
+  }
+
+  return isObserverAccessLevel(currentUserAccessLevel.value)
+})
+const showParticipantCallPip = computed(
+  () =>
+    !isModerator.value &&
+    !isObservator.value &&
+    globalIndex.value >= 1 &&
+    !displayVideoCallComponent.value,
+)
+
+const session = computed(() => store.getters.session)
+const isSessionViewer = computed(() => {
+  if (isModerator.value) {
+    return false
+  }
+  return isModeratedSessionViewer(test.value, user.value, session.value)
+})
 
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
@@ -717,7 +1044,66 @@ const stepperValue = computed(() => {
   return 1 // Default to first step
 })
 
+const isCurrentMainStep = (value) =>
+  Number(stepperValue.value) === Number(value)
+
+const completedSteps = computed(() => {
+  if (isModerator.value) {
+    const participants = Object.values(callState.value?.participants || {})
+
+    // Get the participant's progress
+    const participant = participants.find(
+      (member) => member?.role === 'PARTICIPANT',
+    )
+
+    return (
+      participant?.progress ?? {
+        consent: false,
+        preTest: false,
+        tasks: false,
+        postTest: false,
+        completion: false,
+      }
+    )
+  }
+  return {
+    consent: localTestAnswer.consentCompleted === true,
+    preTest: localTestAnswer.preTestCompleted === true,
+    // "Could not finish" still finishes the task step.
+    tasks:
+      Array.isArray(localTestAnswer.tasks) &&
+      localTestAnswer.tasks.length > 0 &&
+      localTestAnswer.tasks.every((task) => task?.attempted === true),
+    postTest: localTestAnswer.postTestCompleted === true,
+    completion: localTestAnswer.submitted === true,
+  }
+})
+
+// Scroll to top of the page when step changes
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+  if (rightView.value) {
+    rightView.value.scrollTop = 0
+  }
+}
+
 // Watchers
+watch(
+  () => [globalIndex.value, taskIndex.value],
+  () => {
+    const nextScope = structuredScopeForCurrentStage()
+    if (activeStructuredScope && activeStructuredScope !== nextScope) {
+      void initializeStudyLogging()?.checkpointStructuredScope(
+        activeStructuredScope,
+      )
+    }
+    activeStructuredScope = nextScope
+    if (nextScope) {
+      seedStructuredScope(nextScope, structuredValuesForScope(nextScope))
+    }
+  },
+)
+
 watch(user, async () => {
   if (user.value) {
     if (loggedIn.value) await setTestAnswer()
@@ -731,9 +1117,21 @@ watch(
     displayVideoCallComponent.value,
     isUserTestAdmin.value,
   ],
-  ([gi, ti, dvc, admin]) => {
+  () => {
     scrollToTop()
   },
+)
+
+watch(
+  session,
+  (newSession) => {
+    if (!newSession) return
+
+    testDate.value = newSession.scheduledAt
+
+    sessionCooperator.value = newSession
+  },
+  { immediate: true },
 )
 
 watchEffect(() => {
@@ -744,12 +1142,7 @@ watchEffect(() => {
 
   const answers = localTestAnswer?.tasks?.[index]?.susAnswers
 
-  if (isUserTestAdmin.value) {
-    doneTaskDisabled.value = false
-    return
-  }
-
-  if (isUserTestAdmin.value) {
+  if (isModerator.value) {
     doneTaskDisabled.value = false
     return
   }
@@ -784,8 +1177,27 @@ watch(
 )
 
 // Methods
+const handleModeratorStatusChange = (connected) => {
+  if (isModerator.value) return
+
+  if (moderatorDisconnectTimeout.value) {
+    clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = null
+  }
+
+  if (connected === false) {
+    moderatorDisconnectTimeout.value = setTimeout(() => {
+      moderatorInactive.value = true
+      moderatorDisconnectTimeout.value = null
+    }, 1000)
+    return
+  }
+
+  moderatorInactive.value = false
+}
+
 const proceedToNextStep = async () => {
-  if (!isUserTestAdmin.value) return
+  if (!isModerator.value) return
 
   // Increment globalIndex before updating Firebase
   globalIndex.value = globalIndex.value + 1
@@ -802,7 +1214,7 @@ const handleStepSelected = async ({
   globalIndex: newGlobalIndex,
   taskIndex: newTaskIndex,
 }) => {
-  if (!isUserTestAdmin.value) return
+  if (!isModerator.value) return
 
   globalIndex.value = newGlobalIndex
   taskIndex.value = newTaskIndex
@@ -826,9 +1238,16 @@ const handleConsentDecline = async () => {
     timeout: 5000,
   })
 
-  // Clean up room data
-  const roomRef = dbRef(database, `rooms/${roomId.value}`)
-  await set(roomRef, null)
+  // Clean up only the individual participant's presence node
+  const currentUserId =
+    user.value?.id || user.value?.userDocId || user.value?.uid
+  if (currentUserId && roomId.value) {
+    const memberRef = dbRef(
+      database,
+      `calls/${roomId.value}/participants/${currentUserId}`,
+    )
+    await remove(memberRef)
+  }
 
   // Navigate back to admin
   setTimeout(() => {
@@ -836,13 +1255,35 @@ const handleConsentDecline = async () => {
   }, 2000)
 }
 
+// The facilitator's Test Progress reads this, so publish after every step and
+// after submission. taskIndex is the participant's next task.
+const publishParticipantProgress = async () => {
+  if (isModerator.value || !user.value?.id) return
+  await update(
+    dbRef(database, `calls/${roomId.value}/participants/${user.value.id}`),
+    { taskIndex: taskIndex.value, progress: completedSteps.value },
+  )
+}
+
 const handleSubmit = async () => {
   submitDialog.value = false
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
-    await router.push({ name: 'Admin' })
+    void initializeStudyLogging()?.submitted()
+    void publishParticipantProgress().catch(() => {})
+    store.commit('SET_TOAST', {
+      type: 'success',
+      message: t('UserTestView.messages.studySubmittedSuccess', {
+        studyName: test.value.testTitle,
+      }),
+    })
+    displayVideoCallComponent.value = true
   } catch {
+    localTestAnswer.submitted = false
+    if (totalTestTimeStartedAt.value === null) {
+      totalTestTimeStartedAt.value = Date.now()
+    }
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -850,9 +1291,25 @@ const handleSubmit = async () => {
   }
 }
 
+const saveSessionNotes = async () => {
+  try {
+    await saveAnswer()
+  } catch {
+    // saveAnswer already reports the failure for this standalone UI action.
+  }
+}
+
 const saveAnswer = async () => {
   try {
+    accumulateTestTime()
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    // A completed recording is logged only once its media link is saved.
+    const recordingsToSave = recordingOutcomes
+      .beforeSave()
+      .filter(({ taskRef, mediaType }) => {
+        const task = localTestAnswer.tasks?.[Number(taskRef.split(':')[1])]
+        return Boolean(task?.[MEDIA_FIELD_MAP[mediaType]])
+      })
 
     localTestAnswer.fullName = fullName.value
     if (user.value && user.value?.email) {
@@ -867,11 +1324,13 @@ const saveAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
-  } catch {
+    recordingOutcomes.saved(recordingsToSave)
+  } catch (error) {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
     })
+    throw error
   }
 }
 
@@ -896,11 +1355,241 @@ const setTestAnswer = async () => {
 }
 
 const signOut = async () => {
-  await store.dispatch('signOut')
+  await store.dispatch('logout')
   router.push('/signin')
 }
 
+const requestFullscreenIfAvailable = async () => {
+  if (document.fullscreenElement) return
+
+  const root = document.documentElement
+  try {
+    if (root.requestFullscreen) {
+      await root.requestFullscreen()
+      return
+    }
+
+    const legacy =
+      root.webkitRequestFullscreen ||
+      root.mozRequestFullScreen ||
+      root.msRequestFullscreen
+
+    if (legacy) {
+      await legacy.call(root)
+    }
+  } catch {
+    // Ignore if blocked by browser/user settings and continue test flow.
+  }
+}
+
+const cleanupRoomStateForReuse = async (roomKey) => {
+  if (!roomKey) return
+
+  const callRef = dbRef(database, `calls/${roomKey}`)
+  const roomRef = dbRef(database, `rooms/${roomKey}`)
+
+  await Promise.allSettled([
+    get(callRef).then((snapshot) => {
+      if (snapshot.exists()) return remove(callRef)
+      return null
+    }),
+    get(roomRef).then((snapshot) => {
+      if (snapshot.exists()) return remove(roomRef)
+      return null
+    }),
+  ])
+}
+
+const getCallMemberId = (member) =>
+  member?.userDocId || member?.id || member?.email
+
+const buildCallMember = (member, defaults = {}) => {
+  const memberId = getCallMemberId(member)
+  if (!memberId) return null
+
+  const sanitizedMember = { ...member }
+  delete sanitizedMember.connected
+  delete sanitizedMember.presenceStatus
+  delete sanitizedMember.presenceUpdatedAt
+  delete sanitizedMember.updatedAt
+  delete sanitizedMember.status
+
+  const role = defaults.role || member.role || 'participant'
+  const accessLevel =
+    defaults.accessLevel ?? member.accessLevel ?? member.role ?? 5
+  const presenceStatus = defaults.presenceStatus ?? 'disconnected'
+
+  return {
+    ...sanitizedMember,
+    userDocId: member.userDocId || member.id || member.email,
+    email: member.email || null,
+    name:
+      member.name ||
+      member.displayName ||
+      member.email?.split('@')[0] ||
+      memberId,
+    role,
+    accessLevel,
+    isModerator:
+      defaults.isModerator === true ||
+      member.isModerator === true ||
+      role === 'FACILITATOR',
+    joinedAt: member.joinedAt ?? Date.now(),
+    connected: defaults.connected ?? false,
+    presenceStatus,
+    presenceUpdatedAt: presenceStatus === 'connected' ? Date.now() : null,
+    media: member.media ?? {
+      cameraEnabled: true,
+      microphoneEnabled: true,
+    },
+  }
+}
+
+const addMissingCallMembers = (
+  updates,
+  existingMembers,
+  branch,
+  members,
+  defaults,
+) => {
+  const existingList = Object.values(existingMembers || {})
+
+  members.forEach((member) => {
+    const memberId = getCallMemberId(member)
+    if (!memberId) return
+
+    const alreadyExists = existingList.some((existingMember) =>
+      hasSharedMemberKey(existingMember, member),
+    )
+    if (alreadyExists) return
+
+    const callMember = buildCallMember(member, defaults)
+    if (callMember) updates[`${branch}/${memberId}`] = callMember
+  })
+}
+
+const moveMatchingCallMember = (
+  updates,
+  existingMembers,
+  branch,
+  member,
+  targetKey,
+  defaults,
+) => {
+  if (!targetKey) return
+
+  const match = Object.entries(existingMembers || {}).find(
+    ([memberKey, existingMember]) =>
+      memberKey !== targetKey && hasSharedMemberKey(existingMember, member),
+  )
+  if (!match) return
+
+  const [existingKey, existingMember] = match
+  updates[`${branch}/${targetKey}`] = {
+    ...existingMember,
+    ...buildCallMember(member, defaults),
+  }
+  updates[`${branch}/${existingKey}`] = null
+}
+
+const syncCallRoster = async (callRef, currentUserId) => {
+  const snapshot = await get(callRef)
+  const existingCall = snapshot.val() || {}
+  const staffMembers = Array.isArray(session.value?.staff)
+    ? session.value.staff
+    : []
+  const participantMembers = Array.isArray(session.value?.participants)
+    ? session.value.participants
+    : []
+  const currentModeratorMember =
+    isModerator.value && currentUserId
+      ? {
+          userDocId: currentUserId,
+          email: user.value?.email || null,
+          name:
+            user.value?.email?.split('@')[0] ||
+            user.value?.displayName ||
+            'moderator',
+          role: 'FACILITATOR',
+          accessLevel: 'ADMIN',
+          isModerator: true,
+        }
+      : null
+  const allStaffMembers = currentModeratorMember
+    ? [...staffMembers, currentModeratorMember]
+    : staffMembers
+  const participantMembersWithoutStaff = removeStaffDuplicates(
+    participantMembers,
+    allStaffMembers,
+  )
+  const updates = {}
+
+  if (!existingCall.createdAt) updates.createdAt = Date.now()
+  if (!existingCall.startedAt) updates.startedAt = Date.now()
+  if (!existingCall.status) updates.status = 'active'
+
+  if (currentModeratorMember) {
+    moveMatchingCallMember(
+      updates,
+      existingCall.staff,
+      'staff',
+      currentModeratorMember,
+      currentUserId,
+      {
+        connected: false,
+        presenceStatus: 'disconnected',
+        role: 'FACILITATOR',
+        accessLevel: 'ADMIN',
+        isModerator: true,
+      },
+    )
+  }
+
+  addMissingCallMembers(updates, existingCall.staff, 'staff', allStaffMembers, {
+    connected: false,
+    presenceStatus: 'disconnected',
+  })
+  addMissingCallMembers(
+    updates,
+    existingCall.participants,
+    'participants',
+    participantMembersWithoutStaff,
+    {
+      connected: false,
+      presenceStatus: 'disconnected',
+    },
+  )
+
+  if (Object.keys(updates).length) await update(callRef, updates)
+}
+
+const handleCallEnded = async () => {
+  displayVideoCallComponent.value = false
+  stopRealtimeListeners()
+
+  if (isModerator.value && roomId.value) {
+    await cleanupRoomStateForReuse(roomId.value)
+  }
+}
+
+// Start joins the call once per page load (a refresh re-joins through the
+// auto-join watcher). A stray Enter on a still-focused Start button must not
+// re-run it mid-session: that re-enters fullscreen and resets the room.
+let testStartState = 'idle'
+
 const startTest = async () => {
+  if (testStartState !== 'idle') return
+  testStartState = 'starting'
+  try {
+    await startTestOnce()
+    testStartState = 'started'
+  } catch (error) {
+    testStartState = 'idle'
+    throw error
+  }
+}
+
+const startTestOnce = async () => {
   // Check if the test has no tasks
   if (
     !test.value.testStructure ||
@@ -914,15 +1603,16 @@ const startTest = async () => {
     return
   }
 
-  if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    })
-  }
+  await requestFullscreenIfAvailable()
 
-  if (isObservator.value) {
-    // Hidin start screen and mount VideoCall component
+  const observerUser =
+    isObservator.value ||
+    isObserverAccessLevel(currentUserAccessLevel.value) ||
+    normalizeSessionRole(currentUserAccessLevel.value) === 'observator'
+  const staffUser = isModerator.value || observerUser
+
+  if (isSessionViewer.value && !staffUser) {
+    // Hide start screen and mount VideoCall component for non-participant viewers.
     start.value = false
     displayVideoCallComponent.value = true
     return
@@ -934,18 +1624,257 @@ const startTest = async () => {
     startScreen.classList.add('leaving')
   }
 
-  // listen for changes
+  const currentUserId =
+    user.value?.id || user.value?.userDocId || user.value?.uid
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
+  const callRef = dbRef(database, `calls/${roomId.value}`)
+
+  if (staffUser) {
+    displayVideoCallComponent.value = true
+    start.value = false
+  }
+
+  await syncCallRoster(callRef, currentUserId)
+
+  if (!isModerator.value && currentUserId) {
+    const isObserverMember = observerUser
+
+    const memberRef = isObserverMember
+      ? dbRef(database, `calls/${roomId.value}/staff/${currentUserId}`)
+      : dbRef(database, `calls/${roomId.value}/participants/${currentUserId}`)
+    const normalizedAccessLevel = normalizeAccessLevel(
+      currentUserAccessLevel.value,
+    )
+    const now = Date.now()
+    const isParticipant = !isObservator.value && !isModerator.value
+
+    await update(memberRef, {
+      userDocId: currentUserId,
+      email: user.value.email || null,
+      name:
+        user.value.email?.split('@')[0] ||
+        user.value.displayName ||
+        (isObserverMember ? 'observer' : 'participant'),
+      role: isObserverMember ? 'OBSERVER' : 'PARTICIPANT',
+      accessLevel: isObserverMember
+        ? 'OBSERVATOR'
+        : (normalizedAccessLevel ?? 5),
+      isModerator: false,
+      connected: true,
+      presenceStatus: isParticipant ? 'waiting' : 'connected',
+      presenceUpdatedAt: now,
+      joinedAt: now,
+      media: {
+        cameraEnabled: !isObserverMember,
+        microphoneEnabled: !isObserverMember,
+      },
+    })
+  }
+
+  // listen for changes
+  callStateUnsubscribe?.()
+  callStateUnsubscribe = onValue(callRef, (snapshot) => {
+    const nextCallState = snapshot.val() || {}
+    callState.value = {
+      staff: nextCallState.staff || {},
+      participants: nextCallState.participants || {},
+    }
+  })
+
+  if (isModerator.value || observerUser) {
+    const existingCallSnapshot = await get(callRef)
+
+    if (!existingCallSnapshot.exists()) {
+      await cleanupRoomStateForReuse(roomId.value)
+    }
+
+    waitingParticipantsUnsubscribe?.()
+    waitingParticipantsUnsubscribe = onValue(callRef, (snapshot) => {
+      const nextCallState = snapshot.val() || {}
+      const participants = nextCallState.participants || {}
+      const waitingParticipantsCount = Object.values(participants).filter(
+        (member) => {
+          const status =
+            member?.presenceStatus ??
+            member?.status ??
+            (member?.connected === false ? 'disconnected' : 'connected')
+
+          return status === 'waiting'
+        },
+      ).length
+
+      if (waitingParticipantsCount > 0) {
+        if (
+          waitingParticipantsCount !==
+          lastWaitingParticipantsNotificationCount.value
+        ) {
+          const message =
+            waitingParticipantsCount === 1
+              ? 'One participant is waiting to enter.'
+              : 'More than one users are waiting to join.'
+
+          showInfo(message)
+          lastWaitingParticipantsNotificationCount.value =
+            waitingParticipantsCount
+        }
+      } else {
+        lastWaitingParticipantsNotificationCount.value = 0
+      }
+
+      callState.value = {
+        staff: nextCallState.staff || {},
+        participants,
+      }
+    })
+
+    if (isModerator.value) {
+      const callSnapshot = await get(callRef)
+
+      if (!callSnapshot.exists()) {
+        const staffMembers = Array.isArray(session.value?.staff)
+          ? session.value.staff
+          : []
+        const participantMembers = Array.isArray(session.value?.participants)
+          ? session.value.participants
+          : []
+        const participantMembersWithoutStaff = removeStaffDuplicates(
+          participantMembers,
+          [
+            ...staffMembers,
+            { userDocId: user.value?.id, email: user.value?.email },
+          ],
+        )
+
+        const toMemberMap = (members, defaults = {}) =>
+          Object.fromEntries(
+            members
+              .map((member) => {
+                const memberId =
+                  member?.userDocId || member?.id || member?.email
+                if (!memberId) return null
+
+                const memberConnected = Object.prototype.hasOwnProperty.call(
+                  defaults,
+                  'connected',
+                )
+                  ? defaults.connected
+                  : undefined
+                const memberPresenceStatus =
+                  Object.prototype.hasOwnProperty.call(
+                    defaults,
+                    'presenceStatus',
+                  )
+                    ? defaults.presenceStatus
+                    : undefined
+
+                const sanitizedMember = { ...member }
+                delete sanitizedMember.connected
+                delete sanitizedMember.presenceStatus
+                delete sanitizedMember.presenceUpdatedAt
+                delete sanitizedMember.updatedAt
+                delete sanitizedMember.status
+
+                const normalizedMember = {
+                  ...sanitizedMember,
+                  userDocId: member.userDocId || member.id || member.email,
+                  email: member.email || null,
+                  name:
+                    member.name ||
+                    member.displayName ||
+                    member.email?.split('@')[0] ||
+                    memberId,
+                  role: member.role || 'participant',
+                  accessLevel: member.accessLevel ?? member.role ?? 5,
+                  isModerator:
+                    member.role === 'FACILITATOR' ||
+                    member.isModerator === true,
+                  joinedAt: member.joinedAt ?? Date.now(),
+                  media: member.media ?? {
+                    cameraEnabled: true,
+                    microphoneEnabled: true,
+                  },
+                  ...(memberConnected !== undefined
+                    ? { connected: memberConnected }
+                    : {}),
+                  ...(memberPresenceStatus !== undefined
+                    ? { presenceStatus: memberPresenceStatus }
+                    : {}),
+                  ...(memberPresenceStatus === 'disconnected'
+                    ? { presenceUpdatedAt: null }
+                    : memberPresenceStatus === 'connected'
+                      ? { presenceUpdatedAt: Date.now() }
+                      : {}),
+                }
+
+                return [memberId, normalizedMember]
+              })
+              .filter(Boolean),
+          )
+
+        const moderatorEntry = {
+          userDocId: user.value?.id || 'moderator',
+          email: user.value?.email || null,
+          name:
+            user.value?.email?.split('@')[0] ||
+            user.value?.displayName ||
+            'moderator',
+          role: 'FACILITATOR',
+          accessLevel: 'ADMIN',
+          isModerator: true,
+          connected: true,
+          presenceStatus: 'connected',
+          presenceUpdatedAt: Date.now(),
+          joinedAt: Date.now(),
+          media: {
+            cameraEnabled: true,
+            microphoneEnabled: true,
+          },
+        }
+
+        const payload = {
+          createdAt: Date.now(),
+          startedAt: Date.now(),
+          status: 'active',
+          staff: {
+            [moderatorEntry.userDocId]: moderatorEntry,
+            ...toMemberMap(
+              staffMembers.filter((member) => {
+                return !hasSharedMemberKey(member, moderatorEntry)
+              }),
+              {},
+            ),
+          },
+          participants: toMemberMap(participantMembersWithoutStaff, {
+            connected: false,
+            presenceStatus: 'disconnected',
+          }),
+        }
+
+        await update(callRef, {
+          createdAt: payload.createdAt,
+          startedAt: payload.startedAt,
+          status: payload.status,
+          [`staff/${moderatorEntry.userDocId}`]: moderatorEntry,
+        })
+      }
+    }
+  }
 
   // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
   // onDisconnect(roomRef).set(null)
 
-  onValue(roomRef, (snapshot) => {
+  roomUnsubscribe?.()
+  roomUnsubscribe = onValue(roomRef, async (snapshot) => {
     const data = snapshot.val()
 
     // If data is null, the room has been deleted (e.g. by moderator ending call)
     if (!data) {
-      if (!isUserTestAdmin.value && displayVideoCallComponent.value) {
+      if (isObservator.value && !hasSeenRoomState.value) {
+        displayVideoCallComponent.value = true
+        return
+      }
+
+      if (!isModerator.value && displayVideoCallComponent.value) {
         // displayVideoCallComponent.value = false // Avoid updating state before redirect to prevent unmount error
         // Optionally show start screen or just return to test flow
         // start.value = true
@@ -955,17 +1884,68 @@ const startTest = async () => {
       return
     }
 
-    globalIndex.value = data.globalIndex !== undefined ? data.globalIndex : 0
-    taskIndex.value = data.taskIndex !== undefined ? data.taskIndex : 0
+    hasSeenRoomState.value = true
 
-    if (!isUserTestAdmin.value) {
-      // sync video call state
-      if (data.showVideoCall !== undefined) {
-        displayVideoCallComponent.value = data.showVideoCall
+    const nextGlobalIndex =
+      data.globalIndex !== undefined ? data.globalIndex : 0
+    const nextTaskIndex = data.taskIndex !== undefined ? data.taskIndex : 0
+    const nextShowVideoCall =
+      data.showVideoCall !== undefined
+        ? data.showVideoCall
+        : displayVideoCallComponent.value
+
+    const previousGlobalIndex = globalIndex.value
+    const previousTaskIndex = taskIndex.value
+
+    if (
+      !isModerator.value &&
+      !isObservator.value &&
+      globalIndex.value === 1 &&
+      nextGlobalIndex === 0
+    ) {
+      displayVideoCallComponent.value = true
+      return
+    }
+
+    if (!isModerator.value) {
+      if (isObservator.value) {
+        // Observers stay in the call lobby and do not follow the test steps.
+        displayVideoCallComponent.value = true
+        return
+      }
+
+      const announcementKey = `${nextGlobalIndex}-${nextTaskIndex}`
+      const stageChanged =
+        previousGlobalIndex !== nextGlobalIndex ||
+        previousTaskIndex !== nextTaskIndex
+      const isAnnounceableStage = nextGlobalIndex >= 1 && nextGlobalIndex <= 6
+      const shouldAnnounceRemoteStage =
+        isAnnounceableStage &&
+        nextShowVideoCall === false &&
+        stageChanged &&
+        !isProcessingRemoteStepAnnouncement.value &&
+        lastAnnouncedRemoteStepKey.value !== announcementKey
+
+      if (shouldAnnounceRemoteStage) {
+        isProcessingRemoteStepAnnouncement.value = true
+        lastAnnouncedRemoteStepKey.value = announcementKey
+        displayVideoCallComponent.value = true
+
+        await showStageAnnouncementByGlobalIndex(nextGlobalIndex, nextTaskIndex)
+
+        displayVideoCallComponent.value = false
+        isProcessingRemoteStepAnnouncement.value = false
+      } else {
+        displayVideoCallComponent.value = nextShowVideoCall
       }
     } else {
-      // Admin always stays in video call during session
+      // Moderator always stays in video call during session
       displayVideoCallComponent.value = true
+    }
+
+    if (!isObservator.value) {
+      globalIndex.value = nextGlobalIndex
+      taskIndex.value = nextTaskIndex
     }
   })
 
@@ -975,7 +1955,7 @@ const startTest = async () => {
   }, 1000)
 
   // Initialize Room defaults for Moderator
-  if (isUserTestAdmin.value) {
+  if (isModerator.value) {
     // Check if valid data exists, otherwise init defaults
     const snapshot = await get(roomRef)
     const currentData = snapshot.val() || {}
@@ -992,59 +1972,93 @@ const startTest = async () => {
 
     await update(roomRef, updates)
 
-    // Write lastUpdate timestamp when moderator disconnects (server-side timestamp)
-    onDisconnect(roomRef).update({ lastUpdate: serverTimestamp() })
+    // Avoid leaving a room-level onDisconnect update behind. The moderator's
+    // explicit end flow must delete the room branch completely.
   }
 }
 
-const MODERATOR_DISCONNECT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
-
-const handleModeratorStatusChange = (connected) => {
-  if (isUserTestAdmin.value) return // Moderator does not need this
-
-  if (!connected) {
-    // Moderator disconnected — start 5-min timeout
-    if (moderatorDisconnectTimeout.value)
-      clearTimeout(moderatorDisconnectTimeout.value)
-    moderatorDisconnectTimeout.value = setTimeout(() => {
-      moderatorInactive.value = true
-    }, MODERATOR_DISCONNECT_TIMEOUT_MS)
-  } else {
-    // Moderator reconnected — clear timeout and dismiss alert instantly
-    if (moderatorDisconnectTimeout.value) {
-      clearTimeout(moderatorDisconnectTimeout.value)
-      moderatorDisconnectTimeout.value = null
-    }
-    moderatorInactive.value = false
+const handleWelcomeStart = async () => {
+  if (globalIndex.value !== 0) return
+  if (isModerator.value) {
+    await update(dbRef(database, `rooms/${roomId.value}`), {
+      showVideoCall: true,
+    })
   }
-}
-
-// Scroll to top of the page when step changes
-const scrollToTop = () => {
-  // For most browsers
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-  // For rightView (in case of overflow)
-  if (rightView.value) {
-    rightView.value.scrollTop = 0
-  }
-}
-
-const callTimerSave = () => {
   if (
-    timerComponent.value &&
-    typeof timerComponent.value.stopTimer === 'function'
+    !isModerator.value &&
+    !localTestAnswer.submitted &&
+    totalTestTimeStartedAt.value === null
   ) {
-    timerComponent.value.stopTimer()
+    totalTestTimeStartedAt.value = Date.now()
+  }
+  await requestFullscreenIfAvailable()
+  displayVideoCallComponent.value = true
+  globalIndex.value = 1
+}
+
+const showTaskTitleAnnouncement = async (idx) => {
+  const task = test.value?.testStructure?.userTasks?.[idx]
+  if (!task) return
+
+  const fallbackTitle = t('UserTestView.stepper.taskX', { num: idx + 1 })
+  const announcementTitle = task.taskName || fallbackTitle
+  const announcementKicker = fallbackTitle
+
+  await safelyShowNextStepAnnouncement(announcementTitle, 3, announcementKicker)
+}
+
+const showStageAnnouncementByGlobalIndex = async (
+  idx,
+  currentTaskIndex = 0,
+) => {
+  if (idx === 1) {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
+    return
+  }
+
+  if (idx === 2) {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.preTest'), 2)
+    return
+  }
+
+  if (idx === 3) {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.tasks'), 3)
+    return
+  }
+
+  if (idx === 4) {
+    await showTaskTitleAnnouncement(currentTaskIndex)
+    return
+  }
+
+  if (idx === 5) {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.postTest'), 4)
+    return
+  }
+
+  if (idx === 6) {
+    await safelyShowNextStepAnnouncement(
+      t('UserTestView.WelcomeStep.steps.submission'),
+      5,
+    )
   }
 }
 
-function handleTaskFinish(userCompleted) {
-  const currentTask = localTestAnswer.tasks[taskIndex.value]
-  if (currentTask) {
-    console.log('Estado actual de la tarea antes de finalizar:', currentTask) // eslint-disable-line no-console
-  }
-  completeStep(taskIndex.value, 'tasks', userCompleted)
-  callTimerSave()
+const handleStartTasks = async () => {
+  await showTaskTitleAnnouncement(0)
+  taskIndex.value = 0
+  globalIndex.value = 4
+}
+
+async function handleTaskFinish(userCompleted) {
+  const finishedObservedAt = new Date().toISOString()
+  // callTimerSave()
+  await completeStep(
+    taskIndex.value,
+    'tasks',
+    userCompleted,
+    finishedObservedAt,
+  )
 }
 
 const startTimer = () => {
@@ -1058,7 +2072,6 @@ const startTimer = () => {
 
 const handleTimerStopped = (elapsedTime, idx) => {
   // idx is passed from TaskStep, always use it
-  console.log('handleTimerStopped llamado con:', { elapsedTime, idx }) // eslint-disable-line no-console
 
   if (!localTestAnswer.tasks) {
     console.error('localTestAnswer.tasks no está definido') // eslint-disable-line no-console
@@ -1083,30 +2096,75 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 }
 
-const completeStep = async (id, type, userCompleted = true) => {
+const handleTipPressed = (idx) => {
+  if (idx === undefined || idx === null) {
+    return
+  }
+
+  if (!localTestAnswer.tasks?.[idx]) {
+    return
+  }
+
+  const current = Number(localTestAnswer.tasks[idx].tipPressCount || 0)
+  localTestAnswer.tasks[idx].tipPressCount = current + 1
+}
+
+const STEP_GROUP_IDS = {
+  preTest: 0,
+  tasks: 1,
+  postTest: 2,
+}
+
+function findStepGroup(groupId) {
+  return items.value.find((item) => item.id === groupId)
+}
+
+function markSubStepComplete(groupId, subStepId) {
+  const group = findStepGroup(groupId)
+  if (group?.value?.[subStepId]) {
+    group.value[subStepId].icon = 'mdi-check-circle-outline'
+  }
+}
+
+function markGroupComplete(groupId) {
+  const group = findStepGroup(groupId)
+  if (group) {
+    group.icon = 'mdi-check-circle-outline'
+  }
+}
+
+const completeStep = async (
+  id,
+  type,
+  userCompleted = true,
+  finishedObservedAt,
+) => {
+  const consentAcceptedAt =
+    type === 'consent' ? new Date().toISOString() : undefined
   displayVideoCallComponent.value = true
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
-      items.value[0].value[id].icon = 'mdi-check-circle-outline'
-      if (
-        localTestAnswer.preTestCompleted &&
-        localTestAnswer.consentCompleted
-      ) {
-        items.value[0].icon = 'mdi-check-circle-outline'
+      const preTestGroup = findStepGroup(STEP_GROUP_IDS.preTest)
+      if (preTestGroup) {
+        markSubStepComplete(STEP_GROUP_IDS.preTest, 0)
+        if (
+          localTestAnswer.preTestCompleted &&
+          localTestAnswer.consentCompleted
+        ) {
+          markGroupComplete(STEP_GROUP_IDS.preTest)
+        }
       }
-      globalIndex.value = 2
     }
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
-      items.value[0].value[id].icon = 'mdi-check-circle-outline'
+      markSubStepComplete(STEP_GROUP_IDS.preTest, 1)
       if (
         localTestAnswer.preTestCompleted &&
         localTestAnswer.consentCompleted
       ) {
-        items.value[0].icon = 'mdi-check-circle-outline'
+        markGroupComplete(STEP_GROUP_IDS.preTest)
       }
-      globalIndex.value = 3
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
@@ -1114,26 +2172,25 @@ const completeStep = async (id, type, userCompleted = true) => {
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
-      if (items.value[1]?.value?.[id]) {
-        items.value[1].value[id].icon = 'mdi-check-circle-outline'
-      }
+      localTestAnswer.tasks[id].attempted = true
+      markSubStepComplete(STEP_GROUP_IDS.tasks, id)
       allTasksCompleted.value = true
 
-      for (let i = 0; i < items.value[1]?.value?.length || 0; i++) {
+      const tasksGroup = findStepGroup(STEP_GROUP_IDS.tasks)
+      for (let i = 0; i < tasksGroup?.value?.length || 0; i++) {
         if (!localTestAnswer.tasks[i]?.completed) {
           allTasksCompleted.value = false
           break
         }
       }
-      if (allTasksCompleted.value && items.value[1]) {
-        items.value[1].icon = 'mdi-check-circle-outline'
+      if (allTasksCompleted.value) {
+        markGroupComplete(STEP_GROUP_IDS.tasks)
       }
       if (id < localTestAnswer.tasks.length - 1) {
+        await showTaskTitleAnnouncement(id + 1)
         taskIndex.value = id + 1
+        lastAnnouncedRemoteStepKey.value = `${globalIndex.value}-${taskIndex.value}`
         startTimer()
-      } else {
-        console.log('All tasks completed, moving to post-test') // eslint-disable-line no-console
-        globalIndex.value = 5
       }
       if (userCompleted) {
         store.commit('SET_TOAST', {
@@ -1147,10 +2204,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true
-      globalIndex.value = 6
-      if (items.value[2]?.value && items.value[2].value[id]) {
-        items.value[2].value[id].icon = 'mdi-check-circle-outline'
-      }
+      markSubStepComplete(STEP_GROUP_IDS.postTest, id)
     }
 
     const roomRef = dbRef(database, `rooms/${roomId.value}`)
@@ -1160,22 +2214,16 @@ const completeStep = async (id, type, userCompleted = true) => {
       showVideoCall: true,
     })
 
-    // Update individual participant taskIndex (for tracking)
-    if (!isUserTestAdmin.value && user.value?.id) {
-      const participantRef = dbRef(
-        database,
-        `calls/${roomId.value}/participants/${user.value.id}`,
-      )
-      // We can just update taskIndex.
-      // Note: 'taskIndex' variable here is the NEXT index (already updated above if type=='tasks')
-      // validation: type === 'tasks' ? id + 1 : taskIndex.value
-      await update(participantRef, {
-        taskIndex: taskIndex.value,
-      })
-    }
+    await publishParticipantProgress()
 
-    calculateProgress(localTestAnswer)
+    calculateProgress(localTestAnswer, test.value?.testStructure)
     await saveAnswer()
+    if (type === 'consent') {
+      void initializeStudyLogging()?.consentAccepted(consentAcceptedAt)
+    }
+    if (type === 'tasks') {
+      void initializeStudyLogging()?.taskFinished(id, finishedObservedAt)
+    }
   } catch (error) {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
@@ -1187,11 +2235,11 @@ const completeStep = async (id, type, userCompleted = true) => {
 
 const mappingSteps = async () => {
   try {
-    items.value = []
+    const nextItems = []
 
     // PreTest
     if (validate(test.value?.testStructure?.preTest)) {
-      items.value.push({
+      nextItems.push({
         title: t('UserTestView.stepper.preTest'),
         icon: 'mdi-check-bold',
         value: [
@@ -1222,7 +2270,7 @@ const mappingSteps = async () => {
 
     // Tasks
     if (validate(test.value?.testStructure?.userTasks)) {
-      items.value.push({
+      nextItems.push({
         title: t('UserTestView.stepper.tasks'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.userTasks.map((task, index) => ({
@@ -1245,6 +2293,7 @@ const mappingSteps = async () => {
               postAnswer: '',
               taskTime: 0,
               completed: false,
+              tipPressCount: 0,
               susAnswers: [],
               nasaTlxAnswers: null,
             })
@@ -1256,7 +2305,7 @@ const mappingSteps = async () => {
 
     // PostTest
     if (validate(test.value?.testStructure?.postTest)) {
-      items.value.push({
+      nextItems.push({
         title: t('UserTestView.stepper.postTest'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.postTest,
@@ -1273,6 +2322,8 @@ const mappingSteps = async () => {
         )
       }
     }
+
+    items.value = nextItems
   } catch (error) {
     console.error('Error mapping steps:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
@@ -1300,7 +2351,7 @@ watchEffect(() => {
     isStartTestDisabled.value = true
     return
   }
-  if (isUserTestAdmin.value) {
+  if (isModerator.value) {
     if (localTestAnswer.submitted) {
       testDisabledReason.value = 'test-already-completed'
       isStartTestDisabled.value = true
@@ -1317,23 +2368,6 @@ watchEffect(() => {
     }
     return
   }
-  const now = new Date()
-  const userSessions = test.value.cooperators.filter(
-    (u) => u.userDocId === route.params.token,
-  )
-
-  const cooperator = userSessions
-    .filter((s) => {
-      const sessionDate = new Date(s.testDate)
-      const diffHours = (sessionDate - now) / (1000 * 60 * 60)
-      return diffHours >= 0 && diffHours <= 24
-    })
-    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))[0]
-
-  const sessionDate = cooperator?.testDate
-    ? new Date(cooperator.testDate)
-    : null
-
   // 🧩 Test already completed
   if (localTestAnswer.submitted) {
     testDisabledReason.value = 'test-already-completed'
@@ -1358,33 +2392,14 @@ watchEffect(() => {
     return
   }
 
-  // 🧩 Check session date
-  if (sessionDate) {
-    const diffHours = (sessionDate.getTime() - now.getTime()) / (1000 * 60 * 60)
-
-    if (diffHours < 0) {
-      testDisabledReason.value = 'test-expired'
-      isStartTestDisabled.value = true
-      return
-    }
-
-    if (diffHours > 24) {
-      testDisabledReason.value = 'test-session-too-far'
-      isStartTestDisabled.value = true
-      return
-    }
-    testDisabledReason.value = null
-    return false
-  }
-
-  // 🧩 Test expired (fallback endDate)
-  if (test.value.endDate) {
-    const endDate = new Date(test.value.endDate)
-    if (now > endDate) {
-      testDisabledReason.value = 'test-expired'
-      isStartTestDisabled.value = true
-      return
-    }
+  const timingReason = moderatedSessionTimingReason({
+    scheduledAt: session.value?.scheduledAt,
+    studyEndDate: test.value.endDate,
+  })
+  if (timingReason) {
+    testDisabledReason.value = timingReason
+    isStartTestDisabled.value = true
+    return
   }
 
   testDisabledReason.value = null
@@ -1399,51 +2414,30 @@ onMounted(async () => {
     return
   }
 
-  if (route.params.token) {
-    if (route.params.token === test.value.id) {
-      showInfo(t('UserTestView.messages.useSessionLinkModerated'))
-      router.push('/managerview/' + test.value.id)
-      return
-    }
-
-    if (user.value.id !== route.params.token && !isUserTestAdmin.value) {
-      showError('errors.globalError')
-      router.push('/admin')
-      return
-    }
-
-    if (!isUserTestAdmin.value) {
-      sessionCooperator.value = test.value.cooperators.find(
-        (user) => user.userDocId === route.params.token,
-      )
-      if (sessionCooperator.value?.testDate) {
-        testDate.value = sessionCooperator.value.testDate
-      } else {
-        showWarning(t('UserTestView.warnings.sessionNotScheduled'))
-        return
-      }
-    }
-  } else {
+  if (!sessionId.value) {
     showInfo(t('UserTestView.messages.useSessionLink'))
     return
   }
 
   globalIndex.value = 0
 
-  // Initialize localTestAnswer with existing data from currentUserTestAnswer
   if (
     currentUserTestAnswer.value &&
     Object.keys(currentUserTestAnswer.value).length > 0
   ) {
     Object.assign(localTestAnswer, currentUserTestAnswer.value)
   }
+  if (!isModerator.value && hasTestActivity(localTestAnswer)) {
+    totalTestTimeStartedAt.value = Date.now()
+  }
 
   await mappingSteps()
+  initializeStudyLogging()
 })
 
 // Auto-join if refresh happens during active call
 watch(
-  isUserTestAdmin,
+  isModerator,
   async (newValue) => {
     if (newValue && roomId.value) {
       const roomRef = dbRef(database, `rooms/${roomId.value}`)
@@ -1461,16 +2455,13 @@ watch(
   { immediate: true },
 )
 
-onBeforeUnmount(async () => {
-  const roomRef = dbRef(database, `rooms/${roomId.value}`)
-  off(roomRef)
-  // Do NOT delete the room on unmount (refresh/navigate away). Only explicit end should delete.
-  // await set(roomRef, null)
+onBeforeUnmount(() => {
+  studyLogging?.destroy()
+  stopRealtimeListeners()
 
-  // Moderator: explicitly stamp lastUpdate on leave (covers SPA navigation)
-  if (isUserTestAdmin.value) {
-    await update(roomRef, { lastUpdate: serverTimestamp() })
-  }
+  // Never re-create or mutate room metadata during unmount. The room is deleted
+  // only in the explicit end-call flow, and any leftover timestamp writes would
+  // reintroduce stale `lastUpdate` values after the branch was already removed.
 
   if (moderatorDisconnectTimeout.value) {
     clearTimeout(moderatorDisconnectTimeout.value)
@@ -1517,32 +2508,12 @@ onBeforeUnmount(async () => {
   }
 }
 
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-}
-
-.start-screen.leaving::before {
-  opacity: 0;
-}
-
 /* Stepper sticky styles */
 .sticky-stepper {
   position: sticky;
   top: 0;
+  margin-bottom: 24px;
+
   z-index: 10;
   background: transparent;
 }
@@ -1599,5 +2570,57 @@ onBeforeUnmount(async () => {
 
 .v-stepper-item {
   padding: 1rem;
+}
+
+.participant-call-pip {
+  position: fixed !important;
+  z-index: 1400;
+  right: 20px;
+  bottom: 88px;
+  width: min(380px, calc(100vw - 32px));
+  height: 280px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+.participant-call-pip :deep(.video-call-container) {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.participant-call-pip :deep(.video-row) {
+  height: calc(100% - 52px) !important;
+}
+
+.participant-call-pip :deep(.video-stage) {
+  height: 100% !important;
+}
+
+.participant-call-pip :deep(.bottom-control-bar) {
+  position: absolute !important;
+  bottom: 4px !important;
+  left: 50% !important;
+  width: calc(100% - 12px) !important;
+  max-width: calc(100% - 12px) !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  max-height: 44px !important;
+  padding: 4px 8px !important;
+  border-radius: 8px !important;
+  transform: translateX(-50%) !important;
+}
+
+@media (max-width: 600px) {
+  .participant-call-pip {
+    right: 12px;
+    bottom: 76px;
+    width: min(300px, calc(100vw - 24px));
+    height: 210px;
+  }
 }
 </style>

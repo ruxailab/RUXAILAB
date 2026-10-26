@@ -3,7 +3,7 @@
     :headers="headers"
     :items="items"
     :sort-by="sortBy || [{ key: 'updateDate', order: 'desc' }]"
-    item-key="id"
+    :item-value="itemValue"
     density="comfortable"
     class="rounded-lg"
     elevation="2"
@@ -39,18 +39,6 @@
         <div class="text-subtitle-1 font-weight-medium text-on-surface">
           {{ getItemTitle(item) }}
         </div>
-        <!-- <div v-if="type == 'sessions'" class="text-caption text-medium-emphasis">
-          Session Date: {{formatDateTime(item.testDate, 'es')}}
-        </div>
-        <div v-else class="text-caption text-medium-emphasis">
-          <span v-if="item.testAuthorEmail">
-            Last Updated:
-          </span>
-          <span v-else>
-            Creation Date:
-          </span>
-           {{ formatItemDate(item) }}
-        </div> -->
       </div>
     </template>
 
@@ -75,10 +63,6 @@
       {{ formatItemDate(item) }}
     </template>
 
-    <template #item.testDate="{ item }">
-      {{ formatDateTime(item.testDate, 'es') }}
-    </template>
-
     <!-- Owner Column -->
     <template #item.owner="{ item }">
       {{ getOwnerName(item) }}
@@ -90,7 +74,30 @@
 
     <!-- Participants Column -->
     <template #item.participants="{ item }">
+      <!-- Sessions: show participant emails -->
+      <div v-if="type === 'sessions'" class="d-flex flex-wrap align-center">
+        <v-chip
+          v-for="(participant, index) in item.participants || []"
+          :key="participant.userDocId || participant.email || index"
+          size="small"
+          variant="tonal"
+          color="info"
+          class="ma-1"
+        >
+          {{ participant.email }}
+        </v-chip>
+
+        <span
+          v-if="!item.participants?.length"
+          class="text-medium-emphasis text-body-2"
+        >
+          -
+        </span>
+      </div>
+
+      <!-- Other tables: keep participant count -->
       <v-chip
+        v-else
         size="small"
         variant="tonal"
         :color="getParticipantCount(item) > 0 ? 'info' : 'light'"
@@ -100,14 +107,42 @@
       </v-chip>
     </template>
 
+    <!-- Staff Column -->
+    <template #item.staff="{ item }">
+      <div class="d-flex flex-wrap align-center">
+        <v-chip
+          v-for="(staff, index) in item.staff || []"
+          :key="staff.userDocId || staff.email || index"
+          size="small"
+          variant="tonal"
+          color="primary"
+          class="ma-1"
+        >
+          {{ staff.email }} - {{ getStaffRoleLabel(staff.role) }}
+        </v-chip>
+
+        <span
+          v-if="!item.staff?.length"
+          class="text-medium-emphasis text-body-2"
+        >
+          -
+        </span>
+      </div>
+    </template>
+
+    <!-- Session Date Column -->
+    <template #item.scheduledAt="{ item }">
+      {{ formatDateTime(item.scheduledAt, store.getters['Language/lang']) }}
+    </template>
+
     <!-- Status Column -->
     <template #item.status="{ item }">
       <v-chip
         label
         variant="tonal"
-        :color="getSessionStatus(item.testDate).variant"
+        :color="getSessionStatus(item.scheduledAt, item.lifecycleStatus).variant"
       >
-        {{ getSessionStatus(item.testDate).label }}
+        {{ getSessionStatus(item.scheduledAt, item.lifecycleStatus).label }}
       </v-chip>
     </template>
 
@@ -185,15 +220,20 @@ const { t } = useI18n()
 // Composables
 const typeRef = toRef(props, 'type')
 const showActionsRef = toRef(props, 'showActions')
-const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef, t, {
-  showActions: showActionsRef,
-})
+const { headers, getEmptyStateMessage, itemValue } = useDataTableConfig(
+  typeRef,
+  t,
+  {
+    showActions: showActionsRef,
+  },
+)
 const {
   getItemTitle,
   getOwnerName,
   getTags,
   getParticipantCount,
   formatItemDate,
+  getStaffRoleLabel,
 } = useItemFormatting(typeRef)
 const { getTypeIcon, getTestType, getAvatarColor } = useItemTypes()
 

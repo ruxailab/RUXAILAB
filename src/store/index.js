@@ -14,6 +14,9 @@ import automaticReport from '@/ux/accessibility/store/automaticReport'
 import UserStudy from '@/ux/UserTest/store/UserStudy'
 import notification from '@/features/notifications/store/notification'
 import CardStudy from '@/ux/CardSorting/stores/CardStudy'
+import FocusGroup from '@/ux/FocusGroup/store/FocusGroup'
+import Invite from '@/shared/store/Invite'
+import Session from '@/shared/store/Session'
 
 export default createStore({
   state: {
@@ -92,5 +95,8 @@ export default createStore({
     UserStudy,
     CardStudy,
     notification,
+    FocusGroup,
+    Invite,
+    Session,
   },
 })

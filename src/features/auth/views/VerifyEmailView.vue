@@ -72,7 +72,7 @@
 
       <!-- Sign Out Link -->
       <div class="sign-out-link">
-        <button class="link-btn" @click="logout">
+        <button class="link-btn" @click="handleLogout">
           {{ $t('auth.signOut') }}
         </button>
       </div>
@@ -83,7 +83,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { auth } from '@/app/plugins/firebase'
-import { onAuthStateChanged } from 'firebase/auth'
 
 export default {
   name: 'VerifyEmailView',
@@ -106,9 +105,7 @@ export default {
   },
   mounted() {
     // Ensure user is logged in
-    onAuthStateChanged(auth, () => {
-      this.initializeVerification()
-    })
+    this.initializeVerification()
   },
 
   beforeUnmount() {
@@ -118,7 +115,10 @@ export default {
   },
 
   methods: {
-    ...mapActions(['sendVerificationEmail', 'logout']),
+    ...mapActions({
+      sendVerificationEmail: 'sendVerificationEmail',
+      logoutAction: 'logout',
+    }),
 
     async checkEmailVerificationStatus() {
       try {
@@ -176,9 +176,9 @@ export default {
       this.$router.push('/admin')
     },
 
-    async logout() {
+    async handleLogout() {
       try {
-        await this.logout()
+        await this.logoutAction()
         this.$router.push('/signin')
       } catch {}
     },

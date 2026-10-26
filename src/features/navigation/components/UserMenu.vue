@@ -93,7 +93,7 @@
               <div
                 class="d-flex align-center px-4 py-3 rounded-lg cursor-pointer"
                 :class="{ 'error lighten-5': isHovering }"
-                @click="signOut(), (menu = false)"
+                @click="openSignOutDialog"
               >
                 <v-icon color="error" size="20"> mdi-logout </v-icon>
                 <span
@@ -108,6 +108,21 @@
         </div>
       </template>
     </v-menu>
+
+    <ConfirmDialog
+      v-model:show="showSignOutDialog"
+      :title="$t('buttons.signout')"
+      :message="$t('dialogs.signOutMessage')"
+      :confirm-text="$t('buttons.signout')"
+      :cancel-text="$t('buttons.cancel')"
+      confirm-color="error"
+      confirm-icon="mdi-logout"
+      icon="mdi-logout"
+      icon-color="error"
+      type="error"
+      :loading="signingOut"
+      @confirm="signOut"
+    />
   </div>
 </template>
 
@@ -118,6 +133,7 @@ import { useStore } from 'vuex'
 import { getAuth } from 'firebase/auth'
 import UserController from '@/features/auth/controllers/UserController'
 import { showError } from '@/shared/utils/toast'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 // Composables
 const router = useRouter()
@@ -127,6 +143,8 @@ const store = useStore()
 const menu = ref(false)
 const username = ref(null)
 const profileImage = ref(null)
+const showSignOutDialog = ref(false)
+const signingOut = ref(false)
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -175,9 +193,23 @@ const goToProfile = () => {
     .catch(() => {})
 }
 
+const openSignOutDialog = () => {
+  menu.value = false
+  showSignOutDialog.value = true
+}
+
 const signOut = async () => {
-  await store.dispatch('logout')
-  router.push('/').catch(() => {})
+  signingOut.value = true
+
+  try {
+    await store.dispatch('logout')
+    showSignOutDialog.value = false
+    router.push('/').catch(() => {})
+  } catch {
+    showError('errors.globalError')
+  } finally {
+    signingOut.value = false
+  }
 }
 
 // Watchers

@@ -4,7 +4,7 @@ const mockSet = jest.fn();
 const mockUpdate = jest.fn();
 const mockGet = jest.fn();
 
-jest.unstable_mockModule('../src/f.firebase.js', () => ({
+jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   admin: {
     firestore: Object.assign(jest.fn().mockReturnValue({
       collection: jest.fn().mockReturnValue({

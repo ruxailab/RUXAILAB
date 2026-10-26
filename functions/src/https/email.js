@@ -1,4 +1,4 @@
-import { admin, functions } from '../f.firebase.js'
+import { admin, functions } from '../core/firebase/f.firebase.js'
 import nodemailer from 'nodemailer'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -6,7 +6,6 @@ import { logger } from 'firebase-functions'
 
 export const sendEmail = functions.onCall({
   handler: async (data) => {
-    // Firebase callable passes the argument directly
     const content = data.data || data
 
     const transporter = nodemailer.createTransport({
@@ -20,55 +19,133 @@ export const sendEmail = functions.onCall({
     })
 
     let htmlTemplate = ''
-    if (content.template === 'invite') {
-      const templatePath = path.join(
-        process.cwd(),
-        'src/templates/mails/invitations.html',
-      )
-      htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
-      htmlTemplate = htmlTemplate
-        .replace('{{site}}', process.env.SITE_URL)
-        .replace('{{message}}', content.data.message)
-        .replace(/{{testTitle}}/g, content.data.testTitle)
-        .replace(/{{testDescription}}/g, content.data.testDescription)
-        .replace(/{{adminEmail}}/g, content.data.adminEmail)
-        .replace(/{{adminName}}/g, content.data.adminName)
-    } else if (content.template === 'passwordReset') {
-      const actionCodeSettings = {
-        url: `${process.env.SITE_URL}/signin`,
-        handleCodeInApp: false,
+
+    switch (content.template || 'message') {
+      case 'invite': {
+        const templatePath = path.join(
+          process.cwd(),
+          'src/templates/mails/invitations.html',
+        )
+
+        htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
+
+        htmlTemplate = htmlTemplate
+          .replace(
+            /{{invitationLink}}/g,
+            content.data.invitationLink || process.env.SITE_URL,
+          )
+          .replace(/{{title}}/g, content.data.title || '')
+          .replace(/{{description}}/g, content.data.description || '')
+          .replace(/{{message}}/g, content.data.message || '')
+          .replace(/{{testTitle}}/g, content.data.testTitle || '')
+          .replace(/{{testDescription}}/g, content.data.testDescription || '')
+          .replace(/{{adminEmail}}/g, content.data.adminEmail || '')
+          .replace(/{{adminName}}/g, content.data.adminName || '')
+
+        break
       }
 
-      const link = await admin
-        .auth()
-        .generatePasswordResetLink(content.to, actionCodeSettings)
-      const templatePath = path.join(
-        process.cwd(),
-        'src/templates/mails/passwordReset.html',
-      )
-      htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
-      htmlTemplate = htmlTemplate.replace('{{resetLink}}', link)
-    } else if (content.template === 'emailVerification') {
-      const actionCodeSettings = {
-        url: `${process.env.SITE_URL}/verify-email`,
-        handleCodeInApp: false,
+      case 'passwordReset': {
+        const actionCodeSettings = {
+          url: `${process.env.SITE_URL}/signin`,
+          handleCodeInApp: false,
+        }
+
+        const link = await admin
+          .auth()
+          .generatePasswordResetLink(content.to, actionCodeSettings)
+
+        const templatePath = path.join(
+          process.cwd(),
+          'src/templates/mails/passwordReset.html',
+        )
+
+        htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
+
+        htmlTemplate = htmlTemplate.replace(/{{resetLink}}/g, link)
+
+        break
       }
 
-      const link = await admin
-        .auth()
-        .generateEmailVerificationLink(content.to, actionCodeSettings)
-      const templatePath = path.join(
-        process.cwd(),
-        'src/templates/mails/emailVerification.html',
-      )
-      htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
-      htmlTemplate = htmlTemplate
-        .replace('{{verificationLink}}', link)
-        .replace('{{userName}}', content.data.userName || 'User')
+      case 'emailVerification': {
+        const actionCodeSettings = {
+          url: `${process.env.SITE_URL}/verify-email`,
+          handleCodeInApp: false,
+        }
+
+        const link = await admin
+          .auth()
+          .generateEmailVerificationLink(content.to, actionCodeSettings)
+
+        const templatePath = path.join(
+          process.cwd(),
+          'src/templates/mails/emailVerification.html',
+        )
+
+        htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
+
+        htmlTemplate = htmlTemplate
+          .replace(/{{verificationLink}}/g, link)
+          .replace(/{{userName}}/g, content.data.userName || 'User')
+
+        break
+      }
+      case 'session-invite': {
+        const templatePath = path.join(
+          process.cwd(),
+          'src/templates/mails/sessionInvite.html',
+        )
+
+        htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
+
+        htmlTemplate = htmlTemplate
+          .replace(/{{title}}/g, content.data.title || '')
+          .replace(/{{description}}/g, content.data.description || '')
+          .replace(/{{studyTitle}}/g, content.data.studyTitle || '')
+          .replace(/{{testDescription}}/g, content.data.studyDescription || '')
+          .replace(/{{sessionTitle}}/g, content.data.sessionTitle || '')
+          .replace(/{{sessionMessage}}/g, content.data.sessionMessage || '')
+          .replace(/{{scheduledAt}}/g, content.data.scheduledAt || '')
+          .replace(/{{invitedBy}}/g, content.data.invitedBy || '')
+          .replace(
+            /{{sessionLink}}/g,
+            content.data.sessionLink || process.env.SITE_URL,
+          )
+
+        break
+      }
+
+      case 'message':
+      default: {
+        const templatePath = path.join(
+          process.cwd(),
+          'src/templates/mails/message.html',
+        )
+
+        htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
+
+        htmlTemplate = htmlTemplate
+          .replace(/{{title}}/g, content.data.title || '')
+          .replace(/{{message}}/g, content.data.message || '')
+          .replace(/{{author}}/g, content.data.author || '')
+          .replace(
+            /{{actionText}}/g,
+            content.data.actionText || 'Go to RUXAILAB',
+          )
+          .replace(
+            /{{actionLink}}/g,
+            content.data.actionLink || process.env.SITE_URL,
+          )
+
+        break
+      }
     }
 
     const mail = {
-      from: process.env.SMTP_USER || 'no-reply@ruxailab.com',
+      from: {
+        name: 'RUXAILAB',
+        address: process.env.SMTP_USER || 'no-reply@ruxailab.com',
+      },
       to: content.to,
       subject: content.subject,
       html: htmlTemplate,
@@ -77,10 +154,20 @@ export const sendEmail = functions.onCall({
 
     try {
       await transporter.sendMail(mail)
-      logger.info('Email sent successfully to', { to: content.to })
+
+      logger.info('Email sent successfully to', {
+        to: content.to,
+        template: content.template || 'message',
+      })
+
       return 'Email sent successfully.'
     } catch (err) {
-      logger.error('Error sending email:', { error: err })
+      logger.error('Error sending email:', {
+        to: content.to,
+        template: content.template || 'message',
+        error: err,
+      })
+
       return err
     }
   },

@@ -4,6 +4,11 @@ import {
   getMethodCategory,
   getMethodDefinition,
 } from '../constants/methodDefinitions'
+import {
+  getStatusColor,
+  getStatusIcon,
+  getStatusText,
+} from '@/shared/utils/statusUtils'
 
 export function useItemFormatting(type) {
   const { t, ...i18n } = useI18n()
@@ -11,6 +16,11 @@ export function useItemFormatting(type) {
   const getItemTitle = (item) => {
     if (type.value === 'myTemplates' || type.value === 'publicTemplates')
       return item.header?.templateTitle
+
+    if (type.value === 'sessions') {
+      return item.title || 'Session'
+    }
+
     return item.testTitle ?? item.email ?? 'Untitled'
   }
 
@@ -20,6 +30,14 @@ export function useItemFormatting(type) {
       return (
         item.header?.templateAuthor?.userEmail || t('pages.listTests.unknown')
       )
+
+    if (type.value === 'sessions') {
+      return (
+        item.study.testAdmin?.email ??
+        item.study.testAuthorEmail ??
+        t('pages.listTests.me')
+      )
+    }
     return (
       item.testAdmin?.email ?? item.testAuthorEmail ?? t('pages.listTests.me')
     )
@@ -35,20 +53,32 @@ export function useItemFormatting(type) {
     return item.numberColaborators ?? item.cooperators?.length ?? 0
   }
 
+  const getStaffRoleLabel = (role) => {
+    const roleLabels = {
+      FACILITATOR: t('Sessions.staff.roles.facilitator'),
+      OBSERVER: t('Sessions.staff.roles.observer'),
+    }
+
+    return roleLabels[role] || role
+  }
+
   const formatItemDate = (item) => {
     const date =
-      type.value === 'myTemplates' || type.value === 'publicTemplates'
-        ? item.header?.creationDate
-        : item.creationDate || item.updateDate
+      type.value == 'sessions'
+        ? item.createdAt
+        : type.value === 'myTemplates' || type.value === 'publicTemplates'
+          ? item.header?.creationDate
+          : item.creationDate || item.updateDate
 
     return formatDateLong(date, i18n.locale.value)
   }
 
   const getTags = (item) => {
     const tags = []
+    const study = item.study || item
 
     // method definition
-    const definition = getMethodDefinition(item.testType, item.subType)
+    const definition = getMethodDefinition(study.testType, study.subType)
     if (definition) {
       tags.push({
         label: t(`methods.definitions.${definition.id}`),
@@ -58,7 +88,7 @@ export function useItemFormatting(type) {
     }
 
     // method category (ex: Test / Inquiry / Inspection / Accessibility)
-    const category = getMethodCategory(item)
+    const category = getMethodCategory(study)
     if (category) {
       tags.push({
         label: t(`methods.categories.${category.id}`),
@@ -68,35 +98,25 @@ export function useItemFormatting(type) {
     }
 
     // status
-    if (item.status) {
+    if (study.status) {
       tags.push({
-        label: t(`tags.${item.status}`),
-        color:
-          item.status === 'active'
-            ? 'green'
-            : item.status === 'draft'
-              ? 'orange'
-              : 'grey',
-        icon:
-          item.status === 'active'
-            ? 'mdi-check-circle'
-            : item.status === 'draft'
-              ? 'mdi-pencil'
-              : 'mdi-clock-outline',
+        label: getStatusText(study.status),
+        color: getStatusColor(study.status),
+        icon: getStatusIcon(study.status),
       })
     }
 
     // visibility
-    if (item.isPublic !== undefined) {
+    if (study.isPublic !== undefined) {
       tags.push({
-        label: item.isPublic ? t('tags.public') : t('tags.private'),
-        color: item.isPublic ? 'green' : 'grey',
-        icon: item.isPublic ? 'mdi-earth' : 'mdi-lock',
+        label: study.isPublic ? t('tags.public') : t('tags.private'),
+        color: study.isPublic ? 'green' : 'grey',
+        icon: study.isPublic ? 'mdi-earth' : 'mdi-lock',
       })
     }
 
     // if created from a template
-    if (item.templateDoc) {
+    if (study.templateDoc) {
       tags.push({
         label: t('tags.fromTemplate'),
         color: '#9C27B0',
@@ -105,7 +125,7 @@ export function useItemFormatting(type) {
     }
 
     // has cooperators
-    if (item.cooperators?.length > 0) {
+    if (study.cooperators?.length > 0) {
       tags.push({
         label: t('tags.withCollaborators'),
         color: '#ff6161ff',
@@ -123,5 +143,6 @@ export function useItemFormatting(type) {
     getParticipantCount,
     formatItemDate,
     getTags,
+    getStaffRoleLabel,
   }
 }

@@ -16,6 +16,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import IntrosComponent from './IntrosComponent.vue'
+import { goToDisc } from '@/shared/utils/externalLinks'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -45,10 +46,6 @@ const goToCoops = () => {
 
 const goToDoc = () => {
   router.push('/help').catch(() => {})
-}
-
-const goToDisc = () => {
-  window.open('https://discord.gg/MFWNpwTq9q')
 }
 
 const callFunc = (func) => {

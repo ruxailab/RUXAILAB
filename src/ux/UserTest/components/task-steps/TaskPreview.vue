@@ -23,11 +23,11 @@
                   {{ $t('CreateTask.preview.description') }}
                 </div>
                 <div
-                  class="description-content"
-                  v-html="
+                  v-safe-html="
                     (task && task.taskDescription) ||
                     $t('CreateTask.preview.noDescription')
                   "
+                  class="description-content"
                 ></div>
               </div>
 

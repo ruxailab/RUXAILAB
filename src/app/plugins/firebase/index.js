@@ -1,10 +1,15 @@
 import { initializeApp } from 'firebase/app'
-import { getAnalytics } from 'firebase/analytics'
-import { getAuth, connectAuthEmulator } from 'firebase/auth'
+//import { getAnalytics } from 'firebase/analytics'
+import {
+  getAuth,
+  connectAuthEmulator,
+  browserLocalPersistence,
+  setPersistence,
+} from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
-import { getDatabase } from 'firebase/database'
+import { getDatabase, connectDatabaseEmulator } from 'firebase/database'
 
 const REQUIRED_ENV_VARS = {
   VUE_APP_FIREBASE_API_KEY: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -35,27 +40,53 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
-const analytics = getAnalytics(firebaseApp)
-const fbFunctions = getFunctions(firebaseApp)
+//const analytics = getAnalytics(firebaseApp)
+const functionsRegion = process.env.VUE_APP_FIREBASE_FUNCTIONS_REGION?.trim()
+const fbFunctions = functionsRegion
+  ? getFunctions(firebaseApp, functionsRegion)
+  : getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
-if (process.env.VUE_APP_USE_EMULATORS === 'true') {
-  const EMULATOR_HOST =
-    process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
-  const FIRESTORE_EMULATOR_PORT =
-    Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
+const EMULATOR_HOST = process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
+const USE_FIREBASE_EMULATORS = process.env.VUE_APP_USE_EMULATORS === 'true'
+const useEmulator = (serviceFlag) =>
+  USE_FIREBASE_EMULATORS || process.env[serviceFlag] === 'true'
+
+if (useEmulator('VUE_APP_USE_AUTH_EMULATOR')) {
   const AUTH_EMULATOR_PORT =
     Number(process.env.VUE_APP_AUTH_EMULATOR_PORT) || 9099
+  connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`, {
+    disableWarnings: false,
+  })
+  // The Auth Emulator defaults to in-memory persistence, which means sessions
+  // are lost on refresh and never visible in DevTools → Local Storage.
+  // Explicitly set Local persistence so emulator behaviour matches production.
+  setPersistence(auth, browserLocalPersistence).catch(() => {})
+}
+
+if (useEmulator('VUE_APP_USE_FIRESTORE_EMULATOR')) {
+  const FIRESTORE_EMULATOR_PORT =
+    Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
+  connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
+}
+
+if (useEmulator('VUE_APP_USE_FUNCTIONS_EMULATOR')) {
   const FUNCTIONS_EMULATOR_PORT =
     Number(process.env.VUE_APP_FUNCTIONS_EMULATOR_PORT) || 5002
+  connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
+}
+
+if (useEmulator('VUE_APP_USE_STORAGE_EMULATOR')) {
   const STORAGE_EMULATOR_PORT =
     Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
-
-  connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
-  connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
-  connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
   connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
 }
 
-export { auth, db, analytics, fbFunctions, storage, database }
+if (useEmulator('VUE_APP_USE_DATABASE_EMULATOR')) {
+  const DATABASE_EMULATOR_PORT =
+    Number(process.env.VUE_APP_DATABASE_EMULATOR_PORT) || 9000
+  connectDatabaseEmulator(database, EMULATOR_HOST, DATABASE_EMULATOR_PORT)
+}
+
+export { auth, db, fbFunctions, storage, database }

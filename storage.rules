@@ -1,12 +1,121 @@
 rules_version = '2';
-
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function currentUser() {
+      return firestore.get(
+        /databases/(default)/documents/users/$(request.auth.uid)
+      );
+    }
+
+    // Anonymous accounts have no users document, and reading a missing one
+    // fails the whole request in production, so never look one up for them.
+    function isSuperAdmin() {
+      return signedIn() &&
+        request.auth.token.firebase.sign_in_provider != 'anonymous' &&
+        currentUser().data != null &&
+        currentUser().data.accessLevel == 0;
+    }
+
+    function study(studyId) {
+      return firestore.get(
+        /databases/(default)/documents/tests/$(studyId)
+      ).data;
+    }
+
+    function roleFor(studyId) {
+      return signedIn() &&
+        study(studyId).studyRoleMap is map &&
+        request.auth.uid in study(studyId).studyRoleMap
+          ? study(studyId).studyRoleMap[request.auth.uid]
+          : null;
+    }
+
+    function canAccessStorage(studyId) {
+      return signedIn() && (
+        isSuperAdmin() ||
+        study(studyId).testAdmin.userDocId == request.auth.uid ||
+        roleFor(studyId) == 0
+      );
+    }
+
+    function isPublicStudy(studyId) {
+      return study(studyId).get('isPublic', false) == true;
+    }
+
+    function canAnswerStudy(studyId, userId) {
+      let studyData = study(studyId);
+      let role = roleFor(studyId);
+      return signedIn() && userId == request.auth.uid && (
+        isPublicStudy(studyId) ||
+        (studyData.get('testType', '') == 'USER' &&
+          (role == 5 ||
+            (role == 3 && studyData.get('subType', '') == 'USER_MODERATED'))) ||
+        (studyData.get('testType', '') in ['HEURISTIC', 'CARD_SORTING'] &&
+          role == 1) ||
+        (studyData.get('testType', '') == 'FOCUS_GROUP' && role == 1)
+      );
+    }
+
+    function canAnswerModeratedStudy(studyId, userId) {
+      let studyData = study(studyId);
+      return signedIn() && userId == request.auth.uid &&
+        studyData.get('testType', '') == 'USER' &&
+        studyData.get('subType', '') == 'USER_MODERATED' &&
+        roleFor(studyId) == 3;
+    }
+
+    function canEditStudy(studyId) {
+      return signedIn() && (
+        isSuperAdmin() ||
+        study(studyId).testAdmin.userDocId == request.auth.uid ||
+        roleFor(studyId) in [0, 4]
+      );
+    }
+
+    function isFocusGroupStudy(studyId) {
+      return study(studyId).testType == 'FOCUS_GROUP';
+    }
+
+    function canEditHeuristicAssets(studyId, userId) {
+      return signedIn() && userId.matches('heuristic_.*') &&
+        study(studyId).get('testType', '') == 'HEURISTIC' &&
+        roleFor(studyId) in [0, 4];
+    }
+
+    // Focus Group roles (studyRoleMap scale): 0 facilitator, 1 participant,
+    // 3 observer, 4 co-facilitator. All of them may view a presented stimulus.
+    function canViewFocusGroupStimulus(studyId) {
+      return signedIn() && isFocusGroupStudy(studyId) &&
+        roleFor(studyId) in [0, 1, 3, 4];
+    }
+
+    match /tests/{studyId}/{userId}/{allPaths=**} {
+      allow read: if canAccessStorage(studyId) ||
+        canEditHeuristicAssets(studyId, userId) ||
+        (userId.matches('stimulus_.*') && canViewFocusGroupStimulus(studyId)) ||
+        canAnswerStudy(studyId, userId) ||
+        canAnswerModeratedStudy(studyId, userId);
+
+      allow create, update: if
+        canAccessStorage(studyId) ||
+        canEditHeuristicAssets(studyId, userId) ||
+        (userId.matches('stimulus_.*') && canEditStudy(studyId)) ||
+        canAnswerStudy(studyId, userId) ||
+        canAnswerModeratedStudy(studyId, userId);
+      allow delete: if false;
+    }
+
+    match /template-csv/{fileName} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
     match /{allPaths=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
   }
 }

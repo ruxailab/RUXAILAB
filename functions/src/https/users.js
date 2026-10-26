@@ -1,4 +1,4 @@
-import { admin, functions } from '../f.firebase.js'
+import { admin, functions } from '../core/firebase/f.firebase.js'
 import logger from "../utils/logger.js";
 
 export const deleteAuth = functions.onCall({

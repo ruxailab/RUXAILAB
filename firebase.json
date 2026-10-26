@@ -3,10 +3,13 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "database": {
+    "rules": "database.rules.json"
+  },
   "functions": {
     "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run lint"],
     "source": "functions",
-    "runtimes": "python312"
+    "runtime": "nodejs22"
   },
   "hosting": [
     {
@@ -68,6 +71,7 @@
       "enabled": true
     },
     "firestore": { "port": 8081 },
+    "database": { "port": 9000 },
     "singleProjectMode": true,
     "storage": {
       "port": 9199

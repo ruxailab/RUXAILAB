@@ -35,7 +35,7 @@
           <v-data-table
             :headers="headers"
             :items="allTasks"
-            :items-per-page="5"
+            :items-per-page="10"
             :items-per-page-text="$t('common.table.itemsPerPage')"
             class="elevation-0 rounded-lg"
             style="background: #ffffff; border: 1px solid #e5e7eb"
@@ -190,7 +190,7 @@ import { useI18n } from 'vue-i18n'
 import FormDialog from './FormDialog.vue'
 import Task from '../models/Task'
 
-//const emit = defineEmits(['change'])
+const emit = defineEmits(['change'])
 const store = useStore()
 const { t } = useI18n()
 
@@ -295,6 +295,7 @@ const confirmTaskDeletion = async () => {
     if (index > -1) {
       allTasks.value.splice(index, 1)
       await store.dispatch('UserStudy/setTasks', allTasks.value)
+      emit('change')
     }
   } catch {
   } finally {
@@ -314,6 +315,7 @@ const addTask = async (newTask) => {
       allTasks.value.push(newTask.toFirestore())
     }
     await store.dispatch('UserStudy/setTasks', allTasks.value)
+    emit('change')
     task.value = new Task()
     dialog.value = false
   } catch {}

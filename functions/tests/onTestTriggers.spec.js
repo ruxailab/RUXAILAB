@@ -10,7 +10,7 @@ jest.unstable_mockModule('../src/repositories/UserRepository.js', () => ({
   }
 }));
 
-jest.unstable_mockModule('../src/f.firebase.js', () => ({
+jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   functions: {
     onTrigger: jest.fn((opts) => opts?.handler || opts),
   },

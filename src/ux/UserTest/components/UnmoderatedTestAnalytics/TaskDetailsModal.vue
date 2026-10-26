@@ -257,7 +257,10 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
+
+const { intlLocale } = useDateLocale()
 
 const mockObserverNotes = [
   {
@@ -354,7 +357,7 @@ const sortedNotes = computed(() => {
 
 const formatNoteTime = (timestamp) => {
   const date = new Date(timestamp)
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString(intlLocale.value, {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
@@ -418,13 +421,7 @@ const formatDuration = (duration) => {
   return `${minutes}m ${seconds}s`
 }
 
-watch(
-  () => props.userSession,
-  (newValue) => {
-    console.log('userSession updated:', newValue)
-  },
-  { immediate: true }, // also logs on first load
-)
+
 </script>
 
 <style scoped>

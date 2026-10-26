@@ -605,6 +605,12 @@ const testAnswerDocument = computed(
 const tamData = computed(() => {
   const allData = []
 
+  const hasNumericAnswer = (answers) =>
+    Object.values(answers || {}).some((value) =>
+      Array.isArray(value)
+        ? value.some((item) => typeof item === 'number' && Number.isFinite(item))
+        : typeof value === 'number' && Number.isFinite(value),
+    )
   Object.entries(testAnswerDocument.value || {}).forEach(
     ([userId, answerItem]) => {
       if (!answerItem || !answerItem.tasks) {
@@ -630,7 +636,7 @@ const tamData = computed(() => {
           ['tam-1', 'tam-2', 'tam-3'].includes(taskType) &&
           task.tamAnswers &&
           typeof task.tamAnswers === 'object' &&
-          Object.keys(task.tamAnswers).length > 0
+          hasNumericAnswer(task.tamAnswers)
         ) {
           allData.push({
             ...task,
@@ -966,7 +972,7 @@ function processConstructAnswers(
   if (!answersArray || !Array.isArray(answersArray)) return results
 
   answersArray.forEach((answer, index) => {
-    if (answer !== undefined && (!indexLimit || index < indexLimit)) {
+    if (answer !== undefined && answer !== null && (!indexLimit || index < indexLimit)) {
       results.push({
         question: questions[constructKey]?.[index] || `Question ${index + 1}`,
         answer: answer,
@@ -993,14 +999,14 @@ function processSpecialAnswers(answers, constructKey, _questions) {
   ]
 
   const results = []
-  if (answers.actualSystemUse[0] !== undefined) {
+  if (answers.actualSystemUse[0] !== undefined && answers.actualSystemUse[0] !== null) {
     results.push({
       answer:
         useFrequencyOptions[answers.actualSystemUse[0]] ||
         `Option ${answers.actualSystemUse[0]}`,
     })
   }
-  if (answers.actualSystemUse[1] !== undefined) {
+  if (answers.actualSystemUse[1] !== undefined && answers.actualSystemUse[1] !== null) {
     results.push({
       answer: `${answers.actualSystemUse[1]} hours`,
     })

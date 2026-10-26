@@ -11,16 +11,34 @@ export default class HeuristicStudy extends Study {
 
     this.testType = STUDY_TYPES.HEURISTIC
     this.testWeights = params.testWeights ?? {}
+    this.trackTime = params.trackTime ?? true
+    this.studyMode = params.studyMode ?? null
+    this.useWeights = params.useWeights ?? false
+    this.useFrequency = params.useFrequency ?? true
+    this.useSeverity = params.useSeverity ?? true
     this.evaluatorInfo = params.evaluatorInfo ?? {
       enabled: false,
       sections: [],
     }
+    this.heuristicComments = params.heuristicComments ?? {}
+    this.heuristicAgentWebsites = params.heuristicAgentWebsites ?? {
+      url: '', pages: [], selectedUrls: [],
+    }
+    this.heuristicAgentIds = params.heuristicAgentIds ?? []
   }
 
   toFirestore() {
     return Object.assign(super.toFirestore(), {
       testWeights: this.testWeights,
+      trackTime: this.trackTime,
+      studyMode: this.studyMode,
+      useWeights: this.useWeights,
+      useFrequency: this.useFrequency,
+      useSeverity: this.useSeverity,
       evaluatorInfo: this.evaluatorInfo,
+      heuristicComments: this.heuristicComments,
+      heuristicAgentWebsites: this.heuristicAgentWebsites,
+      heuristicAgentIds: this.heuristicAgentIds,
     })
   }
 }

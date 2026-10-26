@@ -5,7 +5,7 @@ const mockGet = jest.fn();
 const mockFilesDelete = jest.fn();
 const mockDeleteUser = jest.fn();
 
-jest.unstable_mockModule('../src/f.firebase.js', () => ({
+jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   admin: {
     firestore: jest.fn().mockReturnValue({
       collection: jest.fn().mockReturnValue({

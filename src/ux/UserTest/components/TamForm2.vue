@@ -256,7 +256,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'response-changed']);
 const form = ref(null);
 const valid = ref(false);
 
@@ -340,6 +340,9 @@ const updateDimensionAnswer = (dimension, index, value) => {
   newAnswers[dimension] = [...newAnswers[dimension]];
   newAnswers[dimension][index] = value;
   emit('update:modelValue', newAnswers);
+  emit('response-changed', {
+    itemRef: `tam-2:${dimension}:${index}`, value,
+  });
 };
 </script>
 

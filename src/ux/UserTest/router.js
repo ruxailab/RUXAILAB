@@ -4,95 +4,183 @@ import ReportView from '@/shared/views/ReportView.vue'
 import EditTest from '@/ux/UserTest/views/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
-import CooperatorsModeratedView from './views/Moderators/CooperatorsModeratedView.vue'
 import UserAnswerView from './views/UserAnswerView.vue'
+import StorageView from '@/shared/views/StorageView.vue'
+import ParticipantsView from '@/shared/views/ParticipantsView.vue'
+import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
+import AuditTrailView from '@/shared/views/AuditTrailView.vue'
+import SessionsView from '../../shared/views/SessionsView.vue'
+import LogsView from '@/shared/views/LogsView.vue'
+
+const studyMeta = (studyCapability, studyRouteBase) => ({
+  authorize: [0, 1],
+  studyCapability,
+  studyRouteBase,
+})
 
 export default [
   {
-    path: '/userTest/unmoderated/manager/:id/:token?',
+    path: '/userTest/unmoderated/dashboard/:id/:token?',
+    alias: '/userTest/unmoderated/manager/:id/:token?',
     name: 'UserUnmoderatedManagerView',
-    meta: { authorize: [0, 1] },
+    meta: studyMeta(C.DASHBOARD_VIEW, 'userTest/unmoderated'),
     component: ManagerUnmoderatedView,
     props: true,
     children: [
       {
-        path: '/userTest/unmoderated/report/:id/:token?',
+        path: '/userTest/unmoderated/progress/:id/:token?',
+        alias: '/userTest/unmoderated/report/:id/:token?',
         name: 'UserUnmoderatedReportView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.REPORTS_VIEW, 'userTest/unmoderated'),
         component: ReportView,
       },
       {
-        path: '/userTest/unmoderated/answer/:id/:token?',
+        path: '/userTest/unmoderated/results/:id/:token?',
+        alias: '/userTest/unmoderated/answer/:id/:token?',
         name: 'UserUnmoderatedAnswersView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.ANSWERS_VIEW, 'userTest/unmoderated'),
         component: UserAnswerView,
+      },
+      {
+        path: '/userTest/unmoderated/logs/:id/:token?',
+        name: 'UserUnmoderatedLogsView',
+        props: true,
+        meta: studyMeta(C.LOGS_VIEW, 'userTest/unmoderated'),
+        component: LogsView,
       },
       {
         path: '/userTest/unmoderated/edit/:id/:token?',
         name: 'UserUnmoderatedEditTest',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.STUDY_EDIT, 'userTest/unmoderated'),
         component: EditTest,
       },
       {
         path: '/userTest/unmoderated/settings/:id/:token?',
         name: 'UserUnmoderatedSettingsView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.SETTINGS_MANAGE, 'userTest/unmoderated'),
         component: SettingsView,
       },
       {
         path: '/userTest/unmoderated/cooperators/:id/:token?',
         name: 'UserUnmoderatedCooperatorsView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.COOPERATORS_VIEW, 'userTest/unmoderated'),
         component: CooperatorsView,
+      },
+      {
+        path: '/userTest/unmoderated/participants/:id',
+        name: 'UserUnmoderatedParticipantsView',
+        props: true,
+        meta: studyMeta(C.COOPERATORS_VIEW, 'userTest/unmoderated'),
+        component: ParticipantsView,
+      },
+      {
+        path: '/userTest/unmoderated/storage/:id/:token?',
+        name: 'UserUnmoderatedStorageView',
+        props: true,
+        meta: studyMeta(C.STORAGE_ACCESS, 'userTest/unmoderated'),
+        component: StorageView,
+      },
+      {
+        path: '/userTest/unmoderated/audit/:id/:token?',
+        name: 'UserUnmoderatedAuditTrailView',
+        props: true,
+        meta: {
+          authorize: [0, 1],
+          studyOwnerOnly: true,
+          studyRouteBase: 'userTest/unmoderated',
+        },
+        component: AuditTrailView,
       },
     ],
   },
   {
-    path: '/userTest/moderated/manager/:id/:token?',
+    path: '/userTest/moderated/dashboard/:id/:token?',
+    alias: '/userTest/moderated/manager/:id/:token?',
     name: 'UserModeratedManagerView',
-    meta: { authorize: [0, 1] },
+    meta: studyMeta(C.DASHBOARD_VIEW, 'userTest/moderated'),
     component: ManagerMonderatedView,
     props: true,
     children: [
       {
-        path: '/userTest/moderated/report/:id/:token?',
+        path: '/userTest/moderated/progress/:id/:token?',
+        alias: '/userTest/moderated/report/:id/:token?',
         name: 'UserModeratedReportView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.REPORTS_VIEW, 'userTest/moderated'),
         component: ReportView,
       },
       {
-        path: '/userTest/moderated/answer/:id/:token?',
+        path: '/userTest/moderated/results/:id/:token?',
+        alias: '/userTest/moderated/answer/:id/:token?',
         name: 'UserModeratedAnswersView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.ANSWERS_VIEW, 'userTest/moderated'),
         component: UserAnswerView,
+      },
+      {
+        path: '/userTest/moderated/logs/:id/:token?',
+        name: 'UserModeratedLogsView',
+        props: true,
+        meta: studyMeta(C.LOGS_VIEW, 'userTest/moderated'),
+        component: LogsView,
       },
       {
         path: '/userTest/moderated/edit/:id/:token?',
         name: 'UserModeratedEditTest',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.STUDY_EDIT, 'userTest/moderated'),
         component: EditTest,
       },
       {
         path: '/userTest/moderated/settings/:id/:token?',
         name: 'UserModeratedSettingsView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.SETTINGS_MANAGE, 'userTest/moderated'),
         component: SettingsView,
       },
       {
         path: '/userTest/moderated/cooperators/:id/:token?',
         name: 'UserModeratedCooperatorsView',
         props: true,
-        meta: { authorize: [0, 1] },
-        component: CooperatorsModeratedView,
+        meta: studyMeta(C.COOPERATORS_VIEW, 'userTest/moderated'),
+        component: CooperatorsView,
+      },
+      {
+        path: '/userTest/moderated/participants/:id/:token?',
+        name: 'UserModeratedParticipantsView',
+        props: true,
+        meta: studyMeta(C.COOPERATORS_VIEW, 'userTest/moderated'),
+        component: ParticipantsView,
+      },
+      {
+        path: '/userTest/moderated/sessions/:id/:token?',
+        name: 'UserModeratedSessionsView',
+        props: true,
+        meta: studyMeta(C.SESSIONS_MANAGE, 'userTest/moderated'),
+        component: SessionsView,
+      },
+      {
+        path: '/userTest/moderated/storage/:id/:token?',
+        name: 'UserModeratedStorageView',
+        props: true,
+        meta: studyMeta(C.STORAGE_ACCESS, 'userTest/moderated'),
+        component: StorageView,
+      },
+      {
+        path: '/userTest/moderated/audit/:id/:token?',
+        name: 'UserModeratedAuditTrailView',
+        props: true,
+        meta: {
+          authorize: [0, 1],
+          studyOwnerOnly: true,
+          studyRouteBase: 'userTest/moderated',
+        },
+        component: AuditTrailView,
       },
     ],
   },

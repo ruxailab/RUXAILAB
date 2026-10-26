@@ -14,6 +14,14 @@
         :title="$t('ModeratedTest.finalMessage')"
         :subtitle="$t('ModeratedTest.finalMessageDescription')"
       />
+
+      <VideoCallConfigForm
+        v-if="showVideoCallConfig"
+        :test-id="testId"
+        :video-call="videoCall"
+        :readonly="readonly"
+        @update:video-call="emit('update:videoCall', $event)"
+      />
     </v-col>
   </v-row>
 </template>
@@ -21,6 +29,7 @@
 <script setup>
 import { computed } from 'vue'
 import TextareaForm from '@/shared/components/TextareaForm.vue'
+import VideoCallConfigForm from '@/shared/components/videoCall/VideoCallConfigForm.vue'
 
 const props = defineProps({
   welcome: {
@@ -31,17 +40,29 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  testId: {
+    type: String,
+    default: '',
+  },
+  videoCall: {
+    type: Object,
+    default: null,
+  },
+  showVideoCallConfig: {
+    type: Boolean,
+    default: false,
+  },
   readonly: {
     type: Boolean,
     default: false,
   },
 })
 
-// Emits
 const emit = defineEmits([
   'update:welcomeMessage',
   'update:finalMessage',
   'update:participantCamera',
+  'update:videoCall',
 ])
 
 // Computed

@@ -7,7 +7,7 @@
         value="1"
         editable
         :title="$t('CreateTask.stepper.basicInfo')"
-        @click="valida() ? (step = '1') : null"
+        @click="valida(false) ? (step = '1') : null"
       />
       <v-divider />
       <v-stepper-item
@@ -16,7 +16,7 @@
         value="2"
         editable
         :title="$t('CreateTask.stepper.configuration')"
-        @click="valida() ? (step = '2') : null"
+        @click="valida(false) ? (step = '2') : null"
       />
       <v-divider />
       <v-stepper-item
@@ -25,7 +25,7 @@
         value="3"
         editable
         :title="$t('CreateTask.stepper.advanced')"
-        @click="valida() ? (step = '3') : null"
+        @click="valida(false) ? (step = '3') : null"
       />
       <v-divider />
       <v-stepper-item
@@ -34,7 +34,7 @@
         value="4"
         editable
         :title="$t('CreateTask.stepper.preview')"
-        @click="valida() ? (step = '4') : null"
+        @click="valida(false) ? (step = '4') : null"
       />
     </v-stepper-header>
 
@@ -72,12 +72,45 @@
       </v-card-text>
     </div>
 
-    <v-stepper-actions
-      :prev-text="$t('buttons.previous')"
-      :next-text="$t('buttons.next')"
-      @click:prev="goToPreviousStep"
-      @click:next="goToNextStep"
-    />
+    <div class="stepper-actions">
+      <div class="stepper-actions__left">
+        <v-btn
+          color="red-lighten-1"
+          variant="text"
+          @click="$emit('update:dialog', false)"
+        >
+          {{ $t('buttons.cancel') }}
+        </v-btn>
+
+        <v-btn
+          v-if="Number.parseInt(step, 10) > 1"
+          variant="outlined"
+          class="ml-2"
+          @click="goToPreviousStep"
+        >
+          {{ $t('buttons.previous') }}
+        </v-btn>
+      </div>
+
+      <div class="stepper-actions__right">
+        <v-btn
+          v-if="Number.parseInt(step, 10) < 4"
+          color="primary"
+          @click="goToNextStep"
+        >
+          {{ $t('buttons.next') }}
+        </v-btn>
+
+        <v-btn
+          v-else
+          class="text-white bg-orange"
+          :disabled="props.task?.isTemplate"
+          @click="valida()"
+        >
+          {{ $t('common.save') }}
+        </v-btn>
+      </div>
+    </div>
   </v-stepper>
 </template>
 
@@ -103,7 +136,12 @@ const taskBasicInfoRef = ref(null)
 const taskConfigurationRef = ref(null)
 const taskAdvancedRef = ref(null)
 
-const emit = defineEmits(['validate', 'update:task', 'complete'])
+const emit = defineEmits([
+  'validate',
+  'update:task',
+  'complete',
+  'update:dialog',
+])
 
 const step = ref('1')
 const localTask = ref({ ...props.task })
@@ -153,7 +191,7 @@ const goToPreviousStep = () => {
   }
 }
 
-const valida = () => {
+const valida = (shouldEmit = true) => {
   const currentStepNum = Number.parseInt(step.value, 10)
 
   if (currentStepNum === 1) {
@@ -173,7 +211,9 @@ const valida = () => {
   }
 
   if (currentStepNum === 4) {
-    emit('validate', localTask.value)
+    if (shouldEmit) {
+      emit('validate', localTask.value)
+    }
     return true
   }
 
@@ -192,5 +232,23 @@ defineExpose({ valida, resetVal })
 .stepper-content {
   min-height: 400px;
   padding: 16px;
+}
+
+.stepper-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
+.stepper-actions__left,
+.stepper-actions__right {
+  display: flex;
+  align-items: center;
+}
+
+.stepper-actions__right {
+  margin-left: auto;
 }
 </style>

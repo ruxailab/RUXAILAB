@@ -229,7 +229,7 @@ const getTaskTypeColor = (type) => {
 const viewTasks = () => {
   const testType =
     props.test?.testType === 'USER_MODERATED' ? 'moderated' : 'unmoderated'
-  router.push(`/userTest/${testType}/answer/${props.test.id}#tasks`)
+  router.push(`/userTest/${testType}/results/${props.test.id}#tasks`)
 }
 </script>
 

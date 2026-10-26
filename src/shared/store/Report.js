@@ -11,6 +11,33 @@ export default {
   namespaced: true,
 
   actions: {
+    async setReportHidden({ commit }, payload) {
+      commit('setLoading', true, { root: true })
+
+      try {
+        const result = await reportController.setReportHidden(payload)
+        if (!result.success) {
+          commit(
+            'setError',
+            {
+              errorCode: 'reportError',
+              message: result.error,
+            },
+            { root: true },
+          )
+        }
+        return result
+      } catch (error) {
+        commit(
+          'setError',
+          { errorCode: 'reportError', message: error },
+          { root: true },
+        )
+        return { success: false, error }
+      } finally {
+        commit('setLoading', false, { root: true })
+      }
+    },
     /**
      * Removes an evaluator log from the report.
      *
@@ -22,21 +49,31 @@ export default {
      * @returns {Promise<void>}
      */
     async removeReport({ commit }, payload) {
-      commit('setLoading', true)
+      commit('setLoading', true, { root: true })
 
       try {
         const result = await reportController.removeReport(payload)
 
         if (!result.success) {
-          commit('setError', {
-            errorCode: 'reportError',
-            message: result.error,
-          })
+          commit(
+            'setError',
+            {
+              errorCode: 'reportError',
+              message: result.error,
+            },
+            { root: true },
+          )
         }
+        return result
       } catch (err) {
-        commit('setError', { errorCode: 'reportError', message: err })
+        commit(
+          'setError',
+          { errorCode: 'reportError', message: err },
+          { root: true },
+        )
+        return { success: false, error: err }
       } finally {
-        commit('setLoading', false)
+        commit('setLoading', false, { root: true })
       }
     },
   },

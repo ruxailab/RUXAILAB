@@ -38,12 +38,12 @@
               :readonly="isTemplate"
               :welcome="welcomeMessage"
               :final-message="finalMessage"
-              @update:welcome-message="
-                ;((welcomeMessage = $event), (change = true))
-              "
-              @update:final-message="
-                ;((finalMessage = $event), (change = true))
-              "
+              :test-id="route.params.id"
+              :video-call="videoCallConfig"
+              :show-video-call-config="isModerated"
+              @update:welcome-message="updateWelcomeMessage"
+              @update:final-message="updateFinalMessage"
+              @update:video-call="onVideoCallConfigChange"
             />
           </div>
 
@@ -54,7 +54,7 @@
               :readonly="isTemplate"
               :title="$t('ModeratedTest.consentForm')"
               :subtitle="$t('ModeratedTest.consentFormSubtitle')"
-              @update:value="consent = $event"
+              @update:value="updateConsent"
             />
           </div>
 
@@ -63,21 +63,24 @@
             <UserVariables
               type="pre-test"
               :is-template="isTemplate"
-              @change="change = true"
+              @change="markFieldDirty('preTest')"
               @update="store.dispatch('UserStudy/setPreTest', $event)"
             />
           </div>
 
           <!-- TASKS -->
           <div v-if="index === 3">
-            <ListTasks :is-template="isTemplate" />
+            <ListTasks
+              :is-template="isTemplate"
+              @change="markFieldDirty('userTasks')"
+            />
           </div>
           <!-- POST-TEST -->
           <div v-if="index === 4">
             <UserVariables
               type="post-test"
               :is-template="isTemplate"
-              @change="change = true"
+              @change="markFieldDirty('postTest')"
               @update="store.dispatch('UserStudy/setPostTest', $event)"
             />
           </div>
@@ -103,9 +106,17 @@ import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import EyeTrackingConfig from '../components/EyeTrackingConfig.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
+import {
+  instantiateStudyByType,
+  USER_STUDY_SUBTYPES,
+} from '@/shared/constants/methodDefinitions'
+import { DEFAULT_VIDEO_CALL_CONFIG } from '@/shared/constants/videoCallProviders'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
+import {
+  getStudyStructureFieldsToSync,
+  mergeStudySnapshotPreservingFields,
+} from '@/shared/utils/studyUpdatePatch'
 
 const props = defineProps({
   isTemplate: {
@@ -130,11 +141,24 @@ const change = ref(false)
 const welcomeMessage = ref('')
 const finalMessage = ref('')
 const consent = ref('')
+const videoCallConfig = ref({ ...DEFAULT_VIDEO_CALL_CONFIG })
 const index = ref(0)
 const route = useRoute()
 let unsubscribe = null
+let unsubscribeStore = null
+const dirtyStudyFields = new Map()
+let fieldChangeVersion = 0
 // Computed
 const test = computed(() => store.getters.test)
+const serializeCalibrationConfig = (config) =>
+  JSON.stringify(
+    typeof config?.toFirestore === 'function'
+      ? config.toFirestore()
+      : (config ?? null),
+  )
+let lastCalibrationConfig = serializeCalibrationConfig(
+  test.value?.calibrationConfig,
+)
 const pageTitle = computed(() =>
   props.isTemplate
     ? t('pages.editTest.previewTitle')
@@ -157,6 +181,43 @@ const getFinalMessage = () => {
 const getConsent = () => {
   consent.value = test.value?.testStructure?.consent || ''
 }
+
+const getVideoCallConfig = () => {
+  const saved = test.value?.testStructure?.videoCall
+  videoCallConfig.value = saved
+    ? { ...saved }
+    : { ...DEFAULT_VIDEO_CALL_CONFIG }
+}
+
+const onVideoCallConfigChange = (config) => {
+  videoCallConfig.value = config
+  markFieldDirty('videoCall')
+}
+
+const markFieldDirty = (field) => {
+  fieldChangeVersion += 1
+  dirtyStudyFields.set(field, fieldChangeVersion)
+  change.value = true
+}
+
+const updateWelcomeMessage = (value) => {
+  welcomeMessage.value = value
+  markFieldDirty('welcomeMessage')
+}
+
+const updateFinalMessage = (value) => {
+  finalMessage.value = value
+  markFieldDirty('finalMessage')
+}
+
+const updateConsent = (value) => {
+  consent.value = value
+  markFieldDirty('consent')
+}
+
+const isModerated = computed(
+  () => test.value?.subType === USER_STUDY_SUBTYPES.MODERATED,
+)
 
 const getTasks = () => {
   const tasksData = test.value?.testStructure?.userTasks || []
@@ -202,8 +263,6 @@ const save = async () => {
       return
     }
 
-    change.value = false
-
     const testStructure = {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
@@ -213,11 +272,44 @@ const save = async () => {
       consent: consent.value,
     }
 
+    if (isModerated.value) {
+      testStructure.videoCall = structuredClone(videoCallConfig.value)
+    }
+
     const rawData = { ...test.value, testStructure: testStructure }
     const study = instantiateStudyByType(rawData.testType, rawData)
-    await store.dispatch('updateStudy', study)
+    const savedFieldVersions = new Map(dirtyStudyFields)
+    const result = await store.dispatch('updateStudy', study)
+    if (!result) throw new Error('Study update failed')
+
+    const updatedQuestionFields = getStudyStructureFieldsToSync(
+      result.rebasedStudy,
+      ['preTest', 'postTest'],
+      dirtyStudyFields,
+      savedFieldVersions,
+    )
+    if (Object.hasOwn(updatedQuestionFields, 'preTest')) {
+      await store.dispatch(
+        'UserStudy/setPreTest',
+        updatedQuestionFields.preTest,
+      )
+    }
+    if (Object.hasOwn(updatedQuestionFields, 'postTest')) {
+      await store.dispatch(
+        'UserStudy/setPostTest',
+        updatedQuestionFields.postTest,
+      )
+    }
+
+    for (const [field, version] of savedFieldVersions) {
+      if (dirtyStudyFields.get(field) === version) {
+        dirtyStudyFields.delete(field)
+      }
+    }
+    change.value = dirtyStudyFields.size > 0
     showSuccess('pages.editTest.updatedTest')
-  } catch {
+  } catch (e) {
+    console.error(e)
     showError('errors.globalError')
   }
 }
@@ -226,14 +318,25 @@ const save = async () => {
 const subscribeToTest = () => {
   const testId = route.params.id
   if (testId) {
-    unsubscribe = studyController.subscribeToStudy(testId, (test) => {
-      store.commit('SET_TEST', test)
-      getWelcome()
-      getFinalMessage()
-      getConsent()
-      getPreTest()
-      getPostTest()
-      getTasks()
+    unsubscribe = studyController.subscribeToStudy(testId, (incomingStudy) => {
+      const currentStudy = test.value
+      const preservedFields = [...dirtyStudyFields.keys()]
+      const updatedStudy = mergeStudySnapshotPreservingFields(
+        currentStudy,
+        incomingStudy,
+        preservedFields,
+      )
+      store.commit('SET_TEST', updatedStudy)
+      lastCalibrationConfig = serializeCalibrationConfig(
+        updatedStudy.calibrationConfig,
+      )
+      if (!dirtyStudyFields.has('welcomeMessage')) getWelcome()
+      if (!dirtyStudyFields.has('finalMessage')) getFinalMessage()
+      if (!dirtyStudyFields.has('consent')) getConsent()
+      if (!dirtyStudyFields.has('videoCall')) getVideoCallConfig()
+      if (!dirtyStudyFields.has('preTest')) getPreTest()
+      if (!dirtyStudyFields.has('postTest')) getPostTest()
+      if (!dirtyStudyFields.has('userTasks')) getTasks()
     })
   }
 }
@@ -244,17 +347,32 @@ onMounted(() => {
     getWelcome()
     getFinalMessage()
     getConsent()
+    getVideoCallConfig()
     getPreTest()
     getPostTest()
     getTasks()
     return
   }
+  unsubscribeStore = store.subscribe(({ type }, state) => {
+    if (type !== 'SET_CALIBRATION_CONFIG') return
+
+    const calibrationConfig = serializeCalibrationConfig(
+      state.Tests.Test?.calibrationConfig,
+    )
+    if (calibrationConfig !== lastCalibrationConfig) {
+      markFieldDirty('calibrationConfig')
+    }
+    lastCalibrationConfig = calibrationConfig
+  })
   subscribeToTest()
 })
 
 onUnmounted(() => {
   if (!props.isTemplate && unsubscribe) {
     unsubscribe()
+  }
+  if (unsubscribeStore) {
+    unsubscribeStore()
   }
 })
 </script>

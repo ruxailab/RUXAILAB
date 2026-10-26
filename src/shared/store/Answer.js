@@ -2,12 +2,28 @@ import AnswerController from '@/shared/controllers/AnswerController'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
 import { percentage } from '@/ux/Heuristic/utils/statistics'
 import { formatTimeSpentFromMs } from '@/ux/Heuristic/utils/statistics'
-import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import {
+  STUDY_TYPES,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
+import CardSortingEvaluatorAnswer from '@/ux/CardSorting/models/CardSortingEvaluatorAnswer'
 import { showError } from '@/shared/utils/toast'
+import { auth } from '@/app/plugins/firebase'
 
 const answerController = new AnswerController()
+
+const isPermissionDenied = (error) =>
+  error?.code === 'permission-denied' ||
+  error?.message?.includes('PERMISSION_DENIED')
+
+const getAnswerCollectionKey = (type) => {
+  const normalizedType = normalizeStudyType(type)
+  if (normalizedType === STUDY_TYPES.USER) return 'taskAnswers'
+  if (normalizedType === STUDY_TYPES.CARD_SORTING) return 'cardSortingAnswers'
+  return 'heuristicAnswers'
+}
 
 export default {
   state: {
@@ -21,23 +37,38 @@ export default {
     mediaUrls(state) {
       return state.mediaUrls
     },
+    rawTestAnswerDocument(state) {
+      return state.testAnswerDocument
+    },
     testAnswerDocument(state, rootState) {
       if (!state.testAnswerDocument) {
         return null
       }
 
+      const answerCollectionKey = getAnswerCollectionKey(
+        state.testAnswerDocument.type,
+      )
+      const answerDocument = {
+        ...state.testAnswerDocument,
+        [answerCollectionKey]: Object.fromEntries(
+          Object.entries(
+            state.testAnswerDocument[answerCollectionKey] || {},
+          ).filter(([, answer]) => answer?.hidden !== true),
+        ),
+      }
+
       // Return a transformed copy to avoid mutating state inside getter
-      if (rootState.test && state.testAnswerDocument.heuristicAnswers) {
+      if (rootState.test && answerDocument.heuristicAnswers) {
         const testOptions = rootState.test.testOptions
 
         // Create a shallow copy with transformed heuristicAnswers
         const transformedDoc = {
-          ...state.testAnswerDocument,
+          ...answerDocument,
           heuristicAnswers: {},
         }
 
         for (const [key, value] of Object.entries(
-          state.testAnswerDocument.heuristicAnswers,
+          answerDocument.heuristicAnswers,
         )) {
           transformedDoc.heuristicAnswers[key] = {
             ...value,
@@ -64,7 +95,7 @@ export default {
         return transformedDoc
       }
 
-      return state.testAnswerDocument
+      return answerDocument
     },
     currentUserTestAnswer(state, rootState) {
       if (!state.testAnswerDocument) {
@@ -75,14 +106,19 @@ export default {
       if (!rootState.test || !rootState.test.testStructure) {
         return {}
       }
-      if (!rootState.user) {
+      // Anonymous participants have no profile in the store, but their
+      // answer is saved under their anonymous account's id.
+      const userId =
+        rootState.user?.id ??
+        (auth.currentUser?.isAnonymous ? auth.currentUser.uid : null)
+      if (!userId) {
         return {}
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
         const heuristicAnswers = state.testAnswerDocument.heuristicAnswers || {}
 
-        const userAnswer = heuristicAnswers[rootState.user.id]
+        const userAnswer = heuristicAnswers[userId]
         if (userAnswer) {
           const transformedAnswer = HeuristicAnswer.toHeuristicAnswer(
             userAnswer,
@@ -99,7 +135,7 @@ export default {
           return transformedAnswer
         } else {
           return new HeuristicAnswer({
-            userDocId: rootState.user.id,
+            userDocId: userId,
             testStarted: false,
           })
         }
@@ -108,10 +144,10 @@ export default {
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
         const taskAnswers = state.testAnswerDocument.taskAnswers || {}
 
-        return taskAnswers[rootState.user.id]
-          ? UserStudyEvaluatorAnswer.toModel(taskAnswers[rootState.user.id])
+        return taskAnswers[userId]
+          ? UserStudyEvaluatorAnswer.toModel(taskAnswers[userId])
           : new UserStudyEvaluatorAnswer({
-              userDocId: rootState.user.id,
+              userDocId: userId,
               preTestAnswer: (() => {
                 const preTestAnswer = []
                 const preTestLength =
@@ -149,7 +185,10 @@ export default {
 
       const doc = state.testAnswerDocument
 
-      if (doc.type === STUDY_TYPES.USER && doc.taskAnswers) {
+      if (
+        normalizeStudyType(doc.type) === STUDY_TYPES.USER &&
+        doc.taskAnswers
+      ) {
         return Object.fromEntries(
           Object.entries(doc.taskAnswers).filter(
             ([, answer]) => answer.hidden !== true,
@@ -163,6 +202,28 @@ export default {
       const doc = state.testAnswerDocument
       if (!doc?.taskAnswers) return []
       return Object.values(doc.taskAnswers).filter(
+        (answer) =>
+          typeof answer === 'object' &&
+          answer !== null &&
+          answer.hidden !== true,
+      )
+    },
+    currentCardSortingAnswer(state, rootGetters) {
+      if (!state.testAnswerDocument) return {}
+      if (!rootGetters.test || !rootGetters.user) return {}
+
+      const cardSortingAnswers =
+        state.testAnswerDocument.cardSortingAnswers || {}
+      const existing = cardSortingAnswers[rootGetters.user.id]
+
+      return existing
+        ? CardSortingEvaluatorAnswer.toModel(existing)
+        : new CardSortingEvaluatorAnswer({ userDocId: rootGetters.user.id })
+    },
+    cardSortingAnswersList(state) {
+      const doc = state.testAnswerDocument
+      if (!doc?.cardSortingAnswers) return []
+      return Object.values(doc.cardSortingAnswers).filter(
         (answer) =>
           typeof answer === 'object' &&
           answer !== null &&
@@ -253,7 +314,25 @@ export default {
           await answerController.getAnswerById(currentAnswersDocId)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (error) {
-        console.error('[Answer Store] Failed to fetch answer document:', error)
+        if (isPermissionDenied(error) && currentTest.id) {
+          try {
+            const answerDoc = await answerController.getMyStudyAnswer(
+              currentTest.id,
+            )
+            commit('SET_ANSWER_DOCUMENT', answerDoc)
+            return
+          } catch (fallbackError) {
+            console.error(
+              '[Answer Store] Failed to fetch own answer document:',
+              fallbackError,
+            )
+          }
+        } else {
+          console.error(
+            '[Answer Store] Failed to fetch answer document:',
+            error,
+          )
+        }
         showError('errors.failedToLoadAnswers')
       } finally {
         commit('setLoading', false)
@@ -265,7 +344,7 @@ export default {
         await answerController.updateUserAnswer(payload)
       } catch (error) {
         console.error('[Answer Store] Failed to update user answer:', error)
-        showError('errors.failedToUpdateAnswer')
+        throw error
       } finally {
         commit('setLoading', false)
       }
@@ -306,6 +385,11 @@ export default {
               state.testAnswerDocument.taskAnswers = {}
             }
             state.testAnswerDocument.taskAnswers[userId] = payload.data
+          } else if (payload.testType === STUDY_TYPES.CARD_SORTING) {
+            if (!state.testAnswerDocument.cardSortingAnswers) {
+              state.testAnswerDocument.cardSortingAnswers = {}
+            }
+            state.testAnswerDocument.cardSortingAnswers[userId] = payload.data
           }
         }
 
@@ -326,6 +410,7 @@ export default {
             show: true,
           })
         }
+        throw e
       } finally {
         commit('setLoading', false)
       }
@@ -384,24 +469,24 @@ export default {
           evaluator.id = `Ev${evaluatorIndex}`
           let totalNoAplication = 0
           let totalNoReply = 0
-          let totalQuestions = 0
+          let totalQuestionsValues = 0
           let totalTimeMs = 0
 
           evaluator.heuristics.forEach((heuristic) => {
             totalNoAplication += heuristic.totalNoAplication
             totalNoReply += heuristic.totalNoReply
-            totalQuestions += heuristic.totalQuestions
+            totalQuestionsValues += heuristic.totalQuestionsValues
             totalTimeMs += Number(heuristic.timeSpentMs || 0)
           })
 
           table.items.push({
             evaluator: evaluator.id,
             result: evaluator.result,
-            aplication: totalQuestions - totalNoAplication,
+            aplication: totalQuestionsValues - totalNoAplication,
             noAplication: totalNoAplication,
             answered: percentage(
-              totalQuestions - totalNoReply,
-              totalQuestions,
+              totalQuestionsValues - totalNoReply,
+              totalQuestionsValues,
             ).toFixed(2),
             totalTime: formatTimeSpentFromMs(totalTimeMs),
             lastUpdate: new Date(evaluator.lastUpdate).toLocaleString(),

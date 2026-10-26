@@ -1,0 +1,287 @@
+import { jest } from '@jest/globals'
+
+jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
+  admin: {
+    firestore: Object.assign(
+      jest.fn(() => ({
+        collection: () => ({
+          doc: () => ({
+            collection: () => ({
+              get: async () => ({ docs: [] }),
+            }),
+          }),
+        }),
+      })),
+      {
+      FieldValue: { delete: jest.fn() },
+      },
+    ),
+  },
+  functions: {
+    onCall: jest.fn((options) => options.handler),
+    https: {
+      HttpsError: class HttpsError extends Error {
+        constructor(code, message) {
+          super(message)
+          this.code = code
+        }
+      },
+    },
+  },
+}))
+
+const {
+  assertMembershipMutationAllowed,
+  assertValidInviteTarget,
+  findMatchingPendingInvitation,
+  resolveInviteTargetUserId,
+} = await import('../src/https/studyMembership.js')
+
+const study = (testType, actorRole) => ({
+  testType,
+  testAdmin: { userDocId: 'owner' },
+  cooperators: [{ userDocId: 'actor', accessLevel: actorRole, accepted: true }],
+})
+
+describe('study membership authorization', () => {
+  it('matches a pending invitation only to the invited account and token', async () => {
+    const invitedStudy = {
+      cooperators: [
+        {
+          userDocId: 'invitee',
+          email: 'invitee@example.com',
+          token: 'invite-token',
+          accepted: false,
+        },
+      ],
+    }
+
+    await expect(
+      findMatchingPendingInvitation(invitedStudy, {
+        uid: 'invitee',
+        email: 'invitee@example.com',
+        token: 'invite-token',
+      }),
+    ).resolves.toEqual(expect.objectContaining({ userDocId: 'invitee' }))
+    await expect(
+      findMatchingPendingInvitation(invitedStudy, {
+        uid: 'forwarded-user',
+        email: 'other@example.com',
+        token: 'invite-token',
+      }),
+    ).resolves.toBeNull()
+  })
+
+  it('allows a user-study Manager to invite User and Observator only', () => {
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('USER', 4),
+        actorId: 'actor',
+        action: 'invite',
+        role: 5,
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('USER', 4),
+        actorId: 'actor',
+        action: 'invite',
+        role: 4,
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('allows a Focus Group Admin to invite Evaluator and Observator, but not Manager', () => {
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('FOCUS_GROUP', 0),
+        actorId: 'actor',
+        action: 'invite',
+        role: 1, // Evaluator — the FG attendee role the frontend actually sends
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('FOCUS_GROUP', 0),
+        actorId: 'actor',
+        action: 'invite',
+        role: 3, // Observator
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('FOCUS_GROUP', 0),
+        actorId: 'actor',
+        action: 'invite',
+        role: 4, // Manager — no frontend capability policy for it yet
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('allows a Card Sorting Manager to invite Evaluator and Guest only', () => {
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('CARD_SORTING', 4),
+        actorId: 'actor',
+        action: 'invite',
+        role: 1,
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('CARD_SORTING', 4),
+        actorId: 'actor',
+        action: 'invite',
+        role: 2,
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('CARD_SORTING', 4),
+        actorId: 'actor',
+        action: 'invite',
+        role: 4,
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('prevents a Manager from changing or removing another Manager', () => {
+    const managerStudy = study('USER', 4)
+    const target = { userDocId: 'target', accessLevel: 4, accepted: true }
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: managerStudy,
+        actorId: 'actor',
+        action: 'assignRole',
+        target,
+        role: 5,
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: managerStudy,
+        actorId: 'actor',
+        action: 'remove',
+        target,
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('allows an Admin to manage invited Admin memberships but not itself', () => {
+    const adminStudy = study('HEURISTIC', 0)
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: adminStudy,
+        actorId: 'actor',
+        action: 'remove',
+        target: { userDocId: 'other-admin', accessLevel: 0, accepted: true },
+      }),
+    ).not.toThrow()
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: adminStudy,
+        actorId: 'actor',
+        action: 'remove',
+        target: { userDocId: 'actor', accessLevel: 0, accepted: true },
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('validates invite targets server-side', () => {
+    const ownedStudy = {
+      testAdmin: { userDocId: 'owner', email: 'owner@example.com' },
+    }
+
+    expect(() =>
+      assertValidInviteTarget({
+        study: ownedStudy,
+        actorId: 'actor',
+        actorEmail: 'actor@example.com',
+        targetUserId: 'target',
+        targetEmail: 'target@example.com',
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertValidInviteTarget({
+        study: ownedStudy,
+        actorId: 'actor',
+        actorEmail: 'actor@example.com',
+        targetUserId: 'target',
+        targetEmail: 'not-an-email',
+      }),
+    ).toThrow(expect.objectContaining({ code: 'invalid-argument' }))
+
+    expect(() =>
+      assertValidInviteTarget({
+        study: ownedStudy,
+        actorId: 'actor',
+        actorEmail: 'actor@example.com',
+        targetUserId: 'actor',
+        targetEmail: 'actor@example.com',
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+
+    expect(() =>
+      assertValidInviteTarget({
+        study: ownedStudy,
+        actorId: 'actor',
+        actorEmail: 'actor@example.com',
+        targetUserId: 'owner',
+        targetEmail: 'owner@example.com',
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('resolves an email-only invite to an existing Firebase Auth user', async () => {
+    const auth = {
+      getUserByEmail: jest.fn().mockResolvedValue({ uid: 'registered-user' }),
+    }
+
+    await expect(
+      resolveInviteTargetUserId({
+        auth,
+        targetUserId: null,
+        targetEmail: ' Registered@Example.com ',
+      }),
+    ).resolves.toBe('registered-user')
+    expect(auth.getUserByEmail).toHaveBeenCalledWith('registered@example.com')
+  })
+
+  it('keeps an unregistered invite email-only', async () => {
+    const auth = {
+      getUserByEmail: jest.fn().mockRejectedValue({
+        code: 'auth/user-not-found',
+      }),
+    }
+
+    await expect(
+      resolveInviteTargetUserId({
+        auth,
+        targetUserId: null,
+        targetEmail: 'external@example.com',
+      }),
+    ).resolves.toBeNull()
+  })
+
+  it('rejects a target user id that belongs to another email', async () => {
+    const auth = {
+      getUserByEmail: jest.fn().mockResolvedValue({ uid: 'registered-user' }),
+    }
+
+    await expect(
+      resolveInviteTargetUserId({
+        auth,
+        targetUserId: 'different-user',
+        targetEmail: 'registered@example.com',
+      }),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+  })
+})

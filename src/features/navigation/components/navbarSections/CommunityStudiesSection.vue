@@ -169,6 +169,8 @@ import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
+import { matchesSearch } from '@/shared/utils/searchUtils'
+import { getCommunityStudyDestination } from '@/shared/utils/studyNavigation'
 
 const store = useStore()
 const router = useRouter()
@@ -249,6 +251,10 @@ const methodOptions = computed(() => [
     text: t('community.method.unmoderatedUserTest'),
   },
   {
+    value: METHOD_DEFINITIONS.CARD_SORTING.id,
+    text: t('methods.definitions.CARD_SORTING'),
+  },
+  {
     value: METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL.id,
     text: t('community.method.accessibilityManual'),
   },
@@ -266,9 +272,9 @@ const user = computed(() => store.getters.user)
 const filteredTests = computed(() => {
   if (!tests.value) return []
   return tests.value.filter((test) => {
-    const title = (test.testTitle || test.title || '').toLowerCase()
-    const query = (search.value || '').toLowerCase()
-    const matchesSearch = !query || title.includes(query)
+    const title = test.testTitle || test.title || ''
+    const query = search.value || ''
+    const matchesSearchQuery = matchesSearch(title, query)
 
     // Filter by method
     let matchesMethod = true
@@ -286,7 +292,9 @@ const filteredTests = computed(() => {
           subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
         (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
           testType === STUDY_TYPES.USER &&
-          subType === USER_STUDY_SUBTYPES.MODERATED)
+          subType === USER_STUDY_SUBTYPES.MODERATED) ||
+        (method === METHOD_DEFINITIONS.CARD_SORTING.id &&
+          testType === STUDY_TYPES.CARD_SORTING)
     }
 
     // Filter by status
@@ -358,6 +366,15 @@ const goTo = (test) => {
 
 // Helper to navigate to community views
 const navigateToCommunityStudy = (test) => {
+  const destination = getCommunityStudyDestination({
+    study: test,
+    user: user.value,
+  })
+  if (destination) {
+    router.push(destination)
+    return
+  }
+
   switch (test.testType) {
     case STUDY_TYPES.HEURISTIC:
       router.push({ name: 'HeuristicManagerView', params: { id: test.id } })

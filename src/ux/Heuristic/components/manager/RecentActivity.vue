@@ -43,20 +43,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { formatDistanceToNow } from 'date-fns'
-import { es, enUS, de, fr, hi, ja, ptBR, ru, zhCN, arSA } from 'date-fns/locale'
-
-const localeMap = {
-  en: enUS,
-  es: es,
-  de: de,
-  fr: fr,
-  hi: hi,
-  ja: ja,
-  pt_br: ptBR,
-  ru: ru,
-  zh: zhCN,
-  ar: arSA,
-}
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 
 const props = defineProps({
   test: {
@@ -67,11 +54,8 @@ const props = defineProps({
 
 const emit = defineEmits(['view-all'])
 const router = useRouter()
-const { t, locale } = useI18n()
-
-const currentLocale = computed(() => {
-  return localeMap[locale.value] || enUS
-})
+const { t } = useI18n()
+const { dateFnsLocale } = useDateLocale()
 
 // Navigate to activity section
 const navigateToActivity = () => {
@@ -94,7 +78,7 @@ const activities = computed(() => {
           description: `${coop.email} ${t('Dashboard.cards.updatedProgress')}`,
           timeAgo: formatDistanceToNow(new Date(coop.updateDate), {
             addSuffix: true,
-            locale: currentLocale.value,
+            locale: dateFnsLocale.value,
           }),
           color: coop.progress === 100 ? 'success' : 'warning',
           timestamp: new Date(coop.updateDate),

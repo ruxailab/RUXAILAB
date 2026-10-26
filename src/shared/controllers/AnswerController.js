@@ -1,4 +1,6 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { arrayUnion, arrayRemove } from 'firebase/firestore'
 import UserController from '../../features/auth/controllers/UserController'
 import {
   instantiateStudyAnswerByType,
@@ -9,43 +11,71 @@ const COLLECTION = 'answers'
 
 const userController = new UserController()
 
-import { increment } from 'firebase/firestore'
-
 export default class AnswerController extends Controller {
   async getAnswerById(payload) {
+    if (!payload) return null
+
     const res = await super.readOne(COLLECTION, payload)
-    const answer = instantiateStudyAnswerByType(res.data().type, {
+    if (!res.exists()) return null
+
+    const data = res.data()
+    return instantiateStudyAnswerByType(data.type, {
       id: res.id,
-      ...res.data(),
+      ...data,
     })
-    return answer
+  }
+
+  async getMyStudyAnswer(studyId) {
+    const response =
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'getMyStudyAnswer',
+        { studyId },
+      )
+    return instantiateStudyAnswerByType(response.data.type, response.data)
   }
 
   async createAnswer(payload) {
     return super.create(COLLECTION, payload.toFirestore())
   }
 
-  async updateUserAnswer(payload) {
-    const userToUpdate = await userController.getById(payload.cooperatorId)
+  async linkAnswerToStudy(answerId, studyId) {
+    return super.update(COLLECTION, answerId, { studyId })
+  }
 
-    userToUpdate.myAnswers[`${payload.testDocId}`] = Object.assign(
-      userToUpdate.myAnswers[`${payload.testDocId}`],
-      payload.data,
-    )
-    return userController.update(userToUpdate.id, userToUpdate.toFirestore())
+  async updateUserAnswer(payload) {
+    if (!payload?.cooperatorId || !payload?.testDocId || !payload?.data) {
+      return null
+    }
+
+    const userToUpdate = await userController.getById(payload.cooperatorId)
+    if (!userToUpdate) {
+      return null
+    }
+
+    userToUpdate.myAnswers = userToUpdate.myAnswers || {}
+    const currentAnswer = userToUpdate.myAnswers[`${payload.testDocId}`]
+
+    // No answer document linked yet (common for pending/new collaborators).
+    // Role changes should not fail because of missing answer metadata.
+    if (!currentAnswer || typeof currentAnswer !== 'object') {
+      return null
+    }
+
+    return userController.update(userToUpdate.id, {
+      [`myAnswers.${payload.testDocId}`]: {
+        ...currentAnswer,
+        ...payload.data,
+      },
+    })
   }
 
   async removeUserAnswer(payload) {
     const userToUpdate = await userController.getById(payload.cooperatorId)
 
-    // Delete answers document
-    const answerDocumentId =
-      userToUpdate.myAnswers[`${payload.testDocId}`].testDocId
-    await super.delete(COLLECTION, answerDocumentId)
-
     // Remove it from user
-    delete userToUpdate.myAnswers[`${payload.testDocId}`]
-    return userController.update(userToUpdate.id, userToUpdate.toFirestore())
+    return userController.update(userToUpdate.id, {
+      [`myAnswers.${payload.testDocId}`]: this.getDeleteField(),
+    })
   }
 
   async saveTestAnswer(payload, answersDocId, testType) {
@@ -55,6 +85,9 @@ export default class AnswerController extends Controller {
 
     if (testType === STUDY_TYPES.HEURISTIC) {
       fieldToUpdate[`heuristicAnswers.${payload.userDocId}`] =
+        payload.toFirestore()
+    } else if (testType === STUDY_TYPES.CARD_SORTING) {
+      fieldToUpdate[`cardSortingAnswers.${payload.userDocId}`] =
         payload.toFirestore()
     } else if (testType === STUDY_TYPES.USER) {
       if (!payload.userDocId) {
@@ -88,13 +121,11 @@ export default class AnswerController extends Controller {
     userDocId,
     taskId,
     latestId,
-    inc = 1,
   }) {
     const base = `taskAnswers.${userDocId}.tasks.${taskId}`
 
     const update = {
-      [`${base}.latestTranscriptionDocId`]: latestId,
-      [`${base}.transcriptionsCount`]: increment(inc),
+      [`${base}.transcriptionDocId`]: latestId,
     }
     return super.update(COLLECTION, answersDocId, update)
   }
@@ -103,15 +134,41 @@ export default class AnswerController extends Controller {
     answersDocId,
     userDocId,
     taskId,
-    latestTranscriptionDocId,
-    transcriptionsCount,
+    transcriptionDocId,
   }) {
     const base = `taskAnswers.${userDocId}.tasks.${taskId}`
 
     const update = {
-      [`${base}.latestTranscriptionDocId`]: latestTranscriptionDocId,
-      [`${base}.transcriptionsCount`]: transcriptionsCount,
+      [`${base}.transcriptionDocId`]: transcriptionDocId,
     }
     return super.update(COLLECTION, answersDocId, update)
+  }
+
+  async addTaskMarker({ answersDocId, userDocId, taskId, marker }) {
+    const fieldPath = `taskAnswers.${userDocId}.tasks.${taskId}.markers`
+    return super.update(COLLECTION, answersDocId, {
+      [fieldPath]: arrayUnion(marker),
+    })
+  }
+
+  async removeTaskMarker({ answersDocId, userDocId, taskId, marker }) {
+    const fieldPath = `taskAnswers.${userDocId}.tasks.${taskId}.markers`
+    return super.update(COLLECTION, answersDocId, {
+      [fieldPath]: arrayRemove(marker),
+    })
+  }
+
+  async addTaskSegment({ answersDocId, userDocId, taskId, segment }) {
+    const fieldPath = `taskAnswers.${userDocId}.tasks.${taskId}.segments`
+    return super.update(COLLECTION, answersDocId, {
+      [fieldPath]: arrayUnion(segment),
+    })
+  }
+
+  async removeTaskSegment({ answersDocId, userDocId, taskId, segment }) {
+    const fieldPath = `taskAnswers.${userDocId}.tasks.${taskId}.segments`
+    return super.update(COLLECTION, answersDocId, {
+      [fieldPath]: arrayRemove(segment),
+    })
   }
 }

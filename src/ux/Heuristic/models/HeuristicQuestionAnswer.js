@@ -3,6 +3,7 @@
  * @param {number} heuristicId - The heuristicId value.
  * @param {number} heuristicAnswer - The heuristicAnswer value.
  * @param {string} heuristicComment - The heuristicComment value (legacy, single comment).
+ * @param {string} heuristicRecommendation - A recommendation for the question.
  * @param {string} answerImageUrl - The image comment url (legacy, single image).
  * @param {Array<{id: string, text: string, createdAt: number}>} comments - Array of comment objects.
  * @param {Array<{id: string, url: string, createdAt: number}>} images - Array of image objects.
@@ -13,6 +14,7 @@ export default class HeuristicQuestionAnswer {
     heuristicId,
     heuristicAnswer,
     heuristicComment,
+    heuristicRecommendation,
     answerImageUrl,
     comments,
     images,
@@ -21,6 +23,7 @@ export default class HeuristicQuestionAnswer {
     this.heuristicAnswer = heuristicAnswer ?? {}
     // Support both legacy single comment/image and new array format
     this.heuristicComment = heuristicComment ?? ''
+    this.heuristicRecommendation = heuristicRecommendation ?? ''
     this.answerImageUrl = answerImageUrl ?? ''
     this.comments = comments ?? []
     this.images = images ?? []
@@ -194,18 +197,31 @@ export default class HeuristicQuestionAnswer {
     }
     return []
   }
+  /**
+   * Normalizes a heuristicAnswer value into the standard {text, value} shape.
+   * Handles both legacy scalar values and already-normalized objects.
+   * @param {*} answer - Raw answer value (string/number) or {text, value} object.
+   * @param {Array<{text: string, value: *}>} testOptions - Available answer options.
+   * @returns {{text: string, value: *}}
+   */
+  static normalizeAnswer(answer, testOptions) {
+    if (answer && typeof answer === 'object' && answer.text) {
+      return answer
+    }
+    const match = testOptions.find((op) => op.value === answer)
+    return {
+      text: match?.text ?? '',
+      value: answer ?? null,
+    }
+  }
+
   static toHeuristicQuestionAnswer(data, testOptions) {
     const instance = new HeuristicQuestionAnswer({
-      // TODO: This needs to be changed urgently, just a hotfix for now
       ...data,
-      heuristicAnswer: data.heuristicAnswer?.text
-        ? data.heuristicAnswer
-        : {
-            text:
-              testOptions.find((op) => op.value === data.heuristicAnswer)
-                ?.text ?? '',
-            value: data.heuristicAnswer,
-          },
+      heuristicAnswer: HeuristicQuestionAnswer.normalizeAnswer(
+        data.heuristicAnswer,
+        testOptions,
+      ),
       comments: Array.isArray(data.comments) ? data.comments : [],
       images: Array.isArray(data.images) ? data.images : [],
     })
@@ -219,6 +235,7 @@ export default class HeuristicQuestionAnswer {
       heuristicAnswer: this.heuristicAnswer,
       // Keep legacy fields for backward compatibility
       heuristicComment: this.heuristicComment || '',
+      heuristicRecommendation: this.heuristicRecommendation || '',
       answerImageUrl: this.answerImageUrl || '',
       comments: this.comments.map((c) => ({
         id: c.id,

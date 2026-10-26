@@ -57,7 +57,7 @@
 
         <!-- Studies list -->
         <v-col
-          v-for="study in studies.filter((s) => s)"
+          v-for="study in displayedStudies.filter((s) => s)"
           :key="study.id"
           cols="12"
           md="6"
@@ -76,8 +76,8 @@
                     study.status === 'active'
                       ? 'success'
                       : study.status === 'finished'
-                      ? 'warning'
-                      : 'info'
+                        ? 'warning'
+                        : 'info'
                   "
                   variant="tonal"
                   size="small"
@@ -96,7 +96,7 @@
               </h4>
               <div class="description-wrapper">
                 <p class="text-body-2 text-medium-emphasis mb-3">
-                  {{ study.description }}
+                  {{ truncateDescription(study.description) }}
                 </p>
               </div>
 
@@ -154,11 +154,14 @@ import {
   getMethodIcon,
   getMethodManagerView,
   STUDY_TYPES,
+  USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { STUDY_ROLE } from '../../../shared/utils/studyAccessPolicy'
+import { showInfo } from '@/shared/utils/toast'
 
 const { t } = useI18n()
 
@@ -177,20 +180,52 @@ const loading = ref(false)
 const studiesWithAnswers = ref([])
 const user = computed(() => store.getters.user)
 
-const studies = computed(() => {
-  return props.studies.length > 0 ? studiesWithAnswers.value : []
-})
+const displayedStudies = computed(() => studiesWithAnswers.value)
 
 const hasNoStudies = computed(() => {
-  return !loading.value && props.studies.length === 0
+  return !loading.value && studiesWithAnswers.value.length === 0
 })
 
 const lastFourStudies = computed(() => {
-  if (!props.studies) return []
+  if (!props.studies?.length) return []
   return [...props.studies]
     .sort((a, b) => (b.creationDate || 0) - (a.creationDate || 0))
     .slice(0, 4)
 })
+
+function extractAnswersFromDoc(answerDoc, testType) {
+  if (!answerDoc) return { answers: [], submitted: false }
+
+  const isUserStudy =
+    answerDoc.type === STUDY_TYPES.USER || testType === STUDY_TYPES.USER
+  const answers = Object.values(
+    isUserStudy
+      ? answerDoc.taskAnswers || {}
+      : answerDoc.heuristicAnswers || {},
+  )
+  const submitted = answers.some((a) => a?.submitted === true)
+
+  return { answers, submitted }
+}
+
+async function loadStudyWithAnswers(testDoc) {
+  if (!testDoc?.answersDocId) {
+    return { ...testDoc, answers: [], submitted: false }
+  }
+
+  try {
+    const answerDoc = await answerController.getAnswerById(testDoc.answersDocId)
+    const { answers, submitted } = extractAnswersFromDoc(
+      answerDoc,
+      testDoc.testType,
+    )
+    return { ...testDoc, answers, submitted }
+  } catch {
+    // Answers may be unreadable (missing studyId, permissions, deleted doc).
+    // Still show the study card with base metadata.
+    return { ...testDoc, answers: [], submitted: false }
+  }
+}
 
 async function loadAnswers() {
   if (!lastFourStudies.value.length) {
@@ -199,35 +234,20 @@ async function loadAnswers() {
   }
 
   loading.value = true
-  const last4 = []
   try {
-    for (const study in lastFourStudies.value) {
-      const testDoc = lastFourStudies.value[study]
-      const answerDoc = await answerController.getAnswerById(
-        testDoc.answersDocId,
-      )
-      if (answerDoc.type === STUDY_TYPES.USER) {
-        const answers = Object.values(answerDoc.taskAnswers || {})
-        const submitted = answers.some((a) => a.submitted === true)
-        last4.push({
-          ...testDoc,
-          answers,
-          submitted,
-        })
-      } else {
-        const answers = Object.values(answerDoc.heuristicAnswers || {})
-        const submitted = answers.some((a) => a.submitted === true)
-        last4.push({
-          ...testDoc,
-          answers,
-          submitted,
-        })
-      }
-    }
+    const last4 = await Promise.all(
+      lastFourStudies.value.map((testDoc) => loadStudyWithAnswers(testDoc)),
+    )
     finalFour(last4)
-  } catch (e) {
-    studiesWithAnswers.value = []
-    return e
+  } catch {
+    // Last resort: render studies without answer-derived metrics.
+    finalFour(
+      lastFourStudies.value.map((testDoc) => ({
+        ...testDoc,
+        answers: [],
+        submitted: false,
+      })),
+    )
   } finally {
     loading.value = false
   }
@@ -235,8 +255,19 @@ async function loadAnswers() {
 
 const calculateProgress = (answers) => {
   if (!answers || answers.length === 0) return 0
-  const sum = answers.reduce((acc, val) => acc + val.progress, 0)
-  return sum / answers.length
+
+  const sum = answers.reduce(
+    (acc, val) => acc + (Number(val?.progress) || 0),
+    0,
+  )
+
+  const average = sum / answers.length
+  return Math.trunc(Math.min(100, Math.max(0, Math.round(average))))
+}
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
 }
 
 const daysLeft = (date) => {
@@ -317,7 +348,11 @@ const canManageStudy = (study) => {
   if (currentUser.accessLevel === 0) return true
   if (study.testAdmin?.userDocId === currentUser.id) return true
   const coop = study.cooperators?.find((c) => c.userDocId === currentUser.id)
-  return coop?.accessLevel === 0 || coop?.accessLevel === 1
+  return (
+    coop?.accessLevel === STUDY_ROLE.ADMIN ||
+    coop?.accessLevel === STUDY_ROLE.EVALUATOR ||
+    coop?.accessLevel === STUDY_ROLE.MANAGER
+  )
 }
 
 const goToStudy = async (study) => {
@@ -342,6 +377,14 @@ const goToStudy = async (study) => {
     return
   }
 
+  if (
+    study.testType == STUDY_TYPES.USER &&
+    study.subType == USER_STUDY_SUBTYPES.MODERATED
+  ) {
+    showInfo(t('UserTestView.messages.useSessionLink'))
+    return
+  }
+
   router.push({ name: 'TestView', params: { id: study.id } })
 }
 
@@ -360,14 +403,16 @@ watch(
   () => {
     loadAnswers()
   },
-  { immediate: true },
+  { immediate: true, deep: true },
 )
 </script>
 
 <style scoped>
 .study-card {
   height: 100%;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
 }
 
 .study-card:hover {

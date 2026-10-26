@@ -1,23 +1,62 @@
-import UserController from '@/features/auth/controllers/UserController'
-const userController = new UserController()
+import NotificationController from '@/features/notifications/controllers/NotificationController'
+const notificationController = new NotificationController()
+
+let unsubscribeNotifications = null
 
 export default {
+  state: {
+    notifications: [],
+  },
+  getters: {
+    notifications(state) {
+      return state.notifications
+    },
+  },
+  mutations: {
+    setNotifications(state, notifications) {
+      state.notifications = notifications
+    },
+  },
   actions: {
     async addNotification({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await userController.addNotification(payload)
+        await notificationController.addNotification(payload)
       } catch (e) {
         commit('setError', e)
       } finally {
         commit('setLoading', false)
       }
+    },
+
+    async subscribeToNotifications({ commit }, userId) {
+      if (typeof unsubscribeNotifications === 'function') {
+        unsubscribeNotifications()
+        unsubscribeNotifications = null
+      }
+
+      unsubscribeNotifications =
+        await notificationController.subscribeToNotifications(
+          userId,
+          (notifications) => {
+            commit('setNotifications', notifications)
+          },
+        )
+      return unsubscribeNotifications
+    },
+
+    unsubscribeFromNotifications({ commit }) {
+      if (typeof unsubscribeNotifications === 'function') {
+        unsubscribeNotifications()
+        unsubscribeNotifications = null
+      }
+      commit('setNotifications', [])
     },
 
     async markNotificationAsRead({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await userController.markNotificationAsRead(payload)
+        await notificationController.markNotificationAsRead(payload)
       } catch (e) {
         commit('setError', e)
       } finally {
@@ -25,12 +64,22 @@ export default {
       }
     },
 
-    async markAllNotificationsAsRead({ commit }, user) {
+    async markNotificationAsUnread({ commit }, payload) {
       commit('setLoading', true)
       try {
-        const updatedUser = await userController.markAllNotificationsAsRead(user)
-        // Update the root Auth store state with the new user object
-        commit('SET_USER', updatedUser, { root: true })
+        await notificationController.markNotificationAsUnread(payload)
+      } catch (e) {
+        commit('setError', e)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async markAllNotificationsAsRead({ commit }, payload) {
+      commit('setLoading', true)
+
+      try {
+        await notificationController.markAllNotificationsAsRead(payload)
       } catch (e) {
         commit('setError', e)
       } finally {

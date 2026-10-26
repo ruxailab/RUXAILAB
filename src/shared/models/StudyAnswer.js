@@ -4,13 +4,23 @@
  */
 
 export default class StudyAnswer {
-  constructor({ type } = {}) {
+  constructor({ id = null, type, studyId = null, createdBy = null } = {}) {
+    this.id = id ?? null
     this.type = type
+    this.studyId = studyId
+    this.createdBy = createdBy
   }
 
   toFirestore() {
-    return {
+    const answer = {
       type: this.type ?? '',
+      studyId: this.studyId,
+      createdBy: this.createdBy,
     }
+    if (this.type === 'USER') answer.taskAnswers = {}
+    if (this.type === 'HEURISTIC' || this.type === 'HEURISTICS') {
+      answer.heuristicAnswers = {}
+    }
+    return answer
   }
 }

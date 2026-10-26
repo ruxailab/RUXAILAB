@@ -20,7 +20,7 @@
                 size="large"
                 class="px-6 text-capitalize"
                 rounded="lg"
-                @click="dialog = true"
+                @click="openCreate"
               >
                 <v-icon start>mdi-plus-circle</v-icon>
                 {{ $t('CardSorting.addNewCard') }}
@@ -100,12 +100,12 @@
           <v-card-text>
             <v-checkbox
               v-model="options.card_description"
-              label="Show Card Description"
+              :label="$t('CardSorting.showCardDescription')"
               @update:model-value="onChange()"
             />
             <v-checkbox
               v-model="options.card_image"
-              label="Show Image"
+              :label="$t('CardSorting.showImage')"
               @update:model-value="onChange()"
             />
           </v-card-text>
@@ -113,10 +113,13 @@
       </v-col>
     </v-row>
     <CardSortingForm
-      v-model:dialog="dialog"
-      :value="card"
+      :dialog="dialog"
+      type="card"
+      :task="card"
       :options="options"
+      :is-edit="editedIndex > -1"
       @save="save"
+      @update:dialog="onDialogChange"
     />
   </v-container>
 </template>
@@ -174,16 +177,33 @@ const onChange = () => {
   emit('cards', cards.value)
 }
 
+const resetEditor = () => {
+  editedIndex.value = -1
+  card.value = new CardSortingStudyCard()
+}
+
+const openCreate = () => {
+  resetEditor()
+  dialog.value = true
+}
+
+const onDialogChange = (isOpen) => {
+  dialog.value = isOpen
+  if (!isOpen) {
+    resetEditor()
+  }
+}
+
 const save = (newCardRaw) => {
   const newCard = new CardSortingStudyCard(newCardRaw)
 
   if (editedIndex.value > -1) {
     cards.value[editedIndex.value] = newCard
-    editedIndex.value = -1
   } else {
     cards.value.push(newCard)
   }
 
+  resetEditor()
   onChange()
 }
 
@@ -191,7 +211,6 @@ const editItem = (item) => {
   editedIndex.value = cards.value.indexOf(item)
   card.value = new CardSortingStudyCard(item)
   dialog.value = true
-  onChange()
 }
 
 const deleteItem = (item) => {
