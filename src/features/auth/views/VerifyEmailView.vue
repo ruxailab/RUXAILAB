@@ -83,6 +83,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { auth } from '@/app/plugins/firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 
 export default {
   name: 'VerifyEmailView',
@@ -105,7 +106,9 @@ export default {
   },
   mounted() {
     // Ensure user is logged in
-    this.initializeVerification()
+    onAuthStateChanged(auth, () => {
+      this.initializeVerification()
+    })
   },
 
   beforeUnmount() {

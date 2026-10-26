@@ -40,91 +40,35 @@ const publicPages = [
   '/invite',
 ]
 
-function captureInviteToken(to) {
-  if (to.path === '/invite') {
-    const inviteToken = to.query?.token
-    if (typeof inviteToken === 'string' && inviteToken.length > 0) {
-      localStorage.setItem(INVITE_TOKEN_KEY, inviteToken)
-    }
-  }
-}
-
-async function restoreUserSession(currentStore, timeoutMs) {
-  const controller = new AbortController()
-  let timeoutId
-
-  try {
-    const authTimeout = new Promise((resolve) => {
-      timeoutId = setTimeout(() => {
-        controller.abort()
-        resolve(null)
-      }, timeoutMs)
-    })
-
-    return await Promise.race([
-      currentStore.dispatch('autoSignIn', { signal: controller.signal }),
-      authTimeout,
-    ])
-  } catch {
-    return null
-  } finally {
-    clearTimeout(timeoutId)
-  }
-}
-
-async function checkStudyAccess(to, user, currentStore) {
+router.beforeEach(async (to, from, next) => {
   const {
+    authorize = [],
     studyCapability = null,
     studyOwnerOnly = false,
     studyRouteBase = '',
   } = to.meta || {}
-  const studyId = to.params?.id
+  let user = store.state.Auth.user
 
-  if (!studyId || (!studyCapability && !studyOwnerOnly)) {
-    return null
+  /**
+   * 1. Store invite token ONLY when visiting the invite route
+   */
+  if (to.path === '/invite') {
+    const inviteToken = to.query.token
+
+    if (typeof inviteToken === 'string' && inviteToken.length > 0) {
+      localStorage.setItem(INVITE_TOKEN_KEY, inviteToken)
+    }
   }
 
-  let study = currentStore.getters?.test
-  if (study?.id !== studyId) {
-    await currentStore.dispatch('getStudy', { id: studyId })
-    study = currentStore.getters?.test
-  }
-
-  const isOwner = studyOwnerOnly && resolveStudyAccess(study, user).isOwner
-  const hasCap =
-    !studyOwnerOnly && hasStudyCapability(study, user, studyCapability)
-  const isDenied = study?.id !== studyId || (!isOwner && !hasCap)
-
-  if (isDenied) {
-    currentStore.commit('SET_TOAST', {
-      message: 'AccessNotAllowed.noAccess',
-      type: 'error',
-    })
-    return getStudyFallbackPath(
-      study?.id === studyId ? study : null,
-      user,
-      studyRouteBase,
-    )
-  }
-
-  return null
-}
-
-export async function beforeEachGuard(
-  to,
-  from,
-  next,
-  currentStore = store,
-  timeoutMs = 5000,
-) {
-  const { authorize = [] } = to.meta || {}
-  captureInviteToken(to)
-
-  let user = currentStore.state?.Auth?.user
+  /**
+   * 2. Ensure user session is restored before applying route rules
+   */
   if (!user) {
-    const authUser = await restoreUserSession(currentStore, timeoutMs)
-    user = currentStore.state?.Auth?.user
+    const authUser = await store.dispatch('autoSignIn')
+    user = store.state.Auth.user
 
+    // Redirect unverified users to email verification page
+    // Anonymous participants have no email to verify.
     if (
       authUser &&
       !authUser.isAnonymous &&
@@ -135,50 +79,76 @@ export async function beforeEachGuard(
     }
   }
 
+  /**
+   * 3. Allow full access for accessibility preview routes
+   */
   const isAccessibilityPreview =
-    to.path?.includes('/accessibility/') && to.path?.includes('/preview/')
+    to.path.includes('/accessibility/') && to.path.includes('/preview/')
+
   if (isAccessibilityPreview) {
     return next()
   }
 
+  /**
+   * 4. Allow public pages without authentication
+   */
   if (publicPages.includes(to.path)) {
     return next()
   }
 
+  /**
+   * 5. Redirect root path based on resolved auth state
+   */
   if (to.path === '/') {
-    return next(redirect(currentStore))
+    return next(redirect())
   }
 
-  if (
-    user?.isFallback &&
-    (to.meta?.studyCapability || to.meta?.studyOwnerOnly)
-  ) {
-    return next('/signin')
+  /**
+   * 6. Enforce role-based access control
+   */
+  if (authorize.length) {
+    if (!user || !authorize.includes(user.accessLevel)) {
+      return next(redirect())
+    }
   }
 
-  if (
-    authorize.length &&
-    (!user || user.isFallback || !authorize.includes(user.accessLevel))
-  ) {
-    return next(redirect(currentStore))
-  }
+  if ((studyCapability || studyOwnerOnly) && to.params.id && user) {
+    const studyId = to.params.id
+    let study = store.getters.test
 
-  if (user) {
-    const fallbackPath = await checkStudyAccess(to, user, currentStore)
-    if (fallbackPath) {
-      return next(fallbackPath)
+    if (study?.id !== studyId) {
+      await store.dispatch('getStudy', { id: studyId })
+      study = store.getters.test
+    }
+
+    const denied =
+      study?.id !== studyId ||
+      (studyOwnerOnly
+        ? !resolveStudyAccess(study, user).isOwner
+        : !hasStudyCapability(study, user, studyCapability))
+
+    if (denied) {
+      store.commit('SET_TOAST', {
+        message: 'AccessNotAllowed.noAccess',
+        type: 'error',
+      })
+      return next(
+        getStudyFallbackPath(
+          study?.id === studyId ? study : null,
+          user,
+          studyRouteBase,
+        ),
+      )
     }
   }
 
   next()
-}
+})
 
-router.beforeEach((to, from, next) => beforeEachGuard(to, from, next))
+function redirect() {
+  const user = store.state.Auth.user
 
-export function redirect(currentStore = store) {
-  const user = currentStore.state?.Auth?.user
-
-  if (!user || user.isFallback) return '/signin'
+  if (!user) return '/signin'
 
   const level = user.accessLevel
 
