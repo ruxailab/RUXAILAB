@@ -79,6 +79,21 @@ it('offers a transcription when the task has audio', async () => {
   expect(wrapper.text()).not.toContain('No audio was recorded')
 })
 
+it('shows a failed transcription lookup instead of the no-audio state', async () => {
+  mockGetRuns.mockRejectedValue(new Error('Lookup failed'))
+
+  const wrapper = await mountPanel({
+    hasAudio: false,
+    answersDocId: 'answers-1',
+    userDocId: 'user-1',
+    taskId: '0',
+  })
+
+  expect(wrapper.text()).toContain('Lookup failed')
+  expect(wrapper.text()).not.toContain('No audio was recorded')
+  expect(wrapper.find('.status-chip').text()).not.toBe('No audio')
+})
+
 it('still shows an existing transcription when the audio file is gone', async () => {
   mockGetRuns.mockResolvedValue([
     { id: 'run-1', provider: 'whisper', model: 'medium', segments: [] },

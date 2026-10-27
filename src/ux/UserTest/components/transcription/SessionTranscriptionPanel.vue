@@ -59,7 +59,13 @@
     </v-row>
 
     <v-row
-      v-else-if="!hasAudio && !hasResults && !isTranscribing && !awaitingQueue"
+      v-else-if="
+        !hasAudio &&
+        !hasResults &&
+        !transcriptionError &&
+        !isTranscribing &&
+        !awaitingQueue
+      "
       justify="center"
       align="center"
       class="my-12"
@@ -354,7 +360,7 @@ const statusLabel = computed(() => {
   if (isTranscribing.value) return 'Transcribing...'
   if (hasResults.value) return 'Transcription Complete'
   if (isLoading.value) return 'Loading...'
-  if (!props.hasAudio) return 'No audio'
+  if (!props.hasAudio && !transcriptionError.value) return 'No audio'
   return 'Waiting to start'
 })
 
