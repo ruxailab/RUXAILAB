@@ -28,6 +28,14 @@ jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   },
   functions: {
     onCall: jest.fn((opts) => opts?.handler || opts),
+    https: {
+      HttpsError: class HttpsError extends Error {
+        constructor(code, message) {
+          super(message)
+          this.code = code
+        }
+      },
+    },
   },
 }));
 
@@ -81,13 +89,27 @@ describe('users.js -> deleteAuth', () => {
     expect(mockDeleteUser).toHaveBeenCalledWith('dev-user-456');
   });
 
-  it('should catch error on exception', async () => {
+  it('should throw HttpsError with code internal on unexpected exception', async () => {
     mockGet.mockRejectedValueOnce(new Error('DB Error'));
 
-    const data = { data: { userId: 'err-user' }};
-    const res = await deleteAuth(data);
-    
-    expect(res).toBeInstanceOf(Error);
-    expect(res.message).toBe('DB Error');
+    const data = { data: { userId: 'err-user' } };
+
+    await expect(deleteAuth(data)).rejects.toMatchObject({
+      code: 'internal',
+      message: 'DB Error',
+    });
+  });
+
+  it('should re-throw an existing HttpsError unchanged', async () => {
+    const { functions: mockFunctions } = await import('../src/core/firebase/f.firebase.js');
+    const httpsError = new mockFunctions.https.HttpsError('not-found', 'User not found');
+    mockGet.mockRejectedValueOnce(httpsError);
+
+    const data = { data: { userId: 'err-user-2' } };
+
+    await expect(deleteAuth(data)).rejects.toMatchObject({
+      code: 'not-found',
+      message: 'User not found',
+    });
   });
 });
