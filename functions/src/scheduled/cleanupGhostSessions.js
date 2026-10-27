@@ -29,6 +29,24 @@ export function shouldDeleteFocusGroupRoom(roomData, cutoffTime) {
   )
 }
 
+/**
+ * Whether anyone is still in a call. Members live under two branches of
+ * `calls/{roomId}`: `participants` for ordinary testers and `staff` for
+ * moderators and observers (see `memberBranch` in VideoCallMesh.vue), so a
+ * call hosted by a moderator alone has an empty `participants` map and must
+ * still count as occupied.
+ *
+ * @param {Object} callData - The call's RTDB value ({} for a missing node).
+ * @returns {boolean}
+ */
+export function hasConnectedCallMember(callData) {
+  return ['participants', 'staff'].some((branch) =>
+    Object.values(callData?.[branch] || {}).some(
+      (member) => member?.connected === true,
+    ),
+  )
+}
+
 // Run every 6 hours
 export const cleanupGhostSessions = onSchedule(
   'every 6 hours',
@@ -45,12 +63,25 @@ export const cleanupGhostSessions = onSchedule(
       const changes = {}
       let deletedCount = 0
 
+      // `calls` is read up front: the rooms sweep below needs to know who is
+      // connected, and that lives under `calls/{roomId}`, not on the room.
+      const [roomsSnapshot, callsSnapshot] = await Promise.all([
+        roomsRef.get(),
+        callsRef.get(),
+      ])
+
       // 1. Process Rooms
-      const roomsSnapshot = await roomsRef.get()
       if (roomsSnapshot.exists()) {
         roomsSnapshot.forEach((child) => {
           const roomId = child.key
           const roomData = child.val()
+
+          // Never drop a call somebody is still in. Staleness alone is not
+          // enough: `lastUpdate` is only written on specific actions, so a
+          // long, quiet-but-active call looks identical to a ghost by that
+          // field. This is the same rule `shouldDeleteFocusGroupRoom`
+          // already applies to the focusGroupSessions sweep below.
+          if (hasConnectedCallMember(callsSnapshot.child(roomId).val())) return
 
           const createdAt = roomData.createdAt || 0
           const lastUpdate = roomData.lastUpdate || 0
@@ -66,12 +97,14 @@ export const cleanupGhostSessions = onSchedule(
       }
 
       // 2. Process Calls (Check for orphans)
-      const callsSnapshot = await callsRef.get()
       if (callsSnapshot.exists()) {
         callsSnapshot.forEach((child) => {
           const callId = child.key
           // If we already marked this call for deletion via room check, skip
           if (changes[`calls/${callId}`] === null) return
+
+          // An orphaned call is still a live call if anyone is connected.
+          if (hasConnectedCallMember(child.val())) return
 
           // If a call exists but NO room exists for it, it is an orphan -> DELETE.
           const roomExists = roomsSnapshot.hasChild(callId)
