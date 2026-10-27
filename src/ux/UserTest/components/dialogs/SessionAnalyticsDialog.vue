@@ -386,7 +386,6 @@ const props = defineProps({
   testAnswer: { type: Object, default: null },
   answersDocId: { type: String, default: '' },
   taskId: { type: [String, Number], default: null },
-  hasAudioRecord: { type: Boolean, default: false },
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -577,13 +576,10 @@ const hasAudioFiles = computed(
     Boolean(props.taskAnswer?.moderatorAudioURL),
 )
 
-// Tasks with audio enabled keep the tab even without a file, so the panel can
-// explain that the recording was blocked or failed to upload.
+// Audio being enabled on the task is not enough: the recording may have been
+// blocked or failed to upload, leaving nothing to transcribe.
 const hasTranscriptionData = computed(
-  () =>
-    Boolean(props.hasAudioRecord) ||
-    hasAudioFiles.value ||
-    Boolean(props.taskAnswer?.transcriptionDocId),
+  () => hasAudioFiles.value || Boolean(props.taskAnswer?.transcriptionDocId),
 )
 
 const resolvedTaskId = computed(() => {
