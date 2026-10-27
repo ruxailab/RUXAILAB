@@ -232,6 +232,7 @@
                     :study-id="testAnswer?.studyId || null"
                     :transcription-doc-id="resolvedTranscriptionDocId"
                     :can-transcribe="canTranscribe"
+                    :has-audio="hasAudioFiles"
                     :unavailable-message="transcriptionUnavailableMessage"
                     @saved="onTranscriptionSaved"
                     @deleted="onTranscriptionDeleted"
@@ -570,11 +571,18 @@ const hasSentimentData = computed(
   () => Boolean(props.taskAnswer?.webcamRecordURL) || hasTaskAudio.value,
 )
 
+const hasAudioFiles = computed(
+  () =>
+    Boolean(props.taskAnswer?.audioRecordURL) ||
+    Boolean(props.taskAnswer?.moderatorAudioURL),
+)
+
+// Tasks with audio enabled keep the tab even without a file, so the panel can
+// explain that the recording was blocked or failed to upload.
 const hasTranscriptionData = computed(
   () =>
     Boolean(props.hasAudioRecord) ||
-    Boolean(props.taskAnswer?.audioRecordURL) ||
-    Boolean(props.taskAnswer?.moderatorAudioURL) ||
+    hasAudioFiles.value ||
     Boolean(props.taskAnswer?.transcriptionDocId),
 )
 
@@ -590,12 +598,6 @@ const canLoadTranscriptions = computed(
     Boolean(props.answersDocId) &&
     Boolean(props.userId) &&
     Boolean(resolvedTaskId.value),
-)
-
-const hasAudioFiles = computed(
-  () =>
-    Boolean(props.taskAnswer?.audioRecordURL) ||
-    Boolean(props.taskAnswer?.moderatorAudioURL),
 )
 
 const canTranscribe = computed(

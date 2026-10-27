@@ -891,10 +891,7 @@ const getTaskRecordings = (taskAnswer, taskDefinition) => {
       key: 'audio',
       label: 'Audio',
       icon: 'mdi-microphone',
-      active:
-        !!taskDefinition?.hasAudioRecord ||
-        !!taskAnswer?.audioRecordURL ||
-        !!taskAnswer?.moderatorAudioURL,
+      active: !!taskAnswer?.audioRecordURL || !!taskAnswer?.moderatorAudioURL,
     },
     {
       key: 'screen',
