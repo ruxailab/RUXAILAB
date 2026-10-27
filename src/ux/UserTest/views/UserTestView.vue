@@ -504,6 +504,7 @@
             :done-task-disabled="doneTaskDisabled"
             :mobile-instructions-eligible="mobileInstructionsEligible"
             :mobile-instructions-enabled="mobileInstructionsEnabled"
+            auto-open-task-link
             :resume-at-stage-three="resumeMobileTask"
             :activate-mobile-task="activateCurrentMobileTask"
             :submit-mobile-outcome="submitCurrentMobileOutcome"
@@ -657,7 +658,10 @@ import {
   structuredValuesForStage as structuredValuesForStageOf,
   structuredValuesForTask,
 } from '@/ux/UserTest/utils/structuredActivity'
-import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
+import {
+  firstOpenTaskIndex,
+  taskDestination,
+} from '@/ux/UserTest/utils/unmoderatedNavigation'
 import { useMobileTaskCompanion } from '@/ux/UserTest/composables/useMobileTaskCompanion'
 import {
   applyAcceptedOutcome,
@@ -895,12 +899,57 @@ const isOnPreTasksStage = computed(
     taskIndex.value === 0,
 )
 
+const openTaskFlowDestination = async (destination) => {
+  if (destination.kind === 'task') {
+    await showTaskTitleAnnouncement(destination.taskIndex)
+    taskIndex.value = destination.taskIndex
+    globalIndex.value = hasEyeTracking.value ? 5 : 4
+    return
+  }
+
+  const postTasksAnnouncement =
+    destination.kind === 'postTest'
+      ? getPostTasksAnnouncement()
+      : {
+          title: t('UserTestView.WelcomeStep.steps.submission'),
+          stage: 4,
+        }
+  await safelyShowNextStepAnnouncement(
+    postTasksAnnouncement.title,
+    postTasksAnnouncement.stage,
+  )
+  globalIndex.value = destination.globalIndex
+  if (!hasPostTest.value) {
+    localTestAnswer.postTestCompleted = true
+  }
+}
+
+const enterPendingTask = async () => {
+  const tasks = Array.isArray(localTestAnswer.tasks) ? localTestAnswer.tasks : []
+  const nextIndex = firstOpenTaskIndex(tasks)
+  if (nextIndex >= 0) {
+    await openTaskFlowDestination({ kind: 'task', taskIndex: nextIndex })
+    return
+  }
+
+  await openTaskFlowDestination(
+    taskDestination({
+      taskIndex: Math.max(tasks.length - 1, 0),
+      taskCount: tasks.length,
+      hasEyeTracking: hasEyeTracking.value,
+      hasPostTest: hasPostTest.value,
+      postTestCompleted: localTestAnswer.postTestCompleted,
+    }),
+  )
+}
+
 const goToPreTasksOrTasks = () => {
   if (showPreTasksStep.value) {
+    taskIndex.value = 0
     globalIndex.value = hasEyeTracking.value ? 4 : 3
     return
   }
-  globalIndex.value = hasEyeTracking.value ? 5 : 4
+  void enterPendingTask()
 }
 
 const hasPostTest = computed(() => {
@@ -1359,9 +1408,7 @@ const handleWelcomeStart = async () => {
 }
 
 const handleStartTasks = async () => {
-  await showTaskTitleAnnouncement(0)
-  taskIndex.value = 0
-  globalIndex.value = hasEyeTracking.value ? 5 : 4
+  await enterPendingTask()
 }
 
 const showTaskTitleAnnouncement = async (idx) => {
@@ -1554,7 +1601,6 @@ const completeStep = async (id, type, userCompleted = true) => {
 
     if (type === 'eyeCalibration') {
       goToPreTasksOrTasks()
-      taskIndex.value = 0
       eyeCalibrationStepDone.value = true
     }
 

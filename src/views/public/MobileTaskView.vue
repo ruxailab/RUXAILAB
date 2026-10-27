@@ -1,8 +1,8 @@
 <template>
-  <v-container class="mobile-task fill-height" fluid>
-    <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="5" lg="4">
-        <v-card rounded="xl" class="pa-2">
+  <div class="session-backdrop mobile-task">
+    <SessionBackdropMark />
+    <v-container class="session-backdrop-content mobile-task__panel" fluid>
+      <v-card rounded="xl" class="pa-2">
           <v-card-text class="pa-4 pa-sm-6">
             <template v-if="uiState === 'loading'">
               <div class="d-flex flex-column align-center py-8">
@@ -120,14 +120,14 @@
               </p>
             </template>
           </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+      </v-card>
+    </v-container>
+  </div>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
 import { useI18n } from 'vue-i18n'
 import { doc, onSnapshot } from 'firebase/firestore'
 import {
@@ -407,8 +407,31 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .mobile-task {
-  min-height: 100vh;
-  background: #f4f6f8;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  align-items: safe center;
+  justify-content: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  background-color: #00213f;
+  background-image: linear-gradient(160deg, #00213f 0%, #1a2f4f 45%, #303f9f 100%);
+}
+
+.mobile-task__panel {
+  width: min(100%, 32rem);
+  margin: 0;
+}
+
+.mobile-task :deep(.session-backdrop-mark) {
+  top: auto;
+  bottom: 0;
+  height: 100dvh;
+  margin-top: 0;
+  background-size: auto 100%;
+  background-position: right bottom;
+  /* The logo file has empty space under the X. Shift it so the mark sits on the bottom edge. */
+  transform: translateY(25.121%);
 }
 
 .mobile-task__description :deep(p:last-child) {

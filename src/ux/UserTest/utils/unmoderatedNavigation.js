@@ -1,3 +1,10 @@
+export const firstOpenTaskIndex = (tasks) => {
+  if (!Array.isArray(tasks) || tasks.length === 0) return 0
+  return tasks.findIndex(
+    (task) => task?.attempted !== true && task?.completed !== true,
+  )
+}
+
 export const taskDestination = ({
   taskIndex,
   taskCount,

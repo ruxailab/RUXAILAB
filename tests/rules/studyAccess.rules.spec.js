@@ -211,6 +211,38 @@ describe('Firestore study RBAC', () => {
     )
   })
 
+  it('allows the owner and a manager to save only their own user-test answer', async () => {
+    const progress = {
+      consentCompleted: true,
+      submitted: false,
+      progress: 10,
+      tasks: {
+        0: { attempted: false, completed: false, taskObservations: '' },
+      },
+    }
+
+    await assertSucceeds(
+      updateDoc(doc(context('owner').firestore(), 'answers/answers-1'), {
+        'taskAnswers.owner': progress,
+      }),
+    )
+    await assertSucceeds(
+      updateDoc(doc(context('manager').firestore(), 'answers/answers-1'), {
+        'taskAnswers.manager': progress,
+      }),
+    )
+    await assertFails(
+      updateDoc(doc(context('owner').firestore(), 'answers/answers-1'), {
+        'taskAnswers.user': progress,
+      }),
+    )
+    await assertFails(
+      updateDoc(doc(context('observator').firestore(), 'answers/answers-1'), {
+        'taskAnswers.observator': progress,
+      }),
+    )
+  })
+
   it('prevents an admin from deleting or hiding another participant answer from the client', async () => {
     await testEnv.withSecurityRulesDisabled((adminContext) =>
       updateDoc(doc(adminContext.firestore(), 'answers/answers-1'), {

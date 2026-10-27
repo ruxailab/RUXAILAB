@@ -723,6 +723,7 @@ const props = defineProps({
   shouldRecordModerator: Boolean, // props that indicate whether to record the moderator's video
   mobileInstructionsEligible: { type: Boolean, default: false },
   mobileInstructionsEnabled: { type: Boolean, default: false },
+  autoOpenTaskLink: { type: Boolean, default: false },
   resumeAtStageThree: { type: Boolean, default: false },
   activateMobileTask: { type: Function, default: null },
   submitMobileOutcome: { type: Function, default: null },
@@ -1087,15 +1088,25 @@ function releaseTaskWindow() {
   }
 }
 
-function openTaskLinkForMobile() {
-  if (!props.mobileInstructionsEnabled || !props.mobileInstructionsEligible) {
-    return
-  }
+function shouldAutoOpenTaskPage() {
+  const mobileSession =
+    props.mobileInstructionsEnabled && props.mobileInstructionsEligible
+  return props.autoOpenTaskLink || mobileSession
+}
+
+function openTaskPageWindow() {
   const url = taskLinkUrl()
-  if (!url) return
+  if (!url) return null
   const opened = window.open(url, '_blank')
-  taskToolWindow = opened
-  if (opened) hasOpenedTool.value = true
+  if (!opened) return null
+  hasOpenedTool.value = true
+  if (props.mobileInstructionsEnabled) taskToolWindow = opened
+  return opened
+}
+
+function openTaskPage() {
+  if (!shouldAutoOpenTaskPage()) return
+  openTaskPageWindow()
 }
 
 async function notifyMobileActivation() {
@@ -1119,7 +1130,6 @@ async function startTask() {
     return
   }
 
-  openTaskLinkForMobile()
   await proceedWithTaskStart({ skipScreen: true })
 }
 
@@ -1129,17 +1139,14 @@ function cancelScreenSharePrompt() {
 }
 
 async function confirmScreenShare() {
-  openTaskLinkForMobile()
   isRequestingScreenShare.value = true
   try {
     await nextTick()
     const screenStarted = await startMediaRecorders({ screenOnly: true })
-    if (!screenStarted) {
-      releaseTaskWindow()
-      return
-    }
+    if (!screenStarted) return
     showScreenSharePrompt.value = false
-    await proceedWithTaskStart({ skipScreen: true })
+    const started = await proceedWithTaskStart({ skipScreen: true })
+    if (!started) screenRecorder.value?.abortCapture?.()
   } finally {
     isRequestingScreenShare.value = false
   }
@@ -1152,7 +1159,7 @@ async function proceedWithTaskStart({ skipScreen = false } = {}) {
     const mediaStarted = await startMediaRecorders({ skipScreen })
     if (!mediaStarted) {
       screenRecorder.value?.abortCapture?.()
-      return
+      return false
     }
 
     const enteredActiveStage = stage.value !== 3
@@ -1173,9 +1180,12 @@ async function proceedWithTaskStart({ skipScreen = false } = {}) {
   }
   if (!started) {
     releaseTaskWindow()
-    return
+    return false
   }
+  // Sharing prompts finish first. The task page opens only after that.
+  openTaskPage()
   await notifyMobileActivation()
+  return true
 }
 
 function openPostFormIfNeeded() {
@@ -1191,11 +1201,7 @@ function openPostFormIfNeeded() {
 }
 
 function openTool() {
-  const url = taskLinkUrl()
-  if (!url) return
-  const opened = window.open(url, '_blank')
-  hasOpenedTool.value = true
-  if (props.mobileInstructionsEnabled && opened) taskToolWindow = opened
+  openTaskPageWindow()
 }
 
 const showPostForm = ref({ userCompleted: undefined })

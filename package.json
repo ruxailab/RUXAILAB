@@ -17,6 +17,7 @@
     "build-dev": "vue-cli-service build --mode development",
     "build-prod": "vue-cli-service build --mode production",
     "cypress:open": "cypress open",
+    "deploy:dev-rules": "firebase use develop && firebase deploy --only firestore:rules",
     "deploy-dev": "firebase use dev && firebase deploy --only hosting:ruxailab-dev",
     "deploy-develop": "firebase use develop && firebase deploy --only hosting:ruxailab-develop",
     "deploy-prod": "firebase use prod && firebase deploy --only hosting:ruxailab-prod"
