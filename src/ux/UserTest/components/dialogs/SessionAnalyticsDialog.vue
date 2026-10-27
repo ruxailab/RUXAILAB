@@ -579,7 +579,10 @@ const hasAudioFiles = computed(
 // Audio being enabled on the task is not enough: the recording may have been
 // blocked or failed to upload, leaving nothing to transcribe.
 const hasTranscriptionData = computed(
-  () => hasAudioFiles.value || Boolean(props.taskAnswer?.transcriptionDocId),
+  () =>
+    Boolean(props.taskDefinitions?.[props.selectedTask]?.hasAudioRecord) ||
+    hasAudioFiles.value ||
+    Boolean(props.taskAnswer?.transcriptionDocId),
 )
 
 const resolvedTaskId = computed(() => {
