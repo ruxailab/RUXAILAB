@@ -1929,7 +1929,14 @@
       "endTest": "Sí, finalizar estudio"
     },
     "PreTestStep": {
-      "title": "Prueba previa"
+      "title": "Prueba previa",
+      "question": "Pregunta {number}",
+      "total": "{count} en total",
+      "noQuestions": "Este estudio no tiene preguntas previas configuradas.",
+      "answerPlaceholder": "Escribe tu respuesta aquí...",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "done": "Hecho"
     },
     "PostTestStep": {
       "title": "Prueba posterior"

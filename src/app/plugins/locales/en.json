@@ -2007,7 +2007,14 @@
       "endTest": "Yes, End Study"
     },
     "PreTestStep": {
-      "title": "PreTest"
+      "title": "Pre-test",
+      "question": "Question {number}",
+      "total": "{count} total",
+      "noQuestions": "No pre-test questions configured for this study.",
+      "answerPlaceholder": "Type your answer here...",
+      "previous": "Previous",
+      "next": "Next",
+      "done": "Done"
     },
     "PostTestStep": {
       "title": "Post-Test"
