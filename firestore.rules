@@ -176,161 +176,59 @@ service cloud.firestore {
     }
 
     match /answers/{answerId} {
-      function answerStudy() {
-        return get(
-          /databases/$(database)/documents/tests/$(resource.data.studyId)
-        ).data;
-      }
-
-      // Nested subcollections (e.g. analytics/{analyticsId}) can't use
-      // answerStudy() because `resource` there refers to the subcollection
-      // document, not the parent answer — so look the parent up by id.
-      function parentAnswerStudy(id) {
-        return get(
-          /databases/$(database)/documents/tests/$(
-            get(/databases/$(database)/documents/answers/$(id)).data.studyId
-          )
-        ).data;
-      }
-
-      function answerRoleCanRead(study) {
-        let role = roleFor(study);
-        let type = study.get('testType', '');
-        return isAdmin(study) || role == 4 ||
-          (type == 'USER' && role == 3) ||
-          (type == 'FOCUS_GROUP' && role == 3) ||
-          (type in ['HEURISTIC', 'CARD_SORTING'] && role in [1, 2]);
-      }
-
-      function lockedTaskOutcome(beforeTasks, afterTasks, key) {
-        return beforeTasks.get(key, {}).get('attempted', false) != true || (
-          afterTasks.get(key, {}).get('completed', null) ==
-            beforeTasks.get(key, {}).get('completed', null) &&
-          afterTasks.get(key, {}).get('attempted', null) ==
-            beforeTasks.get(key, {}).get('attempted', null) &&
-          afterTasks.get(key, {}).get('startedAt', null) ==
-            beforeTasks.get(key, {}).get('startedAt', null) &&
-          afterTasks.get(key, {}).get('endedAt', null) ==
-            beforeTasks.get(key, {}).get('endedAt', null) &&
-          afterTasks.get(key, {}).get('participationMode', null) ==
-            beforeTasks.get(key, {}).get('participationMode', null)
-        );
-      }
-
-      function lockedTaskOutcomes0(beforeTasks, afterTasks) {
-        return lockedTaskOutcome(beforeTasks, afterTasks, '0') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '1') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '2') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '3') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '4') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '5') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '6') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '7');
-      }
-
-      function lockedTaskOutcomes1(beforeTasks, afterTasks) {
-        return lockedTaskOutcome(beforeTasks, afterTasks, '8') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '9') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '10') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '11') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '12') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '13') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '14') &&
-          lockedTaskOutcome(beforeTasks, afterTasks, '15');
-      }
-
-      // Tasks are a map keyed by "0".."15". Once attempted is true, a later
-      // client save cannot change the outcome fields. Observations, media,
-      // taskTime, and questionnaire fields stay writable. Empty task maps
-      // skip the per-index checks so a normal progress save stays cheap.
-      function lockedTaskOutcomesUnchanged(beforeEntry, afterEntry) {
-        let beforeTasks = beforeEntry is map
-          ? beforeEntry.get('tasks', {})
-          : {};
-        let afterTasks = afterEntry is map
-          ? afterEntry.get('tasks', {})
-          : {};
-        return !(beforeTasks is map) ||
-          beforeTasks.size() == 0 ||
-          (afterTasks is map &&
-            lockedTaskOutcomes0(beforeTasks, afterTasks) &&
-            lockedTaskOutcomes1(beforeTasks, afterTasks));
-      }
-
-      function participantAnswerChanged(field) {
+      function canUpdateOwnAnswer(field) {
         let before = resource.data.get(field, {});
         let after = request.resource.data.get(field, {});
-        let oldEntry = before.get(request.auth.uid, {});
-        let newEntry = after.get(request.auth.uid, {});
-        return after is map && before is map &&
-          after.diff(before).affectedKeys().hasOnly([request.auth.uid]) &&
-          oldEntry.get('submitted', false) != true &&
-          (field != 'taskAnswers' ||
-            lockedTaskOutcomesUnchanged(oldEntry, newEntry));
+
+        return before is map &&
+          after is map &&
+          after.diff(before).affectedKeys().hasOnly([request.auth.uid]);
       }
 
-      function canUpdateAnswerData() {
-        let study = answerStudy();
-        let role = roleFor(study);
-        let changed = request.resource.data.diff(resource.data).affectedKeys();
-        // A caller may save only their own answer entry. User-study answers
-        // are written by participants (role 5), managers, and admins —
-        // including the study owner, who is an admin even when absent from
-        // studyRoleMap. Moderated observers (role 3) answer that subtype.
-        // Anonymous invitees are included; they authenticate without a
-        // password provider.
-        return authenticated() && (
-          (changed.hasOnly(['sessions', 'themes']) && isAdmin(study)) ||
-          (changed.hasOnly(['taskAnswers']) &&
-            study.get('testType', '') == 'USER' &&
-            participantAnswerChanged('taskAnswers') && (
-              role == 5 ||
-              role == 4 ||
-              isAdmin(study) ||
-              (study.get('subType', '') == 'USER_MODERATED' && role == 3)
-            )) ||
-          (changed.hasOnly(['heuristicAnswers']) &&
-            (study.get('testType', '') in ['HEURISTIC', 'CARD_SORTING']) &&
-            role == 1 && participantAnswerChanged('heuristicAnswers')) ||
-          (changed.hasOnly(['cardSortingAnswers']) &&
-            study.get('testType', '') == 'CARD_SORTING' &&
-            (role == 1 || isAdmin(study)) &&
-            participantAnswerChanged('cardSortingAnswers')) ||
-          // Any real account may answer a public study (as storage and
-          // activity logging already allow), saving only its own entry.
-          // Anonymous accounts still need an invitation link.
-          (signedIn() && study.get('isPublic', false) == true && (
-            (changed.hasOnly(['taskAnswers']) &&
-              study.get('testType', '') == 'USER' &&
-              participantAnswerChanged('taskAnswers')) ||
-            (changed.hasOnly(['heuristicAnswers']) &&
-              study.get('testType', '') in ['HEURISTIC', 'CARD_SORTING'] &&
-              participantAnswerChanged('heuristicAnswers')) ||
-            (changed.hasOnly(['cardSortingAnswers']) &&
-              study.get('testType', '') == 'CARD_SORTING' &&
-              participantAnswerChanged('cardSortingAnswers')))) ||
-          (changed.hasOnly(['studyId']) && resource.data.studyId == null &&
-            request.resource.data.studyId is string &&
-            exists(/databases/$(database)/documents/tests/$(request.resource.data.studyId)) &&
-            isAdmin(get(/databases/$(database)/documents/tests/$(request.resource.data.studyId)).data))
+      function canUpdateAnswer() {
+        let study = get(
+          /databases/$(database)/documents/tests/$(resource.data.studyId)
+        ).data;
+
+        let changed = request.resource.data
+          .diff(resource.data)
+          .affectedKeys();
+
+        return (
+          authenticated() &&
+          isAdmin(study)
+        ) || (
+          authenticated() && (
+            (
+              changed.hasOnly(['taskAnswers']) &&
+              canUpdateOwnAnswer('taskAnswers')
+            ) ||
+            (
+              changed.hasOnly(['heuristicAnswers']) &&
+              canUpdateOwnAnswer('heuristicAnswers')
+            ) ||
+            (
+              changed.hasOnly(['cardSortingAnswers']) &&
+              canUpdateOwnAnswer('cardSortingAnswers')
+            ) || 
+            (
+              changed.hasOnly(['sessions', 'themes'])
+            )
+          )
         );
       }
+      allow create: if signedIn();
+      allow read: if authenticated();
+      allow update: if canUpdateAnswer();      
+      allow delete: if signedIn() &&
+        resource.data.studyId != null &&
+        get(
+          /databases/$(database)/documents/tests/$(resource.data.studyId)
+        ).data.testAdmin.userDocId == request.auth.uid;
 
-      allow create: if signedIn() &&
-        request.resource.data.createdBy == request.auth.uid &&
-        request.resource.data.studyId == null;
-      allow read: if signedIn() && answerRoleCanRead(answerStudy());
-      allow update: if canUpdateAnswerData();
-      allow delete: if (
-        signedIn() &&
-        resource.data.studyId == null &&
-        resource.data.createdBy == request.auth.uid
-      ) || isAdmin(answerStudy());
-
-       match /analytics/{analyticsId} {
-          allow read: if signedIn() &&
-            answerRoleCanRead(parentAnswerStudy(answerId));
-        }
+      match /analytics/{analyticsId} {
+        allow read: if authenticated();
+      }
     }
 
     // Existing non-study modules retain authenticated access. Their
