@@ -138,14 +138,16 @@
                   y2="0"
                   class="dendrogram-axis"
                 />
-                <text x="0" y="16" class="dendrogram-axis-label">100%</text>
+                <text x="0" y="16" class="dendrogram-axis-label">
+                  {{ $t('CardSorting.similarityMaximum') }}
+                </text>
                 <text
                   :x="layout.heightScale"
                   y="16"
                   text-anchor="end"
                   class="dendrogram-axis-label"
                 >
-                  0%
+                  {{ $t('CardSorting.similarityMinimum') }}
                 </text>
                 <text
                   :x="layout.heightScale / 2"

@@ -2819,6 +2819,8 @@
     "dendrogramInteractionHelp": "Drag the vertical line to change the similarity threshold and see how many groups it creates. The panel beside the chart lists the cards and participant-given category names in each group. You can also focus the line and use the arrow keys.",
     "dendrogramHint": "Hierarchical clustering of cards based on similarity (UPGMA). Cards that were frequently grouped together appear closer in the tree.",
     "similarityScale": "Similarity",
+    "similarityMaximum": "100%",
+    "similarityMinimum": "0%",
     "groupsForSelection": "Groups at this cut",
     "groupCount": "{count} groups",
     "cutLineHint": "Drag the vertical line to change the grouping. Focus the line and use the arrow keys to adjust it.",
