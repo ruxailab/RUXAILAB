@@ -7,22 +7,48 @@
             <h3 class="text-h4 font-weight-bold text-on-surface">
               {{ $t('CardSorting.dendrogram') }}
             </h3>
-            <v-tooltip
-              :text="$t('CardSorting.dendrogramInteractionHelp')"
-              location="top"
-              max-width="320"
-            >
-              <template #activator="{ props: tooltipProps }">
-                <v-btn
-                  v-bind="tooltipProps"
-                  icon="mdi-help-circle-outline"
-                  variant="text"
-                  density="comfortable"
-                  size="small"
-                  :aria-label="$t('CardSorting.dendrogramInteractionHelp')"
-                />
-              </template>
-            </v-tooltip>
+            <div class="d-flex align-center">
+              <v-tooltip
+                :text="$t('CardSorting.dendrogramInteractionHelp')"
+                location="top"
+                max-width="320"
+              >
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    v-bind="tooltipProps"
+                    icon="mdi-help-circle-outline"
+                    variant="text"
+                    density="comfortable"
+                    size="small"
+                    :aria-label="$t('CardSorting.dendrogramInteractionHelp')"
+                  />
+                </template>
+              </v-tooltip>
+              <v-menu>
+                <template #activator="{ props: menuProps }">
+                  <v-btn
+                    v-bind="menuProps"
+                    icon="mdi-dots-vertical"
+                    variant="text"
+                    density="comfortable"
+                    size="small"
+                    :aria-label="$t('CardSorting.exportDendrogram')"
+                  />
+                </template>
+                <v-list density="compact">
+                  <v-list-item
+                    prepend-icon="mdi-image-outline"
+                    :title="$t('CardSorting.exportAsPng')"
+                    @click="exportAsPng"
+                  />
+                  <v-list-item
+                    prepend-icon="mdi-code-braces"
+                    :title="$t('CardSorting.exportAsLatex')"
+                    @click="exportAsLatex"
+                  />
+                </v-list>
+              </v-menu>
+            </div>
           </div>
           <p class="text-body-1 text-medium-emphasis mb-0">
             {{ $t('CardSorting.dendrogramHint') }}
@@ -246,6 +272,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   getCardTitles,
   getSubmittedAnswers,
@@ -254,6 +281,7 @@ import {
   layoutDendrogram,
   UNASSIGNED_KEY,
 } from '../../utils/cardSortingAnalytics'
+import { showError } from '@/shared/utils/toast'
 
 const props = defineProps({
   test: {
@@ -265,6 +293,8 @@ const props = defineProps({
     default: () => [],
   },
 })
+
+const { t } = useI18n()
 
 const LABEL_WIDTH = 180
 const HEIGHT_SCALE = 360
@@ -426,6 +456,148 @@ const truncateLabel = (text) => {
   return text.length > MAX_LABEL_CHARS
     ? `${text.slice(0, MAX_LABEL_CHARS - 1)}…`
     : text
+}
+
+const downloadBlob = (blob, extension) => {
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `card-sorting-dendrogram-${Date.now()}.${extension}`
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+const exportAsPng = async () => {
+  const svg = dendrogramSvg.value
+  if (!svg) return
+
+  try {
+    const clone = svg.cloneNode(true)
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    clone.setAttribute('width', layout.value.width)
+    clone.setAttribute('height', layout.value.height)
+
+    const originalElements = [svg, ...svg.querySelectorAll('*')]
+    const clonedElements = [clone, ...clone.querySelectorAll('*')]
+    originalElements.forEach((element, index) => {
+      const style = getComputedStyle(element)
+      clonedElements[index].style.fill = style.fill
+      clonedElements[index].style.stroke = style.stroke
+      clonedElements[index].style.strokeWidth = style.strokeWidth
+      clonedElements[index].style.strokeDasharray = style.strokeDasharray
+      clonedElements[index].style.fontSize = style.fontSize
+      clonedElements[index].style.fontWeight = style.fontWeight
+      clonedElements[index].style.fontFamily = style.fontFamily
+    })
+
+    const background = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'rect',
+    )
+    background.setAttribute('width', layout.value.width)
+    background.setAttribute('height', layout.value.height)
+    background.setAttribute('fill', '#fafafa')
+    clone.prepend(background)
+
+    const svgBlob = new Blob([new XMLSerializer().serializeToString(clone)], {
+      type: 'image/svg+xml;charset=utf-8',
+    })
+    const svgUrl = URL.createObjectURL(svgBlob)
+
+    try {
+      const image = new Image()
+      await new Promise((resolve, reject) => {
+        image.onload = resolve
+        image.onerror = reject
+        image.src = svgUrl
+      })
+
+      const scale = 2
+      const canvas = document.createElement('canvas')
+      canvas.width = layout.value.width * scale
+      canvas.height = layout.value.height * scale
+      const context = canvas.getContext('2d')
+      if (!context) throw new Error('Canvas context unavailable')
+
+      context.scale(scale, scale)
+      context.drawImage(image, 0, 0)
+      const pngBlob = await new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob)
+          else reject(new Error('PNG export failed'))
+        }, 'image/png')
+      })
+      downloadBlob(pngBlob, 'png')
+    } finally {
+      URL.revokeObjectURL(svgUrl)
+    }
+  } catch {
+    showError('CardSorting.exportError')
+  }
+}
+
+const escapeLatex = (text) =>
+  String(text).replace(/[\\{}$&#_%^~]/g, (character) => {
+    const replacements = {
+      '\\': '\\textbackslash{}',
+      '{': '\\{',
+      '}': '\\}',
+      $: '\\$',
+      '&': '\\&',
+      '#': '\\#',
+      _: '\\_',
+      '%': '\\%',
+      '^': '\\textasciicircum{}',
+      '~': '\\textasciitilde{}',
+    }
+    return replacements[character]
+  })
+
+const exportAsLatex = () => {
+  try {
+    const scale = 0.01
+    const y = (value) => -value * scale
+    const lines = [
+      '\\documentclass[tikz,border=8pt]{standalone}',
+      '\\begin{document}',
+      '\\begin{tikzpicture}[x=1pt,y=1pt, every node/.style={font=\\sffamily\\small}]',
+      '\\fill[white] (0,0) rectangle (' +
+        `${layout.value.width * scale},${-layout.value.height * scale}` +
+        ');',
+    ]
+
+    layout.value.links.forEach((link) => {
+      lines.push(
+        `\\draw[draw={rgb,255:red,252;green,163;blue,38},line width=1.5pt] (${link.x1 * scale},${y(link.y1)}) -- (${link.x2 * scale},${y(link.y2)});`,
+      )
+    })
+
+    layout.value.nodes.forEach((node) => {
+      lines.push(
+        `\\fill[draw={rgb,255:red,245;green,124;blue,0},fill={rgb,255:red,245;green,124;blue,0}] (${node.x * scale},${y(node.y)}) circle[radius=2pt];`,
+      )
+      lines.push(
+        `\\node[anchor=east,text={rgb,255:red,55;green,65;blue,81}] at (${(node.x - 12) * scale},${y(node.y)}) {${escapeLatex(truncateLabel(node.label))}};`,
+      )
+    })
+
+    lines.push(
+      `\\draw[red!80!black,dashed,line width=1pt] (${cutLineX.value * scale},${y((layout.value.nodes[0]?.y || 0) - 18)}) -- (${cutLineX.value * scale},${y(axisY.value - 16)});`,
+      `\\draw[gray] (${layout.value.plotOriginX * scale},${y(axisY.value)}) -- (${(layout.value.plotOriginX + layout.value.heightScale) * scale},${y(axisY.value)});`,
+      `\\node[anchor=north west,text=gray] at (${layout.value.plotOriginX * scale},${y(axisY.value + 16)}) {${escapeLatex(t('CardSorting.similarityMaximum'))}};`,
+      `\\node[anchor=north east,text=gray] at (${(layout.value.plotOriginX + layout.value.heightScale) * scale},${y(axisY.value + 16)}) {${escapeLatex(t('CardSorting.similarityMinimum'))}};`,
+      `\\node[anchor=north,text=gray] at (${(layout.value.plotOriginX + layout.value.heightScale / 2) * scale},${y(axisY.value + 16)}) {${escapeLatex(t('CardSorting.similarityScale'))}};`,
+      '\\end{tikzpicture}',
+      '\\end{document}',
+    )
+
+    downloadBlob(
+      new Blob([lines.join('\n')], { type: 'application/x-tex;charset=utf-8' }),
+      'tex',
+    )
+  } catch {
+    showError('CardSorting.exportError')
+  }
 }
 </script>
 
