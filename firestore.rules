@@ -156,7 +156,8 @@ service cloud.firestore {
 
       // Phone pairing for unmoderated task instructions. Not a study session.
       // Only the owning participant can read the companion. Nobody writes it
-      // from the client. The document id is the uid.
+      // from the client. The document id is the uid. The phone channel lives
+      // in Realtime Database at mobileTaskLive/{token}.
       match /mobileTaskCompanions/{companionId} {
         allow read: if authenticated() &&
           request.auth.uid == companionId &&
@@ -165,17 +166,27 @@ service cloud.firestore {
         allow write: if false;
       }
 
-      // Public phone projection. The document id is the pairing token, so
-      // knowing the path is the capability. Clients may get one document;
-      // they must not list the collection or write it.
-      match /mobileTaskViews/{viewId} {
-        allow get: if viewId.matches('^[a-f0-9]{64}$');
-        allow list, write: if false;
-      }
-
     }
 
     match /answers/{answerId} {
+      function canLinkAnswerToStudy() {
+        let studyId = request.resource.data.get('studyId', null);
+
+        return authenticated() &&
+          resource.data.get('studyId', null) == null &&
+          studyId is string &&
+          request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly(['studyId']) &&
+          exists(
+            /databases/$(database)/documents/tests/$(studyId)
+          ) &&
+          isAdmin(
+            get(
+              /databases/$(database)/documents/tests/$(studyId)
+            ).data
+          );
+      }
+
       function canUpdateOwnAnswer(field) {
         let before = resource.data.get(field, {});
         let after = request.resource.data.get(field, {});
@@ -219,7 +230,7 @@ service cloud.firestore {
       }
       allow create: if signedIn();
       allow read: if authenticated();
-      allow update: if canUpdateAnswer();      
+      allow update: if canUpdateAnswer() || canLinkAnswerToStudy();      
       allow delete: if signedIn() &&
         resource.data.studyId != null &&
         get(

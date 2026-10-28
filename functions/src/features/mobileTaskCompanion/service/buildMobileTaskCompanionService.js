@@ -4,8 +4,7 @@ import {
   FirestoreStudyRepository,
 } from '../../../shared/repositories/index.js'
 import { FirestoreMobileTaskCompanionRepository } from '../repositories/FirestoreMobileTaskCompanionRepository.js'
-import { FirestoreMobileTaskViewRepository } from '../repositories/FirestoreMobileTaskViewRepository.js'
-import { RtdbMobileTaskPresenceRepository } from '../repositories/RtdbMobileTaskPresenceRepository.js'
+import { RtdbMobileTaskLiveRepository } from '../repositories/RtdbMobileTaskLiveRepository.js'
 import { MobileTaskCompanionService } from './MobileTaskCompanionService.js'
 
 /**
@@ -18,16 +17,14 @@ import { MobileTaskCompanionService } from './MobileTaskCompanionService.js'
  * @returns {MobileTaskCompanionService}
  */
 export function buildMobileTaskCompanionService(db, FieldValue, rtdb = null) {
-  const viewRepository = new FirestoreMobileTaskViewRepository(db)
   return new MobileTaskCompanionService({
     companionRepository: new FirestoreMobileTaskCompanionRepository(
       db,
       FieldValue,
-      viewRepository,
+      new RtdbMobileTaskLiveRepository(rtdb),
     ),
     studyRepository: new FirestoreStudyRepository(db),
     answerRepository: new FirestoreAnswerRepository(db),
-    presenceRepository: new RtdbMobileTaskPresenceRepository(rtdb),
     now: () => Date.now(),
     createToken: () => crypto.randomBytes(32).toString('hex'),
     createAttemptId: () => crypto.randomBytes(16).toString('hex'),

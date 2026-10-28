@@ -9,6 +9,17 @@ import {
   TASK_OUTCOME,
 } from '../models/MobileTaskCompanion.js'
 
+/** 16 random bytes, hex. The desktop generates the same shape for the live channel. */
+const CLIENT_ATTEMPT_ID_PATTERN = /^[a-f0-9]{32}$/
+
+/**
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+export function isClientAttemptId(value) {
+  return typeof value === 'string' && CLIENT_ATTEMPT_ID_PATTERN.test(value)
+}
+
 /**
  * @param {unknown} value
  * @param {string} label
@@ -286,6 +297,7 @@ export function decideTaskOutcome({ companion, answer, request, now }) {
  * @param {object} params.task
  * @param {number} params.now
  * @param {() => string} params.createAttemptId
+ * @param {string|null|undefined} [params.requestedAttemptId] desktop-generated id for the fast RTDB write
  */
 export function decideActivation({
   companion,
@@ -293,6 +305,7 @@ export function decideActivation({
   task,
   now,
   createAttemptId,
+  requestedAttemptId = null,
 }) {
   if (
     !companion ||
@@ -343,7 +356,9 @@ export function decideActivation({
   const activeTask = {
     taskIndex: task.taskIndex,
     taskId: task.taskId,
-    attemptId: createAttemptId(),
+    attemptId: isClientAttemptId(requestedAttemptId)
+      ? requestedAttemptId
+      : createAttemptId(),
     startedAt: now,
     taskNumber: task.taskNumber,
     title: task.title,
@@ -410,7 +425,7 @@ export function decideEnd({ companion, answer, uid, now }) {
 
 /**
  * Desktop signals that the participant left the last task for post-test
- * or finish. The phone shows thank-you. The token and public view stay
+ * or finish. The phone shows thank-you. The token and live node stay
  * so that message is not `ended`. Final submit still calls decideEnd.
  *
  * @param {object} params

@@ -129,20 +129,22 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
 import { useI18n } from 'vue-i18n'
-import { doc, onSnapshot } from 'firebase/firestore'
 import {
   onDisconnect,
+  onValue,
   ref as dbRef,
   remove,
   set,
 } from 'firebase/database'
-import { database, db } from '@/app/plugins/firebase'
+import { database } from '@/app/plugins/firebase'
 import { submitMobileTaskOutcome } from '@/ux/UserTest/services/mobileTaskCompanionClient'
 import {
   mapMobileTaskUiState,
   MOBILE_TASK_SAVED_CONFIRMATION_MS,
   MOBILE_TASK_TOKEN_PATTERN,
-  mobileTaskPresencePath,
+  mobileTaskLiveConnectedPath,
+  mobileTaskLivePath,
+  resolveMobileTaskChannel,
   settleMobileTaskSubmit,
 } from '@/ux/UserTest/utils/mobileTaskPageState'
 
@@ -169,7 +171,10 @@ const taskView = ref({
   attemptId: null,
 })
 
-let unsubscribe = null
+let rtdbUnsubscribe = null
+let rtdbPayload
+let rtdbFailed = false
+let sawPayload = false
 let presenceRef = null
 let presenceDisconnect = null
 let sessionEnded = false
@@ -256,8 +261,58 @@ function phoneLocator() {
   }
 }
 
-function viewRef() {
-  return doc(db, 'tests', props.studyId, 'mobileTaskViews', props.token)
+function resetChannel() {
+  rtdbPayload = undefined
+  rtdbFailed = false
+  sawPayload = false
+}
+
+function publishChannel() {
+  if (sessionEnded) return
+  const channel = resolveMobileTaskChannel({
+    rtdb: rtdbPayload,
+    rtdbFailed,
+    sawPayload,
+  })
+  if (channel.status === 'loading') return
+  if (channel.status === 'disconnected') {
+    if (!submitting.value) networkFailure.value = true
+    return
+  }
+  if (channel.status === 'ended') {
+    markEnded()
+    return
+  }
+  if (typeof rtdbPayload?.state === 'string') {
+    sawPayload = true
+  }
+  if (!submitting.value) networkFailure.value = false
+  applyServerPayload(channel.payload)
+}
+
+function listen() {
+  stopListening()
+  const path = mobileTaskLivePath(props.token)
+  if (!locatorIsValid() || !path) {
+    markEnded()
+    return
+  }
+  sessionEnded = false
+  resetChannel()
+  void startPresence()
+  rtdbUnsubscribe = onValue(
+    dbRef(database, path),
+    (snapshot) => {
+      rtdbFailed = false
+      rtdbPayload = snapshot.exists() ? snapshot.val() || {} : null
+      publishChannel()
+    },
+    () => {
+      rtdbFailed = true
+      rtdbPayload = null
+      publishChannel()
+    },
+  )
 }
 
 async function stopPresence() {
@@ -283,21 +338,21 @@ async function stopPresence() {
 
 async function startPresence() {
   await stopPresence()
-  const path = mobileTaskPresencePath(props.token)
+  const path = mobileTaskLiveConnectedPath(props.token)
   if (!path || sessionEnded) return
   presenceRef = dbRef(database, path)
   presenceDisconnect = onDisconnect(presenceRef)
   try {
     await presenceDisconnect.remove()
-    await set(presenceRef, { connected: true })
+    await set(presenceRef, true)
   } catch {
     /* Presence is best-effort; the task view still works. */
   }
 }
 
 function stopListening() {
-  if (typeof unsubscribe === 'function') unsubscribe()
-  unsubscribe = null
+  if (typeof rtdbUnsubscribe === 'function') rtdbUnsubscribe()
+  rtdbUnsubscribe = null
 }
 
 function markEnded() {
@@ -307,30 +362,6 @@ function markEnded() {
   clearLocalAccepted()
   stopListening()
   void stopPresence()
-}
-
-function listen() {
-  stopListening()
-  if (!locatorIsValid()) {
-    markEnded()
-    return
-  }
-  sessionEnded = false
-  unsubscribe = onSnapshot(
-    viewRef(),
-    (snapshot) => {
-      if (!snapshot.exists()) {
-        markEnded()
-        return
-      }
-      if (!submitting.value) networkFailure.value = false
-      applyServerPayload(snapshot.data() || {})
-    },
-    () => {
-      if (!submitting.value && !sessionEnded) networkFailure.value = true
-    },
-  )
-  void startPresence()
 }
 
 function hasAttemptIdentity() {
@@ -390,6 +421,8 @@ function onVisible() {
 if (!locatorIsValid()) {
   serverState.value = 'ended'
   sessionEnded = true
+} else {
+  serverState.value = 'waiting'
 }
 
 onMounted(() => {

@@ -1,11 +1,16 @@
 import {
   applyAcceptedOutcome,
+  buildMobileTaskLivePayload,
+  createMobileTaskAttemptId,
+  resolveMobileTaskChannel,
   isMobileTaskIndexEligible,
   isPhoneConnected,
   mapMobileTaskUiState,
   mobileTaskId,
+  mobileTaskLiveConnectedPath,
+  mobileTaskLivePath,
+  mobileTaskLiveUpdate,
   mobileTaskPairingPath,
-  mobileTaskPresencePath,
   resolveDisplayedOutcome,
   settleMobileTaskSubmit,
 } from '@/ux/UserTest/utils/mobileTaskPageState'
@@ -159,8 +164,115 @@ describe('mobile task page state', () => {
     expect(isPhoneConnected(true)).toBe(true)
     expect(isPhoneConnected(false)).toBe(false)
     expect(isPhoneConnected(null)).toBe(false)
-    expect(mobileTaskPresencePath(token)).toBe(`mobileTaskPresence/${token}`)
-    expect(mobileTaskPresencePath('short')).toBe('')
+    expect(mobileTaskLivePath(token)).toBe(`mobileTaskLive/${token}`)
+    expect(mobileTaskLivePath('short')).toBe('')
+    expect(mobileTaskLiveConnectedPath(token)).toBe(
+      `mobileTaskLive/${token}/connected`,
+    )
+    expect(mobileTaskLiveConnectedPath('short')).toBe('')
+  })
+
+  it('builds the live task payload the phone renders immediately', () => {
+    const attemptId = createMobileTaskAttemptId(() => new Uint8Array(16).fill(0xab))
+    expect(attemptId).toBe('ab'.repeat(16))
+    expect(
+      buildMobileTaskLivePayload({
+        state: 'active',
+        taskIndex: 1,
+        taskId: 'task-b',
+        attemptId,
+        title: 'Checkout',
+        description: 'Pay',
+        updatedAt: 20,
+      }),
+    ).toEqual({
+      state: 'active',
+      updatedAt: 20,
+      taskNumber: 2,
+      title: 'Checkout',
+      description: 'Pay',
+      taskIndex: 1,
+      taskId: 'task-b',
+      attemptId,
+    })
+    expect(buildMobileTaskLivePayload({ state: 'completed', updatedAt: 30 })).toEqual({
+      state: 'completed',
+      updatedAt: 30,
+    })
+    expect(
+      buildMobileTaskLivePayload({
+        state: 'active',
+        taskIndex: 0,
+        taskId: 'task-a',
+        attemptId: 'attempt-1',
+        updatedAt: 1,
+      }),
+    ).toBeNull()
+    expect(
+      mobileTaskLiveUpdate({ state: 'waiting', updatedAt: 30 }),
+    ).toEqual({
+      state: 'waiting',
+      updatedAt: 30,
+      taskNumber: null,
+      title: null,
+      description: null,
+      taskIndex: null,
+      taskId: null,
+      attemptId: null,
+    })
+    expect(
+      mobileTaskLiveUpdate({
+        state: 'active',
+        updatedAt: 20,
+        taskNumber: 2,
+        title: 'Checkout',
+        description: 'Pay',
+        taskIndex: 1,
+        taskId: 'task-b',
+        attemptId,
+      }),
+    ).toEqual({
+      state: 'active',
+      updatedAt: 20,
+      taskNumber: 2,
+      title: 'Checkout',
+      description: 'Pay',
+      taskIndex: 1,
+      taskId: 'task-b',
+      attemptId,
+    })
+  })
+
+  it('keeps the phone paired while the realtime node is still missing', () => {
+    const waiting = { state: 'waiting' }
+    expect(resolveMobileTaskChannel({ rtdb: undefined })).toEqual({
+      status: 'loading',
+    })
+    expect(
+      resolveMobileTaskChannel({ rtdb: { connected: true } }),
+    ).toEqual({ status: 'payload', payload: { state: 'waiting' } })
+    expect(resolveMobileTaskChannel({ rtdb: waiting })).toEqual({
+      status: 'payload',
+      payload: waiting,
+    })
+    expect(
+      resolveMobileTaskChannel({
+        rtdb: { state: 'active', title: 'Find the price', connected: true },
+      }),
+    ).toEqual({
+      status: 'payload',
+      payload: { state: 'active', title: 'Find the price', connected: true },
+    })
+    expect(resolveMobileTaskChannel({ rtdb: null })).toEqual({
+      status: 'payload',
+      payload: { state: 'waiting' },
+    })
+    expect(
+      resolveMobileTaskChannel({ rtdb: null, sawPayload: true }),
+    ).toEqual({ status: 'ended' })
+    expect(
+      resolveMobileTaskChannel({ rtdb: null, rtdbFailed: true }),
+    ).toEqual({ status: 'disconnected' })
   })
 
   it('builds the phone pairing path from study, participant and token', () => {

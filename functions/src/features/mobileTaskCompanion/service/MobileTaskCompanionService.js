@@ -32,7 +32,6 @@ export class MobileTaskCompanionService {
    * @param {object} deps.companionRepository
    * @param {{ get: Function }} deps.studyRepository
    * @param {{ get: Function }} deps.answerRepository
-   * @param {{ remove: Function }} [deps.presenceRepository]
    * @param {() => number} deps.now epoch milliseconds
    * @param {() => string} deps.createToken 32 random bytes, hex
    * @param {() => string} deps.createAttemptId
@@ -41,7 +40,6 @@ export class MobileTaskCompanionService {
     companionRepository,
     studyRepository,
     answerRepository,
-    presenceRepository = { remove: async () => {} },
     now,
     createToken,
     createAttemptId,
@@ -49,7 +47,6 @@ export class MobileTaskCompanionService {
     this.companionRepository = companionRepository
     this.studyRepository = studyRepository
     this.answerRepository = answerRepository
-    this.presenceRepository = presenceRepository
     this.now = now
     this.createToken = createToken
     this.createAttemptId = createAttemptId
@@ -120,6 +117,20 @@ export class MobileTaskCompanionService {
     if (!companion || companion.answerId !== answerId) {
       return { companion: null }
     }
+    if (
+      companion.status === COMPANION_STATUS.PAIRED &&
+      companion.token
+    ) {
+      try {
+        await this.companionRepository.syncOpen({
+          kind: 'reuse',
+          token: companion.token,
+          uid,
+        })
+      } catch {
+        // Restoring the QR must not fail when the live channel is down.
+      }
+    }
     return { companion: toDesktopCompanion(companion) }
   }
 
@@ -156,18 +167,20 @@ export class MobileTaskCompanionService {
       studyId,
       companionId: existing.id,
       answerId,
-      decide: ({ companion, answer }) =>
-        this.withPublicView(
-          decideActivation({
-            companion,
-            answer,
-            task,
-            now: this.now(),
-            createAttemptId: this.createAttemptId,
-          }),
+      decide: ({ companion, answer }) => {
+        const decision = decideActivation({
           companion,
           answer,
-        ),
+          task,
+          now: this.now(),
+          createAttemptId: this.createAttemptId,
+          requestedAttemptId: input.attemptId,
+        })
+        return this.withPublicView(decision, companion, answer, {
+          reason: 'activate',
+          attemptId: decision.result?.attemptId || null,
+        })
+      },
     })
   }
 
@@ -197,21 +210,22 @@ export class MobileTaskCompanionService {
       studyId: located.studyId,
       companionId: located.companion.id,
       answerId: located.companion.answerId,
-      decide: ({ companion, answer }) =>
-        this.withPublicView(
-          decideTaskOutcome({
-            companion,
-            answer,
-            request: {
-              ...request,
-              token: token || null,
-              uid: token ? null : uid,
-            },
-            now: this.now(),
-          }),
+      decide: ({ companion, answer }) => {
+        const decision = decideTaskOutcome({
           companion,
           answer,
-        ),
+          request: {
+            ...request,
+            token: token || null,
+            uid: token ? null : uid,
+          },
+          now: this.now(),
+        })
+        return this.withPublicView(decision, companion, answer, {
+          reason: 'outcome',
+          attemptId: request.attemptId,
+        })
+      },
     })
   }
 
@@ -239,8 +253,7 @@ export class MobileTaskCompanionService {
       fail('not-found', 'Mobile task companion not found')
     }
 
-    const token = existing.token
-    const result = await this.companionRepository.commitSessionChange({
+    return this.companionRepository.commitSessionChange({
       studyId,
       companionId: existing.id,
       answerId,
@@ -254,10 +267,9 @@ export class MobileTaskCompanionService {
           }),
           companion,
           answer,
+          { reason: 'end' },
         ),
     })
-    await this.presenceRepository.remove(token)
-    return result
   }
 
   /**
@@ -298,6 +310,7 @@ export class MobileTaskCompanionService {
           }),
           companion,
           answer,
+          { reason: 'complete' },
         ),
     })
   }
@@ -307,15 +320,17 @@ export class MobileTaskCompanionService {
    * @param {object|null} companion
    * @param {object|null} answer
    */
-  withPublicView(decision, companion, answer) {
+  withPublicView(decision, companion, answer, live = {}) {
+    const view = publicViewWrite({
+      companion,
+      answer,
+      companionUpdate: decision.companionUpdate,
+      clearToken: decision.clearToken === true,
+    })
+    if (view && live && Object.keys(live).length > 0) view.live = live
     return {
       ...decision,
-      view: publicViewWrite({
-        companion,
-        answer,
-        companionUpdate: decision.companionUpdate,
-        clearToken: decision.clearToken === true,
-      }),
+      view,
     }
   }
 

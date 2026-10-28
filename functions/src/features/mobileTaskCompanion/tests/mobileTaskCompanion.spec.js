@@ -6,7 +6,7 @@ import {
   PARTICIPATION_MODE,
 } from '../models/MobileTaskCompanion.js'
 import { FirestoreMobileTaskCompanionRepository } from '../repositories/FirestoreMobileTaskCompanionRepository.js'
-import { FirestoreMobileTaskViewRepository } from '../repositories/FirestoreMobileTaskViewRepository.js'
+import { RtdbMobileTaskLiveRepository } from '../repositories/RtdbMobileTaskLiveRepository.js'
 import { MobileTaskCompanionService } from '../service/MobileTaskCompanionService.js'
 
 const STUDY_ID = 'study-1'
@@ -154,27 +154,53 @@ function seed(db, studyOverrides = {}) {
   })
 }
 
+function createFakeRtdb() {
+  const data = new Map()
+  return {
+    data,
+    ref(path) {
+      return {
+        get: async () => ({
+          exists: () => data.has(path),
+          val: () => (data.has(path) ? structuredClone(data.get(path)) : null),
+        }),
+        set: async (value) => {
+          data.set(path, structuredClone(value))
+        },
+        update: async (value) => {
+          data.set(path, { ...(data.get(path) || {}), ...value })
+        },
+        remove: async () => {
+          data.delete(path)
+        },
+        transaction: async (updater) => {
+          const current = data.has(path) ? structuredClone(data.get(path)) : null
+          const next = updater(current)
+          if (typeof next === 'undefined') return { committed: false }
+          if (next === null) data.delete(path)
+          else data.set(path, structuredClone(next))
+          return { committed: true }
+        },
+      }
+    },
+  }
+}
+
 function harness(studyOverrides = {}) {
   const db = createFakeFirestore()
+  const rtdb = createFakeRtdb()
   seed(db, studyOverrides)
   let clock = 1000
   let tokenCount = 0
   let attemptCount = 0
-  const presenceRemoved = []
-  const viewRepository = new FirestoreMobileTaskViewRepository(db)
   const service = new MobileTaskCompanionService({
     companionRepository: new FirestoreMobileTaskCompanionRepository(
       db,
       { delete: () => ({ __op: 'delete' }) },
-      viewRepository,
+      new RtdbMobileTaskLiveRepository(rtdb),
     ),
     studyRepository: new FirestoreStudyRepository(db),
     answerRepository: new FirestoreAnswerRepository(db),
-    presenceRepository: {
-      remove: async (token) => {
-        if (token) presenceRemoved.push(token)
-      },
-    },
     now: () => clock,
     createToken: () => {
       tokenCount += 1
@@ -194,9 +220,9 @@ function harness(studyOverrides = {}) {
 
   return {
     db,
+    rtdb,
     service,
     caller,
-    presenceRemoved,
     setClock: (value) => {
       clock = value
     },
@@ -204,8 +230,12 @@ function harness(studyOverrides = {}) {
       structuredClone(db.docs.get(`answers/${ANSWER_ID}`)),
     readCompanion: () =>
       db.docs.get(`tests/${STUDY_ID}/mobileTaskCompanions/${UID}`),
-    readView: (token) =>
-      db.docs.get(`tests/${STUDY_ID}/mobileTaskViews/${token}`),
+    readLive: (token) => {
+      const value = rtdb.data.get(`mobileTaskLive/${token}`)
+      if (value == null) return undefined
+      const { updatedAt: _updatedAt, connected: _connected, ...rest } = value
+      return rest
+    },
   }
 }
 
@@ -261,7 +291,7 @@ describe('MobileTaskCompanion', () => {
 
 describe('MobileTaskCompanionService', () => {
   it('keeps the token when the desktop reloads', async () => {
-    const { service, caller, readCompanion, readView, setClock } = harness()
+    const { service, caller, readCompanion, readLive, setClock } = harness()
     const created = await service.create(caller)
     const token = created.companion.token
 
@@ -269,7 +299,7 @@ describe('MobileTaskCompanionService', () => {
     await service.get(caller)
     const restored = await service.get(caller)
 
-    expect(readView(token)).toEqual({ state: 'waiting' })
+    expect(readLive(token)).toEqual({ state: 'waiting' })
     expect(restored.companion.token).toBe(token)
     expect(restored.companion.status).toBe('paired')
     expect(restored.companion.activeTask).toBeNull()
@@ -279,14 +309,14 @@ describe('MobileTaskCompanionService', () => {
   })
 
   it('returns only the public task fields while a task is active', async () => {
-    const { service, caller, readCompanion, readView } = harness()
+    const { service, caller, readCompanion, readLive } = harness()
     const created = await service.create(caller)
     const started = await service.activate({
       ...caller,
       input: taskInput(0, 'task-a'),
     })
 
-    const view = readView(created.companion.token)
+    const view = readLive(created.companion.token)
 
     expect(started).toEqual({
       attemptId: 'attempt-1',
@@ -342,7 +372,7 @@ describe('MobileTaskCompanionService', () => {
   })
 
   it('does not write the answer again when the same attemptId is retried', async () => {
-    const { service, caller, db, readAnswer, readCompanion, readView, setClock } =
+    const { service, caller, db, readAnswer, readCompanion, readLive, setClock } =
       harness()
     const created = await service.create(caller)
     await service.activate({ ...caller, input: taskInput(0, 'task-a') })
@@ -396,7 +426,7 @@ describe('MobileTaskCompanionService', () => {
     setClock(8000)
     expect(readCompanion().activeTask).toBeNull()
     expect(readCompanion().lastOutcome.attemptId).toBe('attempt-1')
-    expect(readView(created.companion.token)).toEqual({
+    expect(readLive(created.companion.token)).toEqual({
       state: 'waiting',
     })
   })
@@ -467,7 +497,7 @@ describe('MobileTaskCompanionService', () => {
   })
 
   it('rejects an outcome when the companion has ended', async () => {
-    const { service, caller, db, readAnswer, readCompanion, readView } =
+    const { service, caller, db, readAnswer, readCompanion, readLive } =
       harness()
     const created = await service.create(caller)
     await service.activate({ ...caller, input: taskInput(0, 'task-a') })
@@ -493,7 +523,7 @@ describe('MobileTaskCompanionService', () => {
     expect(await readAnswer()).toEqual(before)
     expect(db.answerUpdates).toEqual([])
     expect(readCompanion().status).toBe('ended')
-    expect(readView(created.companion.token)).toBeUndefined()
+    expect(readLive(created.companion.token)).toBeUndefined()
   })
 
   it('rejects an outcome and end when the answer is already submitted', async () => {
@@ -585,18 +615,34 @@ describe('MobileTaskCompanionService', () => {
     })
   })
 
+  it('mirrors the phone channel and removes it when the session ends', async () => {
+    const { service, caller, readLive, rtdb } = harness()
+    const created = await service.create(caller)
+    const token = created.companion.token
+
+    expect(readLive(token)).toEqual({ state: 'waiting' })
+    expect(rtdb.data.get(`mobileTaskLive/${token}`).state).toBe('waiting')
+    expect(JSON.stringify(readLive(token))).not.toContain(UID)
+    expect(JSON.stringify(rtdb.data.get(`mobileTaskLive/${token}`))).not.toContain(UID)
+
+    await service.end(caller)
+    expect(readLive(token)).toBeUndefined()
+    expect(rtdb.data.has(`mobileTaskLive/${token}`)).toBe(false)
+    expect(rtdb.data.has(`mobileTaskOwners/${token}`)).toBe(false)
+  })
+
   it('publishes a public view for the phone and deletes it when the session ends', async () => {
-    const { service, caller, readCompanion, readView, presenceRemoved } =
+    const { service, caller, readCompanion, readLive } =
       harness()
     const created = await service.create(caller)
     const token = created.companion.token
 
-    expect(readView(token)).toEqual({ state: 'waiting' })
-    expect(JSON.stringify(readView(token))).not.toContain(UID)
-    expect(JSON.stringify(readView(token))).not.toContain(ANSWER_ID)
+    expect(readLive(token)).toEqual({ state: 'waiting' })
+    expect(JSON.stringify(readLive(token))).not.toContain(UID)
+    expect(JSON.stringify(readLive(token))).not.toContain(ANSWER_ID)
 
     await service.activate({ ...caller, input: taskInput(0, 'task-a') })
-    expect(readView(token)).toEqual({
+    expect(readLive(token)).toEqual({
       state: 'active',
       taskNumber: 1,
       title: 'Find the price',
@@ -605,7 +651,7 @@ describe('MobileTaskCompanionService', () => {
       taskId: 'task-a',
       attemptId: 'attempt-1',
     })
-    expect(JSON.stringify(readView(token))).not.toContain('secret.example')
+    expect(JSON.stringify(readLive(token))).not.toContain('secret.example')
 
     await service.submitOutcome({
       uid: null,
@@ -617,17 +663,16 @@ describe('MobileTaskCompanionService', () => {
         outcome: 'completed',
       },
     })
-    expect(readView(token)).toEqual({ state: 'waiting' })
+    expect(readLive(token)).toEqual({ state: 'waiting' })
     expect(readCompanion().activeTask).toBeNull()
     expect(readCompanion().lastOutcome.attemptId).toBe('attempt-1')
 
     await service.end(caller)
-    expect(readView(token)).toBeUndefined()
-    expect(presenceRemoved).toEqual([token])
+    expect(readLive(token)).toBeUndefined()
   })
 
   it('returns waiting after an outcome so the phone is not stuck on saved', async () => {
-    const { service, caller, readCompanion, readView } = harness()
+    const { service, caller, readCompanion, readLive } = harness()
     const created = await service.create(caller)
     await service.activate({ ...caller, input: taskInput(0, 'task-a') })
 
@@ -647,14 +692,14 @@ describe('MobileTaskCompanionService', () => {
       attemptId: 'attempt-1',
       outcome: 'completed',
     })
-    expect(readView(created.companion.token)).toEqual({ state: 'waiting' })
+    expect(readLive(created.companion.token)).toEqual({ state: 'waiting' })
 
     const next = await service.activate({
       ...caller,
       input: taskInput(1, 'task-b'),
     })
     expect(next.attemptId).toBe('attempt-2')
-    expect(readView(created.companion.token)).toEqual({
+    expect(readLive(created.companion.token)).toEqual({
       state: 'active',
       taskNumber: 2,
       title: 'Checkout',
@@ -666,7 +711,7 @@ describe('MobileTaskCompanionService', () => {
   })
 
   it('keeps the public view on thank-you when the desktop leaves the last task', async () => {
-    const { service, caller, readCompanion, readView } = harness()
+    const { service, caller, readCompanion, readLive } = harness()
     const created = await service.create(caller)
     const token = created.companion.token
     await service.activate({ ...caller, input: taskInput(0, 'task-a') })
@@ -701,19 +746,83 @@ describe('MobileTaskCompanionService', () => {
     expect(readCompanion().status).toBe('paired')
     expect(readCompanion().taskPhaseCompleted).toBe(true)
     expect(readCompanion().activeTask).toBeNull()
-    expect(readView(token)).toEqual({ state: 'completed' })
+    expect(readLive(token)).toEqual({ state: 'completed' })
 
     await service.end(caller)
-    expect(readView(token)).toBeUndefined()
+    expect(readLive(token)).toBeUndefined()
   })
 
   it('does not reset an active public view when create reuses the token', async () => {
-    const { service, caller, readView } = harness()
+    const { service, caller, readLive, rtdb } = harness()
     const created = await service.create(caller)
     await service.activate({ ...caller, input: taskInput(0, 'task-a') })
 
     const again = await service.create(caller)
     expect(again.companion.token).toBe(created.companion.token)
-    expect(readView(created.companion.token).state).toBe('active')
+    expect(readLive(created.companion.token).state).toBe('active')
+    expect(rtdb.data.get(`mobileTaskLive/${created.companion.token}`).state).toBe(
+      'active',
+    )
+  })
+
+  it('stores the attempt id the desktop already showed on the phone', async () => {
+    const { service, caller, readCompanion, readLive, rtdb } = harness()
+    const created = await service.create(caller)
+    const token = created.companion.token
+    const attemptId = 'ab'.repeat(16)
+
+    await service.activate({
+      ...caller,
+      input: { ...taskInput(0, 'task-a'), attemptId },
+    })
+
+    expect(readCompanion().activeTask.attemptId).toBe(attemptId)
+    expect(readLive(token).attemptId).toBe(attemptId)
+    expect(rtdb.data.get(`mobileTaskLive/${token}`)).toMatchObject({
+      state: 'active',
+      attemptId,
+      title: 'Find the price',
+    })
+    expect(rtdb.data.get(`mobileTaskOwners/${token}`)).toBe(UID)
+  })
+
+  it('does not let a late activate replace the task already published to the phone', async () => {
+    const { service, caller, rtdb } = harness()
+    const created = await service.create(caller)
+    const token = created.companion.token
+    await service.activate({ ...caller, input: taskInput(0, 'task-a') })
+    const movedOn = {
+      state: 'active',
+      attemptId: 'cd'.repeat(16),
+      taskIndex: 1,
+      taskId: 'task-b',
+      taskNumber: 2,
+      title: 'Checkout',
+      description: 'Pay',
+      updatedAt: 50,
+    }
+    rtdb.data.set(`mobileTaskLive/${token}`, movedOn)
+
+    await service.activate({ ...caller, input: taskInput(0, 'task-a') })
+
+    expect(rtdb.data.get(`mobileTaskLive/${token}`)).toEqual(movedOn)
+  })
+
+  it('keeps phone presence when the server mirrors a new task', async () => {
+    const { service, caller, rtdb } = harness()
+    const created = await service.create(caller)
+    const token = created.companion.token
+    rtdb.data.set(`mobileTaskLive/${token}`, {
+      ...rtdb.data.get(`mobileTaskLive/${token}`),
+      connected: true,
+    })
+
+    await service.activate({ ...caller, input: taskInput(0, 'task-a') })
+
+    expect(rtdb.data.get(`mobileTaskLive/${token}`)).toMatchObject({
+      state: 'active',
+      connected: true,
+      title: 'Find the price',
+    })
   })
 })

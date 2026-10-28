@@ -1,5 +1,5 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + 'PreTest'">
+  <ShowInfo :title="`${testTitle} - ${$t('UserTestView.PreTestStep.title')}`">
     <template #content>
       <div class="test-content pa-2 pa-sm-4">
         <v-sheet rounded="xl" border class="pa-4 pa-sm-6">
@@ -10,11 +10,17 @@
               size="small"
               class="font-weight-bold"
             >
-              Question {{ step + 1 }}
+              {{
+                $t('UserTestView.PreTestStep.question', {
+                  number: step + 1,
+                })
+              }}
             </v-chip>
-            <span class="text-caption text-medium-emphasis"
-              >{{ preTest.length }} total</span
-            >
+            <span class="text-caption text-medium-emphasis">{{
+              $t('UserTestView.PreTestStep.total', {
+                count: preTest.length,
+              })
+            }}</span>
           </div>
 
           <v-progress-linear
@@ -30,7 +36,7 @@
             class="question-shell mx-auto mb-8 text-center"
           >
             <p class="text-body-1 text-medium-emphasis">
-              No pre-test questions configured for this study.
+              {{ $t('UserTestView.PreTestStep.noQuestions') }}
             </p>
           </div>
 
@@ -51,7 +57,7 @@
               <v-text-field
                 v-model="localAnswers[step].answer"
                 :data-study-field-ref="`preTest:${step}:answer`"
-                :placeholder="'Type your answer here…'"
+                :placeholder="$t('UserTestView.PreTestStep.answerPlaceholder')"
                 variant="outlined"
                 density="comfortable"
                 rounded="lg"
@@ -92,7 +98,7 @@
                 :disabled="step === 0"
                 @click="prev"
               >
-                Previous
+                {{ $t('UserTestView.PreTestStep.previous') }}
               </v-btn>
             </v-col>
             <v-col cols="auto">
@@ -103,7 +109,7 @@
                 variant="flat"
                 @click="next"
               >
-                Next
+                {{ $t('UserTestView.PreTestStep.next') }}
               </v-btn>
 
               <v-btn
@@ -113,7 +119,7 @@
                 variant="flat"
                 @click="$emit('done')"
               >
-                Done
+                {{ $t('UserTestView.PreTestStep.done') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -137,9 +143,19 @@ const props = defineProps({
 const emit = defineEmits(['done', 'update:preTestAnswer', 'selection-changed'])
 
 const step = ref(0)
-const localAnswers = ref(
-  Array.isArray(props.preTestAnswer) ? [...props.preTestAnswer] : [],
-)
+const normalizeAnswers = (questions, answers) => {
+  if (!Array.isArray(questions)) return []
+
+  return questions.map((_, index) => {
+    const answer = answers?.[index]
+    return {
+      ...(answer && typeof answer === 'object' ? answer : {}),
+      answer: answer && typeof answer === 'object' ? (answer.answer ?? '') : '',
+    }
+  })
+}
+
+const localAnswers = ref(normalizeAnswers(props.preTest, props.preTestAnswer))
 
 const hasQuestions = computed(() => (props.preTest?.length ?? 0) > 0)
 const currentItem = computed(() => props.preTest?.[step.value] ?? null)
@@ -173,13 +189,20 @@ const updateAnswer = (index, value) => {
 }
 
 watch(
-  () => props.preTestAnswer,
-  (newVal) => {
-    if (Array.isArray(newVal)) {
-      localAnswers.value = [...newVal]
+  [() => props.preTest, () => props.preTestAnswer],
+  ([questions, answers]) => {
+    localAnswers.value = normalizeAnswers(questions, answers)
+    if (
+      Array.isArray(questions) &&
+      questions.length > 0 &&
+      (!Array.isArray(answers) ||
+        answers.length !== questions.length ||
+        answers.some((answer) => !answer || typeof answer !== 'object'))
+    ) {
+      emit('update:preTestAnswer', localAnswers.value)
     }
   },
-  { deep: true },
+  { deep: true, immediate: true },
 )
 
 watch(

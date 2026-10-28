@@ -6,7 +6,7 @@
  */
 export class RtdbCollectionRepository {
   /**
-   * @param {string} collectionPath root path, e.g. `mobileTaskPresence`
+   * @param {string} collectionPath root path, e.g. `mobileTaskOwners`
    * @param {{ ref: (path: string) => {
    *   get: () => Promise<{ exists: () => boolean, val: () => unknown }>,
    *   set: (value: unknown) => Promise<unknown>,

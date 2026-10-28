@@ -10,8 +10,9 @@ import {
  *
  * The document id is the participant uid, so a study has at most one companion
  * per participant and create can be idempotent without a composite index.
- * The phone listens at mobileTaskViews/{token}; this document stays private
- * to the owning participant.
+ * The phone listens at mobileTaskLive/{token} in the Realtime Database and
+ * writes `connected` on that same node. This document stays private to the
+ * owning participant.
  *
  * @extends {FirestoreSubcollectionRepository<MobileTaskCompanion>}
  */
@@ -19,9 +20,9 @@ export class FirestoreMobileTaskCompanionRepository extends FirestoreSubcollecti
   /**
    * @param {FirebaseFirestore.Firestore} db
    * @param {{ delete: Function }} FieldValue
-   * @param {{ applyInTransaction: Function }} [viewRepository]
+   * @param {{ claim: Function, remove: Function, apply: Function }} [liveRepository]
    */
-  constructor(db, FieldValue, viewRepository = null) {
+  constructor(db, FieldValue, liveRepository = null) {
     super(
       'tests',
       'mobileTaskCompanions',
@@ -31,7 +32,7 @@ export class FirestoreMobileTaskCompanionRepository extends FirestoreSubcollecti
       (item) => item.toFirestore(),
     )
     this.FieldValue = FieldValue
-    this.viewRepository = viewRepository
+    this.liveRepository = liveRepository
   }
 
   /**
@@ -45,7 +46,7 @@ export class FirestoreMobileTaskCompanionRepository extends FirestoreSubcollecti
 
   /**
    * Returns the live paired companion, or replaces an ended one with a new token.
-   * A paired companion for the same answer keeps its token and its public view.
+   * A paired companion for the same answer keeps its token and its live node.
    *
    * @param {object} params
    * @param {string} params.studyId
@@ -56,35 +57,36 @@ export class FirestoreMobileTaskCompanionRepository extends FirestoreSubcollecti
    */
   async openPairedSession({ studyId, participantUid, answerId, buildFresh }) {
     const ref = this.doc(studyId, participantUid)
-    return this.db.runTransaction(async (tx) => {
+    let side = null
+    const companion = await this.db.runTransaction(async (tx) => {
       const snap = await tx.get(ref)
       if (snap.exists) {
-        const companion = this.fromFirestore(snap.data(), snap.id, studyId)
+        const existing = this.fromFirestore(snap.data(), snap.id, studyId)
         if (
-          companion.status === COMPANION_STATUS.PAIRED &&
-          companion.answerId === answerId &&
-          companion.token
+          existing.status === COMPANION_STATUS.PAIRED &&
+          existing.answerId === answerId &&
+          existing.token
         ) {
-          return companion
+          side = { kind: 'reuse', token: existing.token, uid: participantUid }
+          return existing
         }
-        if (companion.token) {
-          this.applyView(tx, {
-            studyId,
-            token: companion.token,
-            delete: true,
-          })
+        side = {
+          kind: 'fresh',
+          releaseToken: existing.token || null,
+          token: null,
+          uid: participantUid,
         }
+      } else {
+        side = { kind: 'fresh', releaseToken: null, token: null, uid: participantUid }
       }
 
       const fresh = buildFresh()
+      if (side.kind === 'fresh') side.token = fresh.token
       tx.set(ref, this.toFirestore(fresh))
-      this.applyView(tx, {
-        studyId,
-        token: fresh.token,
-        payload: { state: PUBLIC_COMPANION_STATE.WAITING },
-      })
       return fresh
     })
+    await this.syncOpen(side)
+    return companion
   }
 
   /**
@@ -107,7 +109,8 @@ export class FirestoreMobileTaskCompanionRepository extends FirestoreSubcollecti
     const companionRef = this.doc(studyId, companionId)
     const answerRef = this.db.collection('answers').doc(answerId)
 
-    return this.db.runTransaction(async (tx) => {
+    let view = null
+    const result = await this.db.runTransaction(async (tx) => {
       const companionSnap = await tx.get(companionRef)
       const answerSnap = await tx.get(answerRef)
       const decision = decide({
@@ -133,16 +136,37 @@ export class FirestoreMobileTaskCompanionRepository extends FirestoreSubcollecti
       if (decision.answerUpdate && Object.keys(decision.answerUpdate).length) {
         tx.update(answerRef, decision.answerUpdate)
       }
-      this.applyView(tx, decision.view)
+      view = decision.view || null
       return decision.result
     })
+    if (view) await this.liveRepository?.apply(view)
+    return result
   }
 
   /**
-   * @param {FirebaseFirestore.Transaction} tx
-   * @param {object|null|undefined} view
+   * Publishes a new pairing token to RTDB after the Firestore transaction.
+   * Reusing a paired token must not reset the task the phone is showing.
+   *
+   * @param {{ kind: string, releaseToken?: string|null, token?: string|null, uid?: string }|null} side
+   * @returns {Promise<void>}
    */
-  applyView(tx, view) {
-    this.viewRepository?.applyInTransaction(tx, view)
+  async syncOpen(side) {
+    if (!this.liveRepository || !side?.token || !side.uid) return
+    if (side.kind === 'reuse') {
+      await this.liveRepository.claim(side.token, side.uid)
+      await this.liveRepository.apply({
+        token: side.token,
+        payload: { state: PUBLIC_COMPANION_STATE.WAITING },
+        live: { reason: 'create' },
+      })
+      return
+    }
+    if (side.releaseToken) await this.liveRepository.remove(side.releaseToken)
+    await this.liveRepository.claim(side.token, side.uid)
+    await this.liveRepository.apply({
+      token: side.token,
+      payload: { state: PUBLIC_COMPANION_STATE.WAITING },
+      live: { reason: 'create' },
+    })
   }
 }

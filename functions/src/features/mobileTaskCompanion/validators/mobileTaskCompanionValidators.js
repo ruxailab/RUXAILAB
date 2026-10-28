@@ -10,6 +10,7 @@ export const activateMobileTaskValidator = {
   answerId: { type: 'string', required: true },
   taskIndex: { type: 'number', required: true },
   taskId: { type: ['string', 'number'], required: true },
+  attemptId: { type: 'string', required: false },
 }
 
 /**

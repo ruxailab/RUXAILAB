@@ -1,6 +1,6 @@
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { doc, onSnapshot } from 'firebase/firestore'
-import { onValue, ref as dbRef } from 'firebase/database'
+import { onValue, ref as dbRef, remove, update } from 'firebase/database'
 import { database, db } from '@/app/plugins/firebase'
 import {
   activateMobileTask,
@@ -11,18 +11,23 @@ import {
   submitMobileTaskOutcome,
 } from '@/ux/UserTest/services/mobileTaskCompanionClient'
 import {
+  buildMobileTaskLivePayload,
+  createMobileTaskAttemptId,
   isMobileTaskIndexEligible,
   isPhoneConnected,
+  mobileTaskLiveConnectedPath,
+  mobileTaskLivePath,
+  mobileTaskLiveUpdate,
   mobileTaskPairingPath,
-  mobileTaskPresencePath,
   resolveDisplayedOutcome,
   settleMobileTaskSubmit,
 } from '@/ux/UserTest/utils/mobileTaskPageState'
 
 /**
  * Desktop pairing for unmoderated task instructions.
- * The phone never reads this companion document. It listens to the public
- * view and writes RTDB presence; this listener is the owner's document.
+ * The phone never reads this companion document. It listens to the RTDB
+ * live channel and writes `connected` on that node; this listener is the
+ * owner's document.
  *
  * @param {object} options
  * @param {() => string|null|undefined} options.getStudyId
@@ -73,13 +78,13 @@ export function useMobileTaskCompanion({
   function listenPresence(nextToken) {
     if (presenceToken === nextToken && presenceUnsubscribe) return
     stopPresence()
-    const path = mobileTaskPresencePath(nextToken)
+    const path = mobileTaskLiveConnectedPath(nextToken)
     if (!path) return
     presenceToken = nextToken
     presenceUnsubscribe = onValue(
       dbRef(database, path),
       (snapshot) => {
-        presenceConnected.value = snapshot.val()?.connected === true
+        presenceConnected.value = snapshot.val() === true
       },
       () => {
         presenceConnected.value = false
@@ -131,6 +136,57 @@ export function useMobileTaskCompanion({
     return { studyId, answerId, ownerUid }
   }
 
+  /**
+   * Writes the phone channel directly without replacing `connected`.
+   * A failure leaves the Cloud Function mirror as the slower path.
+   *
+   * @param {object|null|undefined} payload
+   * @returns {Promise<void>}
+   */
+  async function publishLive(payload) {
+    const path = mobileTaskLivePath(token.value)
+    const next = mobileTaskLiveUpdate(payload)
+    if (!path || !next) return
+    try {
+      await update(dbRef(database, path), next)
+    } catch {
+      /* The server mirror still updates the phone. */
+    }
+  }
+
+  /**
+   * @returns {object|null}
+   */
+  function livePayloadFromCompanion() {
+    const active = companion.value?.activeTask
+    if (active?.attemptId) {
+      const payload = buildMobileTaskLivePayload({
+        state: 'active',
+        taskIndex: active.taskIndex,
+        taskId: active.taskId,
+        attemptId: active.attemptId,
+        taskNumber: active.taskNumber,
+        title: active.title,
+        description: active.description,
+      })
+      if (payload) return payload
+    }
+    return buildMobileTaskLivePayload({ state: 'waiting' })
+  }
+
+  /**
+   * @returns {Promise<void>}
+   */
+  async function clearLive() {
+    const path = mobileTaskLivePath(token.value)
+    if (!path) return
+    try {
+      await remove(dbRef(database, path))
+    } catch {
+      /* Ending the session also deletes this node. */
+    }
+  }
+
   async function enable() {
     if (busy.value || enabled.value) return
     busy.value = true
@@ -145,6 +201,7 @@ export function useMobileTaskCompanion({
       enabled.value = true
       sessionOpen.value = true
       listen(studyId, ownerUid)
+      await publishLive(livePayloadFromCompanion())
     } catch {
       enabled.value = false
       error.value = true
@@ -172,6 +229,7 @@ export function useMobileTaskCompanion({
       enabled.value = true
       sessionOpen.value = true
       listen(studyId, ownerUid)
+      await publishLive(livePayloadFromCompanion())
     } catch {
       restored = false
     }
@@ -181,6 +239,7 @@ export function useMobileTaskCompanion({
     if (!sessionOpen.value) return
     const { studyId, answerId } = requireContext()
     await endMobileTaskCompanion({ studyId, answerId })
+    await clearLive()
     sessionOpen.value = false
     enabled.value = false
     companion.value = null
@@ -193,11 +252,13 @@ export function useMobileTaskCompanion({
    */
   async function completeTaskPhase() {
     if (!sessionOpen.value) return
+    const previous = livePayloadFromCompanion()
+    await publishLive(buildMobileTaskLivePayload({ state: 'completed' }))
     try {
       const { studyId, answerId } = requireContext()
       await completeMobileTaskPhase({ studyId, answerId })
     } catch {
-      /* Thank-you is best-effort; the computer flow continues. */
+      await publishLive(previous)
     }
   }
 
@@ -235,31 +296,70 @@ export function useMobileTaskCompanion({
 
   /**
    * Called after the desktop task has already started. Throws on failure so
-   * the caller can keep the computer flow going.
+   * the caller can keep the computer flow going. The phone sees the task
+   * from the Realtime Database before the callable returns.
    *
-   * @param {{ taskIndex: number, taskId: string }} input
+   * @param {{ taskIndex: number, taskId: string, title?: string, description?: string }} input
    */
-  async function activate({ taskIndex, taskId }) {
+  async function activate({ taskIndex, taskId, title = '', description = '' }) {
     if (!enabled.value || !isMobileTaskIndexEligible(taskIndex)) return null
     const { studyId, answerId } = requireContext()
-    const result = await activateMobileTask({
-      studyId,
-      answerId,
+    const active = companion.value?.activeTask
+    const sameOpenAttempt =
+      active?.attemptId &&
+      Number(active.taskIndex) === Number(taskIndex) &&
+      String(active.taskId) === String(taskId)
+    const attemptId = sameOpenAttempt ? active.attemptId : createMobileTaskAttemptId()
+    const previous = livePayloadFromCompanion()
+    const published = buildMobileTaskLivePayload({
+      state: 'active',
       taskIndex,
       taskId,
+      attemptId,
+      taskNumber: taskIndex + 1,
+      title,
+      description,
     })
-    companion.value = {
-      ...(companion.value || {}),
-      activeTask: {
-        ...(companion.value?.activeTask || {}),
-        taskIndex: result.taskIndex,
-        taskId: result.taskId,
-        attemptId: result.attemptId,
-        startedAt: result.startedAt,
-        taskNumber: result.taskNumber,
-      },
+    await publishLive(published)
+    try {
+      const result = await activateMobileTask({
+        studyId,
+        answerId,
+        taskIndex,
+        taskId,
+        attemptId,
+      })
+      companion.value = {
+        ...(companion.value || {}),
+        activeTask: {
+          ...(companion.value?.activeTask || {}),
+          taskIndex: result.taskIndex,
+          taskId: result.taskId,
+          attemptId: result.attemptId,
+          startedAt: result.startedAt,
+          taskNumber: result.taskNumber,
+          title,
+          description,
+        },
+      }
+      if (result.attemptId && result.attemptId !== attemptId) {
+        await publishLive(
+          buildMobileTaskLivePayload({
+            state: 'active',
+            taskIndex: result.taskIndex,
+            taskId: result.taskId,
+            attemptId: result.attemptId,
+            taskNumber: result.taskNumber,
+            title,
+            description,
+          }),
+        )
+      }
+      return result
+    } catch (error) {
+      await publishLive(previous)
+      throw error
     }
-    return result
   }
 
   /**

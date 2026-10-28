@@ -51,7 +51,7 @@ export function isMobileTaskIndexEligible(taskIndex) {
 
 /**
  * Path encoded into the desktop QR. The phone uses studyId and token for
- * the public view; participantUid stays in the URL for submit.
+ * the live channel; participantUid stays in the URL for submit.
  *
  * @param {{ studyId?: string|null, participantUid?: string|null, token?: string|null }} params
  * @returns {string}
@@ -66,16 +66,161 @@ export function mobileTaskPairingPath({
 }
 
 /**
- * RTDB path for phone presence. The token is the capability.
+ * RTDB path for the live task channel. The token is the capability.
+ * The desktop writes task changes here; the phone listens and writes
+ * `connected` on the same node.
  *
  * @param {string|null|undefined} token
  * @returns {string}
  */
-export function mobileTaskPresencePath(token) {
+export function mobileTaskLivePath(token) {
   if (typeof token !== 'string' || !MOBILE_TASK_TOKEN_PATTERN.test(token)) {
     return ''
   }
-  return `mobileTaskPresence/${token}`
+  return `mobileTaskLive/${token}`
+}
+
+/**
+ * RTDB path for phone presence. A child of the live node so one token
+ * owns both the task and the connection flag.
+ *
+ * @param {string|null|undefined} token
+ * @returns {string}
+ */
+export function mobileTaskLiveConnectedPath(token) {
+  const path = mobileTaskLivePath(token)
+  return path ? `${path}/connected` : ''
+}
+
+/**
+ * Picks what the phone shows from the Realtime Database live node.
+ * `undefined` means the listener has not answered yet. `null` means it
+ * answered and the session node is gone. A node with only `connected`
+ * is still pairing.
+ *
+ * @param {{
+ *   rtdb?: object|null,
+ *   rtdbFailed?: boolean,
+ *   sawPayload?: boolean,
+ * }} [input]
+ * @returns {{ status: 'loading'|'payload'|'ended'|'disconnected', payload?: object }}
+ */
+export function resolveMobileTaskChannel({
+  rtdb,
+  rtdbFailed = false,
+  sawPayload = false,
+} = {}) {
+  if (rtdb && typeof rtdb === 'object' && typeof rtdb.state === 'string') {
+    return { status: 'payload', payload: rtdb }
+  }
+  if (rtdb === undefined) return { status: 'loading' }
+  if (rtdbFailed) return { status: 'disconnected' }
+  // A valid QR has no task yet. Missing nodes mean "waiting", not "ended",
+  // until this phone has already seen a session that then disappeared.
+  if (!sawPayload) return { status: 'payload', payload: { state: 'waiting' } }
+  return { status: 'ended' }
+}
+
+/** 16 random bytes, hex. The server accepts this shape as the attempt id. */
+const CLIENT_ATTEMPT_ID_PATTERN = /^[a-f0-9]{32}$/
+
+/**
+ * @param {(size: number) => Uint8Array} [randomBytes]
+ * @returns {string}
+ */
+export function createMobileTaskAttemptId(randomBytes = defaultRandomBytes) {
+  const bytes = randomBytes(16)
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+/**
+ * @param {number} size
+ * @returns {Uint8Array}
+ */
+function defaultRandomBytes(size) {
+  const bytes = new Uint8Array(size)
+  crypto.getRandomValues(bytes)
+  return bytes
+}
+
+/**
+ * Payload the desktop writes so the phone can show the task without waiting
+ * for a Cloud Function. Active tasks carry the attempt id the server stores.
+ *
+ * @param {object} input
+ * @param {'waiting'|'active'|'accepted'|'completed'} input.state
+ * @param {number} [input.taskIndex]
+ * @param {string|number|null} [input.taskId]
+ * @param {string|null} [input.attemptId]
+ * @param {number} [input.taskNumber]
+ * @param {string} [input.title]
+ * @param {string} [input.description]
+ * @param {number} [input.updatedAt]
+ * @returns {object|null}
+ */
+export function buildMobileTaskLivePayload({
+  state,
+  taskIndex,
+  taskId,
+  attemptId,
+  taskNumber,
+  title,
+  description,
+  updatedAt = Date.now(),
+} = {}) {
+  if (
+    state !== 'waiting' &&
+    state !== 'active' &&
+    state !== 'accepted' &&
+    state !== 'completed'
+  ) {
+    return null
+  }
+  if (!Number.isFinite(updatedAt)) return null
+  const payload = { state, updatedAt }
+  if (state !== 'active') return payload
+  if (!isMobileTaskIndexEligible(taskIndex)) return null
+  if (typeof attemptId !== 'string' || !CLIENT_ATTEMPT_ID_PATTERN.test(attemptId)) {
+    return null
+  }
+  if (taskId == null || taskId === '') return null
+  const taskIdText = String(taskId)
+  if (taskIdText.length > 200) return null
+  return {
+    ...payload,
+    taskNumber: Number.isInteger(taskNumber) ? taskNumber : taskIndex + 1,
+    title: typeof title === 'string' ? title : '',
+    description: typeof description === 'string' ? description : '',
+    taskIndex,
+    taskId: taskIdText,
+    attemptId,
+  }
+}
+
+const LIVE_TASK_KEYS = [
+  'taskNumber',
+  'title',
+  'description',
+  'taskIndex',
+  'taskId',
+  'attemptId',
+]
+
+/**
+ * RTDB `update()` payload. Inactive states clear leftover task fields
+ * without touching `connected`.
+ *
+ * @param {object|null|undefined} payload
+ * @returns {object|null}
+ */
+export function mobileTaskLiveUpdate(payload) {
+  if (!payload || typeof payload !== 'object') return null
+  if (payload.state === 'active') return { ...payload }
+  const update = { ...payload }
+  for (const key of LIVE_TASK_KEYS) {
+    update[key] = null
+  }
+  return update
 }
 
 /**

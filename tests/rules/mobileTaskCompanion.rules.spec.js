@@ -6,11 +6,9 @@ import {
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing'
 import {
-  collection,
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
   setDoc,
   updateDoc,
 } from 'firebase/firestore'
@@ -100,9 +98,6 @@ beforeEach(async () => {
           description: 'Look',
         },
       }),
-      setDoc(doc(db, `tests/study-1/mobileTaskViews/${'ab'.repeat(32)}`), {
-        state: 'waiting',
-      }),
     ])
   })
 })
@@ -142,25 +137,6 @@ describe('mobile task companions', () => {
         participantUid: 'someone',
       }),
     )
-  })
-})
-
-describe('mobile task views', () => {
-  const viewPath = `tests/study-1/mobileTaskViews/${'ab'.repeat(32)}`
-
-  it('lets a signed-out client read one view by token', async () => {
-    const snap = await assertSucceeds(
-      getDoc(doc(testEnv.unauthenticatedContext().firestore(), viewPath)),
-    )
-    expect(snap.data().state).toBe('waiting')
-  })
-
-  it('rejects listing views and every client write', async () => {
-    const guest = testEnv.unauthenticatedContext().firestore()
-    await assertFails(getDocs(collection(guest, 'tests/study-1/mobileTaskViews')))
-    await assertFails(setDoc(doc(guest, viewPath), { state: 'active' }))
-    await assertFails(updateDoc(doc(guest, viewPath), { state: 'active' }))
-    await assertFails(deleteDoc(doc(guest, viewPath)))
   })
 })
 

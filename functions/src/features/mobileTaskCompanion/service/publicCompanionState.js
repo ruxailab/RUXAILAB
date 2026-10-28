@@ -10,9 +10,9 @@ import { isParticipantAnswerSubmitted } from './taskSession.js'
  * study id, or task link.
  *
  * The active state also includes taskIndex, taskId, and attemptId. The phone
- * has to send those back to submitMobileTaskOutcome, and the public view is
- * the only channel that can deliver them. Waiting, accepted, completed, and
- * ended stay without task data.
+ * has to send those back to submitMobileTaskOutcome. The live RTDB node is
+ * the channel that delivers them.
+ * Waiting, accepted, completed, and ended stay without task data.
  *
  * Invalid, ended, and submitted sessions all return the same ended state.
  * A clean finish of the task phase is `completed`, not `ended`.
@@ -70,9 +70,9 @@ export function toPublicCompanionState(companion, answer) {
 }
 
 /**
- * View write that belongs in the same transaction as the companion change.
- * Ended sessions delete the view so the phone listener sees `exists: false`.
- * Completed (thank-you) keeps the document so the phone can show the message.
+ * Live-node write that follows the companion change. Ended sessions delete
+ * the node so the phone listener sees `exists: false`. Completed (thank-you)
+ * keeps the node so the phone can show the message.
  *
  * @param {object} params
  * @param {import('../models/MobileTaskCompanion.js').MobileTaskCompanion|null|undefined} params.companion

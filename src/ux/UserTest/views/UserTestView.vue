@@ -846,6 +846,9 @@ function activateCurrentMobileTask() {
   return mobileCompanion.activate({
     taskIndex: index,
     taskId: mobileTaskId(task, index),
+    title: typeof task?.taskName === 'string' ? task.taskName : '',
+    description:
+      typeof task?.taskDescription === 'string' ? task.taskDescription : '',
   })
 }
 
