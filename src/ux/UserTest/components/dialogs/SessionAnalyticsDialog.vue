@@ -661,7 +661,7 @@ const displayTaskName = computed(() => {
 
 const mockEyeTracking = { accuracy: 92, fixations: 34 }
 const DRIFT_SECONDS = 0.35
-const AUDIO_LEAD_SECONDS = 1
+const AUDIO_LEAD_SECONDS = 0
 let holdVideosForAudioLead = false
 
 function videoElements() {

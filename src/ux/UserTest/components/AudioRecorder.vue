@@ -127,9 +127,40 @@ const resolvedUserDocId = computed(
     currentCardSortingAnswer.value?.userDocId,
 )
 
-const startAudioRecording = async () => {
-  if (recordingAudio.value) return
+let currentStream = null
+let currentRecorder = null
+let stage = 'permission'
+let abandoned = false
+
+const cleanup = () => {
+  stopMediaStream(currentStream)
+  if (currentRecorder && currentRecorder.state !== 'inactive') {
+    try {
+      currentRecorder.stop()
+    } catch {
+      /* Already stopped. */
+    }
+  }
+  currentStream = null
+  currentRecorder = null
+  mediaRecorder.value = null
+  activeAttempt = null
+  recordingAudio.value = false
+  emit('recordingStarted', false)
+}
+
+abortCurrent = () => {
+  abandoned = true
+  if (activeAttempt) {
+    activeAttempt.discard()
+  }
+  cleanup()
+}
+
+const prepareAudio = async () => {
+  if (recordingAudio.value) return true
   recordingAudio.value = true
+  abandoned = false
   const taskIndex = props.taskIndex
   const userId = resolvedUserDocId.value
   const testId = props.testId
@@ -140,51 +171,27 @@ const startAudioRecording = async () => {
     notifyRecordingFailure,
   )
   activeAttempt = attempt
-  let stream
-  let recorder
-  let stage = 'permission'
-  let abandoned = false
-  let abort = () => {}
-  const cleanup = () => {
-    stopMediaStream(stream)
-    if (recorder && recorder.state !== 'inactive') {
-      try {
-        recorder.stop()
-      } catch {
-        /* Already stopped. */
-      }
-    }
-    if (activeAttempt !== attempt) return
-    activeAttempt = null
-    recordingAudio.value = false
-    emit('recordingStarted', false)
-    if (abortCurrent === abort) abortCurrent = () => {}
-  }
-  abort = () => {
-    abandoned = true
-    attempt.discard()
-    cleanup()
-  }
-  abortCurrent = abort
+  stage = 'permission'
+
   try {
     const devices = await navigator.mediaDevices.enumerateDevices()
     if (abandoned) {
       cleanup()
-      return
+      return false
     }
     if (!devices.some((device) => device.kind === 'audioinput')) {
       attempt.finish('failed', 'permission', 'deviceUnavailable')
       cleanup()
-      return
+      return false
     }
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    currentStream = await navigator.mediaDevices.getUserMedia({ audio: true })
     if (abandoned) {
       cleanup()
-      return
+      return false
     }
     stage = 'capture'
-    recorder = createMediaRecorder({
-      stream,
+    currentRecorder = createMediaRecorder({
+      stream: currentStream,
       mimeType: 'audio/webm',
       blobType: 'audio/webm',
       attempt,
@@ -201,13 +208,36 @@ const startAudioRecording = async () => {
           userId,
         }),
     })
-    mediaRecorder.value = recorder
-    recorder.start()
-    emit('recordingStarted', true)
+    mediaRecorder.value = currentRecorder
+    return true
   } catch (error) {
     attempt.finish(...captureFailure(error, stage))
     cleanup()
-    return
+    return false
+  }
+}
+
+const startNow = () => {
+  if (!currentRecorder) return false
+  if (currentRecorder.state !== 'inactive') return true
+  const [track] =
+    currentStream?.getAudioTracks?.() || currentStream?.getTracks?.() || []
+  if (!currentStream || !track || track.readyState === 'ended') {
+    if (activeAttempt) {
+      activeAttempt.finish('failed', 'capture', 'captureError')
+    }
+    cleanup()
+    return false
+  }
+  try {
+    currentRecorder.start()
+    emit('recordingStarted', true)
+  } catch {
+    if (activeAttempt) {
+      activeAttempt.finish('failed', 'capture', 'captureError')
+    }
+    cleanup()
+    return false
   }
 
   // Moderator audio retains its existing save flow; it is not a logging producer.
@@ -248,6 +278,14 @@ const startAudioRecording = async () => {
       console.error('Could not start moderator audio')
     }
   }
+
+  return true
+}
+
+const startAudioRecording = async () => {
+  const prepared = await prepareAudio()
+  if (!prepared) return
+  return startNow()
 }
 
 const stopAudioRecording = () => {
@@ -266,6 +304,8 @@ onBeforeUnmount(abortCapture)
 
 defineExpose({
   startAudioRecording,
+  prepareAudio,
+  startNow,
   stopAudioRecording,
   abortCapture,
 })

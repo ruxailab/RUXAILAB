@@ -55,10 +55,40 @@ const isCapturing = ref(false)
 const mediaRecorder = ref(null)
 let abortCurrent = () => {}
 let activeAttempt = null
+let currentStream = null
+let currentRecorder = null
+let aborted = false
 
-const captureScreen = async ({ requireEntireScreen = false } = {}) => {
+const cleanup = () => {
+  stopMediaStream(currentStream)
+  if (currentRecorder && currentRecorder.state !== 'inactive') {
+    try {
+      currentRecorder.stop()
+    } catch {
+      /* Already stopped. */
+    }
+  }
+  if (activeAttempt) {
+    activeAttempt = null
+  }
+  currentStream = null
+  currentRecorder = null
+  mediaRecorder.value = null
+  isCapturing.value = false
+}
+
+abortCurrent = () => {
+  aborted = true
+  if (activeAttempt) {
+    activeAttempt.discard()
+  }
+  cleanup()
+}
+
+const prepareScreen = async ({ requireEntireScreen = false } = {}) => {
   if (isCapturing.value) return true
   isCapturing.value = true
+  aborted = false
   const taskIndex = props.taskIndex
   const userId = resolvedUserDocId.value
   const testId = props.testId
@@ -69,30 +99,10 @@ const captureScreen = async ({ requireEntireScreen = false } = {}) => {
     notifyRecordingFailure,
   )
   activeAttempt = attempt
-  let stream
-  let recorder
-  let aborted = false
-  const cleanup = () => {
-    stopMediaStream(stream)
-    if (recorder && recorder.state !== 'inactive') {
-      try {
-        recorder.stop()
-      } catch {
-        /* Already stopped. */
-      }
-    }
-    if (activeAttempt !== attempt) return
-    activeAttempt = null
-    isCapturing.value = false
-  }
-  abortCurrent = () => {
-    aborted = true
-    attempt.discard()
-    cleanup()
-  }
+
   try {
     const result = await startScreenShareStream({ requireEntireScreen })
-    stream = result.stream
+    currentStream = result.stream
     if (aborted) {
       cleanup()
       return false
@@ -106,8 +116,8 @@ const captureScreen = async ({ requireEntireScreen = false } = {}) => {
       cleanup()
       return false
     }
-    recorder = createMediaRecorder({
-      stream,
+    currentRecorder = createMediaRecorder({
+      stream: currentStream,
       blobType: 'video/webm',
       attempt,
       emit,
@@ -123,19 +133,53 @@ const captureScreen = async ({ requireEntireScreen = false } = {}) => {
           userId,
         }),
     })
-    mediaRecorder.value = recorder
-    const [track] = stream.getVideoTracks()
+    mediaRecorder.value = currentRecorder
+    const [track] = currentStream.getVideoTracks
+      ? currentStream.getVideoTracks()
+      : currentStream.getTracks
+        ? currentStream.getTracks()
+        : []
     if (track)
       track.onended = () => {
-        if (recorder.state !== 'inactive') recorder.stop()
+        if (currentRecorder && currentRecorder.state !== 'inactive')
+          currentRecorder.stop()
       }
-    recorder.start()
     return true
   } catch {
     attempt.finish('failed', 'capture', 'captureError')
     cleanup()
     return false
   }
+}
+
+const startNow = () => {
+  if (!currentRecorder) return false
+  if (currentRecorder.state !== 'inactive') return true
+  const [track] =
+    currentStream?.getVideoTracks?.() || currentStream?.getTracks?.() || []
+  if (!currentStream || !track || track.readyState === 'ended') {
+    if (activeAttempt) {
+      activeAttempt.finish('failed', 'capture', 'captureError')
+    }
+    cleanup()
+    return false
+  }
+  try {
+    currentRecorder.start()
+    return true
+  } catch {
+    if (activeAttempt) {
+      activeAttempt.finish('failed', 'capture', 'captureError')
+    }
+    cleanup()
+    return false
+  }
+}
+
+const captureScreen = async (options) => {
+  const prepared = await prepareScreen(options)
+  if (!prepared) return false
+  return startNow()
 }
 
 const stopRecording = () => {
@@ -146,5 +190,11 @@ const abortCapture = () => abortCurrent()
 
 onBeforeUnmount(() => abortCurrent())
 
-defineExpose({ captureScreen, stopRecording, abortCapture })
+defineExpose({
+  captureScreen,
+  prepareScreen,
+  startNow,
+  stopRecording,
+  abortCapture,
+})
 </script>
