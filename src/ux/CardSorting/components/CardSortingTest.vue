@@ -146,7 +146,7 @@
 
                   <v-stepper-item
                     :value="hasPreTest ? 3 : 2"
-                    :title="$t('UserTestView.stepper.tasks')"
+                    :title="$t('CardSorting.cardClassification')"
                     :complete="
                       stepperValue >= 3 && !isCurrentCardStep(hasPreTest ? 3 : 2)
                     "
@@ -890,7 +890,7 @@ const completeStep = async (type) => {
         await safelyAnnounce(t('UserTestView.stepper.preTest'), 2)
         globalIndex.value = 2
       } else {
-        await safelyAnnounce(t('UserTestView.stepper.tasks'), 2)
+        await safelyAnnounce(t('CardSorting.cardClassification'), 2)
         localAnswer.preTestCompleted = true
         globalIndex.value = 4
         if (!hasAnyRecording.value) sortingStarted.value = true
@@ -903,7 +903,7 @@ const completeStep = async (type) => {
     }
 
     if (type === 'preTest') {
-      await safelyAnnounce(t('UserTestView.stepper.tasks'), 3)
+      await safelyAnnounce(t('CardSorting.cardClassification'), 3)
       localAnswer.preTestCompleted = true
       globalIndex.value = 4
       if (!hasAnyRecording.value) sortingStarted.value = true
