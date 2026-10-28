@@ -252,7 +252,21 @@ export function mobileTaskLiveUpdate(payload) {
   for (const key of LIVE_TASK_KEYS) {
     update[key] = null
   }
+  update.returnToTaskAt = null
   return update
+}
+
+/**
+ * Payload the desktop queues on RTDB `onDisconnect`. The pairing node stays
+ * so the phone goes back to waiting instead of ended.
+ *
+ * @param {number} [updatedAt]
+ * @returns {object|null}
+ */
+export function mobileTaskLiveDisconnectUpdate(updatedAt = Date.now()) {
+  return mobileTaskLiveUpdate(
+    buildMobileTaskLivePayload({ state: 'waiting', updatedAt }),
+  )
 }
 
 /**

@@ -9,6 +9,7 @@ import {
   mapMobileTaskUiState,
   mobileTaskId,
   mobileTaskLiveConnectedPath,
+  mobileTaskLiveDisconnectUpdate,
   mobileTaskLivePath,
   mobileTaskLiveReturnToTaskPath,
   mobileTaskLiveUpdate,
@@ -263,6 +264,19 @@ describe('mobile task page state', () => {
       taskId: null,
       attemptId: null,
       taskType: null,
+      returnToTaskAt: null,
+    })
+    expect(mobileTaskLiveDisconnectUpdate(30)).toEqual({
+      state: 'waiting',
+      updatedAt: 30,
+      taskNumber: null,
+      title: null,
+      description: null,
+      taskIndex: null,
+      taskId: null,
+      attemptId: null,
+      taskType: null,
+      returnToTaskAt: null,
     })
     expect(
       mobileTaskLiveUpdate({

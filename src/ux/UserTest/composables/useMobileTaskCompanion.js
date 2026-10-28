@@ -1,6 +1,12 @@
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { doc, onSnapshot } from 'firebase/firestore'
-import { onValue, ref as dbRef, remove, update } from 'firebase/database'
+import {
+  onDisconnect,
+  onValue,
+  ref as dbRef,
+  remove,
+  update,
+} from 'firebase/database'
 import { database, db } from '@/app/plugins/firebase'
 import {
   activateMobileTask,
@@ -16,6 +22,7 @@ import {
   isMobileTaskIndexEligible,
   isPhoneConnected,
   mobileTaskLiveConnectedPath,
+  mobileTaskLiveDisconnectUpdate,
   mobileTaskLivePath,
   mobileTaskLiveReturnToTaskPath,
   mobileTaskLiveUpdate,
@@ -57,6 +64,8 @@ export function useMobileTaskCompanion({
   let handledReturnToTaskAt = 0
   let restored = false
   let ensuring = false
+  let liveDisconnect = null
+  let liveDisconnectToken = ''
 
   const token = computed(() => companion.value?.token || '')
   const pairingPath = computed(() =>
@@ -132,6 +141,7 @@ export function useMobileTaskCompanion({
         }
         listenPresence(companion.value.token)
         listenReturnToTask(companion.value.token)
+        void armLiveDisconnect(companion.value.token)
       },
       () => {
         // A failed listener must not mark the offer as failed. Desktop
@@ -140,6 +150,45 @@ export function useMobileTaskCompanion({
     )
     listenPresence(token.value)
     listenReturnToTask(token.value)
+    void armLiveDisconnect(token.value)
+  }
+
+  /**
+   * When the computer drops from Realtime, the task fields are cleared and
+   * the phone goes back to waiting. The node stays so the pairing is not
+   * `ended`. Reload must not cancel this; only an intentional end does.
+   *
+   * @param {string} nextToken
+   */
+  async function armLiveDisconnect(nextToken) {
+    if (liveDisconnectToken === nextToken && liveDisconnect) return
+    await cancelLiveDisconnect()
+    const path = mobileTaskLivePath(nextToken)
+    const payload = mobileTaskLiveDisconnectUpdate()
+    if (!path || !payload) return
+    liveDisconnect = onDisconnect(dbRef(database, path))
+    liveDisconnectToken = nextToken
+    try {
+      await liveDisconnect.update(payload)
+    } catch {
+      liveDisconnect = null
+      liveDisconnectToken = ''
+    }
+  }
+
+  /**
+   * @returns {Promise<void>}
+   */
+  async function cancelLiveDisconnect() {
+    const op = liveDisconnect
+    liveDisconnect = null
+    liveDisconnectToken = ''
+    if (!op) return
+    try {
+      await op.cancel()
+    } catch {
+      /* already disconnected */
+    }
   }
 
   /**
@@ -284,6 +333,7 @@ export function useMobileTaskCompanion({
   async function endSession() {
     if (!sessionOpen.value) return
     const { studyId, answerId } = requireContext()
+    await cancelLiveDisconnect()
     await endMobileTaskCompanion({ studyId, answerId })
     await clearLive()
     sessionOpen.value = false
