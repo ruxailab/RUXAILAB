@@ -111,26 +111,30 @@
 
     <div class="overview-metric-grid mb-4">
       <UxMetricCard
-        :value="`${calculateEffectiveness().toFixed(1)}%`"
+        :value="
+          hasEffectivenessData
+            ? `${calculateEffectiveness().toFixed(1)}%`
+            : $t('analytics.noData')
+        "
         :label="$t('analytics.effectiveness')"
         color="success"
         icon="mdi-target-account"
         :description="$t('analytics.effectivenessDescription')"
-        :progress="calculateEffectiveness()"
+        :progress="hasEffectivenessData ? calculateEffectiveness() : 0"
+        :disabled="!hasEffectivenessData"
       />
       <UxMetricCard
         :value="
-          calculateEfficiency().timeEfficiencyPercentage === null
-            ? $t('analytics.noData')
-            : `${calculateEfficiency().timeEfficiencyPercentage.toFixed(1)}%`
+          hasEfficiencyData
+            ? `${averageEfficiency.toFixed(1)}%`
+            : $t('analytics.noData')
         "
         :label="$t('analytics.efficiency')"
         color="info"
         icon="mdi-speedometer"
         :description="$t('analytics.efficiencyDescription')"
-        :progress="
-          Math.min(calculateEfficiency().timeEfficiencyPercentage || 0, 100)
-        "
+        :progress="hasEfficiencyData ? Math.min(averageEfficiency, 100) : 0"
+        :disabled="!hasEfficiencyData"
       />
       <UxMetricCard
         :value="
@@ -142,8 +146,8 @@
         color="warning"
         icon="mdi-heart"
         :description="hasSUSScore ? $t('analytics.susScoreMoreInsights') : ''"
-        :progress="getAverageSatisfaction()"
-        :show-progress="hasSatisfactionData"
+        :progress="hasSatisfactionData ? getAverageSatisfaction() : 0"
+        :disabled="!hasSatisfactionData"
       />
     </div>
 
@@ -915,6 +919,12 @@ const calculateEffectiveness = () => {
   return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100
 }
 
+const hasEffectivenessData = computed(() =>
+  filteredSessions.value.some(
+    (answer) => Object.keys(answer.tasks || {}).length > 0,
+  ),
+)
+
 const calculateEfficiency = () => {
   return {
     timeEfficiencyPercentage: getAverageTaskEfficiencyPercentage(
@@ -1133,6 +1143,11 @@ const taskTimingStats = computed(() =>
     }
   }),
 )
+
+const averageEfficiency = computed(
+  () => calculateEfficiency().timeEfficiencyPercentage,
+)
+const hasEfficiencyData = computed(() => averageEfficiency.value !== null)
 
 const taskPerformanceCards = computed(() =>
   getTasksPerformance().map((performance) => {
