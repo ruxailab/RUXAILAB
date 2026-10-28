@@ -661,7 +661,9 @@ const displayTaskName = computed(() => {
 
 const mockEyeTracking = { accuracy: 92, fixations: 34 }
 const DRIFT_SECONDS = 0.35
-const AUDIO_LEAD_SECONDS = 1
+const audioLeadSeconds = computed(() =>
+  props.taskAnswer?.syncedStart ? 0 : 1,
+)
 let holdVideosForAudioLead = false
 
 function videoElements() {
@@ -675,7 +677,7 @@ function mountedMedia() {
 function playbackDuration(media) {
   if (!Number.isFinite(media.duration) || media.duration <= 0) return 0
   if (media === taskAudio.value && videoElements().length) {
-    return Math.max(0, media.duration - AUDIO_LEAD_SECONDS)
+    return Math.max(0, media.duration - audioLeadSeconds.value)
   }
   return media.duration
 }
@@ -689,19 +691,20 @@ function seekMedia(media, time) {
 }
 
 function audioTargetFor(videoTime) {
-  return videoTime + AUDIO_LEAD_SECONDS
+  return videoTime + audioLeadSeconds.value
 }
 
 function audioIsLeading(videoTime) {
   const audio = taskAudio.value
   if (!audio) return false
+  if (audioLeadSeconds.value === 0) return true
   const target = audioTargetFor(videoTime)
   return Math.abs(audio.currentTime - target) <= 0.15
 }
 
 function audioIsInsideLeadIn(videoTime) {
   const audio = taskAudio.value
-  if (!audio) return false
+  if (!audio || audioLeadSeconds.value === 0) return false
   return (
     audio.currentTime >= videoTime - 0.05 &&
     audio.currentTime < audioTargetFor(videoTime) - 0.05
@@ -769,7 +772,7 @@ function startVideoSync() {
       } else if (!videosWaiting) {
         videoCurrentTime.value = Math.max(
           0,
-          audio.currentTime - AUDIO_LEAD_SECONDS,
+          audio.currentTime - audioLeadSeconds.value,
         )
       }
       rafId = requestAnimationFrame(loop)
@@ -840,8 +843,10 @@ const togglePlay = async () => {
     else seekMedia(video, time)
   })
 
-  const startVideosNow = !audio || audioIsLeading(time)
-  holdVideosForAudioLead = Boolean(audio) && !startVideosNow
+  const startVideosNow =
+    !audio || audioLeadSeconds.value === 0 || audioIsLeading(time)
+  holdVideosForAudioLead =
+    Boolean(audio) && audioLeadSeconds.value > 0 && !startVideosNow
 
   if (audio) {
     if (audioIsLeading(time)) seekMedia(audio, audioTargetFor(time))
@@ -882,7 +887,7 @@ const onSeek = (time) => {
 
   const audio = taskAudio.value
   if (audio) {
-    const restartLeadIn = time <= 0.05
+    const restartLeadIn = audioLeadSeconds.value > 0 && time <= 0.05
     seekMedia(audio, restartLeadIn ? 0 : audioTargetFor(time))
     if (isPlaying.value && restartLeadIn) {
       holdVideosForAudioLead = true

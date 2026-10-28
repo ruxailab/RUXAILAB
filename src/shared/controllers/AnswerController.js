@@ -61,19 +61,21 @@ export default class AnswerController extends Controller {
       return null
     }
 
-    userToUpdate.myAnswers[`${payload.testDocId}`] = {
-      ...currentAnswer,
-      ...payload.data,
-    }
-    return userController.update(userToUpdate.id, userToUpdate.toFirestore())
+    return userController.update(userToUpdate.id, {
+      [`myAnswers.${payload.testDocId}`]: {
+        ...currentAnswer,
+        ...payload.data,
+      },
+    })
   }
 
   async removeUserAnswer(payload) {
     const userToUpdate = await userController.getById(payload.cooperatorId)
 
     // Remove it from user
-    delete userToUpdate.myAnswers[`${payload.testDocId}`]
-    return userController.update(userToUpdate.id, userToUpdate.toFirestore())
+    return userController.update(userToUpdate.id, {
+      [`myAnswers.${payload.testDocId}`]: this.getDeleteField(),
+    })
   }
 
   async saveTestAnswer(payload, answersDocId, testType) {

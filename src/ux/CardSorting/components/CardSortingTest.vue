@@ -244,6 +244,7 @@
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localAnswer.preTestAnswer"
             :pre-test-completed="localAnswer.preTestCompleted"
+            @update:pre-test-answer="(val) => (localAnswer.preTestAnswer = val)"
             @done="completeStep('preTest')"
           />
 
@@ -431,6 +432,9 @@
             :post-test="test.testStructure.postTest"
             :post-test-answer="localAnswer.postTestAnswer"
             :post-test-completed="localAnswer.postTestCompleted"
+            @update:post-test-answer="
+              (val) => (localAnswer.postTestAnswer = val)
+            "
             @done="completeStep('postTest')"
           />
 
@@ -468,16 +472,16 @@ import StudyWelcomeStep from '@/shared/components/StudyWelcomeStep.vue'
 import StepAnnouncementOverlay from '@/shared/components/StepAnnouncementOverlay.vue'
 import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
 import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
-import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
-import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue'
-import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
-import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
-import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
+import ConsentStep from '@/shared/components/steps/ConsentStep.vue'
+import PreTestStep from '@/shared/components/steps/PreTestStep.vue'
+import PostTestStep from '@/shared/components/steps/PostTestStep.vue'
+import FinishStep from '@/shared/components/steps/FinishStep.vue'
+import SubmitDialog from '@/shared/components/SubmitDialog.vue'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
-import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
-import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue'
-import ScreenShareInstructions from '@/ux/UserTest/components/ScreenShareInstructions.vue'
-import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue'
+import AudioRecorder from '@/shared/components/AudioRecorder.vue'
+import ScreenRecorder from '@/shared/components/ScreenRecorder.vue'
+import ScreenShareInstructions from '@/shared/components/ScreenShareInstructions.vue'
+import VideoRecorder from '@/shared/components/VideoRecorder.vue'
 import CardSortingTask from './CardSortingTask.vue'
 import CardSortingEvaluatorAnswer from '../models/CardSortingEvaluatorAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'

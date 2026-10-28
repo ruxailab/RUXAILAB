@@ -347,6 +347,171 @@ it('does not observe a task when screen-share setup is cancelled or denied', asy
   expect(wrapper.emitted('taskStarted')).toBeUndefined()
 })
 
+function mountSharingTaskStep({
+  task,
+  captureScreen = jest.fn().mockResolvedValue(true),
+  startAudioRecording = jest.fn().mockResolvedValue(undefined),
+  startRecording = jest.fn().mockResolvedValue(true),
+  extraProps = {},
+} = {}) {
+  wrapper = shallowMount(TaskStep, {
+    props: { task, taskIndex: 0, ...extraProps },
+    global: {
+      mocks: { $vuetify: { display: {} } },
+      stubs: {
+        ShowInfo: { template: '<div><slot name="content" /></div>' },
+        ScreenRecorder: {
+          template: '<div />',
+          setup() {
+            return { captureScreen, abortCapture: jest.fn() }
+          },
+        },
+        AudioRecorder: {
+          template: '<div />',
+          setup() {
+            return { startAudioRecording, abortCapture: jest.fn() }
+          },
+        },
+        VideoRecorder: {
+          template: '<div />',
+          setup() {
+            return { startRecording, abortCapture: jest.fn() }
+          },
+        },
+      },
+    },
+  })
+  return wrapper.vm.$.setupState
+}
+
+it('opens the unmoderated task page only after sharing permissions finish', async () => {
+  const open = jest.spyOn(window, 'open').mockReturnValue({})
+  let resolveScreen
+  let resolveAudio
+  let resolveCamera
+  const captureScreen = jest.fn(
+    () =>
+      new Promise((resolve) => {
+        resolveScreen = resolve
+      }),
+  )
+  const startAudioRecording = jest.fn(
+    () =>
+      new Promise((resolve) => {
+        resolveAudio = resolve
+      }),
+  )
+  const startRecording = jest.fn(
+    () =>
+      new Promise((resolve) => {
+        resolveCamera = resolve
+      }),
+  )
+  const taskStep = mountSharingTaskStep({
+    task: {
+      taskType: 'no-answer',
+      hasScreenRecord: true,
+      hasAudioRecord: true,
+      hasCamRecord: true,
+      taskLink: 'example.com/task',
+    },
+    captureScreen,
+    startAudioRecording,
+    startRecording,
+    extraProps: { autoOpenTaskLink: true },
+  })
+
+  try {
+    const pending = taskStep.confirmScreenShare()
+    await flushPromises()
+    expect(captureScreen).toHaveBeenCalledTimes(1)
+    expect(startAudioRecording).not.toHaveBeenCalled()
+    expect(open).not.toHaveBeenCalled()
+
+    resolveScreen(true)
+    await flushPromises()
+    expect(startAudioRecording).toHaveBeenCalledTimes(1)
+    expect(startRecording).not.toHaveBeenCalled()
+    expect(open).not.toHaveBeenCalled()
+
+    resolveAudio()
+    await flushPromises()
+    expect(startRecording).toHaveBeenCalledTimes(1)
+    expect(open).not.toHaveBeenCalled()
+
+    resolveCamera(true)
+    await pending
+    expect(open).toHaveBeenCalledTimes(1)
+    expect(open).toHaveBeenCalledWith('https://example.com/task', '_blank')
+    expect(wrapper.emitted('taskStarted')).toHaveLength(1)
+  } finally {
+    open.mockRestore()
+  }
+})
+
+it('does not open the task page when screen sharing is denied', async () => {
+  const open = jest.spyOn(window, 'open').mockReturnValue({})
+  const startAudioRecording = jest.fn().mockResolvedValue(undefined)
+  const taskStep = mountSharingTaskStep({
+    task: {
+      taskType: 'no-answer',
+      hasScreenRecord: true,
+      hasAudioRecord: true,
+      taskLink: 'https://example.com/task',
+    },
+    captureScreen: jest.fn().mockResolvedValue(false),
+    startAudioRecording,
+    extraProps: { autoOpenTaskLink: true },
+  })
+
+  try {
+    await taskStep.confirmScreenShare()
+    expect(startAudioRecording).not.toHaveBeenCalled()
+    expect(open).not.toHaveBeenCalled()
+    expect(wrapper.emitted('taskStarted')).toBeUndefined()
+  } finally {
+    open.mockRestore()
+  }
+})
+
+it('opens the task page after microphone and camera when the task has no screen share', async () => {
+  const open = jest.spyOn(window, 'open').mockReturnValue({})
+  let resolveAudio
+  const startAudioRecording = jest.fn(
+    () =>
+      new Promise((resolve) => {
+        resolveAudio = resolve
+      }),
+  )
+  const startRecording = jest.fn().mockResolvedValue(true)
+  const taskStep = mountSharingTaskStep({
+    task: {
+      taskType: 'no-answer',
+      hasAudioRecord: true,
+      hasCamRecord: true,
+      taskLink: 'https://example.com/page',
+    },
+    startAudioRecording,
+    startRecording,
+    extraProps: { autoOpenTaskLink: true },
+  })
+
+  try {
+    const pending = taskStep.startTask()
+    await flushPromises()
+    expect(startAudioRecording).toHaveBeenCalledTimes(1)
+    expect(startRecording).not.toHaveBeenCalled()
+    expect(open).not.toHaveBeenCalled()
+
+    resolveAudio()
+    await pending
+    expect(startRecording).toHaveBeenCalledTimes(1)
+    expect(open).toHaveBeenCalledWith('https://example.com/page', '_blank')
+  } finally {
+    open.mockRestore()
+  }
+})
+
 it('normalizes fresh and partial TAM answers by configured task type', () => {
   const cases = [
     {

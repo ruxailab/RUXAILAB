@@ -38,7 +38,7 @@ features/<feature>/
 
 - **`interface/`** — authentication, middlewares, request validation, dependency wiring, and delegation to the service. No business rules.
 - **`service/`** — orchestrates the use case. Must not know HTTP/callable details. Receives dependencies via constructor (DI).
-- **`repositories/`** — the only layer that talks to Firestore/Storage for that feature. Prefer extending `FirestoreCollectionRepository` when it fits.
+- **`repositories/`** — the only layer that talks to Firestore/Storage for that feature. Prefer extending `FirestoreCollectionRepository` (top-level collections) or `FirestoreSubcollectionRepository` (nested collections) when they fit.
 - **`models/`** — domain entities and enums (e.g. `Transcription`, `TranscriptSide`).
 - **`validators/`** — schemas/functions that validate the input payload.
 - **`tests/`** — cover feature behavior; mock repositories/externals.

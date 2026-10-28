@@ -20,6 +20,7 @@ service cloud.firestore {
 
     function isSuperAdmin() {
       return signedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         currentUser().data.accessLevel == 0;
     }
 
@@ -71,13 +72,24 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
+      // Study staff keep a collaborator's study pointers inside that
+      // collaborator's own user document (invite, role change, participant
+      // removal), so a cross-user update stays possible, but only for those
+      // two membership maps. Profile fields and the storage counter are
+      // owner-only.
+      function onlyStudyMembershipChanged() {
+        return request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['myTests', 'myAnswers']);
+      }
+
       allow create: if signedIn() &&
         request.auth.uid == userId &&
         request.resource.data.accessLevel == 1;
       allow read: if signedIn();
       allow update: if isSuperAdmin() || (
         signedIn() &&
-        request.resource.data.accessLevel == resource.data.accessLevel
+        request.resource.data.accessLevel == resource.data.accessLevel &&
+        (request.auth.uid == userId || onlyStudyMembershipChanged())
       );
       allow delete: if isSuperAdmin() ||
         (signedIn() && request.auth.uid == userId);
@@ -91,9 +103,7 @@ service cloud.firestore {
       allow create: if signedIn() &&
         request.resource.data.testAdmin.userDocId == request.auth.uid &&
         request.resource.data.studyRoleMap is map;
-      // A missing study reads as "not found" instead of "permission denied",
-      // so the client can tell a wrong link apart from a study it can't open.
-      allow read: if resource == null || canReadStudy(resource.data);
+      allow read: if canReadStudy(resource.data);
       // RBAC changes and study edits go through trusted callable operations.
       // In particular, a client must not be able to promote itself by editing
       // studyRoleMap, even if it currently has a Manager/Admin role.
@@ -144,9 +154,39 @@ service cloud.firestore {
         allow write: if false;
       }
 
+      // Phone pairing for unmoderated task instructions. Not a study session.
+      // Only the owning participant can read the companion. Nobody writes it
+      // from the client. The document id is the uid. The phone channel lives
+      // in Realtime Database at mobileTaskLive/{token}.
+      match /mobileTaskCompanions/{companionId} {
+        allow read: if authenticated() &&
+          request.auth.uid == companionId &&
+          (resource == null ||
+            resource.data.participantUid == request.auth.uid);
+        allow write: if false;
+      }
+
     }
 
     match /answers/{answerId} {
+      function canLinkAnswerToStudy() {
+        let studyId = request.resource.data.get('studyId', null);
+
+        return authenticated() &&
+          resource.data.get('studyId', null) == null &&
+          studyId is string &&
+          request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly(['studyId']) &&
+          exists(
+            /databases/$(database)/documents/tests/$(studyId)
+          ) &&
+          isAdmin(
+            get(
+              /databases/$(database)/documents/tests/$(studyId)
+            ).data
+          );
+      }
+
       function canUpdateOwnAnswer(field) {
         let before = resource.data.get(field, {});
         let after = request.resource.data.get(field, {});
@@ -190,7 +230,7 @@ service cloud.firestore {
       }
       allow create: if signedIn();
       allow read: if authenticated();
-      allow update: if canUpdateAnswer();      
+      allow update: if canUpdateAnswer() || canLinkAnswerToStudy();      
       allow delete: if signedIn() &&
         resource.data.studyId != null &&
         get(
@@ -223,7 +263,29 @@ service cloud.firestore {
       allow read, write: if signedIn();
     }
     match /jobs/{jobId} {
-      allow read: if signedIn();
+      // A queued job names the participant, the study and the answers
+      // document it was created for, so it is readable only by the account
+      // that queued it and by study staff who can open the study dashboard.
+      // Scoping this per document is also what stops a bare collection read:
+      // a listing only succeeds when every matched document passes.
+      function jobStudy() {
+        return get(
+          /databases/$(database)/documents/tests/$(resource.data.studyId)
+        ).data;
+      }
+
+      function canReadJobStudy() {
+        return resource.data.get('studyId', null) != null &&
+          exists(
+            /databases/$(database)/documents/tests/$(resource.data.studyId)
+          ) &&
+          (isAdmin(jobStudy()) || roleFor(jobStudy()) in [3, 4]);
+      }
+
+      allow read: if signedIn() && (
+        resource.data.get('uid', '') == request.auth.uid ||
+        canReadJobStudy()
+      );
       allow write: if false;
     }
     match /calibrations/{document=**} {

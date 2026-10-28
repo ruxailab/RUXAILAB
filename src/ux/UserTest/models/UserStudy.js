@@ -10,6 +10,8 @@ export default class UserStudy extends Study {
       : null
 
     this.testType = STUDY_TYPES.USER
+    this.allowMobileTaskInstructions =
+      params.allowMobileTaskInstructions !== false
   }
 
   toFirestore() {
@@ -17,6 +19,7 @@ export default class UserStudy extends Study {
       calibrationConfig: this.calibrationConfig?.toFirestore
         ? this.calibrationConfig.toFirestore()
         : this.calibrationConfig || null,
+      allowMobileTaskInstructions: this.allowMobileTaskInstructions,
     })
   }
 }

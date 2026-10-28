@@ -1,23 +1,36 @@
-import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { STUDY_TYPES, normalizeStudyType } from '../constants/methodDefinitions'
 import { deleteTranscriptionsByUser } from '@/app/services/transcription/TranscriptionService'
 import { deleteSentimentsByUser } from '@/app/services/facialSentiment/FacialSentimentService'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
-export default class ReportController extends Controller {
-  async setReportHidden({ report, test, hidden }) {
-    const testType = normalizeStudyType(test.testType)
-    const answerCollection =
-      testType === STUDY_TYPES.USER
-        ? 'taskAnswers'
-        : testType === STUDY_TYPES.CARD_SORTING
-          ? 'cardSortingAnswers'
-          : 'heuristicAnswers'
-    const userDocId = report.userDocId || report.id
+const callStudyReportFunction = async (name, payload) => {
+  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+    name,
+    payload,
+  )
+  return response?.data ?? response
+}
 
+const toStudyReportPayload = ({ report, test, answerType, extra = {} }) => ({
+  answersDocId: test.answersDocId,
+  userDocId: report.userDocId || report.id,
+  studyId: test.id,
+  answerType: answerType || test.testType,
+  ...extra,
+})
+
+export default class ReportController {
+  async setReportHidden({ report, test, hidden, answerType }) {
     try {
-      await this.update('answers', test.answersDocId, {
-        [`${answerCollection}.${userDocId}.hidden`]: hidden === true,
-      })
+      await callStudyReportFunction(
+        'setStudyReportHidden',
+        toStudyReportPayload({
+          report,
+          test,
+          answerType,
+          extra: { hidden: hidden === true },
+        }),
+      )
       return { success: true }
     } catch (error) {
       return { success: false, error }
@@ -25,50 +38,27 @@ export default class ReportController extends Controller {
   }
 
   /**
-   * Remove o report de um usuário e do documento de respostas.
+   * Remove a participant report from the answers document.
    * For USER studies, also deletes associated transcription and sentiment documents.
    *
    * @param {Object} params
-   * @param {Object} params.report - O report a ser removido.
-   * @param {Object} params.test - O objeto do teste atual.
+   * @param {Object} params.report - The report to remove.
+   * @param {Object} params.test - The current study.
    * @param {string} [params.answerType] - Type from the answers document.
    */
   async removeReport({ report, test, answerType }) {
-    const answerId = test.answersDocId
-    const userToRemoveId = report.userDocId || report.id
-    const testId = test.id
-    const normalizedType = normalizeStudyType(answerType || test.testType)
-    const isUserStudy = normalizedType === STUDY_TYPES.USER
-    const answerCollection =
-      normalizedType === STUDY_TYPES.USER
-        ? 'taskAnswers'
-        : normalizedType === STUDY_TYPES.CARD_SORTING
-          ? 'cardSortingAnswers'
-          : 'heuristicAnswers'
+    const payload = toStudyReportPayload({ report, test, answerType })
+    const isUserStudy =
+      normalizeStudyType(payload.answerType) === STUDY_TYPES.USER
 
     try {
-      // 1 - Remover a referência no usuário
-      const userDoc = await this.readOne('users', userToRemoveId)
-      if (userDoc.exists()) {
-        await this.update('users', userToRemoveId, {
-          [`myAnswers.${testId}`]: this.getDeleteField(),
-        })
-      }
+      await callStudyReportFunction('removeStudyReport', payload)
 
-      // 2 - Remover a referência no documento de respostas
-      const answerDoc = await this.readOne('answers', answerId)
-      if (answerDoc.exists()) {
-        await this.update('answers', answerId, {
-          [`${answerCollection}.${userToRemoveId}`]: this.getDeleteField(),
-        })
-      }
-
-      // 3 - Cascade transcriptions and sentiments for User Test reports
       if (isUserStudy) {
         const cascadePayload = {
-          answersDocId: answerId,
-          userDocId: userToRemoveId,
-          studyId: testId,
+          answersDocId: payload.answersDocId,
+          userDocId: payload.userDocId,
+          studyId: payload.studyId,
         }
         await Promise.all([
           deleteTranscriptionsByUser(cascadePayload),

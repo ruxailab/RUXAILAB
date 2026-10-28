@@ -27,8 +27,6 @@
     </div>
   </div>
 
-  <PageNotFound v-else-if="notFound" />
-
   <v-container v-else class="fill-height" fluid>
     <v-row align="center" justify="center">
       <v-col cols="12" sm="8" md="6" lg="4" class="text-center">
@@ -56,7 +54,6 @@ import UserTestView from '@/ux/UserTest/views/UserTestView.vue'
 import ModeratedTestView from '../../ux/UserTest/views/ModeratedTestView.vue'
 import HeuristicTestView from '../../ux/Heuristic/views/HeuristicTestView.vue'
 import CardSortingTest from '@/ux/CardSorting/components/CardSortingTest.vue'
-import PageNotFound from '@/shared/views/public/PageNotFoundView.vue'
 
 import {
   STUDY_TYPES,
@@ -117,7 +114,6 @@ const invitation = ref(null)
 const loading = ref(true)
 const redirecting = ref(false)
 const accessError = ref('')
-const notFound = ref(false)
 
 /*
 |--------------------------------------------------------------------------
@@ -288,7 +284,6 @@ onBeforeMount(async () => {
   loading.value = true
   redirecting.value = false
   accessError.value = ''
-  notFound.value = false
   invitation.value = null
 
   try {
@@ -298,15 +293,6 @@ onBeforeMount(async () => {
     }
 
     const loadedStudy = await loadStudy()
-
-    /*
-     * getStudy resolves null when the study does not exist and undefined when
-     * reading it failed, e.g. because access was denied.
-     */
-    if (loadedStudy === null) {
-      notFound.value = true
-      return
-    }
 
     if (!loadedStudy) {
       await denyAccess()

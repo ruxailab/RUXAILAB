@@ -11,71 +11,26 @@
     "source": "functions",
     "runtime": "nodejs22"
   },
-  "hosting": [
-    {
-      "site": "ruxailab-stage",
-      "public": "dist",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    },
-    {
-      "site": "ruxailab-dev",
-      "public": "dist",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    },
-    {
-      "site": "ruxailab-develop",
-      "public": "dist",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    },
-    {
-      "site": "ruxailab-prod",
-      "public": "dist",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    }
-  ],
+  "hosting": {
+    "target": "ruxailab",
+    "public": "dist",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
   "emulators": {
-    "auth": {
-      "port": 9099
-    },
-    "functions": {
-      "port": 5002
-    },
-    "hosting": {
-      "port": 5001
-    },
-    "ui": {
-      "enabled": true
-    },
+    "auth": { "port": 9099 },
+    "functions": { "port": 5002 },
+    "hosting": { "port": 5001 },
+    "ui": { "enabled": true },
     "firestore": { "port": 8081 },
     "database": { "port": 9000 },
     "singleProjectMode": true,
-    "storage": {
-      "port": 9199
-    }
+    "storage": { "port": 9199 }
   },
   "storage": {
     "rules": "storage.rules"

@@ -195,6 +195,36 @@ export function buildDendrogramTree(cardTitles, submittedAnswers) {
   return clusters[0]
 }
 
+export function cutDendrogramTree(tree, maxDistance) {
+  if (!tree) return []
+
+  const groups = []
+  const collectLeaves = (node) => {
+    if (!node.left && !node.right) return [node.label]
+    return [
+      ...(node.left ? collectLeaves(node.left) : []),
+      ...(node.right ? collectLeaves(node.right) : []),
+    ]
+  }
+  const visit = (node) => {
+    if (!node.left && !node.right) {
+      groups.push([node.label])
+      return
+    }
+
+    if (node.height <= maxDistance) {
+      groups.push(collectLeaves(node))
+      return
+    }
+
+    if (node.left) visit(node.left)
+    if (node.right) visit(node.right)
+  }
+
+  visit(tree)
+  return groups
+}
+
 /**
  * Assign leaf order (depth-first) and compute SVG layout coordinates.
  * Horizontal dendrogram: x = distance from similarity, y = leaf index.
