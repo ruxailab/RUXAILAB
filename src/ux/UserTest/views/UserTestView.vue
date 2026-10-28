@@ -110,6 +110,9 @@
             class="mb-10"
             style="max-width: 300px"
           />
+          <div class="mb-3">
+            <StudyTypeBadges :test="test" />
+          </div>
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
@@ -417,6 +420,7 @@
 
           <WelcomeStep
             v-if="globalIndex === 0"
+            :study="test"
             :stepper-value="stepperValue"
             :has-eye-tracking="hasEyeTracking"
             :has-pre-test="hasPreTest"
@@ -612,6 +616,7 @@
 </template>
 
 <script setup>
+import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 import SubmitDialog from '@/shared/components/SubmitDialog.vue'
 import { doc, onSnapshot } from 'firebase/firestore'
 import {
@@ -936,7 +941,9 @@ const openTaskFlowDestination = async (destination) => {
 }
 
 const enterPendingTask = async () => {
-  const tasks = Array.isArray(localTestAnswer.tasks) ? localTestAnswer.tasks : []
+  const tasks = Array.isArray(localTestAnswer.tasks)
+    ? localTestAnswer.tasks
+    : []
   const nextIndex = firstOpenTaskIndex(tasks)
   if (nextIndex >= 0) {
     await openTaskFlowDestination({ kind: 'task', taskIndex: nextIndex })
@@ -2050,7 +2057,13 @@ watch(
     user.value?.id || anonymousUserDocId.value,
   ],
   async ([allowed, onPreTasks, onTasks, studyId, answerId, ownerId]) => {
-    if (!allowed || (!onPreTasks && !onTasks) || !studyId || !answerId || !ownerId)
+    if (
+      !allowed ||
+      (!onPreTasks && !onTasks) ||
+      !studyId ||
+      !answerId ||
+      !ownerId
+    )
       return
     await mobileCompanion.ensureEnabled()
   },

@@ -26,6 +26,9 @@
             class="mb-10"
             style="max-width: 300px"
           />
+          <div class="mb-3">
+            <StudyTypeBadges :test="test" />
+          </div>
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
@@ -601,6 +604,7 @@
 </template>
 
 <script setup>
+import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 import { ref as dbRef, onValue, update, get, remove } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'

@@ -3380,6 +3380,23 @@
       "addLink": "Agregar enlace"
     }
   },
+  "studyMetadata": {
+    "groupLabel": "Detalles del estudio",
+    "types": {
+      "user": "Prueba con usuarios",
+      "heuristic": "Evaluación heurística",
+      "cardSorting": "Clasificación de tarjetas",
+      "manualAccessibility": "Accesibilidad manual",
+      "automaticAccessibility": "Accesibilidad automática",
+      "focusGroup": "Grupo focal"
+    },
+    "subtypes": {
+      "unmoderated": "Sin moderador",
+      "moderated": "Moderada",
+      "quantitative": "Cuantitativa",
+      "qualitative": "Cualitativa"
+    }
+  },
   "studyCreation": {
     "chooseEvaluationCategory": "Elegir Categoría de Evaluación",
     "selectEvaluationType": "Selecciona el tipo de evaluación que deseas realizar para tu estudio",

@@ -115,6 +115,9 @@
             class="mb-10"
             style="max-width: 300px"
           />
+          <div class="mb-3">
+            <StudyTypeBadges :test="test" />
+          </div>
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
@@ -204,6 +207,7 @@
         </v-col>
         <v-col v-else cols="12" class="pa-6">
           <StudyWelcomeStep
+            :study="test"
             :sections="evaluatorInfoSections"
             :disabled="isStartTestDisabled"
             :welcome-title="
@@ -497,6 +501,7 @@ import {
   resolveHeuristicStudyMode,
   heuristicResponseItems,
 } from '@/ux/Heuristic/utils/heuristicAnswerMode'
+import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'

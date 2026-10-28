@@ -3476,6 +3476,23 @@
       "addLink": "Add link"
     }
   },
+  "studyMetadata": {
+    "groupLabel": "Study details",
+    "types": {
+      "user": "User test",
+      "heuristic": "Heuristic evaluation",
+      "cardSorting": "Card sorting",
+      "manualAccessibility": "Manual accessibility",
+      "automaticAccessibility": "Automatic accessibility",
+      "focusGroup": "Focus group"
+    },
+    "subtypes": {
+      "unmoderated": "Unmoderated",
+      "moderated": "Moderated",
+      "quantitative": "Quantitative",
+      "qualitative": "Qualitative"
+    }
+  },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",
     "selectEvaluationType": "Select the type of evaluation you want to conduct for your study",

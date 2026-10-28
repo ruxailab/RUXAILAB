@@ -46,11 +46,7 @@
     />
 
     <v-container fluid class="session-backdrop-content pa-0">
-      <v-row
-        v-if="start"
-        class="start-screen pa-0 ma-0"
-        align="center"
-      >
+      <v-row v-if="start" class="start-screen pa-0 ma-0" align="center">
         <SessionBackdropMark position="absolute" />
         <v-col md="8" class="ma-5 pa-5">
           <img
@@ -59,6 +55,9 @@
             class="mb-10"
             style="max-width: 300px"
           />
+          <div class="mb-3">
+            <StudyTypeBadges :test="test" />
+          </div>
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
@@ -148,7 +147,8 @@
                     :value="hasPreTest ? 3 : 2"
                     :title="$t('CardSorting.cardClassification')"
                     :complete="
-                      stepperValue >= 3 && !isCurrentCardStep(hasPreTest ? 3 : 2)
+                      stepperValue >= 3 &&
+                      !isCurrentCardStep(hasPreTest ? 3 : 2)
                     "
                     :icon="
                       isCurrentCardStep(hasPreTest ? 3 : 2)
@@ -191,7 +191,8 @@
                     :value="completionStepValue"
                     :title="$t('UserTestView.stepper.completion')"
                     :complete="
-                      stepperValue >= 4 && !isCurrentCardStep(completionStepValue)
+                      stepperValue >= 4 &&
+                      !isCurrentCardStep(completionStepValue)
                     "
                     :icon="
                       isCurrentCardStep(completionStepValue)
@@ -200,9 +201,8 @@
                     "
                     complete-icon="mdi-check"
                     :class="{
-                      'stepper-item--current': isCurrentCardStep(
-                        completionStepValue,
-                      ),
+                      'stepper-item--current':
+                        isCurrentCardStep(completionStepValue),
                     }"
                   />
                 </v-stepper-header>
@@ -212,6 +212,7 @@
 
           <StudyWelcomeStep
             v-if="globalIndex === 0"
+            :study="test"
             :sections="welcomeSections"
             :welcome-title="$t('CardSorting.welcomeTitle')"
             :description="$t('CardSorting.welcomeDescription')"
@@ -457,6 +458,7 @@
 </template>
 
 <script setup>
+import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 import {
   computed,
   reactive,
@@ -696,8 +698,7 @@ const activeStepperItem = computed(() => {
   return completionStepValue.value
 })
 
-const isCurrentCardStep = (value) =>
-  activeStepperItem.value === Number(value)
+const isCurrentCardStep = (value) => activeStepperItem.value === Number(value)
 
 const progress = computed(() => {
   const steps = [
