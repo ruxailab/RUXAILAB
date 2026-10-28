@@ -2905,6 +2905,8 @@
     "efficiencyScaleHint": "Color compares efficiency with the median of the visible users.",
     "satisfaction": "Satisfaction",
     "satisfactionDescription": "Average user satisfaction score",
+    "susScore": "SUS Score",
+    "susScoreMoreInsights": "SUS Score — see SUS Analytics for more insights",
     "totalDuration": "Total duration",
     "studyCompletionRate": "Study completion rate",
     "perfectCompletionRate": "Perfect completion rate achieved",
