@@ -198,10 +198,15 @@ function extractAnswersFromDoc(answerDoc, testType) {
 
   const isUserStudy =
     answerDoc.type === STUDY_TYPES.USER || testType === STUDY_TYPES.USER
+  const isCardSortingStudy =
+    answerDoc.type === STUDY_TYPES.CARD_SORTING ||
+    testType === STUDY_TYPES.CARD_SORTING
   const answers = Object.values(
     isUserStudy
       ? answerDoc.taskAnswers || {}
-      : answerDoc.heuristicAnswers || {},
+      : isCardSortingStudy
+        ? answerDoc.cardSortingAnswers || {}
+        : answerDoc.heuristicAnswers || {},
   )
   const submitted = answers.some((a) => a?.submitted === true)
 

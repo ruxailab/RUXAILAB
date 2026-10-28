@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import ScreenShareInstructions from '@/ux/UserTest/components/ScreenShareInstructions.vue'
+import ScreenShareInstructions from '@/shared/components/ScreenShareInstructions.vue'
 import {
   getScreenSharePickerFamily,
   isMacOS,
