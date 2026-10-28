@@ -17,6 +17,7 @@ import {
   isPhoneConnected,
   mobileTaskLiveConnectedPath,
   mobileTaskLivePath,
+  mobileTaskLiveReturnToTaskPath,
   mobileTaskLiveUpdate,
   mobileTaskPairingPath,
   resolveDisplayedOutcome,
@@ -45,10 +46,15 @@ export function useMobileTaskCompanion({
   const sessionOpen = ref(false)
   const companion = ref(null)
   const presenceConnected = ref(false)
+  const lastReturnToTaskAt = ref(0)
 
   let unsubscribe = null
   let presenceUnsubscribe = null
   let presenceToken = ''
+  let returnToTaskUnsubscribe = null
+  let returnToTaskToken = ''
+  let returnToTaskPrimed = false
+  let handledReturnToTaskAt = 0
   let restored = false
   let ensuring = false
 
@@ -69,10 +75,18 @@ export function useMobileTaskCompanion({
     presenceConnected.value = false
   }
 
+  function stopReturnToTask() {
+    if (typeof returnToTaskUnsubscribe === 'function') returnToTaskUnsubscribe()
+    returnToTaskUnsubscribe = null
+    returnToTaskToken = ''
+    returnToTaskPrimed = false
+  }
+
   function stopListening() {
     if (typeof unsubscribe === 'function') unsubscribe()
     unsubscribe = null
     stopPresence()
+    stopReturnToTask()
   }
 
   function listenPresence(nextToken) {
@@ -117,6 +131,7 @@ export function useMobileTaskCompanion({
           lastOutcome: data.lastOutcome || null,
         }
         listenPresence(companion.value.token)
+        listenReturnToTask(companion.value.token)
       },
       () => {
         // A failed listener must not mark the offer as failed. Desktop
@@ -124,6 +139,36 @@ export function useMobileTaskCompanion({
       },
     )
     listenPresence(token.value)
+    listenReturnToTask(token.value)
+  }
+
+  /**
+   * The first snapshot is whatever was already on the node. Later increases
+   * mean the phone asked the desktop to close the external site.
+   *
+   * @param {string} nextToken
+   */
+  function listenReturnToTask(nextToken) {
+    if (returnToTaskToken === nextToken && returnToTaskUnsubscribe) return
+    stopReturnToTask()
+    const path = mobileTaskLiveReturnToTaskPath(nextToken)
+    if (!path) return
+    returnToTaskToken = nextToken
+    returnToTaskUnsubscribe = onValue(
+      dbRef(database, path),
+      (snapshot) => {
+        const value = snapshot.val()
+        if (!returnToTaskPrimed) {
+          returnToTaskPrimed = true
+          handledReturnToTaskAt = typeof value === 'number' ? value : 0
+          return
+        }
+        if (typeof value === 'number' && value > handledReturnToTaskAt) {
+          handledReturnToTaskAt = value
+          lastReturnToTaskAt.value = value
+        }
+      },
+    )
   }
 
   function requireContext() {
@@ -168,6 +213,7 @@ export function useMobileTaskCompanion({
         taskNumber: active.taskNumber,
         title: active.title,
         description: active.description,
+        taskType: active.taskType,
       })
       if (payload) return payload
     }
@@ -299,9 +345,15 @@ export function useMobileTaskCompanion({
    * the caller can keep the computer flow going. The phone sees the task
    * from the Realtime Database before the callable returns.
    *
-   * @param {{ taskIndex: number, taskId: string, title?: string, description?: string }} input
+   * @param {{ taskIndex: number, taskId: string, title?: string, description?: string, taskType?: string }} input
    */
-  async function activate({ taskIndex, taskId, title = '', description = '' }) {
+  async function activate({
+    taskIndex,
+    taskId,
+    title = '',
+    description = '',
+    taskType = '',
+  }) {
     if (!enabled.value || !isMobileTaskIndexEligible(taskIndex)) return null
     const { studyId, answerId } = requireContext()
     const active = companion.value?.activeTask
@@ -319,6 +371,7 @@ export function useMobileTaskCompanion({
       taskNumber: taskIndex + 1,
       title,
       description,
+      taskType,
     })
     await publishLive(published)
     try {
@@ -340,6 +393,7 @@ export function useMobileTaskCompanion({
           taskNumber: result.taskNumber,
           title,
           description,
+          taskType,
         },
       }
       if (result.attemptId && result.attemptId !== attemptId) {
@@ -352,6 +406,7 @@ export function useMobileTaskCompanion({
             taskNumber: result.taskNumber,
             title,
             description,
+            taskType,
           }),
         )
       }
@@ -425,6 +480,7 @@ export function useMobileTaskCompanion({
     token,
     pairingPath,
     phoneConnected,
+    lastReturnToTaskAt,
     enable,
     disable,
     restore,

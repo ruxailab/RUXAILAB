@@ -24,6 +24,21 @@
               </p>
             </template>
 
+            <template v-else-if="uiState === 'waitingForAnswer'">
+              <p class="text-subtitle-1 text-medium-emphasis mb-1">
+                {{ t('MobileTask.taskLabel', { number: taskView.taskNumber }) }}
+              </p>
+              <h1 class="text-h4 font-weight-bold mb-4">
+                {{ taskView.title }}
+              </h1>
+              <h2 class="text-h5 font-weight-bold mb-3">
+                {{ t('MobileTask.waitingForAnswerTitle') }}
+              </h2>
+              <p class="text-h6 mb-0">
+                {{ t('MobileTask.waitingForAnswerBody') }}
+              </p>
+            </template>
+
             <template v-else-if="uiState === 'active' || uiState === 'sending'">
               <p class="text-subtitle-1 text-medium-emphasis mb-1">
                 {{ t('MobileTask.taskLabel', { number: taskView.taskNumber }) }}
@@ -36,6 +51,7 @@
                 class="mobile-task__description text-h6 mb-6"
               />
               <v-btn
+                v-if="!isReturnToTaskOnly"
                 color="error"
                 variant="outlined"
                 block
@@ -51,15 +67,11 @@
                 variant="flat"
                 block
                 min-height="48"
-                :disabled="uiState === 'sending'"
-                :loading="uiState === 'sending'"
-                @click="sendOutcome('completed')"
+                :disabled="uiState === 'sending' || signaling"
+                :loading="uiState === 'sending' || signaling"
+                @click="handlePrimaryAction"
               >
-                {{
-                  uiState === 'sending'
-                    ? t('MobileTask.sending')
-                    : t('MobileTask.completed')
-                }}
+                {{ primaryButtonLabel }}
               </v-btn>
             </template>
 
@@ -139,11 +151,13 @@ import {
 import { database } from '@/app/plugins/firebase'
 import { submitMobileTaskOutcome } from '@/ux/UserTest/services/mobileTaskCompanionClient'
 import {
+  isReturnToTaskOnlyType,
   mapMobileTaskUiState,
   MOBILE_TASK_SAVED_CONFIRMATION_MS,
   MOBILE_TASK_TOKEN_PATTERN,
   mobileTaskLiveConnectedPath,
   mobileTaskLivePath,
+  mobileTaskLiveReturnToTaskPath,
   resolveMobileTaskChannel,
   settleMobileTaskSubmit,
 } from '@/ux/UserTest/utils/mobileTaskPageState'
@@ -157,9 +171,13 @@ const props = defineProps({
 const { t } = useI18n()
 const serverState = ref(null)
 const submitting = ref(false)
+const signaling = ref(false)
+const pendingReturnToTask = ref(false)
 const networkFailure = ref(false)
 const localAccepted = ref(false)
 const localAcceptedAttemptId = ref(null)
+const returnedToTask = ref(false)
+const returnedAttemptId = ref(null)
 const displayedOutcome = ref(null)
 const pendingOutcome = ref(null)
 const taskView = ref({
@@ -169,6 +187,7 @@ const taskView = ref({
   taskIndex: null,
   taskId: null,
   attemptId: null,
+  taskType: '',
 })
 
 let rtdbUnsubscribe = null
@@ -187,9 +206,23 @@ const uiState = computed(() =>
     networkFailure: networkFailure.value,
     localAccepted: localAccepted.value,
     localAcceptedAttemptId: localAcceptedAttemptId.value,
+    returnedToTask: returnedToTask.value,
+    returnedAttemptId: returnedAttemptId.value,
     serverAttemptId: taskView.value.attemptId,
   }),
 )
+
+const isReturnToTaskOnly = computed(() =>
+  isReturnToTaskOnlyType(taskView.value.taskType),
+)
+
+const primaryButtonLabel = computed(() => {
+  if (uiState.value === 'sending' || signaling.value) {
+    return t('MobileTask.sending')
+  }
+  if (isReturnToTaskOnly.value) return t('MobileTask.returnToTask')
+  return t('MobileTask.completed')
+})
 
 function locatorIsValid() {
   return (
@@ -212,6 +245,17 @@ function clearLocalAccepted() {
   localAcceptedAttemptId.value = null
 }
 
+function clearReturnedToTask() {
+  returnedToTask.value = false
+  returnedAttemptId.value = null
+}
+
+function showReturnedToTask(attemptId) {
+  returnedToTask.value = true
+  returnedAttemptId.value =
+    typeof attemptId === 'string' && attemptId.length > 0 ? attemptId : null
+}
+
 function showLocalAccepted(attemptId) {
   localAccepted.value = true
   localAcceptedAttemptId.value =
@@ -229,8 +273,12 @@ function applyServerPayload(payload) {
   serverState.value = nextState
   if (nextState === 'completed' || nextState === 'ended') {
     clearLocalAccepted()
+    clearReturnedToTask()
   }
-  if (nextState !== 'active') return
+  if (nextState !== 'active') {
+    if (nextState === 'waiting') clearReturnedToTask()
+    return
+  }
   const nextAttemptId =
     typeof payload.attemptId === 'string' ? payload.attemptId : null
   if (
@@ -240,6 +288,13 @@ function applyServerPayload(payload) {
   ) {
     clearLocalAccepted()
   }
+  if (
+    returnedToTask.value &&
+    nextAttemptId &&
+    nextAttemptId !== returnedAttemptId.value
+  ) {
+    clearReturnedToTask()
+  }
   taskView.value = {
     taskNumber: payload.taskNumber,
     title: typeof payload.title === 'string' ? payload.title : '',
@@ -248,6 +303,7 @@ function applyServerPayload(payload) {
     taskIndex: payload.taskIndex,
     taskId: payload.taskId,
     attemptId: nextAttemptId,
+    taskType: typeof payload.taskType === 'string' ? payload.taskType : '',
   }
   displayedOutcome.value = null
   pendingOutcome.value = null
@@ -360,6 +416,7 @@ function markEnded() {
   serverState.value = 'ended'
   networkFailure.value = false
   clearLocalAccepted()
+  clearReturnedToTask()
   stopListening()
   void stopPresence()
 }
@@ -372,6 +429,32 @@ function hasAttemptIdentity() {
     typeof taskView.value.attemptId === 'string' &&
     taskView.value.attemptId.length > 0
   )
+}
+
+async function sendReturnToTask() {
+  if (signaling.value || submitting.value) return
+  signaling.value = true
+  networkFailure.value = false
+  try {
+    const path = mobileTaskLiveReturnToTaskPath(props.token)
+    if (!path) throw new Error('Task session is not available')
+    await set(dbRef(database, path), Date.now())
+    pendingReturnToTask.value = false
+    showReturnedToTask(taskView.value.attemptId)
+  } catch {
+    networkFailure.value = true
+    pendingReturnToTask.value = true
+  } finally {
+    signaling.value = false
+  }
+}
+
+function handlePrimaryAction() {
+  if (isReturnToTaskOnly.value) {
+    void sendReturnToTask()
+    return
+  }
+  void sendOutcome('completed')
 }
 
 async function sendOutcome(outcome) {
@@ -404,6 +487,10 @@ async function sendOutcome(outcome) {
 }
 
 function retry() {
+  if (pendingReturnToTask.value) {
+    void sendReturnToTask()
+    return
+  }
   if (pendingOutcome.value) {
     void sendOutcome(pendingOutcome.value)
     return
@@ -432,6 +519,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearLocalAccepted()
+  clearReturnedToTask()
   stopListening()
   void stopPresence()
   document.removeEventListener('visibilitychange', onVisible)

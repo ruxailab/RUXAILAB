@@ -57,10 +57,12 @@ export class RtdbMobileTaskLiveRepository {
     const next = { ...view.payload, updatedAt: Date.now() }
     await node.transaction((current) => {
       if (!shouldWriteMobileTaskLive(current, view)) return undefined
-      if (current?.connected === true) {
-        return { ...next, connected: true }
+      const merged = { ...next }
+      if (current?.connected === true) merged.connected = true
+      if (typeof current?.returnToTaskAt === 'number') {
+        merged.returnToTaskAt = current.returnToTaskAt
       }
-      return next
+      return merged
     })
   }
 

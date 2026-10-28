@@ -666,6 +666,7 @@ import { useMobileTaskCompanion } from '@/ux/UserTest/composables/useMobileTaskC
 import {
   applyAcceptedOutcome,
   isMobileTaskIndexEligible,
+  isReturnToTaskOnlyType,
   mobileTaskId,
 } from '@/ux/UserTest/utils/mobileTaskPageState'
 
@@ -800,6 +801,7 @@ const {
   error: mobileInstructionsError,
   pairingPath: mobileCompanionPairingPath,
   phoneConnected: mobilePhoneConnected,
+  lastReturnToTaskAt: mobileReturnToTaskAt,
 } = mobileCompanion
 const acceptedMobileOutcome = ref(null)
 const studyAllowsMobileTaskInstructions = computed(
@@ -831,6 +833,11 @@ function rememberAcceptedOutcome(outcome) {
 function continueFromPhoneOutcome(outcome) {
   const task = localTestAnswer.tasks?.[taskIndex.value]
   const alreadyAttempted = task?.attempted === true
+  const studyTask = test.value?.testStructure?.userTasks?.[taskIndex.value]
+  if (isReturnToTaskOnlyType(studyTask?.taskType)) {
+    taskStepComponent.value?.returnToTaskFromMobile()
+    return
+  }
   rememberAcceptedOutcome(outcome)
   if (!alreadyAttempted) {
     taskStepComponent.value?.continueFromAcceptedOutcome(
@@ -849,6 +856,7 @@ function activateCurrentMobileTask() {
     title: typeof task?.taskName === 'string' ? task.taskName : '',
     description:
       typeof task?.taskDescription === 'string' ? task.taskDescription : '',
+    taskType: typeof task?.taskType === 'string' ? task.taskType : '',
   })
 }
 
@@ -2060,6 +2068,14 @@ watch(
     if (!outcome?.success || !taskStepComponent.value) return
     if (acceptedMobileOutcome.value?.attemptId === outcome.attemptId) return
     continueFromPhoneOutcome(outcome)
+  },
+)
+
+watch(
+  () => mobileReturnToTaskAt.value,
+  (value) => {
+    if (!value) return
+    taskStepComponent.value?.returnToTaskFromMobile()
   },
 )
 

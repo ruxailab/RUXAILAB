@@ -696,6 +696,7 @@ import TamForm1 from '@/ux/UserTest/components/TamForm1.vue'
 import TamForm2 from '@/ux/UserTest/components/TamForm2.vue'
 import TamForm3 from '@/ux/UserTest/components/TamForm3.vue'
 import sartForm from '@/ux/UserTest/components/sartForm.vue'
+import { isReturnToTaskOnlyType } from '@/ux/UserTest/utils/mobileTaskPageState'
 
 const { t } = useI18n()
 
@@ -982,6 +983,7 @@ let taskToolWindow = null
 let postFlowStarted = false
 let outcomeRequestStarted = false
 let postFormOpened = false
+let postFormUsesTaskWindow = false
 const audioRecorder = ref(null)
 const videoRecorder = ref(null)
 const screenRecorder = ref(null)
@@ -1072,6 +1074,14 @@ function taskLinkUrl() {
 
 function releaseTaskWindow() {
   const opened = taskToolWindow
+  if (postFormUsesTaskWindow) {
+    try {
+      opened?.focus()
+    } catch {
+      // The form tab stays open after the site is replaced.
+    }
+    return
+  }
   taskToolWindow = null
   if (!opened && !props.mobileInstructionsEnabled) return
   if (opened) {
@@ -1188,16 +1198,49 @@ async function proceedWithTaskStart({ skipScreen = false } = {}) {
   return true
 }
 
+function postFormUrl() {
+  if (props.task?.taskType !== 'post-form' || !props.task?.postForm) return ''
+  const link = props.task.postForm
+  return link.startsWith('http://') || link.startsWith('https://')
+    ? link
+    : `https://${link}`
+}
+
+/**
+ * Replaces the site tab with the Google Form. A phone finish has no user
+ * gesture, so `window.open` would be blocked.
+ *
+ * @returns {boolean}
+ */
+function showPostFormInTaskWindow() {
+  const url = postFormUrl()
+  const opened = taskToolWindow
+  if (!url || !opened || opened.closed) return false
+  if (postFormOpened) return postFormUsesTaskWindow
+  try {
+    opened.location.href = url
+    opened.focus()
+    postFormOpened = true
+    postFormUsesTaskWindow = true
+    return true
+  } catch {
+    return false
+  }
+}
+
 function openPostFormIfNeeded() {
   if (postFormOpened) return
-  if (props.task?.taskType !== 'post-form' || !props.task?.postForm) return
-  const link = props.task.postForm
-  const url =
-    link.startsWith('http://') || link.startsWith('https://')
-      ? link
-      : `https://${link}`
+  if (showPostFormInTaskWindow()) return
+  const url = postFormUrl()
+  if (!url) return
   postFormOpened = true
-  window.open(url, '_blank')
+  const opened = window.open(url, '_blank')
+  if (!opened) return
+  try {
+    opened.focus()
+  } catch {
+    /* best-effort */
+  }
 }
 
 function openTool() {
@@ -1243,6 +1286,7 @@ function abortAllMedia() {
 function beginPostTaskFlow(userCompleted) {
   if (postFlowStarted || stage.value > 3) return
   postFlowStarted = true
+  showPostFormInTaskWindow()
   releaseTaskWindow()
 
   forceStopAllMedia()
@@ -1307,10 +1351,18 @@ async function handleShowPostForm(userCompleted) {
 }
 
 function continueFromAcceptedOutcome(completed) {
+  if (isReturnToTaskOnlyType(props.task?.taskType)) {
+    releaseTaskWindow()
+    return
+  }
   beginPostTaskFlow(completed === true)
 }
 
-defineExpose({ continueFromAcceptedOutcome })
+function returnToTaskFromMobile() {
+  releaseTaskWindow()
+}
+
+defineExpose({ continueFromAcceptedOutcome, returnToTaskFromMobile })
 
 function emitDoneOrCouldNotFinish(savedTime) {
   if (showPostForm.value.userCompleted) {
@@ -1375,6 +1427,7 @@ watch(
     postFlowStarted = false
     outcomeRequestStarted = false
     postFormOpened = false
+    postFormUsesTaskWindow = false
     isSubmittingOutcome.value = false
     taskToolWindow = null
     isPreparingTaskTools.value = false

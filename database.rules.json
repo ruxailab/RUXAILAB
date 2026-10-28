@@ -77,14 +77,15 @@
 
     // Live task channel for the unmoderated phone. The desktop writes
     // enter, change and finish here so the phone does not wait for a
-    // Cloud Function. The phone writes `connected` on the same node.
+    // Cloud Function. The phone writes `connected` and `returnToTaskAt`
+    // on the same node.
     // Knowing the token is the capability to read. No .read on the
     // parent, so tokens cannot be listed.
     "mobileTaskLive": {
       "$token": {
         ".read": "$token.matches(/^[a-f0-9]{64}$/)",
         ".write": "auth != null && root.child('mobileTaskOwners/' + $token).val() === auth.uid",
-        ".validate": "(newData.hasChildren(['state', 'updatedAt']) && (newData.child('state').val() !== 'active' || newData.hasChildren(['taskNumber', 'title', 'description', 'taskIndex', 'taskId', 'attemptId']))) || (!newData.hasChild('state') && newData.hasChild('connected'))",
+        ".validate": "(newData.hasChildren(['state', 'updatedAt']) && (newData.child('state').val() !== 'active' || newData.hasChildren(['taskNumber', 'title', 'description', 'taskIndex', 'taskId', 'attemptId']))) || (!newData.hasChild('state') && (newData.hasChild('connected') || newData.hasChild('returnToTaskAt')))",
         "state": {
           ".validate": "newData.isString() && (newData.val() === 'waiting' || newData.val() === 'active' || newData.val() === 'accepted' || newData.val() === 'completed')"
         },
@@ -109,9 +110,16 @@
         "description": {
           ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 100000)"
         },
+        "taskType": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 50)"
+        },
         "connected": {
           ".write": "$token.matches(/^[a-f0-9]{64}$/)",
           ".validate": "!newData.exists() || newData.isBoolean()"
+        },
+        "returnToTaskAt": {
+          ".write": "$token.matches(/^[a-f0-9]{64}$/)",
+          ".validate": "!newData.exists() || newData.isNumber()"
         },
         "$other": { ".validate": false }
       }

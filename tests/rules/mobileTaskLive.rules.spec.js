@@ -82,6 +82,18 @@ describe('mobile task live channel', () => {
     await assertFails(get(ref(owner(), 'mobileTaskOwners')))
   })
 
+  it('lets a signed-out phone ask the desktop to close the site without replacing the task', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await set(ref(context.database(), livePath), activeTask)
+    })
+    await assertSucceeds(set(ref(guest(), `${livePath}/returnToTaskAt`), 99))
+    const snap = await assertSucceeds(get(ref(guest(), livePath)))
+    expect(snap.val()).toEqual({
+      ...activeTask,
+      returnToTaskAt: 99,
+    })
+  })
+
   it('lets a signed-out phone write connected without replacing the task', async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await set(ref(context.database(), livePath), {

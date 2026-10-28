@@ -10,6 +10,7 @@ export const MOBILE_TASK_UI_STATE = Object.freeze({
   ACTIVE: 'active',
   SENDING: 'sending',
   ACCEPTED: 'accepted',
+  WAITING_FOR_ANSWER: 'waitingForAnswer',
   COMPLETED: 'completed',
   DISCONNECTED: 'disconnected',
   ENDED: 'ended',
@@ -47,6 +48,18 @@ export function isMobileTaskIndexEligible(taskIndex) {
     taskIndex >= 0 &&
     taskIndex <= MAX_MOBILE_TASK_INDEX
   )
+}
+
+/**
+ * Short Answer (`post-test`) and Paragraph Answer (`text-area`) keep the
+ * computer on the task so the participant can type. The phone only asks
+ * the desktop to close the external site.
+ *
+ * @param {string|null|undefined} taskType
+ * @returns {boolean}
+ */
+export function isReturnToTaskOnlyType(taskType) {
+  return taskType === 'post-test' || taskType === 'text-area'
 }
 
 /**
@@ -90,6 +103,18 @@ export function mobileTaskLivePath(token) {
 export function mobileTaskLiveConnectedPath(token) {
   const path = mobileTaskLivePath(token)
   return path ? `${path}/connected` : ''
+}
+
+/**
+ * RTDB path the phone writes so the desktop closes the external site
+ * without finishing the task.
+ *
+ * @param {string|null|undefined} token
+ * @returns {string}
+ */
+export function mobileTaskLiveReturnToTaskPath(token) {
+  const path = mobileTaskLivePath(token)
+  return path ? `${path}/returnToTaskAt` : ''
 }
 
 /**
@@ -155,6 +180,7 @@ function defaultRandomBytes(size) {
  * @param {number} [input.taskNumber]
  * @param {string} [input.title]
  * @param {string} [input.description]
+ * @param {string} [input.taskType]
  * @param {number} [input.updatedAt]
  * @returns {object|null}
  */
@@ -166,6 +192,7 @@ export function buildMobileTaskLivePayload({
   taskNumber,
   title,
   description,
+  taskType,
   updatedAt = Date.now(),
 } = {}) {
   if (
@@ -186,7 +213,7 @@ export function buildMobileTaskLivePayload({
   if (taskId == null || taskId === '') return null
   const taskIdText = String(taskId)
   if (taskIdText.length > 200) return null
-  return {
+  const next = {
     ...payload,
     taskNumber: Number.isInteger(taskNumber) ? taskNumber : taskIndex + 1,
     title: typeof title === 'string' ? title : '',
@@ -195,6 +222,10 @@ export function buildMobileTaskLivePayload({
     taskId: taskIdText,
     attemptId,
   }
+  if (typeof taskType === 'string' && taskType.length > 0 && taskType.length <= 50) {
+    next.taskType = taskType
+  }
+  return next
 }
 
 const LIVE_TASK_KEYS = [
@@ -204,6 +235,7 @@ const LIVE_TASK_KEYS = [
   'taskIndex',
   'taskId',
   'attemptId',
+  'taskType',
 ]
 
 /**
@@ -242,9 +274,11 @@ export function isPhoneConnected(connected) {
  *   networkFailure?: boolean,
  *   localAccepted?: boolean,
  *   localAcceptedAttemptId?: string|null,
+ *   returnedToTask?: boolean,
+ *   returnedAttemptId?: string|null,
  *   serverAttemptId?: string|null,
  * }} [input]
- * @returns {'loading'|'waiting'|'active'|'sending'|'accepted'|'completed'|'disconnected'|'ended'}
+ * @returns {'loading'|'waiting'|'active'|'sending'|'accepted'|'waitingForAnswer'|'completed'|'disconnected'|'ended'}
  */
 export function mapMobileTaskUiState({
   serverState = null,
@@ -252,6 +286,8 @@ export function mapMobileTaskUiState({
   networkFailure = false,
   localAccepted = false,
   localAcceptedAttemptId = null,
+  returnedToTask = false,
+  returnedAttemptId = null,
   serverAttemptId = null,
 } = {}) {
   if (submitting) return MOBILE_TASK_UI_STATE.SENDING
@@ -262,6 +298,16 @@ export function mapMobileTaskUiState({
   }
   if (serverState === MOBILE_TASK_UI_STATE.COMPLETED) {
     return MOBILE_TASK_UI_STATE.COMPLETED
+  }
+  if (returnedToTask) {
+    const nextTaskStarted =
+      serverState === MOBILE_TASK_UI_STATE.ACTIVE &&
+      typeof serverAttemptId === 'string' &&
+      serverAttemptId.length > 0 &&
+      serverAttemptId !== returnedAttemptId
+    if (!nextTaskStarted && serverState === MOBILE_TASK_UI_STATE.ACTIVE) {
+      return MOBILE_TASK_UI_STATE.WAITING_FOR_ANSWER
+    }
   }
   if (localAccepted) {
     const nextTaskStarted =

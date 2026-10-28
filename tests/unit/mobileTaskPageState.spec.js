@@ -5,10 +5,12 @@ import {
   resolveMobileTaskChannel,
   isMobileTaskIndexEligible,
   isPhoneConnected,
+  isReturnToTaskOnlyType,
   mapMobileTaskUiState,
   mobileTaskId,
   mobileTaskLiveConnectedPath,
   mobileTaskLivePath,
+  mobileTaskLiveReturnToTaskPath,
   mobileTaskLiveUpdate,
   mobileTaskPairingPath,
   resolveDisplayedOutcome,
@@ -62,6 +64,32 @@ describe('mobile task page state', () => {
     expect(
       mapMobileTaskUiState({ serverState: null, networkFailure: true }),
     ).toBe('disconnected')
+  })
+
+  it('keeps the phone on waiting-for-answer until the computer leaves the task', () => {
+    expect(
+      mapMobileTaskUiState({
+        serverState: 'active',
+        returnedToTask: true,
+        returnedAttemptId: 'attempt-1',
+        serverAttemptId: 'attempt-1',
+      }),
+    ).toBe('waitingForAnswer')
+    expect(
+      mapMobileTaskUiState({
+        serverState: 'waiting',
+        returnedToTask: true,
+        returnedAttemptId: 'attempt-1',
+      }),
+    ).toBe('waiting')
+    expect(
+      mapMobileTaskUiState({
+        serverState: 'active',
+        returnedToTask: true,
+        returnedAttemptId: 'attempt-1',
+        serverAttemptId: 'attempt-2',
+      }),
+    ).toBe('active')
   })
 
   it('keeps a short local saved confirmation until waiting, not the next task', () => {
@@ -170,6 +198,19 @@ describe('mobile task page state', () => {
       `mobileTaskLive/${token}/connected`,
     )
     expect(mobileTaskLiveConnectedPath('short')).toBe('')
+    expect(mobileTaskLiveReturnToTaskPath(token)).toBe(
+      `mobileTaskLive/${token}/returnToTaskAt`,
+    )
+    expect(mobileTaskLiveReturnToTaskPath('short')).toBe('')
+  })
+
+  it('keeps short and paragraph answers on the computer after the phone returns', () => {
+    expect(isReturnToTaskOnlyType('post-test')).toBe(true)
+    expect(isReturnToTaskOnlyType('text-area')).toBe(true)
+    expect(isReturnToTaskOnlyType('post-form')).toBe(false)
+    expect(isReturnToTaskOnlyType('sus')).toBe(false)
+    expect(isReturnToTaskOnlyType('no-answer')).toBe(false)
+    expect(isReturnToTaskOnlyType('')).toBe(false)
   })
 
   it('builds the live task payload the phone renders immediately', () => {
@@ -183,6 +224,7 @@ describe('mobile task page state', () => {
         attemptId,
         title: 'Checkout',
         description: 'Pay',
+        taskType: 'text-area',
         updatedAt: 20,
       }),
     ).toEqual({
@@ -194,6 +236,7 @@ describe('mobile task page state', () => {
       taskIndex: 1,
       taskId: 'task-b',
       attemptId,
+      taskType: 'text-area',
     })
     expect(buildMobileTaskLivePayload({ state: 'completed', updatedAt: 30 })).toEqual({
       state: 'completed',
@@ -219,6 +262,7 @@ describe('mobile task page state', () => {
       taskIndex: null,
       taskId: null,
       attemptId: null,
+      taskType: null,
     })
     expect(
       mobileTaskLiveUpdate({

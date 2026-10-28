@@ -170,6 +170,7 @@ export function resolveStudyTask(study, taskIndex, requestedTaskId) {
     title: typeof task.taskName === 'string' ? task.taskName : '',
     description:
       typeof task.taskDescription === 'string' ? task.taskDescription : '',
+    taskType: typeof task.taskType === 'string' ? task.taskType : '',
   }
 }
 
@@ -363,6 +364,7 @@ export function decideActivation({
     taskNumber: task.taskNumber,
     title: task.title,
     description: task.description,
+    taskType: task.taskType,
   }
 
   return {

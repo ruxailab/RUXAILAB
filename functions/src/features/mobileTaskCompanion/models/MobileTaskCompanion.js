@@ -156,6 +156,7 @@ function mapActiveTask(value) {
     taskNumber: value.taskNumber,
     title: typeof value.title === 'string' ? value.title : '',
     description: typeof value.description === 'string' ? value.description : '',
+    taskType: typeof value.taskType === 'string' ? value.taskType : '',
   }
 }
 

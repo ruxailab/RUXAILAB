@@ -27,6 +27,7 @@ import { isParticipantAnswerSubmitted } from './taskSession.js'
  *   taskIndex?: number,
  *   taskId?: string,
  *   attemptId?: string,
+ *   taskType?: string,
  * }}
  */
 export function toPublicCompanionState(companion, answer) {
@@ -54,7 +55,7 @@ export function toPublicCompanionState(companion, answer) {
   }
 
   if (active?.attemptId) {
-    return {
+    const view = {
       state: PUBLIC_COMPANION_STATE.ACTIVE,
       taskNumber: active.taskNumber,
       title: typeof active.title === 'string' ? active.title : '',
@@ -64,6 +65,10 @@ export function toPublicCompanionState(companion, answer) {
       taskId: String(active.taskId),
       attemptId: active.attemptId,
     }
+    if (typeof active.taskType === 'string' && active.taskType) {
+      view.taskType = active.taskType
+    }
+    return view
   }
 
   return { state: PUBLIC_COMPANION_STATE.WAITING }
@@ -149,6 +154,7 @@ export function toDesktopCompanion(companion) {
           taskNumber: companion.activeTask.taskNumber,
           title: companion.activeTask.title ?? '',
           description: companion.activeTask.description ?? '',
+          taskType: companion.activeTask.taskType ?? '',
         }
       : null,
     lastOutcome: companion.lastOutcome

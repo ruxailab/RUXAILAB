@@ -808,6 +808,47 @@ describe('MobileTaskCompanionService', () => {
     expect(rtdb.data.get(`mobileTaskLive/${token}`)).toEqual(movedOn)
   })
 
+  it('publishes the study task type so the phone can return without finishing', async () => {
+    const { service, caller, readLive } = harness({
+      testStructure: {
+        userTasks: [
+          {
+            id: 'task-a',
+            taskName: 'Find the price',
+            taskDescription: '<p>Look at the header</p>',
+            taskLink: 'https://secret.example/task',
+            taskType: 'text-area',
+          },
+        ],
+      },
+    })
+    const created = await service.create(caller)
+    await service.activate({ ...caller, input: taskInput(0, 'task-a') })
+
+    expect(readLive(created.companion.token)).toMatchObject({
+      state: 'active',
+      taskType: 'text-area',
+    })
+  })
+
+  it('keeps a phone return-to-task signal when the server mirrors a new task', async () => {
+    const { service, caller, rtdb } = harness()
+    const created = await service.create(caller)
+    const token = created.companion.token
+    rtdb.data.set(`mobileTaskLive/${token}`, {
+      ...rtdb.data.get(`mobileTaskLive/${token}`),
+      returnToTaskAt: 99,
+    })
+
+    await service.activate({ ...caller, input: taskInput(0, 'task-a') })
+
+    expect(rtdb.data.get(`mobileTaskLive/${token}`)).toMatchObject({
+      state: 'active',
+      returnToTaskAt: 99,
+      title: 'Find the price',
+    })
+  })
+
   it('keeps phone presence when the server mirrors a new task', async () => {
     const { service, caller, rtdb } = harness()
     const created = await service.create(caller)
