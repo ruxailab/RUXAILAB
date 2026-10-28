@@ -1,5 +1,27 @@
 {
   "language": "Language",
+  "MobileTask": {
+    "waitingTitle": "Waiting for the task to start",
+    "waitingBody": "Continue on the computer. The instructions will appear here.",
+    "taskLabel": "Task {number}",
+    "completed": "Task completed",
+    "returnToTask": "Voltar para Task",
+    "waitingForAnswerTitle": "Waiting for the answer on the computer",
+    "waitingForAnswerBody": "Continue answering this task on the computer.",
+    "notCompleted": "I could not finish the task",
+    "sending": "Saving...",
+    "acceptedTitle": "Saved",
+    "completedSaved": "Task completed",
+    "notCompletedSaved": "Task not completed",
+    "acceptedBody": "Continue in RUXAILAB on your computer.",
+    "completedTitle": "Thank you for participating",
+    "completedBody": "You can continue on the computer.",
+    "disconnectedTitle": "Connection problem",
+    "disconnectedBody": "RUXAILAB could not be reached. Your answer was not saved. Check the connection and try again.",
+    "retry": "Try again",
+    "endedTitle": "No tasks available",
+    "endedBody": "There are no tasks to show for this session. Go back to the computer."
+  },
   "agents": {
     "list": {
       "title": "Available agents",
@@ -1991,7 +2013,18 @@
       "setupDialogMessage": "We are setting up all the tools this task needs to be completed. This may take a while.",
       "noQuestionnaire": "No post-task questionnaire required for this task type.",
       "validationError": "Please answer all questions before continuing.",
-      "finishTask": "Finish task"
+      "finishTask": "Finish task",
+      "mobileInstructions": {
+        "offer": "Use your phone to view task instructions.",
+        "hint": "Scan the code with your phone, then start the task on this computer. The phone shows the instructions for the current task.",
+        "scan": "Scan this code with your phone. You only need to do this once.",
+        "connected": "Phone connected",
+        "waitingForPhone": "Waiting for your phone",
+        "couldNotStart": "Phone instructions could not be started. You can continue on this computer.",
+        "couldNotStop": "Phone instructions could not be turned off. Try again.",
+        "desktopOnly": "This task stays on this computer.",
+        "qrAlt": "QR code that opens the task instructions on your phone"
+      }
     },
     "ConsentStep": {
       "fullName": "Full Name",
@@ -2447,7 +2480,9 @@
       "description": "Customize the settings and preferences of your study.",
       "updatedTest": "Study updated successfully",
       "previewTitle": "Preview study",
-      "previewDescription": "Review the study in read-only mode."
+      "previewDescription": "Review the study in read-only mode.",
+      "mobile_task_instructions": "Mobile task instructions",
+      "mobile_task_instructions_hint": "When this is on, a QR code appears on each task so participants can follow the instructions on their phone. When it is off, instructions stay on the computer only."
     },
     "cooperators": {
       "invitationSent": "Invitation sent successfully"

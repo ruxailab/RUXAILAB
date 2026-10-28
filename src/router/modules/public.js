@@ -9,6 +9,7 @@ import TermsOfService from '@/features/legal/TermsOfService.vue'
 import PrivacyPolicy from '@/features/legal/PrivacyPolicy.vue'
 import FAQ from '@/shared/views/public/FAQ.vue'
 import InviteView from '@/shared/views/public/InviteView.vue'
+import MobileTaskView from '@/views/public/MobileTaskView.vue'
 
 export default [
   {
@@ -54,6 +55,13 @@ export default [
     meta: { authorize: [] },
     component: Help,
     props: { showAllOnLoad: true },
+  },
+  {
+    path: '/mobile-task/:studyId/:participantUid/:token',
+    name: 'Mobile task',
+    props: true,
+    meta: { authorize: [], layout: 'no-toolbar' },
+    component: MobileTaskView,
   },
   {
     path: '/:catchAll(.*)',

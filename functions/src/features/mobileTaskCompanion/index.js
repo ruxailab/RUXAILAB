@@ -1,0 +1,6 @@
+export { createMobileTaskCompanion } from './interface/createMobileTaskCompanion.js'
+export { getMobileTaskCompanion } from './interface/getMobileTaskCompanion.js'
+export { activateMobileTask } from './interface/activateMobileTask.js'
+export { submitMobileTaskOutcome } from './interface/submitMobileTaskOutcome.js'
+export { completeMobileTaskPhase } from './interface/completeMobileTaskPhase.js'
+export { endMobileTaskCompanion } from './interface/endMobileTaskCompanion.js'

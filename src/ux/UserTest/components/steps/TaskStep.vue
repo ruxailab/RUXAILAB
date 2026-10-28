@@ -458,7 +458,7 @@
                 block
                 variant="outlined"
                 class="mr-2"
-                :disabled="isWaitingForUploadToFinish"
+                :disabled="isWaitingForUploadToFinish || isSubmittingOutcome"
                 :class="{
                   'mb-3': $vuetify.display.xs,
                   'mr-2': $vuetify.display.smAndUp,
@@ -479,7 +479,8 @@
                 block
                 variant="flat"
                 class="ml-2"
-                :disabled="isWaitingForUploadToFinish"
+                :disabled="isWaitingForUploadToFinish || isSubmittingOutcome"
+                :loading="isSubmittingOutcome"
                 :class="{ 'ml-2': $vuetify.display.smAndUp }"
                 @click="handleShowPostForm(true)"
               >
@@ -695,6 +696,7 @@ import TamForm1 from '@/ux/UserTest/components/TamForm1.vue'
 import TamForm2 from '@/ux/UserTest/components/TamForm2.vue'
 import TamForm3 from '@/ux/UserTest/components/TamForm3.vue'
 import sartForm from '@/ux/UserTest/components/sartForm.vue'
+import { isReturnToTaskOnlyType } from '@/ux/UserTest/utils/mobileTaskPageState'
 
 const { t } = useI18n()
 
@@ -720,6 +722,12 @@ const props = defineProps({
   videoUrl: String,
   remoteStream: MediaStream, // props that receive the remote video stream in case of moderated test
   shouldRecordModerator: Boolean, // props that indicate whether to record the moderator's video
+  mobileInstructionsEligible: { type: Boolean, default: false },
+  mobileInstructionsEnabled: { type: Boolean, default: false },
+  autoOpenTaskLink: { type: Boolean, default: false },
+  resumeAtStageThree: { type: Boolean, default: false },
+  activateMobileTask: { type: Function, default: null },
+  submitMobileOutcome: { type: Function, default: null },
 })
 const emit = defineEmits([
   'done',
@@ -746,6 +754,7 @@ const emit = defineEmits([
   'structured-slider-end',
   'structured-slider-blur',
   'task-questionnaire-entered',
+  'mobile-outcome-accepted',
 ])
 
 onBeforeUnmount(() => {
@@ -948,7 +957,7 @@ function nextPreviewStep() {
   goToStartTaskStage()
 }
 
-const stage = ref(introStage())
+const stage = ref(props.resumeAtStageThree ? 3 : introStage())
 
 watch(previewSteps, (steps) => {
   if (previewStepIndex.value > steps.length - 1) {
@@ -959,7 +968,22 @@ watch(previewSteps, (steps) => {
   }
 })
 
+watch(
+  () => props.resumeAtStageThree,
+  (resume) => {
+    if (resume && stage.value < 3 && !postFlowStarted) {
+      stage.value = 3
+    }
+  },
+)
+
 const hasOpenedTool = ref(false)
+const isSubmittingOutcome = ref(false)
+let taskToolWindow = null
+let postFlowStarted = false
+let outcomeRequestStarted = false
+let postFormOpened = false
+let postFormUsesTaskWindow = false
 const audioRecorder = ref(null)
 const videoRecorder = ref(null)
 const screenRecorder = ref(null)
@@ -1040,6 +1064,76 @@ function goToStartTaskStage() {
   resetPreviewStepper()
 }
 
+function taskLinkUrl() {
+  const link = props.task?.taskLink || props.taskLink
+  if (!link) return ''
+  return link.startsWith('http://') || link.startsWith('https://')
+    ? link
+    : `https://${link}`
+}
+
+function releaseTaskWindow() {
+  const opened = taskToolWindow
+  if (postFormUsesTaskWindow) {
+    try {
+      opened?.focus()
+    } catch {
+      // The form tab stays open after the site is replaced.
+    }
+    return
+  }
+  taskToolWindow = null
+  if (!opened && !props.mobileInstructionsEnabled) return
+  if (opened) {
+    try {
+      opened.close()
+    } catch {
+      // The browser can reject closing a tab. The task still continues.
+    }
+  }
+  try {
+    window.focus()
+  } catch {
+    // Focusing the study tab is best-effort and must not block progress.
+  }
+}
+
+function shouldAutoOpenTaskPage() {
+  const mobileSession =
+    props.mobileInstructionsEnabled && props.mobileInstructionsEligible
+  return props.autoOpenTaskLink || mobileSession
+}
+
+function openTaskPageWindow() {
+  const url = taskLinkUrl()
+  if (!url) return null
+  const opened = window.open(url, '_blank')
+  if (!opened) return null
+  hasOpenedTool.value = true
+  if (props.mobileInstructionsEnabled) taskToolWindow = opened
+  return opened
+}
+
+function openTaskPage() {
+  if (!shouldAutoOpenTaskPage()) return
+  openTaskPageWindow()
+}
+
+async function notifyMobileActivation() {
+  if (
+    !props.mobileInstructionsEnabled ||
+    !props.mobileInstructionsEligible ||
+    typeof props.activateMobileTask !== 'function'
+  ) {
+    return
+  }
+  try {
+    await props.activateMobileTask()
+  } catch {
+    // The phone is not required. The computer task already started.
+  }
+}
+
 async function startTask() {
   if (props.task?.hasScreenRecord) {
     showScreenSharePrompt.value = true
@@ -1061,7 +1155,8 @@ async function confirmScreenShare() {
     const screenStarted = await startMediaRecorders({ screenOnly: true })
     if (!screenStarted) return
     showScreenSharePrompt.value = false
-    await proceedWithTaskStart({ skipScreen: true })
+    const started = await proceedWithTaskStart({ skipScreen: true })
+    if (!started) screenRecorder.value?.abortCapture?.()
   } finally {
     isRequestingScreenShare.value = false
   }
@@ -1069,11 +1164,12 @@ async function confirmScreenShare() {
 
 async function proceedWithTaskStart({ skipScreen = false } = {}) {
   isPreparingTaskTools.value = true
+  let started = false
   try {
     const mediaStarted = await startMediaRecorders({ skipScreen })
     if (!mediaStarted) {
       screenRecorder.value?.abortCapture?.()
-      return
+      return false
     }
 
     const enteredActiveStage = stage.value !== 3
@@ -1088,21 +1184,67 @@ async function proceedWithTaskStart({ skipScreen = false } = {}) {
         if (timer && timer.startTimer) timer.startTimer()
       }, 100)
     })
+    started = true
   } finally {
     isPreparingTaskTools.value = false
+  }
+  if (!started) {
+    releaseTaskWindow()
+    return false
+  }
+  // Sharing prompts finish first. The task page opens only after that.
+  openTaskPage()
+  await notifyMobileActivation()
+  return true
+}
+
+function postFormUrl() {
+  if (props.task?.taskType !== 'post-form' || !props.task?.postForm) return ''
+  const link = props.task.postForm
+  return link.startsWith('http://') || link.startsWith('https://')
+    ? link
+    : `https://${link}`
+}
+
+/**
+ * Replaces the site tab with the Google Form. A phone finish has no user
+ * gesture, so `window.open` would be blocked.
+ *
+ * @returns {boolean}
+ */
+function showPostFormInTaskWindow() {
+  const url = postFormUrl()
+  const opened = taskToolWindow
+  if (!url || !opened || opened.closed) return false
+  if (postFormOpened) return postFormUsesTaskWindow
+  try {
+    opened.location.href = url
+    opened.focus()
+    postFormOpened = true
+    postFormUsesTaskWindow = true
+    return true
+  } catch {
+    return false
+  }
+}
+
+function openPostFormIfNeeded() {
+  if (postFormOpened) return
+  if (showPostFormInTaskWindow()) return
+  const url = postFormUrl()
+  if (!url) return
+  postFormOpened = true
+  const opened = window.open(url, '_blank')
+  if (!opened) return
+  try {
+    opened.focus()
+  } catch {
+    /* best-effort */
   }
 }
 
 function openTool() {
-  const link = props.task?.taskLink || props.taskLink
-  if (link) {
-    const url =
-      link.startsWith('http://') || link.startsWith('https://')
-        ? link
-        : `https://${link}`
-    window.open(url, '_blank')
-    hasOpenedTool.value = true
-  }
+  openTaskPageWindow()
 }
 
 const showPostForm = ref({ userCompleted: undefined })
@@ -1141,8 +1283,11 @@ function abortAllMedia() {
   screenRecorder.value?.abortCapture?.()
 }
 
-function handleShowPostForm(userCompleted) {
-  if (isWaitingForUploadToFinish.value) return
+function beginPostTaskFlow(userCompleted) {
+  if (postFlowStarted || stage.value > 3) return
+  postFlowStarted = true
+  showPostFormInTaskWindow()
+  releaseTaskWindow()
 
   forceStopAllMedia()
 
@@ -1159,17 +1304,7 @@ function handleShowPostForm(userCompleted) {
   }
 
   showPostForm.value.userCompleted = userCompleted
-
-  if (props.task?.taskType === 'post-form' && props.task?.postForm) {
-    const link = props.task?.postForm
-    if (link) {
-      const url =
-        link.startsWith('http://') || link.startsWith('https://')
-          ? link
-          : `https://${link}`
-      window.open(url, '_blank')
-    }
-  }
+  openPostFormIfNeeded()
 
   // Questionnaire first, then the optional comment. The timer is already stopped.
   if (hasPostTaskQuestionnaire.value) {
@@ -1183,6 +1318,51 @@ function handleShowPostForm(userCompleted) {
 function goToObservationStep() {
   stage.value = 5
 }
+
+async function handleShowPostForm(userCompleted) {
+  if (
+    isWaitingForUploadToFinish.value ||
+    postFlowStarted ||
+    outcomeRequestStarted
+  ) {
+    return
+  }
+  outcomeRequestStarted = true
+  isSubmittingOutcome.value = true
+  openPostFormIfNeeded()
+  let resolvedCompleted = userCompleted
+  try {
+    if (
+      props.mobileInstructionsEnabled &&
+      props.mobileInstructionsEligible &&
+      typeof props.submitMobileOutcome === 'function'
+    ) {
+      const pressed = userCompleted ? 'completed' : 'not_completed'
+      const settled = await props.submitMobileOutcome(pressed)
+      if (settled?.success) {
+        resolvedCompleted = settled.completed === true
+        emit('mobile-outcome-accepted', settled)
+      }
+    }
+    beginPostTaskFlow(resolvedCompleted)
+  } finally {
+    isSubmittingOutcome.value = false
+  }
+}
+
+function continueFromAcceptedOutcome(completed) {
+  if (isReturnToTaskOnlyType(props.task?.taskType)) {
+    releaseTaskWindow()
+    return
+  }
+  beginPostTaskFlow(completed === true)
+}
+
+function returnToTaskFromMobile() {
+  releaseTaskWindow()
+}
+
+defineExpose({ continueFromAcceptedOutcome, returnToTaskFromMobile })
 
 function emitDoneOrCouldNotFinish(savedTime) {
   if (showPostForm.value.userCompleted) {
@@ -1239,10 +1419,17 @@ watch(
     }
     abortAllMedia()
     resetToTaskIntro()
+    if (props.resumeAtStageThree) stage.value = 3
     taskStartTime = null
     elapsedTimeDisplay.value = '0:00'
     showPostForm.value = { userCompleted: undefined }
     hasOpenedTool.value = false
+    postFlowStarted = false
+    outcomeRequestStarted = false
+    postFormOpened = false
+    postFormUsesTaskWindow = false
+    isSubmittingOutcome.value = false
+    taskToolWindow = null
     isPreparingTaskTools.value = false
     showScreenSharePrompt.value = false
     isRequestingScreenShare.value = false
