@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="create-study-view">
-    <v-container class="">
+    <v-container class="py-0">
       <!-- Stepper Header -->
       <StepperHeader
         :current-step="3"
