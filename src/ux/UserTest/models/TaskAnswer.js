@@ -27,6 +27,7 @@ export default class TaskAnswer {
     webcamSize,
     markers,
     segments,
+    syncedStart,
     startedAt,
     endedAt,
     participationMode,
@@ -62,6 +63,7 @@ export default class TaskAnswer {
     this.webcamSize = webcamSize ?? null
     this.markers = markers ?? []
     this.segments = segments ?? []
+    this.syncedStart = syncedStart ?? false
     // Server epoch milliseconds. Absent on desktop-only attempts.
     this.startedAt = startedAt ?? null
     this.endedAt = endedAt ?? null
@@ -117,6 +119,7 @@ export default class TaskAnswer {
       webcamSize: this.webcamSize,
       markers: this.markers,
       segments: this.segments,
+      syncedStart: this.syncedStart,
     }
 
     // Omit when unset so a desktop-only save does not write nulls, and does

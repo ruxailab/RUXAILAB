@@ -1169,6 +1169,8 @@ async function proceedWithTaskStart({ skipScreen = false } = {}) {
     const mediaStarted = await startMediaRecorders({ skipScreen })
     if (!mediaStarted) {
       screenRecorder.value?.abortCapture?.()
+      audioRecorder.value?.abortCapture?.()
+      videoRecorder.value?.abortCapture?.()
       return false
     }
 
@@ -1253,21 +1255,60 @@ async function startMediaRecorders({
   skipScreen = false,
   screenOnly = false,
 } = {}) {
+  if (screenOnly) {
+    if (props.task?.hasScreenRecord && screenRecorder.value) {
+      const prepare =
+        screenRecorder.value.prepareScreen || screenRecorder.value.captureScreen
+      const screenPrepared = await prepare({
+        requireEntireScreen: hasExternalLink.value,
+      })
+      if (!screenPrepared) return false
+    }
+    return true
+  }
+
+  let screenReady =
+    skipScreen && Boolean(props.task?.hasScreenRecord && screenRecorder.value)
   if (!skipScreen && props.task?.hasScreenRecord && screenRecorder.value) {
-    const screenStarted = await screenRecorder.value.captureScreen({
+    const prepare =
+      screenRecorder.value.prepareScreen || screenRecorder.value.captureScreen
+    screenReady = await prepare({
       requireEntireScreen: hasExternalLink.value,
     })
-    if (!screenStarted) return false
+    if (!screenReady) return false
   }
-  if (screenOnly) return true
 
+  let audioReady = false
   if (props.task?.hasAudioRecord && audioRecorder.value) {
-    await audioRecorder.value.startAudioRecording()
+    const prepare =
+      audioRecorder.value.prepareAudio ||
+      audioRecorder.value.startAudioRecording
+    audioReady = await prepare()
   }
+
+  let camReady = false
   if (props.task?.hasCamRecord && videoRecorder.value) {
     // Camera is optional: missing device / denied permission must not block the task
-    await videoRecorder.value.startRecording()
+    const prepare =
+      videoRecorder.value.prepareCam || videoRecorder.value.startRecording
+    camReady = await prepare()
   }
+
+  if (screenReady && screenRecorder.value.startNow) {
+    const started = screenRecorder.value.startNow()
+    if (!started) {
+      audioRecorder.value?.abortCapture?.()
+      videoRecorder.value?.abortCapture?.()
+      return false
+    }
+  }
+  if (audioReady && audioRecorder.value.startNow) {
+    audioRecorder.value.startNow()
+  }
+  if (camReady && videoRecorder.value.startNow) {
+    videoRecorder.value.startNow()
+  }
+
   return true
 }
 

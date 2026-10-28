@@ -99,9 +99,39 @@ const notifyRecordingFailure = ({ key, mediaKey, severity }) => {
   else showError(message)
 }
 
-const startRecording = async () => {
+let currentStream = null
+let currentRecorder = null
+let stage = 'permission'
+let abandoned = false
+
+const cleanup = () => {
+  stopMediaStream(currentStream)
+  if (currentRecorder && currentRecorder.state !== 'inactive') {
+    try {
+      currentRecorder.stop()
+    } catch {
+      /* Already stopped. */
+    }
+  }
+  currentStream = null
+  currentRecorder = null
+  mediaRecorder.value = null
+  activeAttempt = null
+  recording.value = false
+}
+
+abortCurrent = () => {
+  abandoned = true
+  if (activeAttempt) {
+    activeAttempt.discard()
+  }
+  cleanup()
+}
+
+const prepareCam = async () => {
   if (recording.value) return true
   recording.value = true
+  abandoned = false
   const taskIndex = props.taskIndex
   const userId = resolvedUserDocId.value
   const testId = props.testId
@@ -112,50 +142,27 @@ const startRecording = async () => {
     notifyRecordingFailure,
   )
   activeAttempt = attempt
-  let stream
-  let recorder
-  let stage = 'permission'
-  let abandoned = false
-  let abort = () => {}
-  const cleanup = () => {
-    stopMediaStream(stream)
-    if (recorder && recorder.state !== 'inactive') {
-      try {
-        recorder.stop()
-      } catch {
-        /* Already stopped. */
-      }
-    }
-    if (activeAttempt !== attempt) return
-    activeAttempt = null
-    recording.value = false
-    if (abortCurrent === abort) abortCurrent = () => {}
-  }
-  abort = () => {
-    abandoned = true
-    attempt.discard()
-    cleanup()
-  }
-  abortCurrent = abort
+  stage = 'permission'
+
   try {
     const devices = await navigator.mediaDevices.enumerateDevices()
     if (abandoned) {
       cleanup()
-      return true
+      return false
     }
     if (!devices.some((device) => device.kind === 'videoinput')) {
       attempt.finish('failed', 'permission', 'deviceUnavailable')
       cleanup()
-      return true
+      return false
     }
-    stream = await openCameraStream(navigator.mediaDevices)
+    currentStream = await openCameraStream(navigator.mediaDevices)
     if (abandoned) {
       cleanup()
-      return true
+      return false
     }
     stage = 'capture'
-    recorder = createMediaRecorder({
-      stream,
+    currentRecorder = createMediaRecorder({
+      stream: currentStream,
       blobType: 'video/webm',
       attempt,
       emit,
@@ -171,8 +178,8 @@ const startRecording = async () => {
           userId,
         }),
     })
-    mediaRecorder.value = recorder
-    recorder.start()
+    mediaRecorder.value = currentRecorder
+    return true
   } catch (error) {
     const failure = captureFailure(error, stage)
     attempt.finish(...failure)
@@ -183,9 +190,38 @@ const startRecording = async () => {
     else if (failure[2] === 'deviceUnavailable')
       showWarning(t('errors.cameraNotAvailable'))
     else showError(t('errors.globalError'))
+    return false
   }
-  // Camera remains optional; a failure must not prevent starting the task.
-  return true
+}
+
+const startNow = () => {
+  if (!currentRecorder) return false
+  if (currentRecorder.state !== 'inactive') return true
+  const [track] =
+    currentStream?.getVideoTracks?.() || currentStream?.getTracks?.() || []
+  if (!currentStream || !track || track.readyState === 'ended') {
+    if (activeAttempt) {
+      activeAttempt.finish('failed', 'capture', 'captureError')
+    }
+    cleanup()
+    return false
+  }
+  try {
+    currentRecorder.start()
+    return true
+  } catch {
+    if (activeAttempt) {
+      activeAttempt.finish('failed', 'capture', 'captureError')
+    }
+    cleanup()
+    return false
+  }
+}
+
+const startRecording = async () => {
+  const prepared = await prepareCam()
+  if (!prepared) return true // Camera remains optional; failure does not block
+  return startNow()
 }
 
 const stopRecording = () => {
@@ -197,6 +233,8 @@ onBeforeUnmount(() => abortCurrent())
 
 defineExpose({
   startRecording,
+  prepareCam,
+  startNow,
   stopRecording,
   abortCapture: () => abortCurrent(),
 })
