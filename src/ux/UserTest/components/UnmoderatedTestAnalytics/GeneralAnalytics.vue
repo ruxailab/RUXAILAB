@@ -133,12 +133,17 @@
         "
       />
       <UxMetricCard
-        :value="`${getAverageSatisfaction().toFixed(1)}`"
+        :value="
+          hasSatisfactionData
+            ? getAverageSatisfaction().toFixed(1)
+            : $t('analytics.noData')
+        "
         :label="$t('analytics.satisfaction')"
         color="warning"
         icon="mdi-heart"
-        :description="$t('analytics.satisfactionDescription')"
+        :description="hasSUSScore ? $t('analytics.susScoreMoreInsights') : ''"
         :progress="getAverageSatisfaction()"
+        :show-progress="hasSatisfactionData"
       />
     </div>
 
@@ -607,7 +612,6 @@ import CommentListCard from '../answers/CommentListCard.vue'
 import SelectionPieChart from '../answers/SelectionPieChart.vue'
 import AnswersTimeline from '../answers/AnswersTimeline.vue'
 import { calculateSUSScore } from '../../utils/susCalculator'
-import { getNASATLXData } from '../../utils/nasaTlxData'
 import {
   getAdditionalTimePercentage,
   getAverageTaskEfficiencyPercentage,
@@ -950,6 +954,17 @@ const calculateEfficiency = () => {
   return ratingsCount === 0 ? 0 : totalSatisfaction / ratingsCount
 }
 
+const hasSUSScore = computed(() =>
+  filteredSessions.value.some((item) =>
+    Object.values(item?.tasks || {}).some(
+      (task) =>
+        Array.isArray(task?.susAnswers) && task.susAnswers.length === 10,
+    ),
+  ),
+)
+
+const hasSatisfactionData = hasSUSScore
+
 const getAverageSUSSatisfaction = (answersData) => {
   let totalSUS = 0
   let susCount = 0
@@ -969,60 +984,7 @@ const getAverageSUSSatisfaction = (answersData) => {
 }
 
 const getAverageSatisfaction = () => {
-  let hasSUS = false
-  let hasNASATLX = false
-  let nasaTlxResponses = []
-
-  Object.values(answers.value).forEach((item) => {
-    if (!item.tasks) return
-    Object.values(item.tasks).forEach((task) => {
-      if (Array.isArray(task.susAnswers) && task.susAnswers.length === 10) {
-        hasSUS = true
-      }
-
-      // Check if task is NASA-TLX type and has valid data
-      if (
-        testStructure.value?.userTasks?.[task.taskId]?.taskType ===
-          'nasa-tlx' &&
-        task.nasaTlxAnswers &&
-        typeof task.nasaTlxAnswers === 'object'
-      ) {
-        // Check if nasaTlxAnswers has actual data (not empty object/array)
-        const hasData = Array.isArray(task.nasaTlxAnswers)
-          ? task.nasaTlxAnswers.length > 0
-          : Object.keys(task.nasaTlxAnswers).length > 0
-
-        if (hasData) {
-          hasNASATLX = true
-          const scores = Object.values(task.nasaTlxAnswers)
-          nasaTlxResponses.push({
-            ...task,
-            overallScore:
-              scores.length > 0
-                ? Math.round(
-                    (scores.reduce((sum, score) => sum + score, 0) /
-                      scores.length) *
-                      10,
-                  ) / 10
-                : 0,
-            name: item.fullName,
-            nasaTlxAnswers: task.nasaTlxAnswers,
-          })
-        }
-      }
-    })
-  })
-
-  if (hasSUS && !hasNASATLX) {
-    return getAverageSUSSatisfaction(answers.value)
-  }
-
-  if (hasNASATLX && nasaTlxResponses.length > 0) {
-    const tlxData = getNASATLXData(nasaTlxResponses)
-    return tlxData.averageOverallScore
-  }
-
-  return 0
+  return getAverageSUSSatisfaction(filteredSessions.value)
 }
 
 const getTasksPerformance = () => {
