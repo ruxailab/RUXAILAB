@@ -599,7 +599,7 @@
 </template>
 
 <script setup>
-import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
+import SubmitDialog from '@/shared/components/SubmitDialog.vue'
 import { doc, onSnapshot } from 'firebase/firestore'
 import {
   ref,
@@ -617,12 +617,12 @@ import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar'
 import { nanoid } from 'nanoid'
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue'
-import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
-import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue'
+import ConsentStep from '@/shared/components/steps/ConsentStep.vue'
+import PreTestStep from '@/shared/components/steps/PreTestStep.vue'
 import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue'
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue'
-import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
-import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
+import PostTestStep from '@/shared/components/steps/PostTestStep.vue'
+import FinishStep from '@/shared/components/steps/FinishStep.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
