@@ -27,6 +27,7 @@ export default class TaskAnswer {
     webcamSize,
     markers,
     segments,
+    syncedStart,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -59,6 +60,7 @@ export default class TaskAnswer {
     this.webcamSize = webcamSize ?? null
     this.markers = markers ?? []
     this.segments = segments ?? []
+    this.syncedStart = syncedStart ?? false
   }
 
   static toModel(data) {
@@ -109,6 +111,7 @@ export default class TaskAnswer {
       webcamSize: this.webcamSize,
       markers: this.markers,
       segments: this.segments,
+      syncedStart: this.syncedStart,
     }
   }
 }
