@@ -244,6 +244,7 @@
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localAnswer.preTestAnswer"
             :pre-test-completed="localAnswer.preTestCompleted"
+            @update:pre-test-answer="(val) => (localAnswer.preTestAnswer = val)"
             @done="completeStep('preTest')"
           />
 
@@ -431,6 +432,9 @@
             :post-test="test.testStructure.postTest"
             :post-test-answer="localAnswer.postTestAnswer"
             :post-test-completed="localAnswer.postTestCompleted"
+            @update:post-test-answer="
+              (val) => (localAnswer.postTestAnswer = val)
+            "
             @done="completeStep('postTest')"
           />
 
