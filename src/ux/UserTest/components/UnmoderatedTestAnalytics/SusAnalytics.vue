@@ -24,7 +24,7 @@
                 {{ $t('analytics.sus.averageScore') }}
               </div>
               <div class="text-h2 font-weight-bold text-warning mb-1">
-                {{ analytics.averageScore }}
+                {{ formatSUSScore(analytics.averageScore, locale) }}
               </div>
               <div class="text-caption text-grey">
                 {{ $t('analytics.sus.outOf100') }}
@@ -133,102 +133,121 @@
     <v-row class="mb-2">
       <v-col cols="12">
         <v-card elevation="2" style="border-radius: 12px">
-          <v-card-title class="text-h5 pb-2">
-            {{ $t('analytics.sus.interpretations.title') }}
-          </v-card-title>
-          <v-card-text>
-            <p class="text-body-2 text-medium-emphasis mb-4">
-              {{ $t('analytics.sus.interpretations.description') }}
-            </p>
-
+          <div class="d-flex align-center justify-space-between pa-4 pb-2">
+            <div class="d-flex align-center flex-wrap ga-3">
+              <h2 class="text-h5">
+                {{ $t('analytics.sus.interpretations.title') }}
+              </h2>
+              <v-chip
+                v-if="analytics.totalRespondents"
+                color="warning"
+                variant="tonal"
+                size="small"
+              >
+                {{ $t('analytics.sus.averageScore') }}:
+                {{ formatSUSScore(analytics.averageScore, locale) }}
+              </v-chip>
+            </div>
+            <div class="d-flex align-center">
+              <v-tooltip
+                :text="$t('analytics.sus.interpretations.description')"
+                location="top"
+                max-width="360"
+              >
+                <template #activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    icon="mdi-help-circle-outline"
+                    size="small"
+                    variant="text"
+                    :aria-label="
+                      $t('analytics.sus.interpretations.description')
+                    "
+                  />
+                </template>
+              </v-tooltip>
+              <v-menu>
+                <template #activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    icon="mdi-dots-vertical"
+                    size="small"
+                    variant="text"
+                    :aria-label="
+                      $t('analytics.sus.interpretations.exportOptions')
+                    "
+                  />
+                </template>
+                <v-list density="compact">
+                  <v-list-item
+                    prepend-icon="mdi-download"
+                    :title="$t('analytics.sus.interpretations.downloadSvg')"
+                    @click="downloadInterpretationSvg"
+                  />
+                  <v-list-item
+                    prepend-icon="mdi-code-braces"
+                    :title="$t('analytics.sus.interpretations.exportLatex')"
+                    @click="openInterpretationLatex"
+                  />
+                </v-list>
+              </v-menu>
+            </div>
+          </div>
+          <v-card-text class="pa-4 pt-0">
             <v-alert
               v-if="!analytics.totalRespondents"
               type="info"
               variant="tonal"
-              class="mb-4"
+              class="mb-3"
             >
               {{ $t('analytics.sus.interpretations.noData') }}
             </v-alert>
 
-            <v-row>
-              <v-col
-                v-for="visualization in susInterpretationVisualizations"
-                :key="visualization.key"
-                cols="12"
-              >
-                <v-card variant="outlined" class="pa-4">
-                  <div
-                    class="d-flex flex-wrap justify-space-between align-center ga-2 mb-4"
-                  >
-                    <div class="flex-grow-1">
-                      <h3 class="text-subtitle-1 font-weight-bold">
+            <div class="sus-interpretation-scroll">
+              <div class="sus-interpretation-content">
+                <div class="sus-interpretation-list">
+                  <div class="sus-interpretation-names">
+                    <div
+                      v-for="visualization in susInterpretationVisualizations"
+                      :key="visualization.key"
+                      class="sus-interpretation-name"
+                    >
+                      <span class="text-body-2 font-weight-medium">
                         {{
                           $t(
                             `analytics.sus.interpretations.methods.${visualization.key}.title`,
                           )
                         }}
-                      </h3>
-                      <p class="text-caption text-medium-emphasis mb-0">
-                        {{
+                      </span>
+                      <v-tooltip
+                        :text="
                           $t(
                             `analytics.sus.interpretations.methods.${visualization.key}.description`,
                           )
-                        }}
-                      </p>
-                    </div>
-                    <div class="d-flex align-center ga-2">
-                      <v-chip
-                        v-if="analytics.totalRespondents"
-                        color="primary"
-                        variant="tonal"
-                        size="small"
+                        "
+                        location="top"
+                        max-width="360"
                       >
-                        {{
-                          $t(
-                            `analytics.sus.interpretations.methods.${visualization.key}.result`,
-                            {
-                              score: analytics.averageScore,
-                              category: $t(
-                                `analytics.sus.interpretations.categories.${getActiveInterpretationSegment(visualization).category}`,
-                              ),
-                            },
-                          )
-                        }}
-                      </v-chip>
-                      <v-menu>
                         <template #activator="{ props }">
                           <v-btn
                             v-bind="props"
-                            icon="mdi-dots-vertical"
-                            size="small"
+                            icon="mdi-help-circle-outline"
+                            size="x-small"
                             variant="text"
                             :aria-label="
-                              $t('analytics.sus.interpretations.exportOptions')
+                              $t(
+                                `analytics.sus.interpretations.methods.${visualization.key}.description`,
+                              )
                             "
                           />
                         </template>
-                        <v-list density="compact">
-                          <v-list-item
-                            prepend-icon="mdi-download"
-                            :title="
-                              $t('analytics.sus.interpretations.downloadSvg')
-                            "
-                            @click="downloadInterpretationSvg(visualization)"
-                          />
-                          <v-list-item
-                            prepend-icon="mdi-code-braces"
-                            :title="
-                              $t('analytics.sus.interpretations.exportLatex')
-                            "
-                            @click="openInterpretationLatex(visualization)"
-                          />
-                        </v-list>
-                      </v-menu>
+                      </v-tooltip>
                     </div>
                   </div>
-
-                  <div class="sus-interpretation-chart">
+                  <div class="sus-interpretation-tracks">
                     <div
+                      v-for="visualization in susInterpretationVisualizations"
+                      :key="visualization.key"
                       class="sus-interpretation-track"
                       role="list"
                       :aria-label="
@@ -237,65 +256,98 @@
                         )
                       "
                     >
-                      <div
-                        v-for="segment in visualization.segments"
+                      <v-tooltip
+                        v-for="(segment, index) in visualization.segments"
                         :key="`${segment.category}-${segment.min}-${segment.max}`"
-                        class="sus-interpretation-segment"
-                        :class="{
-                          'sus-interpretation-segment--active':
-                            analytics.totalRespondents &&
-                            isActiveInterpretationSegment(
-                              visualization,
-                              segment,
-                            ),
-                        }"
-                        :style="{ flex: `${segment.width} 1 0%` }"
-                        :title="`${$t(`analytics.sus.interpretations.categories.${segment.category}`)} — ${segment.min}–${segment.max}`"
-                        :aria-label="`${$t(`analytics.sus.interpretations.categories.${segment.category}`)} — ${segment.min}–${segment.max}`"
-                        role="listitem"
-                      >
-                        <span
-                          v-if="segment.width >= 8"
-                          class="sus-interpretation-segment-label"
-                        >
-                          {{
-                            $t(
-                              `analytics.sus.interpretations.categories.${segment.category}`,
-                            )
-                          }}
-                        </span>
-                      </div>
-                      <div
-                        v-if="
-                          analytics.totalRespondents &&
-                          visualization.key !== 'percentileRank'
+                        :text="
+                          getInterpretationTooltip(
+                            segment,
+                            locale,
+                            (category) =>
+                              $t(
+                                `analytics.sus.interpretations.categories.${category}`,
+                              ),
+                          )
                         "
-                        class="sus-interpretation-marker"
-                        :style="{
-                          left: `${analytics.averageScore}%`,
-                        }"
-                        aria-hidden="true"
-                      />
+                        location="top"
+                      >
+                        <template #activator="{ props }">
+                          <div
+                            v-bind="props"
+                            class="sus-interpretation-segment"
+                            :class="{
+                              'sus-interpretation-segment--active':
+                                analytics.totalRespondents &&
+                                isActiveInterpretationSegment(
+                                  visualization,
+                                  segment,
+                                ),
+                            }"
+                            :style="{
+                              flex: `${segment.width} 1 0%`,
+                              backgroundColor: getInterpretationColor(
+                                visualization,
+                                index,
+                              ),
+                            }"
+                            :aria-label="
+                              getInterpretationTooltip(
+                                segment,
+                                locale,
+                                (category) =>
+                                  $t(
+                                    `analytics.sus.interpretations.categories.${category}`,
+                                  ),
+                              )
+                            "
+                            role="listitem"
+                          >
+                            <span
+                              v-if="
+                                segment.width >= 8 ||
+                                (visualization.key === 'curvedGradingScale' &&
+                                  segment.width >= 3)
+                              "
+                              class="sus-interpretation-segment-label"
+                            >
+                              {{
+                                $t(
+                                  `analytics.sus.interpretations.categories.${segment.category}`,
+                                )
+                              }}
+                            </span>
+                          </div>
+                        </template>
+                      </v-tooltip>
                     </div>
-                    <div class="sus-interpretation-axis" aria-hidden="true">
-                      <span v-for="tick in scoreAxisLabels" :key="tick">
-                        {{ tick }}
-                      </span>
-                    </div>
-                    <div class="text-caption text-medium-emphasis">
-                      {{
-                        $t(
-                          `analytics.sus.interpretations.${visualization.axisLabel}`,
-                        )
-                      }}
-                    </div>
+                    <div
+                      v-if="analytics.totalRespondents"
+                      class="sus-interpretation-marker"
+                      :style="{ left: `${analytics.averageScore}%` }"
+                      aria-hidden="true"
+                    />
                   </div>
-                </v-card>
-              </v-col>
-            </v-row>
+                </div>
+
+                <div class="sus-interpretation-axis-row">
+                  <span class="text-caption font-weight-medium">
+                    {{ $t('analytics.sus.interpretations.scoreAxisTitle') }}
+                  </span>
+                  <div class="sus-interpretation-axis" aria-hidden="true">
+                    <span
+                      v-for="tick in scoreAxisLabels"
+                      :key="tick"
+                      :style="{ left: `${tick}%` }"
+                    >
+                      {{ tick }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <a
-              class="text-caption"
+              class="text-caption d-inline-block mt-4"
               href="https://measuringu.com/interpret-sus-score/"
               target="_blank"
               rel="noopener noreferrer"
@@ -427,9 +479,9 @@
                 {{ $t('analytics.sus.finalScore') }}
               </div>
               <div class="d-flex align-center">
-                <span class="text-h4 font-weight-bold text-primary mr-2">
-                  {{ selectedResponse.susScore.toFixed(1) }}
-                </span>
+                <!-- <span class="text-h4 font-weight-bold text-primary mr-2">
+                  {{ formatSUSScore(selectedResponse.susScore, locale) }}
+                </span> -->
                 <span class="text-h6 text-grey">
                   {{ $t('analytics.sus.scoreDenominator') }}
                 </span>
@@ -549,12 +601,19 @@ import {
   getRatingColor,
   calculateSUSScore,
 } from '../../utils/susCalculator'
+import {
+  SUS_INTERPRETATION_VISUALIZATIONS,
+  formatSUSScore,
+  getActiveInterpretationSegment as findActiveInterpretationSegment,
+  getInterpretationRange,
+  getInterpretationTooltip,
+} from '../../utils/susInterpretations'
 import { useStore } from 'vuex'
 import SusHistogramChart from '@/ux/UserTest/SusHistogramChart.vue'
 import SusRatingChart from '@/ux/UserTest/SusRatingChart.vue'
 
 const store = useStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const detailsModal = ref(false)
 const selectedResponse = ref(null)
@@ -564,148 +623,8 @@ const latexCopyStatus = ref('')
 const selectedRatingFilter = ref(null)
 const scoreRange = ref([0, 100])
 const dialogMaxWidth = 800
-const scoreAxisLabels = [0, 25, 50, 75, 100]
-const susInterpretationVisualizations = [
-  {
-    key: 'percentileRank',
-    axisLabel: 'percentileAxis',
-    segments: [
-      {
-        min: 0,
-        max: 25,
-        category: 'percentile0to1',
-        resultRange: '0–1.9',
-        width: 2,
-      },
-      {
-        min: 25.1,
-        max: 51.6,
-        category: 'percentile2to14',
-        resultRange: '2–14',
-        width: 13,
-      },
-      {
-        min: 51.7,
-        max: 62.6,
-        category: 'percentile15to34',
-        resultRange: '15–34',
-        width: 20,
-      },
-      {
-        min: 62.7,
-        max: 64.9,
-        category: 'percentile35to40',
-        resultRange: '35–40',
-        width: 6,
-      },
-      {
-        min: 65,
-        max: 71,
-        category: 'percentile41to59',
-        resultRange: '41–59',
-        width: 19,
-      },
-      {
-        min: 71.1,
-        max: 72.5,
-        category: 'percentile60to64',
-        resultRange: '60–64',
-        width: 5,
-      },
-      {
-        min: 72.6,
-        max: 74,
-        category: 'percentile65to69',
-        resultRange: '65–69',
-        width: 5,
-      },
-      {
-        min: 74.1,
-        max: 77.1,
-        category: 'percentile70to79',
-        resultRange: '70–79',
-        width: 10,
-      },
-      {
-        min: 77.2,
-        max: 78.8,
-        category: 'percentile80to84',
-        resultRange: '80–84',
-        width: 5,
-      },
-      {
-        min: 78.9,
-        max: 80.7,
-        category: 'percentile85to89',
-        resultRange: '85–89',
-        width: 5,
-      },
-      {
-        min: 80.8,
-        max: 84,
-        category: 'percentile90to95',
-        resultRange: '90–95',
-        width: 6,
-      },
-      {
-        min: 84.1,
-        max: 100,
-        category: 'percentile96to100',
-        resultRange: '96–100',
-        width: 4,
-      },
-    ],
-  },
-  {
-    key: 'curvedGradingScale',
-    axisLabel: 'scoreAxis',
-    segments: [
-      { min: 0, max: 51.6, category: 'gradeF', width: 51.7 },
-      { min: 51.7, max: 62.6, category: 'gradeD', width: 11 },
-      { min: 62.7, max: 64.9, category: 'gradeCMinus', width: 2.3 },
-      { min: 65, max: 71, category: 'gradeC', width: 6.1 },
-      { min: 71.1, max: 72.5, category: 'gradeCPlus', width: 1.5 },
-      { min: 72.6, max: 74, category: 'gradeBMinus', width: 1.5 },
-      { min: 74.1, max: 77.1, category: 'gradeB', width: 3.1 },
-      { min: 77.2, max: 78.8, category: 'gradeBPlus', width: 1.7 },
-      { min: 78.9, max: 80.7, category: 'gradeAMinus', width: 1.9 },
-      { min: 80.8, max: 84, category: 'gradeA', width: 3.3 },
-      { min: 84.1, max: 100, category: 'gradeAPlus', width: 15.9 },
-    ],
-  },
-  {
-    key: 'adjectiveRating',
-    axisLabel: 'scoreAxis',
-    segments: [
-      { min: 0, max: 25, category: 'worstImaginable', width: 25 },
-      { min: 25.1, max: 51.6, category: 'poorAdjective', width: 26.7 },
-      { min: 51.7, max: 62.6, category: 'okAdjective', width: 11 },
-      { min: 62.7, max: 71, category: 'noAdjective', width: 8.4 },
-      { min: 71.1, max: 72.5, category: 'goodAdjective', width: 1.5 },
-      { min: 72.6, max: 80.7, category: 'noAdjective', width: 8.2 },
-      { min: 80.8, max: 84, category: 'excellentAdjective', width: 3.3 },
-      { min: 84.1, max: 100, category: 'bestImaginable', width: 15.9 },
-    ],
-  },
-  {
-    key: 'acceptabilityRanges',
-    axisLabel: 'scoreAxis',
-    segments: [
-      { min: 0, max: 62.6, category: 'notAcceptable', width: 62.7 },
-      { min: 62.7, max: 71, category: 'marginal', width: 8.4 },
-      { min: 71.1, max: 100, category: 'acceptable', width: 28.9 },
-    ],
-  },
-  {
-    key: 'npsCategories',
-    axisLabel: 'scoreAxis',
-    segments: [
-      { min: 0, max: 62.6, category: 'detractor', width: 62.7 },
-      { min: 62.7, max: 78.8, category: 'passive', width: 16.2 },
-      { min: 78.9, max: 100, category: 'promoter', width: 21.1 },
-    ],
-  },
-]
+const scoreAxisLabels = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+const susInterpretationVisualizations = SUS_INTERPRETATION_VISUALIZATIONS
 
 const tableHeaders = computed(() => [
   { title: t('analytics.sus.user'), key: 'user', sortable: true },
@@ -745,9 +664,7 @@ const analytics = computed(() => {
   const scores = tasksArray.value.map((r) => r.susScore)
   return {
     averageScore: scores.length
-      ? Math.round(
-          (scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10,
-        ) / 10
+      ? scores.reduce((sum, score) => sum + score, 0) / scores.length
       : 0,
     totalRespondents: tasksArray.value.length,
     minScore: scores.length ? Math.min(...scores) : 0,
@@ -756,24 +673,42 @@ const analytics = computed(() => {
 })
 
 function isActiveInterpretationSegment(visualization, segment) {
-  const score = analytics.value.averageScore
-  return score >= segment.min && score <= segment.max
+  return (
+    findActiveInterpretationSegment(
+      visualization,
+      analytics.value.averageScore,
+    ) === segment
+  )
 }
 
 function getActiveInterpretationSegment(visualization) {
-  return visualization.segments.find((segment) =>
-    isActiveInterpretationSegment(visualization, segment),
+  return findActiveInterpretationSegment(
+    visualization,
+    analytics.value.averageScore,
   )
 }
 
 const interpretationColors = [
-  '#f4a261',
-  '#e9c46a',
-  '#8abf88',
-  '#f4a261',
-  '#e9c46a',
-  '#8abf88',
+  '#f2c5c2',
+  '#f3cec4',
+  '#f4d8c6',
+  '#f5e1c9',
+  '#f5eacb',
+  '#f1edcf',
+  '#e6eccf',
+  '#d9e9ce',
+  '#cde5ce',
+  '#c0e0cb',
+  '#afd9c5',
+  '#9fd1bd',
 ]
+
+function getInterpretationColor(visualization, index) {
+  const palettePosition =
+    (index / Math.max(visualization.segments.length - 1, 1)) *
+    (interpretationColors.length - 1)
+  return interpretationColors[Math.round(palettePosition)]
+}
 
 const escapeXml = (value) =>
   String(value)
@@ -806,122 +741,135 @@ const getInterpretationTitle = (visualization) =>
 const getInterpretationCategory = (segment) =>
   t(`analytics.sus.interpretations.categories.${segment.category}`)
 
-function downloadInterpretationSvg(visualization) {
-  const width = 960
-  const left = 24
-  const trackWidth = width - left * 2
-  const trackY = 68
-  const trackHeight = 38
+function downloadInterpretationSvg() {
+  const width = 1200
+  const left = 280
+  const right = 28
+  const trackWidth = width - left - right
+  const top = 72
+  const rowHeight = 60
+  const trackHeight = 34
+  const height = top + rowHeight * susInterpretationVisualizations.length + 76
   const score = analytics.value.averageScore
-  const activeSegment = getActiveInterpretationSegment(visualization)
-  const resultText = analytics.value.totalRespondents
-    ? t(`analytics.sus.interpretations.methods.${visualization.key}.result`, {
-        score,
-        category: getInterpretationCategory(activeSegment),
-      })
-    : t('analytics.sus.interpretations.noData')
-  const widthTotal = visualization.segments.reduce(
-    (sum, segment) => sum + segment.width,
-    0,
-  )
-  let currentX = left
-  const segmentMarkup = visualization.segments
-    .map((segment, index) => {
-      const segmentWidth = (trackWidth * segment.width) / widthTotal
-      const active =
-        segment === activeSegment && analytics.value.totalRespondents
-      const category = escapeXml(getInterpretationCategory(segment))
-      const rect = `<rect x="${currentX}" y="${trackY}" width="${segmentWidth}" height="${trackHeight}" fill="${interpretationColors[index % interpretationColors.length]}" stroke="${active ? '#172554' : '#ffffff'}" stroke-width="${active ? 4 : 1}"><title>${category}: ${segment.min}–${segment.max}</title></rect>`
-      const label =
-        segmentWidth >= 76
-          ? `<text x="${currentX + segmentWidth / 2}" y="${trackY + 24}" text-anchor="middle" font-size="13" font-weight="600" fill="#172b4d">${category}</text>`
-          : ''
-      currentX += segmentWidth
-      return `${rect}${label}`
+  const rows = susInterpretationVisualizations
+    .map((visualization, rowIndex) => {
+      const trackY = top + rowIndex * rowHeight
+      const activeSegment = getActiveInterpretationSegment(visualization)
+      const widthTotal = visualization.segments.reduce(
+        (sum, segment) => sum + segment.width,
+        0,
+      )
+      let currentX = left
+      const segments = visualization.segments
+        .map((segment, index) => {
+          const segmentWidth = (trackWidth * segment.width) / widthTotal
+          const active =
+            segment === activeSegment && analytics.value.totalRespondents
+          const category = escapeXml(getInterpretationCategory(segment))
+          const rect = `<rect x="${currentX}" y="${trackY}" width="${segmentWidth}" height="${trackHeight}" fill="${getInterpretationColor(visualization, index)}" stroke="${active ? '#334155' : '#ffffff'}" stroke-width="${active ? 3 : 1}"><title>${category}: ${escapeXml(getInterpretationRange(segment, locale.value))}</title></rect>`
+          const label =
+            segmentWidth >= 76
+              ? `<text x="${currentX + segmentWidth / 2}" y="${trackY + 22}" text-anchor="middle" font-size="12" font-weight="600" fill="#334155">${category}</text>`
+              : ''
+          currentX += segmentWidth
+          return `${rect}${label}`
+        })
+        .join('')
+      const title = escapeXml(getInterpretationTitle(visualization))
+      return `<text x="${left - 14}" y="${trackY + 21}" text-anchor="end" font-size="14" font-weight="600" fill="#334155">${title}</text>${segments}`
     })
     .join('')
-  const scoreMarker =
-    analytics.value.totalRespondents && visualization.key !== 'percentileRank'
-      ? `<line x1="${left + (trackWidth * score) / 100}" y1="${trackY - 8}" x2="${left + (trackWidth * score) / 100}" y2="${trackY + trackHeight + 8}" stroke="#172554" stroke-width="3"/>`
-      : ''
-  const axis = [0, 25, 50, 75, 100]
+  const scoreMarker = analytics.value.totalRespondents
+    ? `<line x1="${left + (trackWidth * score) / 100}" y1="${top - 4}" x2="${left + (trackWidth * score) / 100}" y2="${top + rowHeight * (susInterpretationVisualizations.length - 1) + trackHeight + 4}" stroke="#172554" stroke-width="2"/>`
+    : ''
+  const axisY = top + rowHeight * susInterpretationVisualizations.length + 8
+  const axis = scoreAxisLabels
     .map((tick) => {
       const x = left + (trackWidth * tick) / 100
-      return `<line x1="${x}" y1="${trackY + trackHeight + 14}" x2="${x}" y2="${trackY + trackHeight + 22}" stroke="#64748b"/><text x="${x}" y="${trackY + trackHeight + 42}" text-anchor="middle" font-size="13" fill="#172b4d">${tick}</text>`
+      return `<line x1="${x}" y1="${axisY}" x2="${x}" y2="${axisY + 8}" stroke="#64748b"/><text x="${x}" y="${axisY + 26}" text-anchor="middle" font-size="13" fill="#334155">${tick}</text>`
     })
     .join('')
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="160" viewBox="0 0 ${width} 160"><rect width="100%" height="100%" fill="#ffffff"/><text x="${left}" y="30" font-size="20" font-weight="700" fill="#172b4d">${escapeXml(getInterpretationTitle(visualization))}</text><text x="${width - left}" y="30" text-anchor="end" font-size="14" fill="#475569">${escapeXml(resultText)}</text>${segmentMarkup}${scoreMarker}<line x1="${left}" y1="${trackY + trackHeight + 14}" x2="${width - left}" y2="${trackY + trackHeight + 14}" stroke="#64748b"/>${axis}<text x="${left}" y="154" font-size="12" fill="#475569">${escapeXml(t(`analytics.sus.interpretations.${visualization.axisLabel}`))}</text></svg>`
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#ffffff"/><text x="24" y="36" font-size="22" font-weight="700" fill="#172b4d">${escapeXml(t('analytics.sus.interpretations.title'))}</text>${rows}${scoreMarker}<line x1="${left}" y1="${axisY}" x2="${width - right}" y2="${axisY}" stroke="#64748b"/>${axis}<text x="${left}" y="${height - 12}" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">${escapeXml(t('analytics.sus.interpretations.scoreAxisTitle'))}</text></svg>`
   const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
-  const fileName = getInterpretationTitle(visualization)
+  const fileName = t('analytics.sus.interpretations.title')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
 
   link.href = url
-  link.download = `sus-${fileName || visualization.key}.svg`
+  link.download = `sus-${fileName || 'five-ways'}.svg`
   link.click()
   setTimeout(() => URL.revokeObjectURL(url), 0)
 }
 
-function openInterpretationLatex(visualization) {
-  const activeSegment = getActiveInterpretationSegment(visualization)
-  const widthTotal = visualization.segments.reduce(
-    (sum, segment) => sum + segment.width,
-    0,
-  )
-  let currentX = 0
-  const segmentCommands = visualization.segments
-    .map((segment, index) => {
+function openInterpretationLatex() {
+  const left = 32
+  const rowGap = 0.9
+  const trackHeight = 0.38
+  const title = escapeLatex(t('analytics.sus.interpretations.title'))
+  const commands = [
+    '% Requires \\usepackage{tikz,xcolor}',
+    '\\begin{tikzpicture}[x=0.12cm,y=1cm,font=\\sffamily\\scriptsize]',
+    `\\node[anchor=west,font=\\bfseries\\large] at (0,1.1) {${title}};`,
+  ]
+
+  susInterpretationVisualizations.forEach((visualization, rowIndex) => {
+    const y = -rowIndex * rowGap
+    const activeSegment = getActiveInterpretationSegment(visualization)
+    const widthTotal = visualization.segments.reduce(
+      (sum, segment) => sum + segment.width,
+      0,
+    )
+    let currentX = left
+
+    commands.push(
+      `\\node[anchor=east,align=right,text width=3.5cm] at (${left - 2},${y + trackHeight / 2}) {${escapeLatex(getInterpretationTitle(visualization))}};`,
+    )
+
+    visualization.segments.forEach((segment, index) => {
       const segmentWidth = (100 * segment.width) / widthTotal
-      const color = interpretationColors[index % interpretationColors.length]
+      const color = getInterpretationColor(visualization, index)
         .slice(1)
         .match(/.{2}/g)
         .map((channel) => Number.parseInt(channel, 16))
+      const colorName = `sussegment${rowIndex}_${index}`
       const active =
         segment === activeSegment && analytics.value.totalRespondents
       const category = escapeLatex(getInterpretationCategory(segment))
-      const commands = [
-        `\\definecolor{sussegment${index}}{RGB}{${color.join(',')}}`,
-        `\\filldraw[fill=sussegment${index},draw=${active ? 'black,line width=1pt' : 'white'}] (${currentX.toFixed(2)},0) rectangle ++(${segmentWidth.toFixed(2)},0.38);`,
-        segmentWidth >= 9
-          ? `\\node[font=\\scriptsize,align=center,text width=${Math.max(segmentWidth - 1, 3).toFixed(2)}cm] at (${(currentX + segmentWidth / 2).toFixed(2)},0.19) {${category}};`
-          : '',
-      ].filter(Boolean)
+      commands.push(
+        `\\definecolor{${colorName}}{RGB}{${color.join(',')}}`,
+        `\\filldraw[fill=${colorName},draw=${active ? 'black,line width=1pt' : 'white'}] (${currentX.toFixed(2)},${y.toFixed(2)}) rectangle ++(${segmentWidth.toFixed(2)},${trackHeight});`,
+      )
+      if (segmentWidth >= 9) {
+        commands.push(
+          `\\node[align=center,text width=${Math.max(segmentWidth - 1, 3).toFixed(2)}cm] at (${(currentX + segmentWidth / 2).toFixed(2)},${(y + trackHeight / 2).toFixed(2)}) {${category}};`,
+        )
+      }
       currentX += segmentWidth
-      return commands.join('\n')
     })
-    .join('\n')
-  const marker =
-    analytics.value.totalRespondents && visualization.key !== 'percentileRank'
-      ? `\\draw[black,line width=1.2pt] (${analytics.value.averageScore},-0.12) -- (${analytics.value.averageScore},0.5);`
-      : ''
-  const result = analytics.value.totalRespondents
-    ? t(`analytics.sus.interpretations.methods.${visualization.key}.result`, {
-        score: analytics.value.averageScore,
-        category: getInterpretationCategory(activeSegment),
-      })
-    : t('analytics.sus.interpretations.noData')
-  const title = escapeLatex(getInterpretationTitle(visualization))
+  })
 
-  interpretationLatex.value = [
-    '% Requires \\usepackage{tikz}',
-    '\\begin{tikzpicture}[x=0.08cm,y=1cm]',
-    `\\node[anchor=west,font=\\bfseries] at (0,1.05) {${title}};`,
-    `\\node[anchor=east,font=\\small] at (100,1.05) {${escapeLatex(result)}};`,
-    segmentCommands,
-    marker,
-    '\\draw (0,-0.12) -- (100,-0.12);',
+  if (analytics.value.totalRespondents) {
+    const scoreX = left + analytics.value.averageScore
+    const lastRowY = -(susInterpretationVisualizations.length - 1) * rowGap
+    commands.push(
+      `\\draw[black,line width=1.2pt] (${scoreX},${(lastRowY - 0.08).toFixed(2)}) -- (${scoreX},${(trackHeight + 0.08).toFixed(2)});`,
+    )
+  }
+
+  const axisY = -(susInterpretationVisualizations.length - 1) * rowGap - 0.25
+  commands.push(
+    `\\draw (${left},${axisY}) -- (${left + 100},${axisY});`,
     ...scoreAxisLabels.map(
       (tick) =>
-        `\\draw (${tick},-0.12) -- (${tick},-0.22) node[below,font=\\scriptsize] {${tick}};`,
+        `\\draw (${left + tick},${axisY}) -- (${left + tick},${axisY - 0.1}) node[below] {${tick}};`,
     ),
-    `\\node[anchor=west,font=\\scriptsize] at (0,-0.62) {${escapeLatex(t(`analytics.sus.interpretations.${visualization.axisLabel}`))}};`,
+    `\\node[anchor=north] at (${left + 50},${axisY - 0.42}) {${escapeLatex(t('analytics.sus.interpretations.scoreAxisTitle'))}};`,
     '\\end{tikzpicture}',
-  ]
-    .filter(Boolean)
-    .join('\n')
+  )
+  interpretationLatex.value = [...commands].join('\n')
   latexCopyStatus.value = ''
   interpretationLatexDialog.value = true
 }
@@ -1008,57 +956,77 @@ function getResponseLabel(score) {
   justify-content: flex-end;
 }
 
-.sus-interpretation-chart {
+.sus-interpretation-scroll {
   max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.sus-interpretation-content {
+  min-width: 860px;
+}
+
+.sus-interpretation-list {
+  display: grid;
+  grid-template-columns: 240px minmax(600px, 1fr);
+  column-gap: 12px;
+}
+
+.sus-interpretation-names,
+.sus-interpretation-tracks {
+  display: grid;
+  grid-template-rows: repeat(5, 36px);
+  row-gap: 5px;
+}
+
+.sus-interpretation-tracks {
+  position: relative;
+}
+
+.sus-interpretation-name {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 2px;
+}
+
+.sus-interpretation-name > span {
+  min-width: 0;
 }
 
 .sus-interpretation-track {
-  position: relative;
   display: flex;
   width: 100%;
-  min-height: 44px;
+  min-height: 36px;
   align-items: stretch;
   overflow: hidden;
-  border-radius: 5px;
-  background: #f1f3f5;
+  border-radius: 4px;
+  background: #e8edf2;
 }
 
 .sus-interpretation-segment {
   display: flex;
   min-width: 0;
-  min-height: 44px;
+  min-height: 36px;
   align-items: center;
   justify-content: center;
-  border-right: 1px solid rgba(255, 255, 255, 0.8);
-  background: #d9e2ec;
-  color: #172b4d;
+  border-right: 1px solid rgba(255, 255, 255, 0.75);
+  color: #202b38;
   transition:
     filter 0.15s ease,
     box-shadow 0.15s ease;
 }
 
-.sus-interpretation-segment:nth-child(3n + 1) {
-  background-color: #f4a261;
-}
-
-.sus-interpretation-segment:nth-child(3n + 2) {
-  background-color: #e9c46a;
-}
-
-.sus-interpretation-segment:nth-child(3n) {
-  background-color: #8abf88;
-}
-
 .sus-interpretation-segment--active {
   z-index: 1;
-  filter: saturate(1.2);
-  box-shadow: inset 0 0 0 3px #172554;
+  filter: saturate(1.12);
+  box-shadow: inset 0 0 0 2px #172554;
 }
 
 .sus-interpretation-segment-label {
   overflow: hidden;
-  padding: 2px;
-  font-size: 0.7rem;
+  padding: 1px;
+  font-size: 0.65rem;
   font-weight: 700;
   text-align: center;
   text-overflow: ellipsis;
@@ -1070,20 +1038,77 @@ function getResponseLabel(score) {
   z-index: 2;
   top: 0;
   bottom: 0;
+  left: 0;
   border-left: 2px solid #172554;
   pointer-events: none;
 }
 
 .sus-interpretation-axis {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  display: block;
+  height: 24px;
+  padding-top: 8px;
   color: rgb(var(--v-theme-on-surface));
   font-size: 0.75rem;
 }
 
+.sus-interpretation-axis::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  border-top: 1px solid #64748b;
+  content: '';
+}
+
+.sus-interpretation-axis > span {
+  position: absolute;
+  top: 8px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.sus-interpretation-axis > span:first-child {
+  transform: none;
+}
+
+.sus-interpretation-axis > span:last-child {
+  transform: translateX(-100%);
+}
+
+.sus-interpretation-axis > span::before {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  height: 6px;
+  border-left: 1px solid #64748b;
+  content: '';
+}
+
+.sus-interpretation-axis > span:first-child::before {
+  left: 0;
+}
+
+.sus-interpretation-axis > span:last-child::before {
+  right: 0;
+  left: auto;
+}
+
+.sus-interpretation-axis-row {
+  display: grid;
+  grid-template-columns: 240px minmax(600px, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.sus-interpretation-axis-row > span {
+  text-align: right;
+  padding-right: 4px;
+}
+
 @media (max-width: 600px) {
-  .sus-interpretation-segment-label {
-    display: none;
+  .sus-interpretation-name {
+    font-size: 0.75rem;
   }
 }
 </style>

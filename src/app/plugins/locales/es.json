@@ -2867,7 +2867,8 @@
       "description": "Comentarios de la Escala de Usabilidad del Sistema de todos los participantes",
       "interpretations": {
         "title": "Cinco formas de interpretar los resultados SUS",
-        "description": "Las cinco visualizaciones usan la misma puntuación SUS media. El segmento resaltado muestra su clasificación según los rangos de referencia publicados.",
+        "description": "Las cinco filas usan la misma puntuación SUS media, indicada por la línea vertical. Cada posición horizontal representa una puntuación SUS de 0 a 100; las etiquetas de Rango percentil muestran los percentiles de referencia, no un segundo eje. Los límites decimales usan puntos medios entre los valores publicados con un decimal. Las categorías NPS son estimaciones exploratorias basadas en SUS, no una medición de NPS.",
+        "scoreAxisTitle": "Puntuación SUS",
         "scoreAxis": "Puntuación SUS (0–100)",
         "percentileAxis": "Percentil en la muestra de referencia de Sauro y Lewis",
         "noData": "No hay respuestas SUS válidas; por eso no se muestran interpretaciones.",
@@ -2882,18 +2883,17 @@
         "latexCopyFailed": "No se pudo copiar automáticamente. Selecciona y copia el código anterior.",
         "close": "Cerrar",
         "categories": {
-          "percentile0to1": "Percentil 0–1,9",
-          "percentile2to14": "Percentil 2–14",
-          "percentile15to34": "Percentil 15–34",
-          "percentile35to40": "Percentil 35–40",
-          "percentile41to59": "Percentil 41–59",
-          "percentile60to64": "Percentil 60–64",
-          "percentile65to69": "Percentil 65–69",
-          "percentile70to79": "Percentil 70–79",
-          "percentile80to84": "Percentil 80–84",
-          "percentile85to89": "Percentil 85–89",
-          "percentile90to95": "Percentil 90–95",
-          "percentile96to100": "Percentil 96–100",
+          "percentile0to14": "0–14",
+          "percentile15to34": "15–34",
+          "percentile35to40": "35–40",
+          "percentile41to59": "41–59",
+          "percentile60to64": "60–64",
+          "percentile65to69": "65–69",
+          "percentile70to79": "70–79",
+          "percentile80to84": "80–84",
+          "percentile85to89": "85–89",
+          "percentile90to95": "90–95",
+          "percentile96to100": "96–100",
           "gradeAPlus": "A+",
           "gradeA": "A",
           "gradeAMinus": "A−",
@@ -2907,11 +2907,10 @@
           "gradeF": "F",
           "worstImaginable": "Peor imaginable",
           "poorAdjective": "Deficiente",
-          "okAdjective": "Aceptable",
+          "fairOkAdjective": "Regular / aceptable",
           "goodAdjective": "Buena",
           "excellentAdjective": "Excelente",
           "bestImaginable": "Mejor imaginable",
-          "noAdjective": "La referencia no asigna un adjetivo",
           "notAcceptable": "No aceptable",
           "marginal": "Marginal",
           "acceptable": "Aceptable",
@@ -2922,27 +2921,27 @@
         "methods": {
           "percentileRank": {
             "title": "Rango percentil",
-            "description": "Compara esta puntuación con la muestra de referencia de Sauro y Lewis. Los percentiles dependen de la referencia y no son universales.",
+            "description": "Asocia cada rango SUS con su intervalo percentil en la muestra de referencia de Sauro y Lewis; estos percentiles dependen de la muestra y no son universales. El rango F combina los percentiles 0–1,9 y 2–14 de la referencia en 0–14. La posición de los segmentos y el eje muestran puntuaciones SUS; las etiquetas muestran percentiles. Los límites decimales usan puntos medios entre los valores publicados con un decimal.",
             "result": "SUS {score}: {category}"
           },
           "curvedGradingScale": {
             "title": "Escala de calificación",
-            "description": "Asigna la puntuación a los rangos de calificación con letras publicados por Sauro y Lewis.",
+            "description": "Usa los rangos curvos de calificación de Sauro y Lewis, independientes de la escala de adjetivos. El gráfico muestra A, B, C, D y F; pasa el cursor sobre A, B o C para ver sus subrangos con más/menos. Los límites decimales usan puntos medios entre los valores publicados con un decimal.",
             "result": "SUS {score}: calificación {category}"
           },
           "adjectiveRating": {
             "title": "Valoración descriptiva",
-            "description": "Usa las asociaciones de adjetivos de la tabla de referencia. Algunos rangos no tienen adjetivo asignado.",
+            "description": "Usa los rangos de adjetivos, independientes de los límites de calificación curva: Peor imaginable (0–25), Deficiente (25,1–51,6), Regular / aceptable (51,7–71,0), Buena (71,1–80,7), Excelente (80,8–84,0) y Mejor imaginable (84,1–100). Los límites decimales usan puntos medios entre los valores publicados con un decimal.",
             "result": "SUS {score}: {category}"
           },
           "acceptabilityRanges": {
             "title": "Rangos de aceptabilidad",
-            "description": "Agrupa los rangos publicados en No aceptable, Marginal o Aceptable.",
+            "description": "Usa los rangos de referencia: No aceptable (0–51,6), Marginal (51,7–71,0) y Aceptable (71,1–100). Los límites decimales usan puntos medios entre los valores publicados con un decimal.",
             "result": "SUS {score}: {category}"
           },
           "npsCategories": {
             "title": "Categorías NPS",
-            "description": "Categoría exploratoria inferida de SUS, no una medición real de NPS. La fuente indica que estos límites requieren más validación.",
+            "description": "Categorías exploratorias inferidas de promedios SUS, no una medición real de NPS: Detractor (0–62,6), Pasivo (62,7–78,8) y Promotor (78,9–100). Los límites decimales usan puntos medios entre los valores publicados con un decimal; estos límites basados en SUS son aproximados.",
             "result": "SUS {score}: {category} inferido"
           }
         }

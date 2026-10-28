@@ -2964,7 +2964,8 @@
       "description": "System Usability Scale feedback from all participants",
       "interpretations": {
         "title": "Five Ways to Interpret SUS Results",
-        "description": "All five visualizations use the same average SUS score. The highlighted segment shows its classification using published reference bands.",
+        "description": "All five rows use the same average SUS score, shown by the vertical marker. Every horizontal position is a SUS score from 0 to 100; labels in the Percentile Rank row show the corresponding reference percentiles, not a second axis. Decimal cutoffs use midpoints between the published one-decimal limits. NPS categories are exploratory estimates from SUS averages, not measured NPS.",
+        "scoreAxisTitle": "SUS score",
         "scoreAxis": "SUS score (0–100)",
         "percentileAxis": "Percentile in the Sauro–Lewis reference sample",
         "noData": "No valid SUS responses are available, so interpretations are not shown.",
@@ -2979,18 +2980,17 @@
         "latexCopyFailed": "Could not copy automatically. Select and copy the code above.",
         "close": "Close",
         "categories": {
-          "percentile0to1": "0–1.9th percentile",
-          "percentile2to14": "2nd–14th percentile",
-          "percentile15to34": "15th–34th percentile",
-          "percentile35to40": "35th–40th percentile",
-          "percentile41to59": "41st–59th percentile",
-          "percentile60to64": "60th–64th percentile",
-          "percentile65to69": "65th–69th percentile",
-          "percentile70to79": "70th–79th percentile",
-          "percentile80to84": "80th–84th percentile",
-          "percentile85to89": "85th–89th percentile",
-          "percentile90to95": "90th–95th percentile",
-          "percentile96to100": "96th–100th percentile",
+          "percentile0to14": "0–14",
+          "percentile15to34": "15–34",
+          "percentile35to40": "35–40",
+          "percentile41to59": "41–59",
+          "percentile60to64": "60–64",
+          "percentile65to69": "65–69",
+          "percentile70to79": "70–79",
+          "percentile80to84": "80–84",
+          "percentile85to89": "85–89",
+          "percentile90to95": "90–95",
+          "percentile96to100": "96–100",
           "gradeAPlus": "A+",
           "gradeA": "A",
           "gradeAMinus": "A−",
@@ -3004,11 +3004,10 @@
           "gradeF": "F",
           "worstImaginable": "Worst Imaginable",
           "poorAdjective": "Poor",
-          "okAdjective": "OK",
+          "fairOkAdjective": "Fair / OK",
           "goodAdjective": "Good",
           "excellentAdjective": "Excellent",
           "bestImaginable": "Best Imaginable",
-          "noAdjective": "No adjective assigned in reference",
           "notAcceptable": "Not Acceptable",
           "marginal": "Marginal",
           "acceptable": "Acceptable",
@@ -3019,27 +3018,27 @@
         "methods": {
           "percentileRank": {
             "title": "Percentile Rank",
-            "description": "Compares this score with the Sauro–Lewis reference sample. Percentiles are reference-dependent, not universal.",
+            "description": "Maps each SUS score band to its percentile interval in the Sauro–Lewis reference sample; these percentiles are reference-dependent, not universal. The F band combines the reference's 0–1.9 and 2–14 percentile ranges into 0–14. Segment positions and axis ticks show SUS scores, while labels show percentiles. Decimal cutoffs use midpoints between published one-decimal limits.",
             "result": "SUS {score}: {category}"
           },
           "curvedGradingScale": {
             "title": "Curved Grading Scale",
-            "description": "Maps the score to the curved letter-grade bands published by Sauro and Lewis.",
+            "description": "Uses the Sauro–Lewis curved grading bands, separately from the adjective-rating scale. The chart shows A, B, C, D, and F; hover over A, B, or C to see their plus/minus subgrades. Decimal cutoffs use midpoints between published one-decimal limits.",
             "result": "SUS {score}: grade {category}"
           },
           "adjectiveRating": {
             "title": "Adjective Rating",
-            "description": "Uses adjective associations in the reference table. Some score bands have no adjective assigned.",
+            "description": "Uses the adjective-rating bands, separately from the curved grade thresholds: Worst Imaginable (0–25), Poor (25.1–51.6), Fair / OK (51.7–71.0), Good (71.1–80.7), Excellent (80.8–84.0), and Best Imaginable (84.1–100). Decimal cutoffs use midpoints between published one-decimal limits.",
             "result": "SUS {score}: {category}"
           },
           "acceptabilityRanges": {
             "title": "Acceptability Ranges",
-            "description": "Groups published score bands as Not Acceptable, Marginal, or Acceptable.",
+            "description": "Uses the reference bands: Not Acceptable (0–51.6), Marginal (51.7–71.0), and Acceptable (71.1–100). Decimal cutoffs use midpoints between published one-decimal limits.",
             "result": "SUS {score}: {category}"
           },
           "npsCategories": {
             "title": "NPS Categories",
-            "description": "An exploratory category inferred from SUS, not an actual NPS measurement. The source notes these boundaries need further validation.",
+            "description": "Exploratory categories inferred from SUS averages, not an actual NPS measurement: Detractor (0–62.6), Passive (62.7–78.8), and Promoter (78.9–100). Decimal cutoffs use midpoints between published one-decimal limits; these SUS-based boundaries are approximate.",
             "result": "SUS {score}: inferred {category}"
           }
         }
