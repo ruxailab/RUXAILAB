@@ -28,6 +28,9 @@ export default class TaskAnswer {
     markers,
     segments,
     syncedStart,
+    startedAt,
+    endedAt,
+    participationMode,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -61,6 +64,11 @@ export default class TaskAnswer {
     this.markers = markers ?? []
     this.segments = segments ?? []
     this.syncedStart = syncedStart ?? false
+    // Server epoch milliseconds. Absent on desktop-only attempts.
+    this.startedAt = startedAt ?? null
+    this.endedAt = endedAt ?? null
+    // "mobile-task-instructions" when the server accepted the outcome.
+    this.participationMode = participationMode ?? null
   }
 
   static toModel(data) {
@@ -84,7 +92,7 @@ export default class TaskAnswer {
           : new TamAnswer(this.tamAnswers).toFirestore()
     }
 
-    return {
+    const payload = {
       taskId: this.taskId,
       taskAnswer: this.taskAnswer,
       taskObservations: this.taskObservations,
@@ -113,5 +121,14 @@ export default class TaskAnswer {
       segments: this.segments,
       syncedStart: this.syncedStart,
     }
+
+    // Omit when unset so a desktop-only save does not write nulls, and does
+    // not add the fields when mobile task instructions are off.
+    if (this.startedAt != null) payload.startedAt = this.startedAt
+    if (this.endedAt != null) payload.endedAt = this.endedAt
+    if (this.participationMode != null) {
+      payload.participationMode = this.participationMode
+    }
+    return payload
   }
 }

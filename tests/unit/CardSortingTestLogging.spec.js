@@ -48,19 +48,19 @@ jest.mock('@/shared/components/StudyWelcomeStep.vue', () => ({
   template: '<div />',
 }))
 
-jest.mock('@/ux/UserTest/components/AudioRecorder.vue', () => ({
+jest.mock('@/shared/components/AudioRecorder.vue', () => ({
   name: 'AudioRecorder',
   template: '<div />',
 }))
-jest.mock('@/ux/UserTest/components/ScreenRecorder.vue', () => ({
+jest.mock('@/shared/components/ScreenRecorder.vue', () => ({
   name: 'ScreenRecorder',
   template: '<div />',
 }))
-jest.mock('@/ux/UserTest/components/VideoRecorder.vue', () => ({
+jest.mock('@/shared/components/VideoRecorder.vue', () => ({
   name: 'VideoRecorder',
   template: '<div />',
 }))
-jest.mock('@/ux/UserTest/components/ScreenShareInstructions.vue', () => ({
+jest.mock('@/shared/components/ScreenShareInstructions.vue', () => ({
   name: 'ScreenShareInstructions',
   template: '<div />',
 }))

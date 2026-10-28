@@ -736,7 +736,7 @@ import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.
 import BreakoutPanel from '@/ux/FocusGroup/components/session/BreakoutPanel.vue'
 import BreakoutRoomsBar from '@/ux/FocusGroup/components/session/BreakoutRoomsBar.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
-import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
+import ConsentStep from '@/shared/components/steps/ConsentStep.vue'
 import SessionController from '@/shared/controllers/SessionController'
 import {
   splitIntoGroups,

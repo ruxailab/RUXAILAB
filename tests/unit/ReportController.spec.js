@@ -1,19 +1,12 @@
 import ReportController from '@/shared/controllers/ReportController'
-import { createControllerSpies, createMockDoc } from './helpers/testUtils'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { deleteTranscriptionsByUser } from '@/app/services/transcription/TranscriptionService'
 import { deleteSentimentsByUser } from '@/app/services/facialSentiment/FacialSentimentService'
 
-jest.mock('firebase/firestore', () => ({
-  doc: jest.fn(),
-  updateDoc: jest.fn(),
-  collection: jest.fn(),
-  getDocs: jest.fn(),
-  getDoc: jest.fn(),
-  deleteField: jest.fn(() => 'DELETE_FIELD_SENTINEL'),
-}))
-
-jest.mock('@/app/plugins/firebase', () => ({
-  db: {},
+jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
+  FirebaseFunctionsController: {
+    callHttpsCallableFunction: jest.fn(),
+  },
 }))
 
 jest.mock('@/shared/constants/methodDefinitions', () => ({
@@ -38,7 +31,6 @@ jest.mock('@/app/services/facialSentiment/FacialSentimentService', () => ({
 
 describe('ReportController', () => {
   let reportController
-  let spies
   let consoleErrorSpy
 
   const mockReport = { userDocId: 'user-123' }
@@ -56,8 +48,10 @@ describe('ReportController', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     reportController = new ReportController()
-    spies = createControllerSpies(reportController)
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    FirebaseFunctionsController.callHttpsCallableFunction.mockResolvedValue({
+      data: { success: true },
+    })
     deleteTranscriptionsByUser.mockResolvedValue({
       deletedCount: 0,
       answersDocId: 'answer-789',
@@ -71,7 +65,6 @@ describe('ReportController', () => {
   })
 
   afterEach(() => {
-    spies.restore()
     consoleErrorSpy.mockRestore()
   })
 
@@ -87,44 +80,43 @@ describe('ReportController', () => {
 
   describe('setReportHidden', () => {
     it.each([
-      ['USER', 'taskAnswers'],
-      ['HEURISTIC', 'heuristicAnswers'],
-      ['CARD_SORTING', 'cardSortingAnswers'],
-    ])(
-      'updates %s visibility without deleting its answer',
-      async (testType, collection) => {
-        spies.mockUpdate()
-        const result = await reportController.setReportHidden({
-          report: mockReport,
-          test: { ...mockTestUser, testType },
-          hidden: true,
-        })
+      ['USER', 'USER'],
+      ['HEURISTIC', 'HEURISTIC'],
+      ['CARD_SORTING', 'CARD_SORTING'],
+    ])('hides a %s report through the callable', async (testType) => {
+      const result = await reportController.setReportHidden({
+        report: mockReport,
+        test: { ...mockTestUser, testType },
+        hidden: true,
+      })
 
-        expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', {
-          [`${collection}.user-123.hidden`]: true,
-        })
-        expect(result).toEqual({ success: true })
-      },
-    )
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).toHaveBeenCalledWith('setStudyReportHidden', {
+        answersDocId: 'answer-789',
+        userDocId: 'user-123',
+        studyId: 'test-456',
+        answerType: testType,
+        hidden: true,
+      })
+      expect(result).toEqual({ success: true })
+    })
   })
 
   describe('removeReport', () => {
-    const setupMocks = (userExists = true, answerExists = true) => {
-      spies.mockReadOne(createMockDoc(userExists))
-      spies.mockReadOne(createMockDoc(answerExists))
-      spies.mockUpdate()
-      spies.mockDeleteField()
-    }
-
     it('should use heuristicAnswers for HEURISTIC test type', async () => {
-      setupMocks()
       const result = await reportController.removeReport({
         report: mockReport,
         test: mockTestHeuristic,
       })
 
-      expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', {
-        'heuristicAnswers.user-123': 'DELETE_FIELD_SENTINEL',
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).toHaveBeenCalledWith('removeStudyReport', {
+        answersDocId: 'answer-789',
+        userDocId: 'user-123',
+        studyId: 'test-456',
+        answerType: 'HEURISTIC',
       })
       expect(deleteTranscriptionsByUser).not.toHaveBeenCalled()
       expect(deleteSentimentsByUser).not.toHaveBeenCalled()
@@ -132,7 +124,6 @@ describe('ReportController', () => {
     })
 
     it('cascades from the answers document type when test.testType is missing', async () => {
-      setupMocks()
       await reportController.removeReport({
         report: mockReport,
         test: { id: 'test-456', answersDocId: 'answer-789' },
@@ -144,7 +135,6 @@ describe('ReportController', () => {
     })
 
     it('should use taskAnswers for USER test type and cascade transcriptions and sentiments', async () => {
-      setupMocks()
       const result = await reportController.removeReport({
         report: mockReport,
         test: mockTestUser,
@@ -155,59 +145,22 @@ describe('ReportController', () => {
         userDocId: 'user-123',
         studyId: 'test-456',
       }
-      expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', {
-        'taskAnswers.user-123': 'DELETE_FIELD_SENTINEL',
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).toHaveBeenCalledWith('removeStudyReport', {
+        ...cascadePayload,
+        answerType: 'USER',
       })
       expect(deleteTranscriptionsByUser).toHaveBeenCalledWith(cascadePayload)
       expect(deleteSentimentsByUser).toHaveBeenCalledWith(cascadePayload)
       expect(result).toEqual({ success: true })
     })
 
-    it('should remove user reference when user document exists', async () => {
-      setupMocks()
-      await reportController.removeReport({
-        report: mockReport,
-        test: mockTestHeuristic,
-      })
-
-      expect(spies.update).toHaveBeenCalledWith('users', 'user-123', {
-        'myAnswers.test-456': 'DELETE_FIELD_SENTINEL',
-      })
-    })
-
-    it('should not update user when user document does not exist', async () => {
-      setupMocks(false, true)
-      await reportController.removeReport({
-        report: mockReport,
-        test: mockTestHeuristic,
-      })
-
-      expect(spies.update).toHaveBeenCalledTimes(1)
-      expect(spies.update).toHaveBeenCalledWith(
-        'answers',
-        'answer-789',
-        expect.anything(),
+    it('should return error when the callable fails', async () => {
+      const mockError = new Error('permission-denied')
+      FirebaseFunctionsController.callHttpsCallableFunction.mockRejectedValue(
+        mockError,
       )
-    })
-
-    it('should not update answer when answer document does not exist', async () => {
-      setupMocks(true, false)
-      await reportController.removeReport({
-        report: mockReport,
-        test: mockTestHeuristic,
-      })
-
-      expect(spies.update).toHaveBeenCalledTimes(1)
-      expect(spies.update).toHaveBeenCalledWith(
-        'users',
-        'user-123',
-        expect.anything(),
-      )
-    })
-
-    it('should return error when operation fails', async () => {
-      const mockError = new Error('Firestore error')
-      spies.readOne.mockRejectedValue(mockError)
 
       const result = await reportController.removeReport({
         report: mockReport,
@@ -215,10 +168,11 @@ describe('ReportController', () => {
       })
 
       expect(result).toEqual({ success: false, error: mockError })
+      expect(deleteTranscriptionsByUser).not.toHaveBeenCalled()
+      expect(deleteSentimentsByUser).not.toHaveBeenCalled()
     })
 
     it('should return error when transcription cascade fails for USER study', async () => {
-      setupMocks()
       const mockError = new Error('Cascade failed')
       deleteTranscriptionsByUser.mockRejectedValue(mockError)
 
@@ -231,7 +185,6 @@ describe('ReportController', () => {
     })
 
     it('should return error when sentiment cascade fails for USER study', async () => {
-      setupMocks()
       const mockError = new Error('Sentiment cascade failed')
       deleteSentimentsByUser.mockRejectedValue(mockError)
 
