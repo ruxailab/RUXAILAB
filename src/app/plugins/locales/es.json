@@ -2657,6 +2657,7 @@
   },
   "CardSorting": {
     "title": "Card Sorting",
+    "cardClassification": "Clasificación de tarjetas",
     "invalidConfiguration": "Este estudio de card sorting no se puede iniciar.",
     "welcomeTitle": "¡Bienvenido a RUXAILAB!",
     "welcomeDescription": "Vas a participar en un estudio de card sorting. Organizarás tarjetas en categorías para que podamos entender cómo agrupas la información.",

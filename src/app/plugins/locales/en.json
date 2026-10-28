@@ -2753,6 +2753,7 @@
   },
   "CardSorting": {
     "title": "Card Sorting",
+    "cardClassification": "Card classification",
     "invalidConfiguration": "This card sorting study cannot be started.",
     "welcomeTitle": "Welcome to RUXAILAB!",
     "welcomeDescription": "You are going to participate in a card sorting study. You will organize cards into categories so we can understand how you group the information.",
