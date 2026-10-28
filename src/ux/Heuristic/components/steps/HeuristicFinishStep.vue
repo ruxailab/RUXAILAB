@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
+import FinishStep from '@/shared/components/steps/FinishStep.vue'
 
 defineEmits(['submit'])
 </script>

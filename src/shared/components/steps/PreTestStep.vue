@@ -40,7 +40,11 @@
             </p>
           </div>
 
-          <div v-else-if="currentItem" class="question-shell mx-auto mb-8">
+          <div
+            v-else-if="currentItem"
+            class="question-shell mx-auto mb-8"
+            @keydown.enter.prevent="handleEnter"
+          >
             <h2
               class="text-h5 text-sm-h4 font-weight-bold text-secondary text-center mb-3"
             >
@@ -174,6 +178,14 @@ const next = () => {
 
 const prev = () => {
   if (step.value > 0) step.value--
+}
+
+const handleEnter = () => {
+  if (!hasQuestions.value || isLastStep.value) {
+    emit('done')
+    return
+  }
+  next()
 }
 
 const updateAnswer = (index, value) => {

@@ -26,11 +26,11 @@ jest.mock('@/shared/utils/screenShareCapture', () => ({
 
 global.MediaStream = class MediaStream {}
 const AudioRecorder =
-  require('@/ux/UserTest/components/AudioRecorder.vue').default
+  require('@/shared/components/AudioRecorder.vue').default
 const VideoRecorder =
-  require('@/ux/UserTest/components/VideoRecorder.vue').default
+  require('@/shared/components/VideoRecorder.vue').default
 const ScreenRecorder =
-  require('@/ux/UserTest/components/ScreenRecorder.vue').default
+  require('@/shared/components/ScreenRecorder.vue').default
 const { showError, showWarning } = require('@/shared/utils/toast')
 
 const cases = [

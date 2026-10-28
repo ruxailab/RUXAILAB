@@ -489,8 +489,8 @@ import Snackbar from '@/shared/components/Snackbar'
 import StudyWelcomeStep from '@/shared/components/StudyWelcomeStep.vue'
 import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswerStep.vue'
 import HeuristicCardsStep from '@/ux/Heuristic/components/steps/HeuristicCardsStep.vue'
-import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
-import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
+import FinishStep from '@/shared/components/steps/FinishStep.vue'
+import SubmitDialog from '@/shared/components/SubmitDialog.vue'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import {
   resolveHeuristicAnswerMode,
