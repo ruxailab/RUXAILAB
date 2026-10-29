@@ -2846,6 +2846,8 @@
     "matrixHint": "Number of participants who placed each card in each category (based on {total} submitted answers)",
     "categoryMatrix": "Card × Category Matrix",
     "categoryMatrixHint": "How often each card was placed in each category",
+    "exportCategoryMatrix": "Export category matrix",
+    "categoryMatrixExportError": "Unable to export the category matrix. Please try again.",
     "similarityMatrix": "Similarity Matrix",
     "similarityMatrixHint": "How often two cards were placed in the same category by participants",
     "similarityMatrixFooter": "Based on {total} submitted answers. Higher values mean cards were grouped together more often.",

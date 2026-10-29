@@ -2750,6 +2750,8 @@
     "matrixHint": "Número de participantes que colocaron cada tarjeta en cada categoría (según {total} respuestas enviadas)",
     "categoryMatrix": "Matriz Tarjeta × Categoría",
     "categoryMatrixHint": "Con qué frecuencia cada tarjeta se colocó en cada categoría",
+    "exportCategoryMatrix": "Exportar matriz de categorías",
+    "categoryMatrixExportError": "No se pudo exportar la matriz de categorías. Inténtalo de nuevo.",
     "similarityMatrix": "Matriz de similitud",
     "similarityMatrixHint": "Con qué frecuencia dos tarjetas se colocaron en la misma categoría",
     "similarityMatrixFooter": "Basado en {total} respuestas enviadas. Valores más altos indican que las tarjetas se agruparon juntas con más frecuencia.",
