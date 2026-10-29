@@ -2880,6 +2880,8 @@
     "participantsDescription": "{total} total answers including in-progress",
     "cardsDescription": "Cards defined in this study",
     "categoriesDescription": "Categories used across the study",
+    "filteredCardsDescription": "Cards sorted by matching participants",
+    "filteredCategoriesDescription": "Categories used by matching participants",
     "categoriesUsed": "{count} categories",
     "studyStructure": "Study Structure",
     "studyStructureSubtitle": "Cards and categories overview",
