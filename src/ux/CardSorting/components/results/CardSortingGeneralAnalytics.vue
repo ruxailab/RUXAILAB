@@ -420,7 +420,7 @@ const getTextAnswers = (stage, questionIndex) => {
 }
 
 const validTotalDurationAnswers = computed(() =>
-  answers.value.filter(
+  filteredAnswers.value.filter(
     (a) =>
       a?.totalDurationSeconds != null && Number(a.totalDurationSeconds) > 0,
   ),
@@ -440,7 +440,7 @@ const formattedAverageTotalTime = computed(() => {
 })
 
 const validSortingDurationAnswers = computed(() =>
-  answers.value.filter(
+  filteredAnswers.value.filter(
     (a) =>
       a?.sortingDurationSeconds != null && Number(a.sortingDurationSeconds) > 0,
   ),

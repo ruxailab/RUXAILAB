@@ -287,13 +287,13 @@
             "
             class="my-3"
           />
-          <div class="d-flex align-center mb-2">
+          <div class="d-flex align-center mb-4">
             <v-icon color="primary" class="mr-2">mdi-cards-outline</v-icon>
             <h4 class="text-subtitle-1 font-weight-bold">
               {{ $t('CardSorting.title') }}
             </h4>
           </div>
-          <v-row>
+          <v-row class="mb-2">
             <v-col
               v-for="category in getAnswerCategories(answer)"
               :key="category"
