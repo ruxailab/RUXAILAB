@@ -75,20 +75,35 @@
               :key="category.id"
               class="sorting-board__item"
             >
-              <div class="sorting-column">
+              <div
+                class="sorting-column"
+                :class="{
+                  'sorting-column--unnamed': isCategoryUnnamed(category),
+                }"
+              >
                 <div
                   class="sorting-column__header sorting-column__header--category"
                 >
                   <div class="sorting-column__heading">
                     <v-icon
                       size="20"
-                      color="primary"
+                      :color="
+                        isCategoryUnnamed(category) ? 'warning' : 'primary'
+                      "
                       class="sorting-column__heading-icon"
                     >
                       mdi-folder-outline
                     </v-icon>
                     <div class="sorting-column__title-wrap">
-                      <h3 class="sorting-column__title">
+                      <button
+                        v-if="isCategoryUnnamed(category)"
+                        type="button"
+                        class="sorting-column__title sorting-column__title--unnamed"
+                        @click="openRenameDialog(category)"
+                      >
+                        {{ $t('CardSorting.unnamedCategory') }}
+                      </button>
+                      <h3 v-else class="sorting-column__title">
                         {{ category.title }}
                       </h3>
                       <div
@@ -104,7 +119,7 @@
 
                   <div class="sorting-column__meta">
                     <span class="sorting-column__count">
-                      {{ categoryCardCount(category.title) }}
+                      {{ categoryCardCount(category.id) }}
                       {{ $t('CardSorting.cards_low') }}
                     </span>
                     <v-chip
@@ -142,7 +157,7 @@
                 </div>
 
                 <Draggable
-                  :list="categoryLists[category.title]"
+                  :list="categoryLists[category.id]"
                   item-key="title"
                   class="sorting-column__list sorting-column__list--category"
                   group="cards"
@@ -172,11 +187,31 @@
 
             <!-- New category placeholder -->
             <div v-if="allowCreateCategories" class="sorting-board__item">
-              <button
-                type="button"
+              <div
+                role="button"
+                tabindex="0"
                 class="new-category-card"
-                @click="openCreateDialog"
+                @click="createUnnamedCategory"
+                @keydown.enter.prevent="createUnnamedCategory"
+                @keydown.space.prevent="createUnnamedCategory"
               >
+                <Draggable
+                  :list="newCategoryDropList"
+                  item-key="title"
+                  class="new-category-card__dropzone"
+                  group="cards"
+                  ghost-class="sorting-card-ghost"
+                  drag-class="sorting-card-drag"
+                  @change="onNewCategoryDrop"
+                >
+                  <template #item="{ element }">
+                    <CardSortingCard
+                      :element="element"
+                      :options="options"
+                      compact
+                    />
+                  </template>
+                </Draggable>
                 <span class="new-category-card__icon-wrap">
                   <v-icon size="28" color="primary">
                     mdi-folder-plus-outline
@@ -188,7 +223,7 @@
                 <span class="new-category-card__subtitle">
                   {{ $t('CardSorting.newCategoryHint') }}
                 </span>
-              </button>
+              </div>
             </div>
           </div>
         </v-container>
@@ -200,7 +235,9 @@
         <v-card-title class="text-h6">
           {{
             editingCategory
-              ? $t('CardSorting.renameCategory')
+              ? isCategoryUnnamed(editingCategory)
+                ? $t('CardSorting.nameCategory')
+                : $t('CardSorting.renameCategory')
               : $t('CardSorting.createCategory')
           }}
         </v-card-title>
@@ -293,7 +330,11 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:modelValue', 'update:pending'])
+const emit = defineEmits([
+  'update:modelValue',
+  'update:pending',
+  'update:unnamed',
+])
 const { t } = useI18n()
 
 const UNASSIGNED_KEY = '__unassigned'
@@ -316,6 +357,7 @@ const totalCards = computed(() => cards.value.length)
 const pool = ref([])
 const localCategories = ref([])
 const categoryLists = reactive({})
+const newCategoryDropList = ref([])
 
 const categoryDialog = ref(false)
 const categoryNameInput = ref('')
@@ -324,12 +366,23 @@ const editingCategory = ref(null)
 
 const assignedCount = computed(() => totalCards.value - pool.value.length)
 
-const categoryCardCount = (title) => (categoryLists[title] || []).length
+const isCategoryUnnamed = (category) => !String(category?.title || '').trim()
+
+const categoryCardCount = (categoryId) => (categoryLists[categoryId] || []).length
+
+const unnamedCategoriesWithCardsCount = computed(
+  () =>
+    localCategories.value.filter(
+      (category) =>
+        isCategoryUnnamed(category) && categoryCardCount(category.id) > 0,
+    ).length,
+)
 
 const buildSorting = () => {
   const sorting = {}
   localCategories.value.forEach((category) => {
-    sorting[category.title] = (categoryLists[category.title] || []).map(
+    if (isCategoryUnnamed(category)) return
+    sorting[category.title] = (categoryLists[category.id] || []).map(
       (card) => card.title,
     )
   })
@@ -340,15 +393,43 @@ const buildSorting = () => {
 const onChange = () => {
   emit('update:modelValue', buildSorting())
   emit('update:pending', pool.value.length)
+  emit('update:unnamed', unnamedCategoriesWithCardsCount.value)
 }
 
-const ensureList = (title) => {
-  if (!categoryLists[title]) {
-    categoryLists[title] = []
+const ensureList = (categoryId) => {
+  if (!categoryLists[categoryId]) {
+    categoryLists[categoryId] = []
   }
 }
 
-const validateCategoryName = (name, excludeTitle = null) => {
+const createParticipantCategory = (title = '', initialCards = []) => {
+  const id = `participant-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  const category = {
+    id,
+    title,
+    description: '',
+    isPredefined: false,
+  }
+  categoryLists[id] = [...initialCards]
+  localCategories.value.push(category)
+  onChange()
+  return category
+}
+
+const createUnnamedCategory = () => {
+  createParticipantCategory('', [])
+}
+
+const onNewCategoryDrop = () => {
+  if (!newCategoryDropList.value.length) return
+  const droppedCards = newCategoryDropList.value.splice(
+    0,
+    newCategoryDropList.value.length,
+  )
+  createParticipantCategory('', droppedCards)
+}
+
+const validateCategoryName = (name, excludeCategoryId = null) => {
   const trimmed = (name || '').trim()
   if (!trimmed) {
     return t('CardSorting.categoryNameRequired')
@@ -358,20 +439,14 @@ const validateCategoryName = (name, excludeTitle = null) => {
   }
   const duplicate = localCategories.value.some(
     (category) =>
-      category.title.toLowerCase() === trimmed.toLowerCase() &&
-      category.title !== excludeTitle,
+      category.id !== excludeCategoryId &&
+      !isCategoryUnnamed(category) &&
+      category.title.toLowerCase() === trimmed.toLowerCase(),
   )
   if (duplicate) {
     return t('CardSorting.categoryNameDuplicate')
   }
   return ''
-}
-
-const openCreateDialog = () => {
-  editingCategory.value = null
-  categoryNameInput.value = ''
-  categoryNameError.value = ''
-  categoryDialog.value = true
 }
 
 const openRenameDialog = (category) => {
@@ -389,8 +464,11 @@ const closeCategoryDialog = () => {
 }
 
 const confirmCategoryDialog = () => {
-  const excludeTitle = editingCategory.value?.title ?? null
-  const error = validateCategoryName(categoryNameInput.value, excludeTitle)
+  const excludeCategoryId = editingCategory.value?.id ?? null
+  const error = validateCategoryName(
+    categoryNameInput.value,
+    excludeCategoryId,
+  )
   if (error) {
     categoryNameError.value = error
     return
@@ -399,31 +477,21 @@ const confirmCategoryDialog = () => {
   const title = categoryNameInput.value.trim()
 
   if (editingCategory.value) {
-    const oldTitle = editingCategory.value.title
-    const cardsInCategory = categoryLists[oldTitle] || []
-    delete categoryLists[oldTitle]
-    categoryLists[title] = cardsInCategory
     editingCategory.value.title = title
+    closeCategoryDialog()
+    onChange()
   } else {
-    localCategories.value.push({
-      id: `participant-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      title,
-      description: '',
-      isPredefined: false,
-    })
-    ensureList(title)
+    closeCategoryDialog()
+    createParticipantCategory(title, [])
   }
-
-  closeCategoryDialog()
-  onChange()
 }
 
 const removeCategory = (category) => {
   if (category.isPredefined) return
 
-  const cardsInCategory = categoryLists[category.title] || []
+  const cardsInCategory = categoryLists[category.id] || []
   pool.value.push(...cardsInCategory)
-  delete categoryLists[category.title]
+  delete categoryLists[category.id]
   localCategories.value = localCategories.value.filter(
     (item) => item.id !== category.id,
   )
@@ -458,13 +526,13 @@ const initialize = () => {
   }
 
   localCategories.value = [...predefined, ...participantCategories]
-  localCategories.value.forEach((category) => ensureList(category.title))
+  localCategories.value.forEach((category) => ensureList(category.id))
 
   if (hasSaved) {
     const usedTitles = new Set()
     localCategories.value.forEach((category) => {
       const titles = savedSorting[category.title] || []
-      categoryLists[category.title] = titles
+      categoryLists[category.id] = titles
         .filter((title) => cardByTitle.has(title))
         .map((title) => {
           usedTitles.add(title)
@@ -474,12 +542,13 @@ const initialize = () => {
     pool.value = cards.value.filter((card) => !usedTitles.has(card.title))
   } else {
     localCategories.value.forEach((category) => {
-      categoryLists[category.title] = []
+      categoryLists[category.id] = []
     })
     pool.value = [...cards.value]
   }
 
   emit('update:pending', pool.value.length)
+  emit('update:unnamed', unnamedCategoriesWithCardsCount.value)
   if (hasSaved) {
     emit('update:modelValue', buildSorting())
   }
@@ -653,7 +722,32 @@ onMounted(() => {
   line-height: 1.4;
 }
 
+.sorting-column--unnamed {
+  border-color: rgba(245, 124, 0, 0.35);
+}
+
+.sorting-column__title--unnamed {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0;
+  color: #b45309;
+  font-family: inherit;
+  font-style: italic;
+  font-weight: 600;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed rgba(180, 83, 9, 0.55);
+  cursor: pointer;
+}
+
+.sorting-column__title--unnamed:hover {
+  color: #92400e;
+  border-bottom-color: #92400e;
+}
+
 .new-category-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -673,6 +767,16 @@ onMounted(() => {
     background-color 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+.new-category-card__dropzone {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 12px;
 }
 
 .new-category-card:hover {
