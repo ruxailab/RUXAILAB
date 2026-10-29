@@ -75,6 +75,36 @@
     </v-card>
 
     <v-row class="mb-2">
+      <v-col cols="12" md="6">
+        <UxMetricCard
+          :value="formattedAverageTotalTime"
+          :label="$t('CardSorting.averageTotalTime')"
+          color="primary"
+          icon="mdi-clock-time-four-outline"
+          :description="
+            $t('CardSorting.averageTotalTimeDescription', {
+              count: totalDurationCount,
+            })
+          "
+          :show-progress="false"
+        />
+      </v-col>
+      <v-col cols="12" md="6">
+        <UxMetricCard
+          :value="formattedAverageSortingTime"
+          :label="$t('CardSorting.averageSortingTime')"
+          color="teal"
+          icon="mdi-timer-outline"
+          :description="
+            $t('CardSorting.averageSortingTimeDescription', {
+              count: sortingDurationCount,
+            })
+          "
+          :show-progress="false"
+        />
+      </v-col>
+    </v-row>
+    <v-row class="mb-2">
       <v-col cols="12" md="4">
         <UxMetricCard
           :value="submittedCount"
@@ -215,6 +245,7 @@ import CommentListCard from '@/ux/UserTest/components/answers/CommentListCard.vu
 import CardSortingMatrix from './CardSortingMatrix.vue'
 import CardSortingSimilarityMatrix from './CardSortingSimilarityMatrix.vue'
 import CardSortingDendrogram from './CardSortingDendrogram.vue'
+import { formatDuration } from '../../utils/cardSortingAnalytics'
 
 const store = useStore()
 const { t } = useI18n()
@@ -387,6 +418,46 @@ const getTextAnswers = (stage, questionIndex) => {
     return (Array.isArray(response) ? response : [response]).map(String)
   })
 }
+
+const validTotalDurationAnswers = computed(() =>
+  answers.value.filter(
+    (a) =>
+      a?.totalDurationSeconds != null && Number(a.totalDurationSeconds) > 0,
+  ),
+)
+
+const totalDurationCount = computed(
+  () => validTotalDurationAnswers.value.length,
+)
+
+const formattedAverageTotalTime = computed(() => {
+  if (!totalDurationCount.value) return '—'
+  const sum = validTotalDurationAnswers.value.reduce(
+    (acc, a) => acc + Number(a.totalDurationSeconds),
+    0,
+  )
+  return formatDuration(Math.round(sum / totalDurationCount.value))
+})
+
+const validSortingDurationAnswers = computed(() =>
+  answers.value.filter(
+    (a) =>
+      a?.sortingDurationSeconds != null && Number(a.sortingDurationSeconds) > 0,
+  ),
+)
+
+const sortingDurationCount = computed(
+  () => validSortingDurationAnswers.value.length,
+)
+
+const formattedAverageSortingTime = computed(() => {
+  if (!sortingDurationCount.value) return '—'
+  const sum = validSortingDurationAnswers.value.reduce(
+    (acc, a) => acc + Number(a.sortingDurationSeconds),
+    0,
+  )
+  return formatDuration(Math.round(sum / sortingDurationCount.value))
+})
 
 const submittedCount = computed(
   () => filteredAnswers.value.filter((answer) => answer?.submitted).length,

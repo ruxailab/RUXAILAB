@@ -334,4 +334,20 @@ export function layoutDendrogram(tree, options = {}) {
   }
 }
 
+/**
+ * Format duration in seconds to a human-readable string (e.g., "45s", "2m 30s", "1h 5m").
+ */
+export function formatDuration(seconds) {
+  if (seconds == null || isNaN(seconds) || seconds < 0) return '—'
+  const total = Math.round(Number(seconds))
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
+  if (h > 0) {
+    return `${h}h ${m}m`
+  }
+  if (m === 0) return `${s}s`
+  return `${m}m ${s}s`
+}
+
 export { UNASSIGNED_KEY }

@@ -22,9 +22,6 @@ export const DEFAULT_CARD_SORTING_OPTIONS = Object.freeze({
   category_description: false,
   category_image: false,
   allow_create_categories: false,
-  hasScreenRecord: false,
-  hasCamRecord: false,
-  hasAudioRecord: false,
 })
 
 /**

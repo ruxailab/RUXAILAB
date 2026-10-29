@@ -35,7 +35,7 @@ CARD_SORTING:
 - testStructure is an OBJECT with welcomeMessage, finalMessage, consent, preTest=[], postTest=[], cardSorting
 - cardSorting.cards: [{ title, description }] (at least 1)
 - cardSorting.categories: [{ title, description }]
-- options.allow_create_categories true/false; hasScreenRecord / hasCamRecord / hasAudioRecord as requested
+- options.allow_create_categories true/false
 
 USER:
 - subType: USER_MODERATED or USER_UNMODERATED

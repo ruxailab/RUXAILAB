@@ -13,7 +13,22 @@
                 {{ $t('CardSorting.currentCategories') }}
               </v-card-title>
             </v-col>
-            <v-col cols="12" sm="6" class="text-right">
+            <v-col
+              cols="12"
+              sm="6"
+              class="d-flex justify-end align-center ga-3 flex-wrap"
+            >
+              <v-btn
+                color="primary"
+                variant="outlined"
+                size="large"
+                class="px-6 text-capitalize"
+                rounded="lg"
+                @click="openImport"
+              >
+                <v-icon start>mdi-import</v-icon>
+                {{ $t('CardSorting.import') }}
+              </v-btn>
               <v-btn
                 color="primary"
                 variant="flat"
@@ -22,7 +37,7 @@
                 rounded="lg"
                 @click="openCreate"
               >
-                <v-icon start> mdi-plus-circle </v-icon>
+                <v-icon start>mdi-plus-circle</v-icon>
                 {{ $t('CardSorting.addNewCategory') }}
               </v-btn>
             </v-col>
@@ -136,15 +151,23 @@
       @save="save"
       @update:dialog="onDialogChange"
     />
+    <CardSortingImportDialog
+      :dialog="importDialog"
+      type="category"
+      :existing-titles="existingTitles"
+      @import="importItems"
+      @update:dialog="importDialog = $event"
+    />
   </v-container>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { CardSortingStudyCategory } from '../models/CardSortingStudyCategory'
 import { CardSortingStudyOptions } from '../models/CardSortingStudyOptions'
 import CardSortingForm from './dialogs/CardSortingForm.vue'
+import CardSortingImportDialog from './dialogs/CardSortingImportDialog.vue'
 
 // Emits
 const emit = defineEmits(['change', 'categories', 'options'])
@@ -159,7 +182,11 @@ const test = computed(() => store.getters.test)
 const categories = ref([])
 const editedIndex = ref(-1)
 const dialog = ref(false)
+const importDialog = ref(false)
 const category = ref(new CardSortingStudyCategory())
+const existingTitles = computed(() =>
+  categories.value.map((item) => item.title).filter(Boolean),
+)
 const options = ref(new CardSortingStudyOptions())
 const headers = ref([
   {
@@ -201,6 +228,17 @@ const openCreate = () => {
   dialog.value = true
 }
 
+const openImport = () => {
+  importDialog.value = true
+}
+
+const importItems = (titles) => {
+  titles.forEach((title) => {
+    categories.value.push(new CardSortingStudyCategory({ title }))
+  })
+  onChange()
+}
+
 const onDialogChange = (isOpen) => {
   dialog.value = isOpen
   if (!isOpen) {
@@ -234,19 +272,22 @@ const save = (newCategoryRaw) => {
 }
 
 const getCards = () => {
-  if (!test.value.testStructure.cardSorting) return
+  const cardSorting = test.value?.testStructure?.cardSorting
+  if (!cardSorting) return
 
-  test.value.testStructure.cardSorting.categories.map((cat) => {
-    categories.value.push(new CardSortingStudyCategory(cat))
-  })
-
-  options.value = new CardSortingStudyOptions(
-    test.value.testStructure.cardSorting.options,
+  categories.value = (cardSorting.categories || []).map(
+    (cat) => new CardSortingStudyCategory(cat),
   )
-  onChange()
+  options.value = new CardSortingStudyOptions(cardSorting.options)
+  emit('options', options.value)
+  emit('categories', categories.value)
 }
 
-onMounted(() => {
-  getCards()
-})
+watch(
+  () => test.value?.testStructure?.cardSorting,
+  () => {
+    getCards()
+  },
+  { immediate: true },
+)
 </script>

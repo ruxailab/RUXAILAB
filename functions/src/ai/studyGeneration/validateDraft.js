@@ -7,9 +7,6 @@ const DEFAULT_CARD_SORTING_OPTIONS = {
   category_description: false,
   category_image: false,
   allow_create_categories: false,
-  hasScreenRecord: false,
-  hasCamRecord: false,
-  hasAudioRecord: false,
 }
 
 /**

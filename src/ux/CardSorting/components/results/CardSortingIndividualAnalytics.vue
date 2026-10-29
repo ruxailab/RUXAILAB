@@ -108,32 +108,116 @@
                 </div>
               </div>
             </div>
-            <v-chip
-              size="small"
-              :color="answer.submitted ? 'success' : 'warning'"
-              variant="tonal"
-              class="mr-4"
-            >
-              {{
-                answer.submitted
-                  ? $t('CardSorting.submitted')
-                  : $t('CardSorting.inProgress')
-              }}
-            </v-chip>
+            <div class="d-flex align-center ga-2 mr-4 flex-wrap justify-end">
+              <v-chip
+                v-if="answer.totalDurationSeconds != null"
+                size="small"
+                color="primary"
+                variant="tonal"
+                prepend-icon="mdi-clock-outline"
+                :title="$t('CardSorting.totalDuration')"
+              >
+                <span class="font-weight-medium">
+                  {{ $t('CardSorting.totalDuration') }}:
+                </span>
+                <span class="ml-1 font-weight-bold">
+                  {{ formatDuration(answer.totalDurationSeconds) }}
+                </span>
+              </v-chip>
+              <v-chip
+                v-if="answer.sortingDurationSeconds != null"
+                size="small"
+                color="blue-grey"
+                variant="tonal"
+                prepend-icon="mdi-timer-outline"
+                :title="$t('CardSorting.sortingDuration')"
+              >
+                <span class="font-weight-medium">
+                  {{ $t('CardSorting.sortingDuration') }}:
+                </span>
+                <span class="ml-1 font-weight-bold">
+                  {{ formatDuration(answer.sortingDurationSeconds) }}
+                </span>
+              </v-chip>
+              <v-chip
+                size="small"
+                :color="answer.submitted ? 'success' : 'warning'"
+                variant="tonal"
+              >
+                {{
+                  answer.submitted
+                    ? $t('CardSorting.submitted')
+                    : $t('CardSorting.inProgress')
+                }}
+              </v-chip>
+            </div>
           </div>
         </v-expansion-panel-title>
 
         <v-expansion-panel-text>
           <v-row
             v-if="
-              test?.testStructure?.preTest?.length ||
-              test?.testStructure?.postTest?.length
+              answer.totalDurationSeconds != null ||
+              answer.sortingDurationSeconds != null
             "
             class="mb-2"
           >
-            <v-col v-if="test?.testStructure?.preTest?.length" cols="12" md="6">
+            <v-col
+              v-if="answer.totalDurationSeconds != null"
+              cols="12"
+              :sm="answer.sortingDurationSeconds != null ? 6 : 12"
+            >
+              <v-card
+                variant="tonal"
+                color="primary"
+                rounded="lg"
+                class="pa-2 d-flex align-center ga-2 h-100"
+              >
+                <v-icon size="20">mdi-clock-outline</v-icon>
+                <span class="text-body-2 font-weight-medium">
+                  {{ $t('CardSorting.totalDuration') }}:
+                </span>
+                <span class="text-body-2 font-weight-bold">
+                  {{ formatDuration(answer.totalDurationSeconds) }}
+                </span>
+              </v-card>
+            </v-col>
+            <v-col
+              v-if="answer.sortingDurationSeconds != null"
+              cols="12"
+              :sm="answer.totalDurationSeconds != null ? 6 : 12"
+            >
+              <v-card
+                variant="tonal"
+                color="blue-grey"
+                rounded="lg"
+                class="pa-2 d-flex align-center ga-2 h-100"
+              >
+                <v-icon size="20">mdi-timer-outline</v-icon>
+                <span class="text-body-2 font-weight-medium">
+                  {{ $t('CardSorting.sortingDuration') }}:
+                </span>
+                <span class="text-body-2 font-weight-bold">
+                  {{ formatDuration(answer.sortingDurationSeconds) }}
+                </span>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row
+            v-if="
+              test?.testStructure?.preTest?.length ||
+              test?.testStructure?.postTest?.length
+            "
+            class="mb-1"
+          >
+            <v-col
+              v-if="test?.testStructure?.preTest?.length"
+              cols="12"
+              md="6"
+              class="py-1"
+            >
               <section class="questionnaire-section">
-                <h4 class="text-subtitle-1 font-weight-bold mb-3">
+                <h4 class="text-subtitle-1 font-weight-bold mb-2">
                   <v-icon color="primary" size="small" class="mr-2">
                     mdi-clipboard-text-outline
                   </v-icon>
@@ -164,9 +248,10 @@
               v-if="test?.testStructure?.postTest?.length"
               cols="12"
               md="6"
+              class="py-1"
             >
               <section class="questionnaire-section">
-                <h4 class="text-subtitle-1 font-weight-bold mb-3">
+                <h4 class="text-subtitle-1 font-weight-bold mb-2">
                   <v-icon color="secondary" size="small" class="mr-2">
                     mdi-clipboard-check-outline
                   </v-icon>
@@ -200,9 +285,9 @@
               test?.testStructure?.preTest?.length ||
               test?.testStructure?.postTest?.length
             "
-            class="my-6"
+            class="my-3"
           />
-          <div class="d-flex align-center mb-4">
+          <div class="d-flex align-center mb-2">
             <v-icon color="primary" class="mr-2">mdi-cards-outline</v-icon>
             <h4 class="text-subtitle-1 font-weight-bold">
               {{ $t('CardSorting.title') }}
@@ -214,9 +299,10 @@
               :key="category"
               cols="12"
               md="4"
+              class="py-1"
             >
-              <v-card variant="outlined" rounded="lg" class="pa-3 h-100">
-                <div class="d-flex align-center mb-2 flex-wrap ga-1">
+              <v-card variant="outlined" rounded="lg" class="pa-2 h-100">
+                <div class="d-flex align-center mb-1 flex-wrap ga-1">
                   <h4 class="mb-0">
                     {{
                       category === UNASSIGNED_KEY
@@ -260,11 +346,16 @@
             v-if="hasRecordings(answer)"
             variant="outlined"
             rounded="lg"
-            class="pa-4 mt-4"
+            class="pa-3 mt-3"
           >
-            <h4 class="mb-3">{{ $t('CardSorting.recordings') }}</h4>
-            <v-row>
-              <v-col v-if="answer.screenRecordURL" cols="12" md="6">
+            <h4 class="mb-2">{{ $t('CardSorting.recordings') }}</h4>
+            <v-row dense>
+              <v-col
+                v-if="answer.screenRecordURL"
+                cols="12"
+                md="6"
+                class="py-1"
+              >
                 <p class="text-caption text-medium-emphasis mb-1">
                   {{ $t('CreateTask.taskPreview.screenRecord') }}
                 </p>
@@ -274,7 +365,12 @@
                   class="recording-player"
                 />
               </v-col>
-              <v-col v-if="answer.webcamRecordURL" cols="12" md="6">
+              <v-col
+                v-if="answer.webcamRecordURL"
+                cols="12"
+                md="6"
+                class="py-1"
+              >
                 <p class="text-caption text-medium-emphasis mb-1">
                   {{ $t('CreateTask.taskPreview.camera') }}
                 </p>
@@ -284,7 +380,7 @@
                   class="recording-player"
                 />
               </v-col>
-              <v-col v-if="answer.audioRecordURL" cols="12" md="6">
+              <v-col v-if="answer.audioRecordURL" cols="12" md="6" class="py-1">
                 <p class="text-caption text-medium-emphasis mb-1">
                   {{ $t('CreateTask.taskPreview.audioRecord') }}
                 </p>
@@ -302,7 +398,10 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { UNASSIGNED_KEY } from '../../utils/cardSortingAnalytics'
+import {
+  UNASSIGNED_KEY,
+  formatDuration,
+} from '../../utils/cardSortingAnalytics'
 
 const store = useStore()
 const { t } = useI18n()
@@ -466,9 +565,13 @@ const hasRecordings = (answer) =>
 </script>
 
 <style scoped>
+.v-expansion-panel-text :deep(.v-expansion-panel-text__wrapper) {
+  padding: 8px 16px 12px;
+}
+
 .questionnaire-section {
   height: 100%;
-  padding: 4px 8px 12px;
+  padding: 2px 4px 6px;
 }
 
 .question-answer-list {
@@ -477,7 +580,7 @@ const hasRecordings = (answer) =>
 }
 
 .question-answer-row {
-  padding: 4px 0;
+  padding: 2px 0;
 }
 
 .question-label {
