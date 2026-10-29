@@ -14,6 +14,21 @@
         :subtitle="$t('studyCreation.selectStudyType')"
       />
 
+      <v-alert
+        class="mx-auto mt-6 mb-8 text-center"
+        max-width="900"
+        border="start"
+        color="primary"
+        variant="tonal"
+        prominent
+      >
+        <i18n-t keypath="studyCreation.studyTypeIntro" tag="span">
+          <template #study>
+            <strong>{{ studyName }}</strong>
+          </template>
+        </i18n-t>
+      </v-alert>
+
       <!-- Options Grid -->
       <v-row v-if="selectedOption !== 'template'" justify="center" class="mb-8">
         <v-col
@@ -99,6 +114,10 @@ const store = useStore()
 const { t, tm } = useI18n()
 const selectedOption = ref('')
 const studyMethod = computed(() => store.state.Tests.studyMethod)
+const studyName = computed(() => {
+  const methodNames = tm('studyCreation.methodCreationNames')
+  return methodNames?.[studyMethod.value] || t('studyCreation.study')
+})
 const selectedStudyType = computed(
   () => selectedOption.value || store.state.Tests.studyType,
 )
