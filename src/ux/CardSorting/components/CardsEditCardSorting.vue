@@ -13,7 +13,22 @@
                 {{ $t('CardSorting.currentCards') }}
               </v-card-title>
             </v-col>
-            <v-col cols="12" sm="6" class="text-right">
+            <v-col
+              cols="12"
+              sm="6"
+              class="d-flex justify-end align-center ga-3 flex-wrap"
+            >
+              <v-btn
+                color="primary"
+                variant="outlined"
+                size="large"
+                class="px-6 text-capitalize"
+                rounded="lg"
+                @click="openImport"
+              >
+                <v-icon start>mdi-import</v-icon>
+                {{ $t('CardSorting.import') }}
+              </v-btn>
               <v-btn
                 color="primary"
                 variant="flat"
@@ -121,12 +136,20 @@
       @save="save"
       @update:dialog="onDialogChange"
     />
+    <CardSortingImportDialog
+      :dialog="importDialog"
+      type="card"
+      :existing-titles="existingTitles"
+      @import="importItems"
+      @update:dialog="importDialog = $event"
+    />
   </v-container>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import CardSortingForm from '../components/dialogs/CardSortingForm.vue'
+import { computed, ref, watch } from 'vue'
+import CardSortingForm from './dialogs/CardSortingForm.vue'
+import CardSortingImportDialog from './dialogs/CardSortingImportDialog.vue'
 import { useStore } from 'vuex'
 import { CardSortingStudyOptions } from '../models/CardSortingStudyOptions'
 import { CardSortingStudyCard } from '../models/CardSortingStudyCard'
@@ -145,7 +168,11 @@ const cards = ref([])
 const editedIndex = ref(-1)
 const card = ref(new CardSortingStudyCard())
 const dialog = ref(false)
+const importDialog = ref(false)
 const options = ref(new CardSortingStudyOptions())
+const existingTitles = computed(() =>
+  cards.value.map((item) => item.title).filter(Boolean),
+)
 const headers = ref([
   {
     title: 'Name',
@@ -187,6 +214,17 @@ const openCreate = () => {
   dialog.value = true
 }
 
+const openImport = () => {
+  importDialog.value = true
+}
+
+const importItems = (titles) => {
+  titles.forEach((title) => {
+    cards.value.push(new CardSortingStudyCard({ title }))
+  })
+  onChange()
+}
+
 const onDialogChange = (isOpen) => {
   dialog.value = isOpen
   if (!isOpen) {
@@ -220,19 +258,22 @@ const deleteItem = (item) => {
 }
 
 const getCards = () => {
-  if (!test.value.testStructure.cardSorting) return
+  const cardSorting = test.value?.testStructure?.cardSorting
+  if (!cardSorting) return
 
-  test.value.testStructure.cardSorting.cards.map((card) => {
-    cards.value.push(new CardSortingStudyCard(card))
-  })
-
-  options.value = new CardSortingStudyOptions(
-    test.value.testStructure.cardSorting.options,
+  cards.value = (cardSorting.cards || []).map(
+    (item) => new CardSortingStudyCard(item),
   )
-  onChange()
+  options.value = new CardSortingStudyOptions(cardSorting.options)
+  emit('options', options.value)
+  emit('cards', cards.value)
 }
 
-onMounted(() => {
-  getCards()
-})
+watch(
+  () => test.value?.testStructure?.cardSorting,
+  () => {
+    getCards()
+  },
+  { immediate: true },
+)
 </script>

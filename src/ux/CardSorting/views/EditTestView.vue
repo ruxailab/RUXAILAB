@@ -7,9 +7,18 @@
     </template>
 
     <v-container>
-      <ButtonSave :visible="change" @click="save" />
+      <div
+        v-if="!test"
+        class="d-flex justify-center align-center"
+        style="min-height: 400px"
+      >
+        <v-progress-circular indeterminate color="primary" size="64" />
+      </div>
 
-      <div>
+      <template v-else>
+        <ButtonSave :visible="change" @click="save" />
+
+        <div>
         <VTabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
           <VTab @click="index = 0">
             {{ $t('CardSorting.test') }}
@@ -27,9 +36,6 @@
             {{ $t('CardSorting.cards') }}
           </VTab>
           <VTab @click="index = 5">
-            {{ $t('CardSorting.recording') }}
-          </VTab>
-          <VTab @click="index = 6">
             {{ $t('ModeratedTest.postTest') }}
           </VTab>
         </VTabs>
@@ -84,19 +90,8 @@
             />
           </div>
 
-          <!-- RECORDING -->
-          <div v-if="index === 5" rounded="xxl">
-            <TaskAdvancedOptions
-              :model-value="recordingOptions"
-              :show-eye-tracking="false"
-              :title="$t('CardSorting.recordingTitle')"
-              :description="$t('CardSorting.recordingDescription')"
-              @update:model-value="onRecordingOptionsChange"
-            />
-          </div>
-
           <!-- POS-TEST -->
-          <v-card v-if="index === 6" rounded="xxl">
+          <v-card v-if="index === 5" rounded="xxl">
             <UserVariables
               type="post-test"
               @change="change = true"
@@ -104,7 +99,8 @@
             />
           </v-card>
         </VCol>
-      </div>
+        </div>
+      </template>
     </v-container>
   </PageWrapper>
 </template>
@@ -116,14 +112,13 @@ import UserVariables from '@/shared/components/UserVariables.vue'
 import CardsEditCardSorting from '../components/CardsEditCardSorting.vue'
 import CategoriesEditCardSorting from '../components/CategoriesEditCardSorting.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import { CardSortingStudyCategory } from '../models/CardSortingStudyCategory'
 import { CardSortingStudyCard } from '../models/CardSortingStudyCard'
 import { CardSortingStudyOptions } from '../models/CardSortingStudyOptions'
-import TaskAdvancedOptions from '@/ux/UserTest/components/task-steps/TaskAdvancedOptions.vue'
 
 // Variables
 const index = ref(0)
@@ -135,12 +130,6 @@ const categories = ref([])
 const cards = ref([])
 const optionsCategories = ref({})
 const optionsCards = ref({})
-const recordingOptions = ref({
-  hasScreenRecord: false,
-  hasCamRecord: false,
-  hasAudioRecord: false,
-  hasEye: false,
-})
 
 // Stores
 const store = useStore()
@@ -149,29 +138,14 @@ const store = useStore()
 const test = computed(() => store.getters.test)
 
 // Methods
-const onRecordingOptionsChange = (value) => {
-  const prev = recordingOptions.value
-  const changed =
-    !!prev.hasScreenRecord !== !!value.hasScreenRecord ||
-    !!prev.hasCamRecord !== !!value.hasCamRecord ||
-    !!prev.hasAudioRecord !== !!value.hasAudioRecord
-
-  recordingOptions.value = {
-    hasScreenRecord: !!value.hasScreenRecord,
-    hasCamRecord: !!value.hasCamRecord,
-    hasAudioRecord: !!value.hasAudioRecord,
-    hasEye: false,
-  }
-
-  if (changed) change.value = true
-}
-
 const save = async () => {
   await submit()
   change.value = false
 }
 
 const submit = async () => {
+  if (!test.value) return
+
   const testStructure = {
     welcomeMessage: welcomeMessage.value,
     finalMessage: finalMessage.value,
@@ -188,9 +162,6 @@ const submit = async () => {
         category_image: optionsCategories.value.category_image,
         allow_create_categories:
           optionsCategories.value.allow_create_categories,
-        hasScreenRecord: !!recordingOptions.value.hasScreenRecord,
-        hasCamRecord: !!recordingOptions.value.hasCamRecord,
-        hasAudioRecord: !!recordingOptions.value.hasAudioRecord,
       },
     },
   }
@@ -200,64 +171,34 @@ const submit = async () => {
   await store.dispatch('updateStudy', study)
 }
 
-const getWelcome = () => {
-  welcomeMessage.value = test.value.testStructure?.welcomeMessage || ''
-}
+const hydrateFromTest = () => {
+  const structure = test.value?.testStructure
+  welcomeMessage.value = structure?.welcomeMessage || ''
+  finalMessage.value = structure?.finalMessage || ''
+  consent.value = structure?.consent || ''
 
-const getFinalMessage = () => {
-  finalMessage.value = test.value.testStructure?.finalMessage || ''
-}
+  const cardSorting = structure?.cardSorting
+  categories.value = (cardSorting?.categories || []).map(
+    (cat) => new CardSortingStudyCategory(cat),
+  )
+  cards.value = (cardSorting?.cards || []).map(
+    (card) => new CardSortingStudyCard(card),
+  )
 
-const getConsent = () => {
-  consent.value = test.value.testStructure?.consent || ''
-}
-
-const getCategories = () => {
-  if (!test.value.testStructure.cardSorting) return
-
-  test.value.testStructure.cardSorting.categories.map((cat) => {
-    categories.value.push(new CardSortingStudyCategory(cat))
-  })
-}
-
-const getCards = () => {
-  if (!test.value.testStructure.cardSorting) return
-
-  test.value.testStructure.cardSorting.cards.map((card) => {
-    cards.value.push(new CardSortingStudyCard(card))
-  })
-}
-
-const getOptions = () => {
-  if (!test.value.testStructure.cardSorting) return
-  const options = test.value.testStructure.cardSorting.options || {}
+  const options = cardSorting?.options || {}
   optionsCategories.value = new CardSortingStudyOptions(options)
   optionsCards.value = new CardSortingStudyOptions(options)
-  recordingOptions.value = {
-    hasScreenRecord: !!options.hasScreenRecord,
-    hasCamRecord: !!options.hasCamRecord,
-    hasAudioRecord: !!options.hasAudioRecord,
-    hasEye: false,
-  }
+
+  store.dispatch('setPreTest', structure?.preTest || [])
+  store.dispatch('setPostTest', structure?.postTest || [])
 }
 
-const getPreTest = () => {
-  store.dispatch('setPreTest', test.value.testStructure?.preTest || [])
-}
-
-const getPostTest = () => {
-  store.dispatch('setPostTest', test.value.testStructure?.postTest || [])
-}
-
-// Lifecycle
-onMounted(() => {
-  getWelcome()
-  getFinalMessage()
-  getConsent()
-  getCategories()
-  getCards()
-  getOptions()
-  getPreTest()
-  getPostTest()
-})
+watch(
+  test,
+  (current) => {
+    if (!current || change.value) return
+    hydrateFromTest()
+  },
+  { immediate: true },
+)
 </script>

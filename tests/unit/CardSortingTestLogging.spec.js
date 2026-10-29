@@ -48,23 +48,6 @@ jest.mock('@/shared/components/StudyWelcomeStep.vue', () => ({
   template: '<div />',
 }))
 
-jest.mock('@/shared/components/AudioRecorder.vue', () => ({
-  name: 'AudioRecorder',
-  template: '<div />',
-}))
-jest.mock('@/shared/components/ScreenRecorder.vue', () => ({
-  name: 'ScreenRecorder',
-  template: '<div />',
-}))
-jest.mock('@/shared/components/VideoRecorder.vue', () => ({
-  name: 'VideoRecorder',
-  template: '<div />',
-}))
-jest.mock('@/shared/components/ScreenShareInstructions.vue', () => ({
-  name: 'ScreenShareInstructions',
-  template: '<div />',
-}))
-
 const FREE_TEXT = ['Billing card', 'My money stuff']
 
 const test = {
