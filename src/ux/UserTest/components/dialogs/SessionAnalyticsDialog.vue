@@ -232,6 +232,7 @@
                     :study-id="testAnswer?.studyId || null"
                     :transcription-doc-id="resolvedTranscriptionDocId"
                     :can-transcribe="canTranscribe"
+                    :has-audio="hasAudioFiles"
                     :unavailable-message="transcriptionUnavailableMessage"
                     @saved="onTranscriptionSaved"
                     @deleted="onTranscriptionDeleted"
@@ -385,7 +386,6 @@ const props = defineProps({
   testAnswer: { type: Object, default: null },
   answersDocId: { type: String, default: '' },
   taskId: { type: [String, Number], default: null },
-  hasAudioRecord: { type: Boolean, default: false },
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -570,12 +570,16 @@ const hasSentimentData = computed(
   () => Boolean(props.taskAnswer?.webcamRecordURL) || hasTaskAudio.value,
 )
 
-const hasTranscriptionData = computed(
+const hasAudioFiles = computed(
   () =>
-    Boolean(props.hasAudioRecord) ||
     Boolean(props.taskAnswer?.audioRecordURL) ||
-    Boolean(props.taskAnswer?.moderatorAudioURL) ||
-    Boolean(props.taskAnswer?.transcriptionDocId),
+    Boolean(props.taskAnswer?.moderatorAudioURL),
+)
+
+// Audio being enabled on the task is not enough: the recording may have been
+// blocked or failed to upload, leaving nothing to transcribe.
+const hasTranscriptionData = computed(
+  () => hasAudioFiles.value || Boolean(props.taskAnswer?.transcriptionDocId),
 )
 
 const resolvedTaskId = computed(() => {
@@ -590,12 +594,6 @@ const canLoadTranscriptions = computed(
     Boolean(props.answersDocId) &&
     Boolean(props.userId) &&
     Boolean(resolvedTaskId.value),
-)
-
-const hasAudioFiles = computed(
-  () =>
-    Boolean(props.taskAnswer?.audioRecordURL) ||
-    Boolean(props.taskAnswer?.moderatorAudioURL),
 )
 
 const canTranscribe = computed(
