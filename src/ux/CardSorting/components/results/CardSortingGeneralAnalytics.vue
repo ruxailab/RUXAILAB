@@ -163,7 +163,7 @@
           <v-row>
             <template
               v-for="(question, questionIndex) in preTestQuestions"
-:key="`pre-${questionIndex}`"
+              :key="`pre-${questionIndex}`"
             >
               <v-col
                 v-if="question.selectionFields?.length"
@@ -235,7 +235,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import UxMetricCard from '@/ux/UserTest/components/answers/UxMetricCard.vue'
@@ -246,16 +246,13 @@ import CardSortingMatrix from './CardSortingMatrix.vue'
 import CardSortingSimilarityMatrix from './CardSortingSimilarityMatrix.vue'
 import CardSortingDendrogram from './CardSortingDendrogram.vue'
 import { formatDuration } from '../../utils/cardSortingAnalytics'
+import { useCardSortingAnswerFilters } from '../../composables/useCardSortingAnswerFilters'
 
 const store = useStore()
 const { t } = useI18n()
 
 const test = computed(() => store.getters.test)
 const answers = computed(() => store.getters.cardSortingAnswersList)
-const searchTerm = ref('')
-const selectedFilters = ref({})
-const showFilters = ref(true)
-const ALL_VALUE = '__ALL__'
 const preTestQuestions = computed(
   () => test.value?.testStructure?.preTest || [],
 )
@@ -274,116 +271,21 @@ const chartColors = [
   '#D4E157',
 ]
 
-const filterDefinitions = computed(() =>
-  preTestQuestions.value.map((question = {}, index) => {
-    const optionValues = new Set(
-      Array.isArray(question.selectionFields) ? question.selectionFields : [],
-    )
-    answers.value.forEach((participant) => {
-      const response = participant?.preTestAnswer?.[index]?.answer
-      const values = Array.isArray(response) ? response : [response]
-      values.forEach((value) => {
-        if (value !== undefined && value !== null && value !== '') {
-          optionValues.add(value)
-        }
-      })
-    })
-
-    const options = [...optionValues].sort((a, b) =>
-      String(a).localeCompare(String(b)),
-    )
-    const isSelection =
-      question.selectionField === true ||
-      question.type === 'selection' ||
-      (Array.isArray(question.selectionFields) &&
-        question.selectionFields.length > 0)
-    const isCategorical =
-      isSelection || (options.length >= 2 && options.length <= 50)
-
-    return {
-      index,
-      title:
-        question.title ||
-        question.question ||
-        t('analytics.question', { number: index + 1 }),
-      isCategorical,
-      items: isCategorical
-        ? [
-            { title: t('analytics.all'), value: ALL_VALUE },
-            ...options.map((option) => ({
-              title: String(option),
-              value: option,
-            })),
-          ]
-        : [],
-    }
-  }),
-)
-
-const hasActiveFilters = computed(
-  () =>
-    !!searchTerm.value.trim() ||
-    Object.values(selectedFilters.value).some((filter) =>
-      Array.isArray(filter)
-        ? filter.length > 0 && !filter.includes(ALL_VALUE)
-        : !!filter,
-    ),
-)
-
-const filteredAnswers = computed(() => {
-  const term = searchTerm.value.trim().toLowerCase()
-  return answers.value.filter((participant) => {
-    if (term && !(participant.fullName || '').toLowerCase().includes(term)) {
-      return false
-    }
-
-    return filterDefinitions.value.every((definition) => {
-      const filter = selectedFilters.value[definition.index]
-      if (
-        filter === undefined ||
-        filter === null ||
-        filter === '' ||
-        (Array.isArray(filter) &&
-          (filter.length === 0 || filter.includes(ALL_VALUE)))
-      ) {
-        return true
-      }
-
-      const response =
-        participant.preTestAnswer?.[definition.index]?.answer ?? ''
-      if (definition.isCategorical) {
-        const values = Array.isArray(response) ? response : [response]
-        return (
-          Array.isArray(filter) &&
-          values.some((value) => filter.includes(value))
-        )
-      }
-
-      return String(response)
-        .toLowerCase()
-        .includes(String(filter).toLowerCase())
-    })
-  })
+const {
+  searchTerm,
+  selectedFilters,
+  showFilters,
+  filterDefinitions,
+  hasActiveFilters,
+  filteredAnswers,
+  onFilterChange,
+  resetFilters,
+  toggleFilters,
+} = useCardSortingAnswerFilters({
+  preTestQuestions,
+  answers,
+  t,
 })
-
-const onFilterChange = (index, value) => {
-  if (!value?.length) {
-    selectedFilters.value[index] = []
-  } else if (value.includes(ALL_VALUE)) {
-    selectedFilters.value[index] = [ALL_VALUE]
-  } else {
-    selectedFilters.value[index] = value
-  }
-}
-
-const resetFilters = () => {
-  searchTerm.value = ''
-  selectedFilters.value = {}
-}
-
-const toggleFilters = () => {
-  showFilters.value = !showFilters.value
-}
 
 const getSelectionCounts = (stage, questionIndex) => {
   const questions =
