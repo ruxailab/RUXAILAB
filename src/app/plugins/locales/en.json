@@ -2835,6 +2835,9 @@
     "recordings": "Recordings"
   },
   "analytics": {
+    "transcriptionNoAudioTitle": "No audio was recorded for this task",
+    "transcriptionNoAudioDescription": "The participant's audio was not captured or failed to upload, so there is nothing to transcribe.",
+    "transcriptionNoAudio": "No audio",
     "answersTimelineTitle": "Answers Timeline",
     "answersTimelineDescription": "Track your answer submissions over time",
     "answersTimelineOptions": "Timeline options",

@@ -75,11 +75,10 @@
           mdi-microphone-off
         </v-icon>
         <div class="text-body-1 font-weight-medium mb-1">
-          No audio was recorded for this task
+          {{ $t('analytics.transcriptionNoAudioTitle') }}
         </div>
         <div class="text-body-2 text-grey-darken-1">
-          The participant's audio was not captured or failed to upload, so there
-          is nothing to transcribe.
+          {{ $t('analytics.transcriptionNoAudioDescription') }}
         </div>
       </v-col>
     </v-row>
@@ -270,6 +269,7 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 import {
   deleteTranscription,
@@ -298,6 +298,7 @@ const props = defineProps({
 
 const emit = defineEmits(['saved', 'deleted'])
 const store = useStore()
+const { t } = useI18n()
 
 const transcriptionController = new TranscriptionController()
 
@@ -360,7 +361,9 @@ const statusLabel = computed(() => {
   if (isTranscribing.value) return 'Transcribing...'
   if (hasResults.value) return 'Transcription Complete'
   if (isLoading.value) return 'Loading...'
-  if (!props.hasAudio && !transcriptionError.value) return 'No audio'
+  if (!props.hasAudio && !transcriptionError.value) {
+    return t('analytics.transcriptionNoAudio')
+  }
   return 'Waiting to start'
 })
 

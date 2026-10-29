@@ -2739,6 +2739,9 @@
     "recordings": "Grabaciones"
   },
   "analytics": {
+    "transcriptionNoAudioTitle": "No se grabó audio para esta tarea",
+    "transcriptionNoAudioDescription": "El audio del participante no se capturó o no se pudo subir, por lo que no hay nada que transcribir.",
+    "transcriptionNoAudio": "Sin audio",
     "answersTimelineTitle": "Cronología de respuestas",
     "answersTimelineDescription": "Sigue los envíos de respuestas a lo largo del tiempo",
     "answersTimelineOptions": "Opciones de la cronología",
