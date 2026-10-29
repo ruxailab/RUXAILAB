@@ -5,11 +5,22 @@
         <v-divider class="mb-5" />
 
         <v-container>
-          <div class="d-flex align-center justify-center mb-4">
+          <div class="d-flex align-center justify-space-between flex-wrap ga-2 mb-4">
             <p class="text-body-1 mb-0">
               {{ assignedCount }} {{ $t('CardSorting.of') }} {{ totalCards }}
               {{ $t('CardSorting.cards_low') }}
             </p>
+            <v-btn
+              v-if="allowCreateCategories"
+              color="primary"
+              variant="tonal"
+              size="small"
+              prepend-icon="mdi-folder-plus-outline"
+              data-test="create-category-top-btn"
+              @click="createUnnamedCategory"
+            >
+              {{ $t('CardSorting.newCategory') }}
+            </v-btn>
           </div>
           <v-progress-linear
             :model-value="assignedCount"
@@ -51,21 +62,28 @@
                   group="cards"
                   ghost-class="sorting-card-ghost"
                   drag-class="sorting-card-drag"
+                  :scroll="true"
+                  :scroll-sensitivity="100"
+                  :scroll-speed="20"
+                  :bubble-scroll="true"
+                  :empty-insert-threshold="15"
                   @change="onChange"
                 >
                   <template #item="{ element }">
                     <CardSortingCard :element="element" :options="options" />
                   </template>
-                </Draggable>
 
-                <div v-if="pool.length === 0" class="sorting-column__empty">
-                  <v-icon size="28" class="sorting-column__empty-icon">
-                    mdi-check-circle-outline
-                  </v-icon>
-                  <p class="sorting-column__empty-text">
-                    {{ $t('CardSorting.allCardsSorted') }}
-                  </p>
-                </div>
+                  <template #footer>
+                    <div v-if="pool.length === 0" class="sorting-column__empty">
+                      <v-icon size="28" class="sorting-column__empty-icon">
+                        mdi-check-circle-outline
+                      </v-icon>
+                      <p class="sorting-column__empty-text">
+                        {{ $t('CardSorting.allCardsSorted') }}
+                      </p>
+                    </div>
+                  </template>
+                </Draggable>
               </div>
             </div>
 
@@ -163,6 +181,11 @@
                   group="cards"
                   ghost-class="sorting-card-ghost"
                   drag-class="sorting-card-drag"
+                  :scroll="true"
+                  :scroll-sensitivity="100"
+                  :scroll-speed="20"
+                  :bubble-scroll="true"
+                  :empty-insert-threshold="15"
                   @change="onChange"
                 >
                   <template #item="{ element }">
@@ -172,21 +195,29 @@
                       compact
                     />
                   </template>
-                </Draggable>
 
-                <div class="sorting-column__drop-hint">
-                  <v-icon size="22" class="sorting-column__drop-icon">
-                    mdi-inbox-arrow-down-outline
-                  </v-icon>
-                  <p class="sorting-column__drop-text">
-                    {{ $t('CardSorting.dropCardsHere') }}
-                  </p>
-                </div>
+                  <template #footer>
+                    <div
+                      v-if="categoryCardCount(category.id) === 0"
+                      class="sorting-column__drop-hint"
+                    >
+                      <v-icon size="22" class="sorting-column__drop-icon">
+                        mdi-inbox-arrow-down-outline
+                      </v-icon>
+                      <p class="sorting-column__drop-text">
+                        {{ $t('CardSorting.dropCardsHere') }}
+                      </p>
+                    </div>
+                  </template>
+                </Draggable>
               </div>
             </div>
 
             <!-- New category placeholder -->
-            <div v-if="allowCreateCategories" class="sorting-board__item">
+            <div
+              v-if="allowCreateCategories"
+              class="sorting-board__item sorting-board__item--new-category"
+            >
               <div
                 role="button"
                 tabindex="0"
@@ -202,6 +233,7 @@
                   group="cards"
                   ghost-class="sorting-card-ghost"
                   drag-class="sorting-card-drag"
+                  :empty-insert-threshold="15"
                   @change="onNewCategoryDrop"
                 >
                   <template #item="{ element }">
@@ -574,6 +606,10 @@ onMounted(() => {
   min-width: 0;
 }
 
+.sorting-board__item--new-category {
+  align-self: flex-start;
+}
+
 @media (max-width: 599px) {
   .sorting-board__item {
     flex-basis: 100%;
@@ -586,6 +622,7 @@ onMounted(() => {
   flex-direction: column;
   height: 100%;
   min-height: 280px;
+  max-height: 560px;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -685,9 +722,29 @@ onMounted(() => {
 }
 
 .sorting-column__list {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 120px;
+  max-height: 480px;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 12px;
+}
+
+.sorting-column__list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sorting-column__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sorting-column__list::-webkit-scrollbar-thumb {
+  background: rgba(0, 33, 63, 0.15);
+  border-radius: 999px;
+}
+
+.sorting-column__list::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 33, 63, 0.3);
 }
 
 .sorting-column__list--category {
@@ -701,12 +758,14 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin: 0 12px 14px;
+  margin: 0;
   padding: 20px 12px;
+  min-height: 120px;
   text-align: center;
   border: 2px dashed rgba(0, 33, 63, 0.18);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
 }
 
 .sorting-column__empty-icon,
@@ -754,8 +813,8 @@ onMounted(() => {
   justify-content: center;
   gap: 10px;
   width: 100%;
-  height: 100%;
-  min-height: 280px;
+  min-height: 240px;
+  max-height: 300px;
   margin: 0;
   padding: 24px 20px;
   cursor: pointer;
