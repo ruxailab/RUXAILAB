@@ -56,7 +56,7 @@
             style="max-width: 300px"
           />
           <div class="mb-3">
-            <StudyTypeBadges :test="test" />
+            <StudyTypeBadges :test="test" color="white" />
           </div>
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}

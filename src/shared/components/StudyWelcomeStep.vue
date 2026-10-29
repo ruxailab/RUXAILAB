@@ -8,7 +8,6 @@
           <StudyTypeBadges
             v-if="study"
             :test="study"
-            color="primary"
             class="justify-center mb-4"
           />
           <h1 class="text-h5 font-weight-bold mb-4 text-primary">
