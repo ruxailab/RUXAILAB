@@ -59,11 +59,22 @@
             </div>
             <div class="d-flex align-center ga-2 mr-4">
               <v-chip
+                v-if="answer.totalDurationSeconds != null"
+                size="small"
+                color="primary"
+                variant="tonal"
+                prepend-icon="mdi-clock-outline"
+                :title="$t('CardSorting.totalDuration')"
+              >
+                {{ formatDuration(answer.totalDurationSeconds) }}
+              </v-chip>
+              <v-chip
                 v-if="answer.sortingDurationSeconds != null"
                 size="small"
                 color="blue-grey"
                 variant="tonal"
                 prepend-icon="mdi-timer-outline"
+                :title="$t('CardSorting.sortingDuration')"
               >
                 {{ formatDuration(answer.sortingDurationSeconds) }}
               </v-chip>
@@ -83,21 +94,54 @@
         </v-expansion-panel-title>
 
         <v-expansion-panel-text>
-          <v-card
-            v-if="answer.sortingDurationSeconds != null"
-            variant="tonal"
-            color="blue-grey"
-            rounded="lg"
-            class="pa-3 mb-4 d-flex align-center ga-2"
+          <v-row
+            v-if="
+              answer.totalDurationSeconds != null ||
+              answer.sortingDurationSeconds != null
+            "
+            class="mb-3"
           >
-            <v-icon size="20">mdi-timer-outline</v-icon>
-            <span class="text-body-2 font-weight-medium">
-              {{ $t('CardSorting.sortingDuration') }}:
-            </span>
-            <span class="text-body-2">
-              {{ formatDuration(answer.sortingDurationSeconds) }}
-            </span>
-          </v-card>
+            <v-col
+              v-if="answer.totalDurationSeconds != null"
+              cols="12"
+              :sm="answer.sortingDurationSeconds != null ? 6 : 12"
+            >
+              <v-card
+                variant="tonal"
+                color="primary"
+                rounded="lg"
+                class="pa-3 d-flex align-center ga-2 h-100"
+              >
+                <v-icon size="20">mdi-clock-outline</v-icon>
+                <span class="text-body-2 font-weight-medium">
+                  {{ $t('CardSorting.totalDuration') }}:
+                </span>
+                <span class="text-body-2 font-weight-bold">
+                  {{ formatDuration(answer.totalDurationSeconds) }}
+                </span>
+              </v-card>
+            </v-col>
+            <v-col
+              v-if="answer.sortingDurationSeconds != null"
+              cols="12"
+              :sm="answer.totalDurationSeconds != null ? 6 : 12"
+            >
+              <v-card
+                variant="tonal"
+                color="blue-grey"
+                rounded="lg"
+                class="pa-3 d-flex align-center ga-2 h-100"
+              >
+                <v-icon size="20">mdi-timer-outline</v-icon>
+                <span class="text-body-2 font-weight-medium">
+                  {{ $t('CardSorting.sortingDuration') }}:
+                </span>
+                <span class="text-body-2 font-weight-bold">
+                  {{ formatDuration(answer.sortingDurationSeconds) }}
+                </span>
+              </v-card>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col
               v-for="category in getAnswerCategories(answer)"
@@ -191,7 +235,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { UNASSIGNED_KEY } from '../../utils/cardSortingAnalytics'
+import { UNASSIGNED_KEY, formatDuration } from '../../utils/cardSortingAnalytics'
 
 const store = useStore()
 const searchTerm = ref('')
@@ -229,18 +273,6 @@ const getAnswerCategories = (answer) => {
 }
 
 const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '?'
-
-/**
- * Converts a duration in seconds to a human-readable "Xm Ys" string.
- * Shows only seconds when the duration is under one minute.
- */
-const formatDuration = (seconds) => {
-  if (seconds == null || isNaN(seconds)) return ''
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  if (m === 0) return `${s}s`
-  return `${m}m ${s}s`
-}
 
 const hasRecordings = (answer) =>
   !!(

@@ -422,6 +422,11 @@ const truncateDescription = (description) => {
 const startTest = () => {
   if (!canStartCardSorting.value) return
 
+  if (!localAnswer.testStartedAt) {
+    localAnswer.testStartedAt = Date.now()
+    void savePartial()
+  }
+
   const startScreen = document.querySelector('.start-screen')
   if (startScreen) startScreen.classList.add('leaving')
 
@@ -431,6 +436,9 @@ const startTest = () => {
 }
 
 const handleWelcomeStart = async () => {
+  if (!localAnswer.testStartedAt) {
+    localAnswer.testStartedAt = Date.now()
+  }
   await safelyAnnounce(t('UserTestView.stepper.consent'), 1)
   globalIndex.value = 1
 }
@@ -460,7 +468,7 @@ const welcomeSteps = computed(() => {
   if (hasPreTest.value) {
     steps.push(t('CardSorting.welcomeSteps.preTest'))
   }
-  steps.push(t('CardSorting.title'))
+  steps.push(t('CardSorting.cardClassification'))
   if (hasPostTest.value) {
     steps.push(t('CardSorting.welcomeSteps.postTest'))
   }
@@ -532,6 +540,11 @@ const savePartial = async () => {
   localAnswer.invited = true
   localAnswer.lastUpdate = Date.now()
   localAnswer.progress = Math.round(progress.value)
+  if (localAnswer.testStartedAt && !localAnswer.submitted) {
+    localAnswer.totalDurationSeconds = Math.round(
+      (Date.now() - localAnswer.testStartedAt) / 1000,
+    )
+  }
 
   await store.dispatch('saveTestAnswer', {
     data: new CardSortingEvaluatorAnswer({ ...localAnswer }),
@@ -546,6 +559,10 @@ async function finishSorting() {
 
 const completeStep = async (type) => {
   try {
+    if (!localAnswer.testStartedAt) {
+      localAnswer.testStartedAt = Date.now()
+    }
+
     if (type === 'consent') {
       const consentAcceptedAt = new Date().toISOString()
       localAnswer.consentCompleted = true
@@ -621,6 +638,11 @@ const submit = async () => {
     submitting.value = true
     localAnswer.submitted = true
     localAnswer.progress = 100
+    if (localAnswer.testStartedAt) {
+      localAnswer.totalDurationSeconds = Math.round(
+        (Date.now() - localAnswer.testStartedAt) / 1000,
+      )
+    }
     await savePartial()
     void initializeStudyLogging()?.submitted()
     showSuccess('CardSorting.answerSubmitted')

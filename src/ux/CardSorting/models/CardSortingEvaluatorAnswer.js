@@ -15,6 +15,8 @@ export default class CardSortingEvaluatorAnswer {
     preTestCompleted,
     sorting,
     sortingDurationSeconds,
+    totalDurationSeconds,
+    testStartedAt,
     postTestAnswer,
     postTestCompleted,
     submitted,
@@ -39,6 +41,10 @@ export default class CardSortingEvaluatorAnswer {
     this.sorting = sorting ?? {}
     /** Duration (in seconds) the participant spent on the card sorting task. */
     this.sortingDurationSeconds = sortingDurationSeconds ?? null
+    /** Total duration (in seconds) from start of test until submission. */
+    this.totalDurationSeconds = totalDurationSeconds ?? null
+    /** Timestamp (ms) when the participant started the test. */
+    this.testStartedAt = testStartedAt ?? null
     this.postTestAnswer = postTestAnswer ?? []
     this.postTestCompleted = postTestCompleted ?? false
     this.submitted = submitted ?? false
@@ -69,6 +75,8 @@ export default class CardSortingEvaluatorAnswer {
       preTestCompleted: this.preTestCompleted,
       sorting: this.sorting,
       sortingDurationSeconds: this.sortingDurationSeconds,
+      totalDurationSeconds: this.totalDurationSeconds,
+      testStartedAt: this.testStartedAt,
       postTestAnswer: this.postTestAnswer,
       postTestCompleted: this.postTestCompleted,
       submitted: this.submitted,

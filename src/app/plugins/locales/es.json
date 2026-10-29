@@ -2766,7 +2766,6 @@
     "resultsSubtitle": "Resultados agregados del card sorting de todos los participantes",
     "totalParticipants": "Participantes",
     "answers": "Respuestas",
-    "answersSubtitle": "Resumen de resultados de card sorting y respuestas individuales por participante",
     "noAnswers": "Aún no se han recopilado respuestas",
     "anonymous": "Anónimo",
     "submitted": "Enviado",
@@ -2811,6 +2810,11 @@
     "studyStructureSubtitle": "Resumen de tarjetas y categorías",
     "viewResults": "Ver resultados",
     "sortingDuration": "Tiempo de clasificación",
+    "totalDuration": "Tiempo total",
+    "averageTotalTime": "Tiempo medio total",
+    "averageTotalTimeDescription": "Tiempo medio empleado desde el inicio hasta el final",
+    "averageSortingTime": "Tiempo medio de clasificación",
+    "averageSortingTimeDescription": "Tiempo medio empleado en clasificar las tarjetas en categorías",
     "recordings": "Grabaciones"
   },
   "analytics": {
