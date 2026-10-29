@@ -2809,6 +2809,8 @@
     "participantsDescription": "{total} respuestas totales incluyendo las en progreso",
     "cardsDescription": "Tarjetas definidas en este estudio",
     "categoriesDescription": "Categorías usadas en el estudio",
+    "filteredCardsDescription": "Tarjetas ordenadas por los participantes coincidentes",
+    "filteredCategoriesDescription": "Categorías usadas por los participantes coincidentes",
     "categoriesUsed": "{count} categorías",
     "studyStructure": "Estructura del estudio",
     "studyStructureSubtitle": "Resumen de tarjetas y categorías",

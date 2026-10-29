@@ -424,7 +424,7 @@ const startTest = () => {
 
   if (!localAnswer.testStartedAt) {
     localAnswer.testStartedAt = Date.now()
-    void savePartial()
+    void savePartial().catch(() => showError('CardSorting.saveError'))
   }
 
   const startScreen = document.querySelector('.start-screen')

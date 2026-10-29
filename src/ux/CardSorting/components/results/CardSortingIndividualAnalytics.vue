@@ -1,7 +1,7 @@
 <template>
   <div class="pa-4 analytics-dashboard">
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
-      <div class="d-flex align-center flex-wrap ga-2">
+      <div class="d-flex align-center mb-3 flex-wrap ga-2">
         <v-text-field
           v-model="searchTerm"
           prepend-inner-icon="mdi-magnify"
@@ -15,12 +15,63 @@
         <v-btn
           color="primary"
           prepend-icon="mdi-filter-remove"
-          :disabled="!searchTerm"
-          @click="searchTerm = ''"
+          :disabled="!hasActiveFilters"
+          @click="resetFilters"
         >
           {{ $t('analytics.reset') }}
         </v-btn>
+        <v-btn
+          :color="showFilters ? 'primary' : 'grey'"
+          variant="tonal"
+          icon
+          size="small"
+          :title="
+            showFilters
+              ? $t('analytics.hideFilters')
+              : $t('analytics.showFilters')
+          "
+          @click="toggleFilters"
+        >
+          <v-icon>{{
+            showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant'
+          }}</v-icon>
+        </v-btn>
       </div>
+      <v-expand-transition>
+        <v-row v-show="showFilters" dense>
+          <v-col
+            v-for="definition in filterDefinitions"
+            :key="`filter-${definition.index}`"
+            cols="12"
+            sm="6"
+            md="3"
+          >
+            <div class="filter-label">{{ definition.title }}</div>
+            <v-select
+              v-if="definition.isCategorical && definition.items.length"
+              v-model="selectedFilters[definition.index]"
+              :items="definition.items"
+              multiple
+              chips
+              clearable
+              density="compact"
+              variant="outlined"
+              hide-details
+              @update:model-value="
+                (value) => onFilterChange(definition.index, value)
+              "
+            />
+            <v-text-field
+              v-else
+              v-model="selectedFilters[definition.index]"
+              density="compact"
+              variant="outlined"
+              hide-details
+              clearable
+            />
+          </v-col>
+        </v-row>
+      </v-expand-transition>
     </v-card>
 
     <div
@@ -109,7 +160,7 @@
               answer.totalDurationSeconds != null ||
               answer.sortingDurationSeconds != null
             "
-            class="mb-3"
+            class="mb-2"
           >
             <v-col
               v-if="answer.totalDurationSeconds != null"
@@ -120,7 +171,7 @@
                 variant="tonal"
                 color="primary"
                 rounded="lg"
-                class="pa-3 d-flex align-center ga-2 h-100"
+                class="pa-2 d-flex align-center ga-2 h-100"
               >
                 <v-icon size="20">mdi-clock-outline</v-icon>
                 <span class="text-body-2 font-weight-medium">
@@ -140,7 +191,7 @@
                 variant="tonal"
                 color="blue-grey"
                 rounded="lg"
-                class="pa-3 d-flex align-center ga-2 h-100"
+                class="pa-2 d-flex align-center ga-2 h-100"
               >
                 <v-icon size="20">mdi-timer-outline</v-icon>
                 <span class="text-body-2 font-weight-medium">
@@ -152,15 +203,106 @@
               </v-card>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row
+            v-if="
+              test?.testStructure?.preTest?.length ||
+              test?.testStructure?.postTest?.length
+            "
+            class="mb-1"
+          >
+            <v-col
+              v-if="test?.testStructure?.preTest?.length"
+              cols="12"
+              md="6"
+              class="py-1"
+            >
+              <section class="questionnaire-section">
+                <h4 class="text-subtitle-1 font-weight-bold mb-2">
+                  <v-icon color="primary" size="small" class="mr-2">
+                    mdi-clipboard-text-outline
+                  </v-icon>
+                  {{ $t('analytics.preTest') }}
+                </h4>
+                <ul class="question-answer-list">
+                  <li
+                    v-for="(question, questionIndex) in test.testStructure
+                      .preTest"
+                    :key="`pre-${questionIndex}`"
+                    class="question-answer-row"
+                  >
+                    <span class="question-label">
+                      {{ question.title || question.question }}
+                    </span>
+                    <span class="question-answer-value">
+                      {{
+                        formatAnswer(
+                          answer.preTestAnswer?.[questionIndex]?.answer,
+                        )
+                      }}
+                    </span>
+                  </li>
+                </ul>
+              </section>
+            </v-col>
+            <v-col
+              v-if="test?.testStructure?.postTest?.length"
+              cols="12"
+              md="6"
+              class="py-1"
+            >
+              <section class="questionnaire-section">
+                <h4 class="text-subtitle-1 font-weight-bold mb-2">
+                  <v-icon color="secondary" size="small" class="mr-2">
+                    mdi-clipboard-check-outline
+                  </v-icon>
+                  {{ $t('analytics.postTest') }}
+                </h4>
+                <ul class="question-answer-list">
+                  <li
+                    v-for="(question, questionIndex) in test.testStructure
+                      .postTest"
+                    :key="`post-${questionIndex}`"
+                    class="question-answer-row"
+                  >
+                    <span class="question-label">
+                      {{ question.title || question.question }}
+                    </span>
+                    <span class="question-answer-value">
+                      {{
+                        formatAnswer(
+                          answer.postTestAnswer?.[questionIndex]?.answer,
+                        )
+                      }}
+                    </span>
+                  </li>
+                </ul>
+              </section>
+            </v-col>
+          </v-row>
+
+          <v-divider
+            v-if="
+              test?.testStructure?.preTest?.length ||
+              test?.testStructure?.postTest?.length
+            "
+            class="my-3"
+          />
+          <div class="d-flex align-center mb-4">
+            <v-icon color="primary" class="mr-2">mdi-cards-outline</v-icon>
+            <h4 class="text-subtitle-1 font-weight-bold">
+              {{ $t('CardSorting.title') }}
+            </h4>
+          </div>
+          <v-row class="mb-2">
             <v-col
               v-for="category in getAnswerCategories(answer)"
               :key="category"
               cols="12"
               md="4"
+              class="py-1"
             >
-              <v-card variant="outlined" rounded="lg" class="pa-3 h-100">
-                <div class="d-flex align-center mb-2 flex-wrap ga-1">
+              <v-card variant="outlined" rounded="lg" class="pa-2 h-100">
+                <div class="d-flex align-center mb-1 flex-wrap ga-1">
                   <h4 class="mb-0">
                     {{
                       category === UNASSIGNED_KEY
@@ -204,11 +346,16 @@
             v-if="hasRecordings(answer)"
             variant="outlined"
             rounded="lg"
-            class="pa-4 mt-4"
+            class="pa-3 mt-3"
           >
-            <h4 class="mb-3">{{ $t('CardSorting.recordings') }}</h4>
-            <v-row>
-              <v-col v-if="answer.screenRecordURL" cols="12" md="6">
+            <h4 class="mb-2">{{ $t('CardSorting.recordings') }}</h4>
+            <v-row dense>
+              <v-col
+                v-if="answer.screenRecordURL"
+                cols="12"
+                md="6"
+                class="py-1"
+              >
                 <p class="text-caption text-medium-emphasis mb-1">
                   {{ $t('CreateTask.taskPreview.screenRecord') }}
                 </p>
@@ -218,7 +365,12 @@
                   class="recording-player"
                 />
               </v-col>
-              <v-col v-if="answer.webcamRecordURL" cols="12" md="6">
+              <v-col
+                v-if="answer.webcamRecordURL"
+                cols="12"
+                md="6"
+                class="py-1"
+              >
                 <p class="text-caption text-medium-emphasis mb-1">
                   {{ $t('CreateTask.taskPreview.camera') }}
                 </p>
@@ -228,7 +380,7 @@
                   class="recording-player"
                 />
               </v-col>
-              <v-col v-if="answer.audioRecordURL" cols="12" md="6">
+              <v-col v-if="answer.audioRecordURL" cols="12" md="6" class="py-1">
                 <p class="text-caption text-medium-emphasis mb-1">
                   {{ $t('CreateTask.taskPreview.audioRecord') }}
                 </p>
@@ -243,25 +395,39 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import {
   UNASSIGNED_KEY,
   formatDuration,
 } from '../../utils/cardSortingAnalytics'
+import { useCardSortingAnswerFilters } from '../../composables/useCardSortingAnswerFilters'
 
 const store = useStore()
-const searchTerm = ref('')
+const { t } = useI18n()
 
 const test = computed(() => store.getters.test)
 const answers = computed(() => store.getters.cardSortingAnswersList)
 
-const filteredAnswers = computed(() => {
-  const term = searchTerm.value.trim().toLowerCase()
-  if (!term) return answers.value
-  return answers.value.filter((answer) =>
-    (answer.fullName || '').toLowerCase().includes(term),
-  )
+const preTestQuestions = computed(
+  () => test.value?.testStructure?.preTest || [],
+)
+
+const {
+  searchTerm,
+  selectedFilters,
+  showFilters,
+  filterDefinitions,
+  hasActiveFilters,
+  filteredAnswers,
+  onFilterChange,
+  resetFilters,
+  toggleFilters,
+} = useCardSortingAnswerFilters({
+  preTestQuestions,
+  answers,
+  t,
 })
 
 const predefinedCategorySet = computed(() => {
@@ -287,6 +453,12 @@ const getAnswerCategories = (answer) => {
 
 const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '?'
 
+const formatAnswer = (value) => {
+  if (value === undefined || value === null || value === '') return '-'
+  if (Array.isArray(value)) return value.length ? value.join(', ') : '-'
+  return String(value)
+}
+
 const hasRecordings = (answer) =>
   !!(
     answer?.screenRecordURL ||
@@ -296,6 +468,37 @@ const hasRecordings = (answer) =>
 </script>
 
 <style scoped>
+.v-expansion-panel-text :deep(.v-expansion-panel-text__wrapper) {
+  padding: 8px 16px 12px;
+}
+
+.questionnaire-section {
+  height: 100%;
+  padding: 2px 4px 6px;
+}
+
+.question-answer-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.question-answer-row {
+  padding: 2px 0;
+}
+
+.question-label {
+  font-weight: 500;
+  color: rgba(var(--v-theme-on-surface), 0.75);
+}
+
+.question-label::after {
+  content: ': ';
+}
+
+.question-answer-value {
+  overflow-wrap: anywhere;
+}
+
 .recording-player {
   width: 100%;
   max-height: 280px;
