@@ -135,6 +135,7 @@ import {
   getSubmittedAnswers,
   buildSimilarityMatrix,
 } from '../../utils/cardSortingAnalytics'
+import { getTrafficLightColor } from '../../utils/matrixColors'
 import { showError } from '@/shared/utils/toast'
 
 const props = defineProps({
@@ -179,11 +180,13 @@ const cellStyle = (abs, pct, isDiagonal) => {
       color: '#9e9e9e',
     }
   }
-  if (!abs || !totalParticipants.value) return {}
+  if (!totalParticipants.value || (displayMode.value === 'absolute' && !abs)) {
+    return {}
+  }
   const intensity = abs / totalParticipants.value
   return {
-    backgroundColor: `rgba(252, 163, 38, ${0.12 + intensity * 0.7})`,
-    color: intensity > 0.55 ? '#3e2723' : 'inherit',
+    backgroundColor: getTrafficLightColor(intensity),
+    color: '#212121',
   }
 }
 
