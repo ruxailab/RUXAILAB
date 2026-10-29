@@ -2,8 +2,6 @@
   <div>
     <ShowInfo :title="props.test.testTitle">
       <template #content>
-        <v-divider class="mb-5" />
-
         <v-container>
           <div class="d-flex align-center justify-space-between flex-wrap ga-2 mb-4">
             <p class="text-body-1 mb-0">
@@ -603,7 +601,7 @@ onMounted(() => {
 .sorting-board__item {
   flex: 1 1 240px;
   max-width: 300px;
-  min-width: 0;
+  min-width: 240px;
 }
 
 .sorting-board__item--new-category {
@@ -614,6 +612,7 @@ onMounted(() => {
   .sorting-board__item {
     flex-basis: 100%;
     max-width: 100%;
+    min-width: 0;
   }
 }
 
@@ -787,13 +786,19 @@ onMounted(() => {
 
 .sorting-column__title--unnamed {
   display: inline-block;
+  box-sizing: border-box;
   max-width: 100%;
-  padding: 0;
+  padding: 0 2px 1px;
+  overflow: visible;
   color: #b45309;
   font-family: inherit;
   font-style: italic;
   font-weight: 600;
+  line-height: 1.35;
   text-align: left;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
   background: transparent;
   border: 0;
   border-bottom: 1px dashed rgba(180, 83, 9, 0.55);
