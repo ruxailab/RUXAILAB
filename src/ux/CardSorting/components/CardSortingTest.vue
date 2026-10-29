@@ -340,6 +340,9 @@ const unnamedCategories = ref(0)
 const submitting = ref(false)
 const dialog = ref(false)
 
+/** Timestamp (ms) when the card sorting task step started. */
+const sortingStartedAt = ref(null)
+
 const localAnswer = reactive(
   new CardSortingEvaluatorAnswer({
     ...currentCardSortingAnswer.value,
@@ -554,6 +557,7 @@ const completeStep = async (type) => {
         await safelyAnnounce(t('CardSorting.cardClassification'), 2)
         localAnswer.preTestCompleted = true
         globalIndex.value = 4
+        sortingStartedAt.value = Date.now()
       }
       await savePartial()
       if (user.value) {
@@ -566,11 +570,17 @@ const completeStep = async (type) => {
       await safelyAnnounce(t('CardSorting.cardClassification'), 3)
       localAnswer.preTestCompleted = true
       globalIndex.value = 4
+      sortingStartedAt.value = Date.now()
       await savePartial()
       return
     }
 
     if (type === 'sorting') {
+      if (sortingStartedAt.value !== null) {
+        localAnswer.sortingDurationSeconds = Math.round(
+          (Date.now() - sortingStartedAt.value) / 1000,
+        )
+      }
       if (hasPostTest.value) {
         await safelyAnnounce(t('UserTestView.stepper.postTest'), 4)
         globalIndex.value = 5
@@ -628,6 +638,14 @@ onMounted(() => {
   if (localAnswer.submitted) {
     globalIndex.value = 6
     localAnswer.postTestCompleted = true
+  } else if (
+    localAnswer.preTestCompleted &&
+    !localAnswer.postTestCompleted &&
+    localAnswer.sortingDurationSeconds === null
+  ) {
+    // Participant is resuming a session that was already at the card sorting
+    // step — restart the timer from now so elapsed time keeps accumulating.
+    sortingStartedAt.value = Date.now()
   }
 })
 

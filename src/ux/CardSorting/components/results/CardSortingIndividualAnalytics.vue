@@ -57,22 +57,47 @@
                 </div>
               </div>
             </div>
-            <v-chip
-              size="small"
-              :color="answer.submitted ? 'success' : 'warning'"
-              variant="tonal"
-              class="mr-4"
-            >
-              {{
-                answer.submitted
-                  ? $t('CardSorting.submitted')
-                  : $t('CardSorting.inProgress')
-              }}
-            </v-chip>
+            <div class="d-flex align-center ga-2 mr-4">
+              <v-chip
+                v-if="answer.sortingDurationSeconds != null"
+                size="small"
+                color="blue-grey"
+                variant="tonal"
+                prepend-icon="mdi-timer-outline"
+              >
+                {{ formatDuration(answer.sortingDurationSeconds) }}
+              </v-chip>
+              <v-chip
+                size="small"
+                :color="answer.submitted ? 'success' : 'warning'"
+                variant="tonal"
+              >
+                {{
+                  answer.submitted
+                    ? $t('CardSorting.submitted')
+                    : $t('CardSorting.inProgress')
+                }}
+              </v-chip>
+            </div>
           </div>
         </v-expansion-panel-title>
 
         <v-expansion-panel-text>
+          <v-card
+            v-if="answer.sortingDurationSeconds != null"
+            variant="tonal"
+            color="blue-grey"
+            rounded="lg"
+            class="pa-3 mb-4 d-flex align-center ga-2"
+          >
+            <v-icon size="20">mdi-timer-outline</v-icon>
+            <span class="text-body-2 font-weight-medium">
+              {{ $t('CardSorting.sortingDuration') }}:
+            </span>
+            <span class="text-body-2">
+              {{ formatDuration(answer.sortingDurationSeconds) }}
+            </span>
+          </v-card>
           <v-row>
             <v-col
               v-for="category in getAnswerCategories(answer)"
@@ -204,6 +229,18 @@ const getAnswerCategories = (answer) => {
 }
 
 const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '?'
+
+/**
+ * Converts a duration in seconds to a human-readable "Xm Ys" string.
+ * Shows only seconds when the duration is under one minute.
+ */
+const formatDuration = (seconds) => {
+  if (seconds == null || isNaN(seconds)) return ''
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  if (m === 0) return `${s}s`
+  return `${m}m ${s}s`
+}
 
 const hasRecordings = (answer) =>
   !!(
