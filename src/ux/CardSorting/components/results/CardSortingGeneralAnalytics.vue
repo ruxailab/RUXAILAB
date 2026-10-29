@@ -163,7 +163,7 @@
           <v-row>
             <template
               v-for="(question, questionIndex) in preTestQuestions"
-              :key="`pre-${question.title || question.question || questionIndex}`"
+:key="`pre-${questionIndex}`"
             >
               <v-col
                 v-if="question.selectionFields?.length"
