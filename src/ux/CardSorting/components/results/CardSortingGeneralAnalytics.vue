@@ -43,6 +43,7 @@
       v-if="answers.length"
       :task-answers="answers"
       :show-export="false"
+      compact
     />
   </div>
 </template>

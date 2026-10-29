@@ -1,10 +1,10 @@
 <template>
-  <v-row class="mb-8">
+  <v-row class="mb-4">
     <v-col cols="12">
-      <v-card class="pa-8 elevation-4 rounded-xl chart-card">
-        <div class="mb-6">
-          <div class="d-flex align-center justify-space-between ga-2 mb-2">
-            <h3 class="text-h4 font-weight-bold text-on-surface">
+      <v-card class="pa-4 elevation-4 rounded-xl chart-card">
+        <div class="mb-4">
+          <div class="d-flex align-center justify-space-between ga-2 mb-1">
+            <h3 class="text-h5 font-weight-bold text-on-surface">
               {{ $t('CardSorting.dendrogram') }}
             </h3>
             <div class="d-flex align-center">
@@ -50,7 +50,7 @@
               </v-menu>
             </div>
           </div>
-          <p class="text-body-1 text-medium-emphasis mb-0">
+          <p class="text-body-2 text-medium-emphasis mb-0">
             {{ $t('CardSorting.dendrogramHint') }}
           </p>
         </div>
