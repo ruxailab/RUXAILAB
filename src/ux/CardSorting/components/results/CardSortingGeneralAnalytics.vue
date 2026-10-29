@@ -137,6 +137,7 @@
           icon="mdi-shape"
           :description="$t('CardSorting.filteredCategoriesDescription')"
           :progress="categoriesProgress"
+          :show-progress="categoriesTotal > 0"
         />
       </v-col>
     </v-row>
@@ -509,12 +510,16 @@ const categoriesCount = computed(() => {
   return custom.size
 })
 
-const categoriesProgress = computed(() => {
-  const totalCategories =
+const categoriesTotal = computed(() => {
+  const configuredCategories =
     test.value?.testStructure?.cardSorting?.categories?.length || 0
-  if (!totalCategories) return 0
+  return Math.max(configuredCategories, categoriesCount.value)
+})
+
+const categoriesProgress = computed(() => {
+  if (!categoriesTotal.value) return 0
   return Math.min(
-    Math.round((categoriesCount.value / totalCategories) * 100),
+    Math.round((categoriesCount.value / categoriesTotal.value) * 100),
     100,
   )
 })
