@@ -57,7 +57,7 @@
                 </div>
               </div>
             </div>
-            <div class="d-flex align-center ga-2 mr-4">
+            <div class="d-flex align-center ga-2 mr-4 flex-wrap justify-end">
               <v-chip
                 v-if="answer.totalDurationSeconds != null"
                 size="small"
@@ -66,7 +66,12 @@
                 prepend-icon="mdi-clock-outline"
                 :title="$t('CardSorting.totalDuration')"
               >
-                {{ formatDuration(answer.totalDurationSeconds) }}
+                <span class="font-weight-medium">
+                  {{ $t('CardSorting.totalDuration') }}:
+                </span>
+                <span class="ml-1 font-weight-bold">
+                  {{ formatDuration(answer.totalDurationSeconds) }}
+                </span>
               </v-chip>
               <v-chip
                 v-if="answer.sortingDurationSeconds != null"
@@ -76,7 +81,12 @@
                 prepend-icon="mdi-timer-outline"
                 :title="$t('CardSorting.sortingDuration')"
               >
-                {{ formatDuration(answer.sortingDurationSeconds) }}
+                <span class="font-weight-medium">
+                  {{ $t('CardSorting.sortingDuration') }}:
+                </span>
+                <span class="ml-1 font-weight-bold">
+                  {{ formatDuration(answer.sortingDurationSeconds) }}
+                </span>
               </v-chip>
               <v-chip
                 size="small"
@@ -235,7 +245,10 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { UNASSIGNED_KEY, formatDuration } from '../../utils/cardSortingAnalytics'
+import {
+  UNASSIGNED_KEY,
+  formatDuration,
+} from '../../utils/cardSortingAnalytics'
 
 const store = useStore()
 const searchTerm = ref('')
