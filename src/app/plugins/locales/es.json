@@ -548,14 +548,12 @@
     "hoursAgo": "hace {count}h",
     "daysAgo": "hace {count}d",
     "newNotification": "Tienes una nueva notificación.",
-    "notificationsPage": {
-      "types": {
-        "session": "Sesión",
-        "message": "Mensaje",
-        "collaboration": "Colaboración",
-        "notification": "Notificación",
-        "participant": "Participante"
-      }
+    "types": {
+      "session": "Sesión",
+      "message": "Mensaje",
+      "collaboration": "Colaboración",
+      "notification": "Notificación",
+      "participant": "Participante"
     }
   },
   "notifications": {
