@@ -223,6 +223,7 @@ const processDataForChart = () => {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
+      timeZone: 'UTC',
     })
   })
   chartData.value.datasets[0].data = sortedDates.map(

@@ -289,7 +289,7 @@ service cloud.firestore {
       allow write: if false;
     }
     match /calibrations/{document=**} {
-      allow read, write: if signedIn();
+      allow read, write: if authenticated();
     }
     // Invitation tokens grant study access, so only trusted functions read
     // or write them (validateInvite / resolveInvite check a token).

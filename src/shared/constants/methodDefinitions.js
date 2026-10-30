@@ -335,6 +335,10 @@ export const getMethodDefinition = (testType, subType = '') => {
       return METHOD_DEFINITIONS.CARD_SORTING
     case STUDY_TYPES.FOCUS_GROUP:
       return METHOD_DEFINITIONS.FOCUS_GROUP
+    case STUDY_TYPES.ACCESSIBILITY_MANUAL:
+      return METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL
+    case STUDY_TYPES.ACCESSIBILITY_AUTOMATIC:
+      return METHOD_DEFINITIONS.ACCESSIBILITY_AUTOMATIC
     default:
       return null
   }

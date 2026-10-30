@@ -46,7 +46,7 @@
             style="max-width: 300px"
           />
           <div class="mb-3">
-            <StudyTypeBadges :test="test" />
+            <StudyTypeBadges :test="test" color="white" />
           </div>
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
@@ -474,7 +474,7 @@ const startTest = () => {
 
   if (!localAnswer.testStartedAt) {
     localAnswer.testStartedAt = Date.now()
-    void savePartial()
+    void savePartial().catch(() => showError('CardSorting.saveError'))
   }
 
   const startScreen = document.querySelector('.start-screen')

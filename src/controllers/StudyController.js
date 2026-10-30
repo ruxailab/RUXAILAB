@@ -1,6 +1,6 @@
 // imports
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
-import { doc, onSnapshot } from 'firebase/firestore'
+import { collection, doc, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/app/plugins/firebase'
 import AnswerController from '../shared/controllers/AnswerController'
 import UserController from '../features/auth/controllers/UserController'
@@ -265,5 +265,20 @@ export default class StudyController extends Controller {
         callback(study)
       }
     })
+  }
+
+  // Fires onCreated when a calibration is saved for authId (logged-in or anonymous) after subscribing
+  subscribeToCalibration(authId, onCreated) {
+    let firstSnapshot = true
+    return onSnapshot(
+      query(collection(db, 'calibrations'), where('userId', '==', authId)),
+      (snapshot) => {
+        if (firstSnapshot) {
+          firstSnapshot = false
+          return
+        }
+        if (snapshot.docChanges().some((c) => c.type === 'added')) onCreated()
+      },
+    )
   }
 }
