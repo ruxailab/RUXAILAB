@@ -210,6 +210,13 @@ describe('LogsView', () => {
     expect(eventType.props('items')).toEqual([
       { title: 'Study View Opened', value: 'STUDY_VIEW_OPENED' },
       { title: 'Consent Accepted', value: 'CONSENT_ACCEPTED' },
+      { title: 'Answer Edited', value: 'ANSWER_EDITED' },
+      {
+        title: 'Structured Response Activity',
+        value: 'STRUCTURED_RESPONSE_ACTIVITY',
+      },
+      { title: 'Card Sort Started', value: 'CARD_SORT_STARTED' },
+      { title: 'Card Sort Finished', value: 'CARD_SORT_FINISHED' },
       { title: 'Study Submitted', value: 'STUDY_SUBMITTED' },
     ])
     wrapper.unmount()

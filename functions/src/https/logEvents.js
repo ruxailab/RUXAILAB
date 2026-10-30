@@ -21,6 +21,10 @@ const CLIENT_EVENT_POLICIES = Object.freeze({
     message: 'Study view opened',
     detailKeys: [],
   },
+  CARD_SORT_STARTED: {
+    message: 'Card sorting started',
+    detailKeys: [],
+  },
   TASK_STARTED: {
     message: 'Task started',
     detailKeys: ['taskRef'],
@@ -282,15 +286,15 @@ const fieldExists = (study, fieldRef) => {
       )
     )
   }
-  if (type === 'USER') {
+  if (type === 'USER' || type === 'CARD_SORTING') {
     const [section, index, field] = parts
     const collections = {
       preTest: study.testStructure?.preTest,
       postTest: study.testStructure?.postTest,
-      task: study.testStructure?.userTasks,
+      ...(type === 'USER' ? { task: study.testStructure?.userTasks } : {}),
     }
     return (
-      ['preTest', 'postTest', 'task'].includes(section) &&
+      Object.keys(collections).includes(section) &&
       ['answer', 'comment'].includes(field) &&
       Boolean(collections[section]?.[Number(index)])
     )
@@ -410,7 +414,7 @@ const validStructuredResponse = (details, study) => {
       .slice()
       .sort(compareStrings)
       .join(',') ||
-    normalizeStudyType(study.testType) !== 'USER'
+    !['USER', 'CARD_SORTING'].includes(normalizeStudyType(study.testType))
   ) {
     return false
   }
@@ -418,6 +422,7 @@ const validStructuredResponse = (details, study) => {
   let allowedRefs
   const taskMatch = /^task:(0|[1-9]\d*)$/.exec(details.scopeRef || '')
   if (taskMatch) {
+    if (normalizeStudyType(study.testType) !== 'USER') return false
     const taskIndex = Number(taskMatch[1])
     const task = study.testStructure?.userTasks?.[taskIndex]
     if (!Number.isSafeInteger(taskIndex) || !task) return false
@@ -545,6 +550,12 @@ const validateClientBatch = (payload, study) => {
     const validDetails = (() => {
       if (recording) return true
       if (!isRecord(event?.details)) return false
+      if (
+        event?.eventType === 'CARD_SORT_STARTED' &&
+        normalizeStudyType(study.testType) !== 'CARD_SORTING'
+      ) {
+        return false
+      }
       if (policy?.detailKeys.length === 0) {
         return Object.keys(event.details).length === 0
       }
@@ -861,6 +872,26 @@ const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
           ? { taskDurationMs: duration }
           : {}),
       },
+    }
+  }
+
+  if (requestData.eventType === 'CARD_SORT_FINISHED') {
+    const duration = participantAnswer?.sortingDurationSeconds
+    if (
+      normalizeStudyType(study.testType) !== 'CARD_SORTING' ||
+      !nonNegativeInteger(duration, MAX_TASK_DURATION_MS / 1000)
+    ) {
+      rejectVerified({
+        reasonCode: 'UNVERIFIED_TRANSITION',
+        studyId: requestData.studyId,
+      })
+    }
+    return {
+      eventId: 'CARD_SORT_FINISHED',
+      eventType: 'CARD_SORT_FINISHED',
+      level: 'info',
+      message: 'Card sorting finished',
+      details: { sortingDurationSeconds: duration },
     }
   }
 

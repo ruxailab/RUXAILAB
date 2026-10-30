@@ -152,6 +152,10 @@ const summaryDetails = (step) => {
           ),
         ]
       : []
+  if (step.kind === 'cardSort')
+    return summary.durationSeconds === null
+      ? []
+      : [L('sortTime', { time: formatSpan(summary.durationSeconds * 1000) })]
   if (step.kind === 'heuristic')
     return [
       L('questionsUpdated', { count: summary.questions }, summary.questions),

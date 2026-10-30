@@ -4505,6 +4505,7 @@
         "preTest": "Pre-test",
         "postTest": "Post-test",
         "submitted": "Study submitted",
+        "cardSort": "Card sorting",
         "liveSession": "Live session",
         "other": "Other activity"
       },
@@ -4530,6 +4531,7 @@
       "questionsUpdated": "{count} question updated | {count} questions updated",
       "ended": "Ended",
       "live": "Live",
+      "sortTime": "sort time {time}",
       "taskTime": "task time {time}",
       "questionnaireUpdates": "{count} questionnaire update | {count} questionnaire updates"
     },

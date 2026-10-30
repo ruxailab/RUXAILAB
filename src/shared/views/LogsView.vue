@@ -721,7 +721,15 @@ const EVENT_TYPES_BY_STUDY = Object.freeze({
     'STRUCTURED_RESPONSE_ACTIVITY',
     'STUDY_SUBMITTED',
   ],
-  CARD_SORTING: ['STUDY_VIEW_OPENED', 'CONSENT_ACCEPTED', 'STUDY_SUBMITTED'],
+  CARD_SORTING: [
+    'STUDY_VIEW_OPENED',
+    'CONSENT_ACCEPTED',
+    'ANSWER_EDITED',
+    'STRUCTURED_RESPONSE_ACTIVITY',
+    'CARD_SORT_STARTED',
+    'CARD_SORT_FINISHED',
+    'STUDY_SUBMITTED',
+  ],
   FOCUS_GROUP: ['SESSION_STARTED', 'SESSION_ENDED'],
 })
 const levels = ['info', 'warning', 'error']
@@ -983,6 +991,10 @@ const eventPresentation = (event) => {
   if (event?.eventType === 'STUDY_VIEW_OPENED') primary = 'Study opened'
   else if (event?.eventType === 'CONSENT_ACCEPTED') primary = 'Consent accepted'
   else if (event?.eventType === 'STUDY_SUBMITTED') primary = 'Study submitted'
+  else if (event?.eventType === 'CARD_SORT_STARTED')
+    primary = 'Card sorting started'
+  else if (event?.eventType === 'CARD_SORT_FINISHED')
+    primary = 'Card sorting finished'
   else if (event?.eventType === 'SESSION_STARTED') primary = 'Session started'
   else if (event?.eventType === 'SESSION_ENDED') primary = 'Session ended'
   else if (event?.eventType === 'ANSWER_EDITED' && field) {

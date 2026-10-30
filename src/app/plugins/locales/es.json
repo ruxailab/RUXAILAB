@@ -4434,6 +4434,7 @@
         "preTest": "Pre-test",
         "postTest": "Post-test",
         "submitted": "Estudio enviado",
+        "cardSort": "Card sorting",
         "liveSession": "Sesión en vivo",
         "other": "Otra actividad"
       },
@@ -4459,6 +4460,7 @@
       "questionsUpdated": "{count} pregunta actualizada | {count} preguntas actualizadas",
       "ended": "Finalizada",
       "live": "En vivo",
+      "sortTime": "tiempo de clasificación {time}",
       "taskTime": "tiempo de tarea {time}",
       "questionnaireUpdates": "{count} actualización del cuestionario | {count} actualizaciones del cuestionario"
     },
