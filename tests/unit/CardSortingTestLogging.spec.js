@@ -69,6 +69,11 @@ const createRuntime = () => ({
   consentAccepted: jest.fn(() => Promise.resolve()),
   resumeAfterConsent: jest.fn(() => Promise.resolve()),
   submitted: jest.fn(() => Promise.resolve()),
+  cardSortStarted: jest.fn(() => Promise.resolve()),
+  cardSortFinished: jest.fn(() => Promise.resolve()),
+  checkpointStructuredScope: jest.fn(() => Promise.resolve()),
+  seedStructuredScope: jest.fn(),
+  editHandlers: { focusin: jest.fn(), input: jest.fn(), focusout: jest.fn() },
   destroy: jest.fn(),
 })
 
@@ -298,6 +303,15 @@ describe('CardSortingTest activity logging', () => {
     await flushPromises()
 
     expect(runtime.consentAccepted).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
+
+  it('logs card sorting start when entering the sorting step', async () => {
+    const wrapper = mountView({ consentCompleted: true })
+    await flushPromises()
+    wrapper.vm.globalIndex = 4
+    await flushPromises()
+    expect(runtime.cardSortStarted).toHaveBeenCalledTimes(1)
     wrapper.unmount()
   })
 

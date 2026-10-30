@@ -2,6 +2,9 @@
   <div
     class="session-backdrop"
     :class="{ 'study-preview-start': preview && start }"
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
   >
     <SessionBackdropMark />
 
@@ -238,7 +241,8 @@
             :pre-test-answer="localAnswer.preTestAnswer"
             :pre-test-completed="localAnswer.preTestCompleted"
             @update:pre-test-answer="(val) => (localAnswer.preTestAnswer = val)"
-            @done="completeStep('preTest')"
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePreTestDone"
           />
 
           <div v-if="globalIndex === 4">
@@ -288,7 +292,8 @@
             @update:post-test-answer="
               (val) => (localAnswer.postTestAnswer = val)
             "
-            @done="completeStep('postTest')"
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePostTestDone"
           />
 
           <FinishStep
@@ -328,6 +333,7 @@ import {
   computed,
   reactive,
   ref,
+  watch,
   nextTick,
   onMounted,
   onBeforeUnmount,
@@ -350,6 +356,10 @@ import CardSortingEvaluatorAnswer from '../models/CardSortingEvaluatorAnswer'
 import { showError, showSuccess, showInfo } from '@/shared/utils/toast'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import {
+  createStructuredActivityHandlers,
+  structuredValuesForStage,
+} from '@/ux/UserTest/utils/structuredActivity'
 
 const props = defineProps({
   preview: { type: Boolean, default: false },
@@ -400,8 +410,9 @@ const localAnswer = reactive(
 fullName.value = localAnswer.fullName || ''
 if (localAnswer.submitted) start.value = false
 
-// Activity logging records only that the study was opened, consented to and
-// submitted. Card and category names are participant free text and never
+// Activity logging records metadata only: consent, pre/post-test edit and
+// selection activity, when card sorting started and how long it took, and
+// submission. Card and category names are participant free text and never
 // reach logging.
 let studyLogging = null
 const initializeStudyLogging = () => {
@@ -418,6 +429,46 @@ const initializeStudyLogging = () => {
     void studyLogging.resumeAfterConsent()
   }
   return studyLogging
+}
+
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
+
+const { seedStructuredScope, handleStructuredSelectionChanged } =
+  createStructuredActivityHandlers(initializeStudyLogging)
+
+const STAGE_BY_INDEX = { 2: 'preTest', 5: 'postTest' }
+const seedStage = (stage) =>
+  seedStructuredScope(
+    stage,
+    structuredValuesForStage(
+      stage,
+      props.test?.testStructure?.[stage],
+      localAnswer[`${stage}Answer`],
+    ),
+  )
+
+watch(globalIndex, (index, previous) => {
+  const previousStage = STAGE_BY_INDEX[previous]
+  if (previousStage) {
+    void initializeStudyLogging()?.checkpointStructuredScope(previousStage)
+  }
+  if (STAGE_BY_INDEX[index]) seedStage(STAGE_BY_INDEX[index])
+  if (index === 4) void initializeStudyLogging()?.cardSortStarted()
+})
+
+const handlePreTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('preTest')
+  await completeStep('preTest')
+}
+
+const handlePostTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('postTest')
+  await completeStep('postTest')
 }
 
 const cardSortingConfigurationIssues = computed(() => {
@@ -696,6 +747,7 @@ const completeStep = async (type) => {
         globalIndex.value = 6
       }
       await savePartial()
+      void initializeStudyLogging()?.cardSortFinished()
       return
     }
 

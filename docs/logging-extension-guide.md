@@ -62,10 +62,12 @@ Elsewhere, a study type also needs:
 | `CONSENT_ACCEPTED` | `requestLogEvent` | USER, CARD_SORTING | `consentCompleted` in the answer |
 | `TASK_STARTED` | `logEvents` | USER | task index exists in the study |
 | `TASK_ATTEMPT_FINISHED` | `requestLogEvent` | USER | `tasks[i].attempted` in the answer |
-| `ANSWER_EDITED` | `logEvents` | USER | field exists in the study |
-| `STRUCTURED_RESPONSE_ACTIVITY` | `logEvents` | USER | questionnaire items exist in the study |
+| `ANSWER_EDITED` | `logEvents` | USER, CARD_SORTING (pre/post-test) | field exists in the study |
+| `STRUCTURED_RESPONSE_ACTIVITY` | `logEvents` | USER, CARD_SORTING (pre/post-test) | questionnaire items exist in the study |
 | `MEDIA_RECORDING_OUTCOME` | `logEvents` | USER | task and media flag exist in the study |
 | `QUESTION_RESPONSE_UPDATED` | `logEvents` | HEURISTIC | question exists in the study |
+| `CARD_SORT_STARTED` | `logEvents` | CARD_SORTING | — (observation) |
+| `CARD_SORT_FINISHED` | `requestLogEvent` | CARD_SORTING | `sortingDurationSeconds` in the answer |
 | `STUDY_SUBMITTED` | `requestLogEvent` | USER, HEURISTIC, CARD_SORTING | `submitted` in the answer |
 | `SESSION_STARTED` | `requestLogEvent` | FOCUS_GROUP | live room status (see below) |
 | `SESSION_ENDED` | `requestLogEvent` | FOCUS_GROUP | scheduled session `lifecycleStatus` |
