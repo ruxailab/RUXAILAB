@@ -130,6 +130,7 @@ import ShowInfo from '@/shared/components/ShowInfo.vue'
 import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   testTitle: String,
   postTestTitle: String,
   postTest: Array,
@@ -140,6 +141,20 @@ const props = defineProps({
 const emit = defineEmits(['done', 'update:postTestAnswer', 'selection-changed'])
 
 const step = ref(0)
+const movePreviewQuestion = (direction) => {
+  if (!props.preview) return false
+  const nextStep = step.value + direction
+  if (nextStep < 0 || nextStep >= (props.postTest?.length ?? 0)) return false
+  step.value = nextStep
+  return true
+}
+
+const showLastPreviewQuestion = () => {
+  if (props.preview) step.value = Math.max(0, (props.postTest?.length ?? 0) - 1)
+}
+
+defineExpose({ movePreviewQuestion, showLastPreviewQuestion })
+
 const localAnswers = ref(
   Array.isArray(props.postTestAnswer) ? [...props.postTestAnswer] : [],
 )

@@ -28,6 +28,7 @@ export function getStudyRouteBase(study) {
     return 'userTest/moderated'
   }
   if (studyType === STUDY_TYPES.USER) return 'userTest/unmoderated'
+  if (studyType === STUDY_TYPES.CARD_SORTING) return 'cardSorting'
   if (studyType === STUDY_TYPES.FOCUS_GROUP) return 'focusGroup'
 
   return ''
@@ -36,12 +37,23 @@ export function getStudyRouteBase(study) {
 const isFocusGroupStudy = (study) =>
   normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP
 
+export function supportsStudyPreview(study) {
+  const studyType = normalizeStudyType(study?.testType)
+  return (
+    studyType === STUDY_TYPES.HEURISTIC ||
+    studyType === STUDY_TYPES.CARD_SORTING ||
+    (studyType === STUDY_TYPES.USER &&
+      study?.subType !== USER_STUDY_SUBTYPES.MODERATED)
+  )
+}
+
 export function getTestViewAccessRedirect({
   study,
   user,
   token,
   invitation = null,
   redirectTo = '',
+  preview = false,
 }) {
   if (!study) return '/admin'
 
@@ -62,6 +74,13 @@ export function getTestViewAccessRedirect({
    */
   if (!user && !isAnonymousInvitation) {
     return buildSignInPath(redirectTo)
+  }
+
+  if (preview) {
+    if (!hasStudyCapability(study, user, C.DASHBOARD_VIEW)) return '/admin'
+    return supportsStudyPreview(study)
+      ? null
+      : getStudyFallbackPath(study, user, routeBase)
   }
 
   if (isModeratedUserStudy && !token && !study?.isPublic) {
@@ -200,9 +219,17 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: ({ type, id }) => `/${type}/edit/${id}`,
   },
   {
-    title: 'Answer',
+    title: 'Preview',
     group: 'evaluation',
     icon: ICONS.PREVIEW,
+    capability: C.DASHBOARD_VIEW,
+    visible: supportsStudyPreview,
+    path: ({ id }) => `/preview/${id}`,
+  },
+  {
+    title: 'Answer',
+    group: 'evaluation',
+    icon: ICONS.DOCUMENT,
     capability: C.STUDY_ANSWER,
     path: ({ id, previewPath }) => previewPath ?? `/testview/${id}`,
     visible: (study) =>

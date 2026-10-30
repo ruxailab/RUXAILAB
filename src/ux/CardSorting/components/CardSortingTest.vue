@@ -1,5 +1,11 @@
 <template>
-  <div class="session-backdrop">
+  <div
+    class="session-backdrop"
+    :class="{ 'study-preview-start': preview && start }"
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+  >
     <SessionBackdropMark />
 
     <div v-if="showStepAnnouncement" class="step-announcement-container">
@@ -12,10 +18,22 @@
 
     <SubmitDialog
       :model-value="dialog"
-      :title="$t('HeuristicsTestView.messages.submitTest')"
-      :message="$t('HeuristicsTestView.messages.submitOnce')"
+      :title="
+        $t(
+          preview
+            ? 'studyPreview.finish'
+            : 'HeuristicsTestView.messages.submitTest',
+        )
+      "
+      :message="
+        $t(
+          preview
+            ? 'studyPreview.finishMessage'
+            : 'HeuristicsTestView.messages.submitOnce',
+        )
+      "
       :cancel-label="$t('buttons.cancel')"
-      :submit-label="$t('buttons.submit')"
+      :submit-label="$t(preview ? 'studyPreview.exit' : 'buttons.submit')"
       @cancel="dialog = false"
       @submit="handleSubmit"
     />
@@ -216,12 +234,15 @@
 
           <PreTestStep
             v-if="globalIndex === 2 && hasPreTest"
+            ref="preTestStepComponent"
+            :preview="preview"
             :test-title="test.testTitle"
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localAnswer.preTestAnswer"
             :pre-test-completed="localAnswer.preTestCompleted"
             @update:pre-test-answer="(val) => (localAnswer.preTestAnswer = val)"
-            @done="completeStep('preTest')"
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePreTestDone"
           />
 
           <div v-if="globalIndex === 4">
@@ -258,8 +279,12 @@
             v-if="
               hasPostTest &&
               globalIndex === 5 &&
-              (!localAnswer.postTestCompleted || localAnswer.submitted)
+              (preview ||
+                !localAnswer.postTestCompleted ||
+                localAnswer.submitted)
             "
+            ref="postTestStepComponent"
+            :preview="preview"
             :test-title="test.testTitle"
             :post-test="test.testStructure.postTest"
             :post-test-answer="localAnswer.postTestAnswer"
@@ -267,30 +292,53 @@
             @update:post-test-answer="
               (val) => (localAnswer.postTestAnswer = val)
             "
-            @done="completeStep('postTest')"
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePostTestDone"
           />
 
           <FinishStep
             v-if="
               globalIndex === 6 &&
-              localAnswer.postTestCompleted &&
+              (preview || localAnswer.postTestCompleted) &&
               !localAnswer.submitted
             "
             :final-message="$t('finishTest.finalMessage')"
             :congratulations="test.testStructure.finalMessage"
-            :submit-message="$t('finishTest.submitMessage')"
-            :submit-btn="$t('buttons.submit')"
+            :submit-message="
+              $t(
+                preview
+                  ? 'studyPreview.finishMessage'
+                  : 'finishTest.submitMessage',
+              )
+            "
+            :submit-btn="$t(preview ? 'studyPreview.finish' : 'buttons.submit')"
             @submit="dialog = true"
           />
         </v-col>
       </v-row>
     </v-container>
+    <StudyPreviewNavigation
+      v-if="preview"
+      :can-previous="previewStepIndex > 0"
+      :can-next="previewStepIndex < previewSteps.length - 1"
+      @previous="navigatePreview(-1)"
+      @next="navigatePreview(1)"
+    />
   </div>
 </template>
 
 <script setup>
 import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
-import { computed, reactive, ref, onMounted, onBeforeUnmount } from 'vue'
+import {
+  computed,
+  reactive,
+  ref,
+  watch,
+  nextTick,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue'
+import StudyPreviewNavigation from '@/shared/components/StudyPreviewNavigation.vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -308,8 +356,13 @@ import CardSortingEvaluatorAnswer from '../models/CardSortingEvaluatorAnswer'
 import { showError, showSuccess, showInfo } from '@/shared/utils/toast'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import {
+  createStructuredActivityHandlers,
+  structuredValuesForStage,
+} from '@/ux/UserTest/utils/structuredActivity'
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   test: {
     type: Object,
     required: true,
@@ -328,8 +381,8 @@ const {
 } = useStepAnnouncement({ scroll: true })
 
 const user = computed(() => store.getters.user)
-const currentCardSortingAnswer = computed(
-  () => store.getters.currentCardSortingAnswer,
+const currentCardSortingAnswer = computed(() =>
+  props.preview ? null : store.getters.currentCardSortingAnswer,
 )
 
 const fullName = ref('')
@@ -339,6 +392,8 @@ const pendingCards = ref(0)
 const unnamedCategories = ref(0)
 const submitting = ref(false)
 const dialog = ref(false)
+const preTestStepComponent = ref(null)
+const postTestStepComponent = ref(null)
 
 /** Timestamp (ms) when the card sorting task step started. */
 const sortingStartedAt = ref(null)
@@ -355,11 +410,13 @@ const localAnswer = reactive(
 fullName.value = localAnswer.fullName || ''
 if (localAnswer.submitted) start.value = false
 
-// Activity logging records only that the study was opened, consented to and
-// submitted. Card and category names are participant free text and never
+// Activity logging records metadata only: consent, pre/post-test edit and
+// selection activity, when card sorting started and how long it took, and
+// submission. Card and category names are participant free text and never
 // reach logging.
 let studyLogging = null
 const initializeStudyLogging = () => {
+  if (props.preview) return null
   if (studyLogging || !user.value?.id || !props.test?.id) return studyLogging
   studyLogging = createStudyLoggingRuntime({
     ownerUid: user.value.id,
@@ -372,6 +429,46 @@ const initializeStudyLogging = () => {
     void studyLogging.resumeAfterConsent()
   }
   return studyLogging
+}
+
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
+
+const { seedStructuredScope, handleStructuredSelectionChanged } =
+  createStructuredActivityHandlers(initializeStudyLogging)
+
+const STAGE_BY_INDEX = { 2: 'preTest', 5: 'postTest' }
+const seedStage = (stage) =>
+  seedStructuredScope(
+    stage,
+    structuredValuesForStage(
+      stage,
+      props.test?.testStructure?.[stage],
+      localAnswer[`${stage}Answer`],
+    ),
+  )
+
+watch(globalIndex, (index, previous) => {
+  const previousStage = STAGE_BY_INDEX[previous]
+  if (previousStage) {
+    void initializeStudyLogging()?.checkpointStructuredScope(previousStage)
+  }
+  if (STAGE_BY_INDEX[index]) seedStage(STAGE_BY_INDEX[index])
+  if (index === 4) void initializeStudyLogging()?.cardSortStarted()
+})
+
+const handlePreTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('preTest')
+  await completeStep('preTest')
+}
+
+const handlePostTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('postTest')
+  await completeStep('postTest')
 }
 
 const cardSortingConfigurationIssues = computed(() => {
@@ -420,6 +517,10 @@ const truncateDescription = (description) => {
 }
 
 const startTest = () => {
+  if (props.preview) {
+    start.value = false
+    return
+  }
   if (!canStartCardSorting.value) return
 
   if (!localAnswer.testStartedAt) {
@@ -456,6 +557,44 @@ const hasPostTest = computed(() => {
     props.test?.testStructure?.postTest.length > 0
   )
 })
+
+const previewSteps = computed(() => [
+  -1,
+  0,
+  1,
+  ...(hasPreTest.value ? [2] : []),
+  4,
+  ...(hasPostTest.value ? [5] : []),
+  6,
+])
+
+const previewStepIndex = computed(() =>
+  previewSteps.value.indexOf(start.value ? -1 : globalIndex.value),
+)
+
+const navigatePreview = async (direction) => {
+  if (!props.preview) return
+  const questionnaire =
+    globalIndex.value === 2
+      ? preTestStepComponent.value
+      : globalIndex.value === 5
+        ? postTestStepComponent.value
+        : null
+  if (!start.value && questionnaire?.movePreviewQuestion?.(direction)) return
+  const destination = previewSteps.value[previewStepIndex.value + direction]
+  if (destination === undefined) return
+  start.value = destination === -1
+  globalIndex.value = destination === -1 ? 0 : destination
+  dialog.value = false
+  window.scrollTo({ top: 0, behavior: 'auto' })
+  await nextTick()
+  if (direction < 0) {
+    if (destination === 2)
+      preTestStepComponent.value?.showLastPreviewQuestion?.()
+    if (destination === 5)
+      postTestStepComponent.value?.showLastPreviewQuestion?.()
+  }
+}
 
 const welcomeSections = computed(() => {
   const message = props.test?.testStructure?.welcomeMessage
@@ -534,6 +673,7 @@ function buildPostTestAnswer() {
 }
 
 const savePartial = async () => {
+  if (props.preview) return
   if (!user.value) return
   localAnswer.userDocId = user.value.id
   localAnswer.fullName = fullName.value
@@ -607,6 +747,7 @@ const completeStep = async (type) => {
         globalIndex.value = 6
       }
       await savePartial()
+      void initializeStudyLogging()?.cardSortFinished()
       return
     }
 
@@ -634,6 +775,10 @@ const handleSubmit = () => {
 }
 
 const submit = async () => {
+  if (props.preview) {
+    router.push(`/cardSorting/manager/${props.test.id}`)
+    return
+  }
   try {
     submitting.value = true
     localAnswer.submitted = true

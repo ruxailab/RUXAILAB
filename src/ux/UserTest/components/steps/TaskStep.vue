@@ -130,14 +130,9 @@
                     </div>
                   </div>
 
-                  <div
-                    v-if="task?.hasCamRecord"
-                    class="recording-feature-card"
-                  >
+                  <div v-if="task?.hasCamRecord" class="recording-feature-card">
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">
-                        mdi-camera
-                      </v-icon>
+                      <v-icon size="48" color="secondary"> mdi-camera </v-icon>
                     </div>
                     <div class="feature-content">
                       <h4
@@ -501,9 +496,9 @@
               <!-- SUS Form -->
               <div v-if="task?.taskType === 'sus'">
                 <SusForm
-                  @response-changed="onStructuredResponseChanged"
                   v-model="localSusAnswers"
                   :task-index="taskIndex"
+                  @response-changed="onStructuredResponseChanged"
                   @update:model-value="(val) => emit('update:susAnswers', val)"
                 />
               </div>
@@ -513,11 +508,21 @@
                 <nasaTlxForm
                   :nasa-tlx="nasaTlxAnswers"
                   @update:nasa-tlx="onUpdateNasaTlx"
-                  @slider-focus="(event) => onStructuredSlider('nasa-tlx', 'focus', event)"
-                  @slider-start="(event) => onStructuredSlider('nasa-tlx', 'start', event)"
-                  @slider-change="(event) => onStructuredSlider('nasa-tlx', 'change', event)"
-                  @slider-end="(event) => onStructuredSlider('nasa-tlx', 'end', event)"
-                  @slider-blur="(event) => onStructuredSlider('nasa-tlx', 'blur', event)"
+                  @slider-focus="
+                    (event) => onStructuredSlider('nasa-tlx', 'focus', event)
+                  "
+                  @slider-start="
+                    (event) => onStructuredSlider('nasa-tlx', 'start', event)
+                  "
+                  @slider-change="
+                    (event) => onStructuredSlider('nasa-tlx', 'change', event)
+                  "
+                  @slider-end="
+                    (event) => onStructuredSlider('nasa-tlx', 'end', event)
+                  "
+                  @slider-blur="
+                    (event) => onStructuredSlider('nasa-tlx', 'blur', event)
+                  "
                 />
               </div>
 
@@ -526,11 +531,21 @@
                 <sartForm
                   :sart="sartAnswers"
                   @update:sart="onUpdateSart"
-                  @slider-focus="(event) => onStructuredSlider('sart', 'focus', event)"
-                  @slider-start="(event) => onStructuredSlider('sart', 'start', event)"
-                  @slider-change="(event) => onStructuredSlider('sart', 'change', event)"
-                  @slider-end="(event) => onStructuredSlider('sart', 'end', event)"
-                  @slider-blur="(event) => onStructuredSlider('sart', 'blur', event)"
+                  @slider-focus="
+                    (event) => onStructuredSlider('sart', 'focus', event)
+                  "
+                  @slider-start="
+                    (event) => onStructuredSlider('sart', 'start', event)
+                  "
+                  @slider-change="
+                    (event) => onStructuredSlider('sart', 'change', event)
+                  "
+                  @slider-end="
+                    (event) => onStructuredSlider('sart', 'end', event)
+                  "
+                  @slider-blur="
+                    (event) => onStructuredSlider('sart', 'blur', event)
+                  "
                 />
               </div>
 
@@ -538,8 +553,8 @@
               <div v-else-if="task?.taskType === 'tam-1'">
                 <TamForm1
                   v-model="localTamAnswers"
-                  @response-changed="onStructuredResponseChanged"
                   :task-index="taskIndex"
+                  @response-changed="onStructuredResponseChanged"
                   @update:model-value="(val) => emit('update:tamAnswers', val)"
                 />
               </div>
@@ -548,8 +563,8 @@
               <div v-else-if="task?.taskType === 'tam-2'">
                 <TamForm2
                   v-model="localTamAnswers"
-                  @response-changed="onStructuredResponseChanged"
                   :task-index="taskIndex"
+                  @response-changed="onStructuredResponseChanged"
                   @update:model-value="(val) => emit('update:tamAnswers', val)"
                 />
               </div>
@@ -558,8 +573,8 @@
               <div v-else-if="task?.taskType === 'tam-3'">
                 <TamForm3
                   v-model="localTamAnswers"
-                  @response-changed="onStructuredResponseChanged"
                   :task-index="taskIndex"
+                  @response-changed="onStructuredResponseChanged"
                   @update:model-value="(val) => emit('update:tamAnswers', val)"
                 />
               </div>
@@ -640,7 +655,7 @@
       </div>
 
       <AudioRecorder
-        v-if="task?.hasAudioRecord"
+        v-if="!preview && task?.hasAudioRecord"
         ref="audioRecorder"
         :test-id="testId"
         :task-index="taskIndex"
@@ -654,7 +669,7 @@
       />
 
       <ScreenRecorder
-        v-if="task?.hasScreenRecord"
+        v-if="!preview && task?.hasScreenRecord"
         ref="screenRecorder"
         :test-id="testId"
         :task-index="taskIndex"
@@ -665,7 +680,7 @@
       />
 
       <VideoRecorder
-        v-if="task?.hasCamRecord"
+        v-if="!preview && task?.hasCamRecord"
         ref="videoRecorder"
         :test-id="testId"
         :user-doc-id="userDocId"
@@ -701,6 +716,7 @@ import { isReturnToTaskOnlyType } from '@/ux/UserTest/utils/mobileTaskPageState'
 const { t } = useI18n()
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   task: Object,
   taskName: String,
   taskDescription: String,
@@ -1135,7 +1151,7 @@ async function notifyMobileActivation() {
 }
 
 async function startTask() {
-  if (props.task?.hasScreenRecord) {
+  if (!props.preview && props.task?.hasScreenRecord) {
     showScreenSharePrompt.value = true
     return
   }
@@ -1255,6 +1271,7 @@ async function startMediaRecorders({
   skipScreen = false,
   screenOnly = false,
 } = {}) {
+  if (props.preview) return true
   if (screenOnly) {
     if (props.task?.hasScreenRecord && screenRecorder.value) {
       const prepare =
@@ -1403,7 +1420,56 @@ function returnToTaskFromMobile() {
   releaseTaskWindow()
 }
 
-defineExpose({ continueFromAcceptedOutcome, returnToTaskFromMobile })
+const previewTaskSteps = computed(() => [
+  ...previewSteps.value.map((_, previewIndex) => ({ stage: 1, previewIndex })),
+  { stage: 2 },
+  { stage: 3 },
+  ...(hasPostTaskQuestionnaire.value ? [{ stage: 4 }] : []),
+  { stage: 5 },
+])
+
+function setPreviewTaskStep(step) {
+  if (timerInterval) {
+    clearInterval(timerInterval)
+    timerInterval = null
+  }
+  if (finishTimeout) {
+    clearTimeout(finishTimeout)
+    finishTimeout = null
+  }
+  postFlowStarted = false
+  outcomeRequestStarted = false
+  isWaitingForUploadToFinish.value = false
+  taskStartTime = null
+  elapsedTimeDisplay.value = '0:00'
+  stage.value = step.stage
+  previewStepIndex.value = step.previewIndex ?? 0
+}
+
+function movePreviewStep(direction) {
+  if (!props.preview) return false
+  const currentIndex = previewTaskSteps.value.findIndex(
+    (step) =>
+      step.stage === stage.value &&
+      (step.stage !== 1 || step.previewIndex === previewStepIndex.value),
+  )
+  const destination = previewTaskSteps.value[currentIndex + direction]
+  if (!destination) return false
+  setPreviewTaskStep(destination)
+  return true
+}
+
+function showLastPreviewStep() {
+  if (!props.preview) return
+  setPreviewTaskStep(previewTaskSteps.value[previewTaskSteps.value.length - 1])
+}
+
+defineExpose({
+  continueFromAcceptedOutcome,
+  returnToTaskFromMobile,
+  movePreviewStep,
+  showLastPreviewStep,
+})
 
 function emitDoneOrCouldNotFinish(savedTime) {
   if (showPostForm.value.userCompleted) {

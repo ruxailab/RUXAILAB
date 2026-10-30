@@ -6,7 +6,7 @@
         {{ statusText }}
       </span>
       <span v-if="activeSpan" class="timeline-span">
-        {{ activeSpan }} from first to last activity
+        {{ $t('LogExplorer.timeline.activeSpan', { span: activeSpan }) }}
       </span>
     </header>
 
@@ -68,6 +68,7 @@
 
 <script setup>
 import { computed, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   timeline: { type: Object, required: true },
@@ -78,6 +79,8 @@ const props = defineProps({
   mediaTypeLabel: { type: Function, default: (type) => type },
 })
 defineEmits(['select'])
+const { t } = useI18n()
+const L = (key, ...args) => t(`LogExplorer.timeline.${key}`, ...args)
 
 const expanded = reactive(new Set())
 const toggle = (key) =>
@@ -98,77 +101,99 @@ const statusKind = computed(() =>
 // participant is only "in progress".
 const statusText = computed(() =>
   props.timeline.submittedAt
-    ? `Submitted ${props.formatDateTime(props.timeline.submittedAt)}`
-    : `In progress · last activity ${props.formatDateTime(props.timeline.lastActivityAt)}`,
+    ? L('submitted', { date: props.formatDateTime(props.timeline.submittedAt) })
+    : L('inProgress', {
+        date: props.formatDateTime(props.timeline.lastActivityAt),
+      }),
 )
 const activeSpan = computed(() =>
   formatSpan(props.timeline.lastActivityAt - props.timeline.firstActivityAt),
 )
 
-const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`
 const stepTitle = (step) => {
-  const titles = {
-    session: 'Study opened',
-    consent: 'Consent accepted',
-    preTest: 'Pre-test',
-    postTest: 'Post-test',
-    submitted: 'Study submitted',
-    liveSession: 'Live session',
-    other: 'Other activity',
-  }
   if (step.kind === 'task') {
     const type = props.taskTypeLabel(step.summary.taskType)
-    return `Task ${step.index + 1}${type ? ` · ${type}` : ''}`
+    return type
+      ? L('taskWithType', { index: step.index + 1, type })
+      : L('task', { index: step.index + 1 })
   }
-  if (step.kind === 'heuristic') return `Heuristic ${step.index + 1}`
-  return titles[step.kind]
+  if (step.kind === 'heuristic')
+    return L('heuristic', { index: step.index + 1 })
+  return L(`titles.${step.kind}`)
 }
 
-const OUTCOMES = {
-  completed: 'Completed',
-  not_completed: 'Could not finish',
-}
-const RECORDING_MARKS = {
-  completed: 'saved',
-  failed: 'failed',
-  permission_denied: 'not allowed',
-  cancelled: 'cancelled',
-}
+const OUTCOME_KEYS = ['completed', 'not_completed']
+const RECORDING_KEYS = ['completed', 'failed', 'permission_denied', 'cancelled']
 // Inside another step, "Study opened" means the participant came back to the
 // study page (refresh, new tab or rejoin) during that step.
 const rowTitle = (step, event) =>
   event.eventType === 'STUDY_VIEW_OPENED' && step.kind !== 'session'
-    ? 'Returned to study'
+    ? L('returnedToStudy')
     : props.eventPresentation(event).primary
 const stepDetails = (step) =>
   [
     ...summaryDetails(step),
     step.returns &&
-      `Returned ${step.returns === 1 ? 'once' : `${step.returns} times`}`,
+      (step.returns === 1
+        ? L('returnedOnce')
+        : L('returnedTimes', { count: step.returns })),
   ].filter(Boolean)
-const summaryDetails = (step) => {
-  const summary = step.summary
-  if (step.kind === 'session' && summary.opens > 1)
-    return [`Opened ${summary.opens} times`]
-  if (step.kind === 'preTest' || step.kind === 'postTest')
-    return summary.questions
-      ? [`${plural(summary.questions, 'question')} answered`]
-      : []
-  if (step.kind === 'heuristic')
-    return [`${plural(summary.questions, 'question')} updated`]
-  if (step.kind === 'liveSession') return [summary.ended ? 'Ended' : 'Live']
-  if (step.kind !== 'task') return []
-  return [
-    OUTCOMES[summary.outcome] || 'In progress',
+const taskDetails = (summary) =>
+  [
+    L(
+      OUTCOME_KEYS.includes(summary.outcome)
+        ? `outcomes.${summary.outcome}`
+        : 'outcomes.inProgress',
+    ),
     formatSpan(summary.durationMs) &&
-      `task time ${formatSpan(summary.durationMs)}`,
+      L('taskTime', { time: formatSpan(summary.durationMs) }),
     summary.questionnaireUpdates &&
-      plural(summary.questionnaireUpdates, 'questionnaire update'),
+      L(
+        'questionnaireUpdates',
+        { count: summary.questionnaireUpdates },
+        summary.questionnaireUpdates,
+      ),
     ...Object.entries(summary.recordings).map(
       ([type, outcome]) =>
-        `${props.mediaTypeLabel(type)} ${RECORDING_MARKS[outcome] || outcome}`,
+        `${props.mediaTypeLabel(type)} ${
+          RECORDING_KEYS.includes(outcome)
+            ? L(`recordings.${outcome}`)
+            : outcome
+        }`,
     ),
   ].filter(Boolean)
+const stageDetails = (summary) =>
+  summary.questions
+    ? [L('questionsAnswered', { count: summary.questions }, summary.questions)]
+    : []
+const cardSortDetails = (summary) =>
+  summary.durationSeconds === null
+    ? []
+    : [L('sortTime', { time: formatSpan(summary.durationSeconds * 1000) })]
+
+const summaryDetails = (step) => {
+  const summary = step.summary
+  switch (step.kind) {
+    case 'session':
+      return summary.opens > 1
+        ? [L('openedTimes', { count: summary.opens })]
+        : []
+    case 'preTest':
+    case 'postTest':
+      return stageDetails(summary)
+    case 'cardSort':
+      return cardSortDetails(summary)
+    case 'heuristic':
+      return [
+        L('questionsUpdated', { count: summary.questions }, summary.questions),
+      ]
+    case 'liveSession':
+      return [summary.ended ? L('ended') : L('live')]
+    case 'task':
+      return taskDetails(summary)
+    default:
+      return []
+  }
 }
 const stepSpan = (step) => formatSpan(step.endedAt - step.startedAt)
 const statusIcon = (status) =>

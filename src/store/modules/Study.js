@@ -128,6 +128,10 @@ export default {
     },
   },
   actions: {
+    subscribeToCalibration(_, { authId, onCreated }) {
+      return studyController.subscribeToCalibration(authId, onCreated)
+    },
+
     async createStudy({ commit }, payload) {
       commit('setLoading', true)
       try {

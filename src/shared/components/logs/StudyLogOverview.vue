@@ -2,11 +2,10 @@
   <section class="overview" aria-labelledby="log-overview-heading">
     <div class="overview-toolbar">
       <div>
-        <h2 id="log-overview-heading">Overview</h2>
-        <p>
-          Counts describe recorded log evidence, not completion rates or unique
-          people.
-        </p>
+        <h2 id="log-overview-heading">
+          {{ $t('LogExplorer.overviewPanel.title') }}
+        </h2>
+        <p>{{ $t('LogExplorer.overviewPanel.description') }}</p>
       </div>
       <v-btn
         prepend-icon="mdi-refresh"
@@ -15,7 +14,7 @@
         :loading="loading"
         @click="load"
       >
-        Refresh
+        {{ $t('LogExplorer.overviewPanel.refresh') }}
       </v-btn>
     </div>
 
@@ -25,7 +24,10 @@
     </p>
 
     <template v-if="overview">
-      <ul class="kpi-grid" aria-label="Log totals">
+      <ul
+        class="kpi-grid"
+        :aria-label="$t('LogExplorer.overviewPanel.logTotals')"
+      >
         <li v-for="card in cards" :key="card.key">
           <component
             :is="card.filters ? 'button' : 'div'"
@@ -38,7 +40,10 @@
             :data-kpi="card.key"
             :aria-label="
               card.filters
-                ? `${card.label}: ${formatCount(card.value)}. Show in Log Explorer`
+                ? $t('LogExplorer.overviewPanel.showInExplorer', {
+                    label: card.label,
+                    value: formatCount(card.value),
+                  })
                 : undefined
             "
             @click="card.filters && $emit('filter', card.filters)"
@@ -57,7 +62,9 @@
 
       <section class="overview-panel" aria-labelledby="latest-events-heading">
         <div class="panel-heading">
-          <h3 id="latest-events-heading">Latest events</h3>
+          <h3 id="latest-events-heading">
+            {{ $t('LogExplorer.overviewPanel.latestEvents') }}
+          </h3>
           <button
             v-if="overview.latestEvents.length"
             type="button"
@@ -65,7 +72,7 @@
             data-test="view-all-events"
             @click="$emit('filter', {})"
           >
-            View all
+            {{ $t('LogExplorer.overviewPanel.viewAll') }}
             <v-icon size="16" aria-hidden="true">mdi-arrow-right</v-icon>
           </button>
         </div>
@@ -97,7 +104,9 @@
             </button>
           </li>
         </ul>
-        <p v-else class="overview-empty">No activity has been recorded yet.</p>
+        <p v-else class="overview-empty">
+          {{ $t('LogExplorer.overviewPanel.noActivity') }}
+        </p>
       </section>
     </template>
   </section>
@@ -105,6 +114,7 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { db } from '@/app/plugins/firebase'
 import { getStudyLogOverview } from '@/shared/services/studyLogOverview'
 
@@ -113,6 +123,7 @@ const props = defineProps({
   eventPresentation: { type: Function, required: true },
 })
 defineEmits(['filter', 'select'])
+const { t } = useI18n()
 
 const overview = ref(null)
 const loading = ref(false)
@@ -125,45 +136,45 @@ const cards = computed(() => {
   return [
     {
       key: 'sessions',
-      label: 'Sessions',
+      label: t('LogExplorer.overviewPanel.cards.sessions.label'),
       icon: 'mdi-account-multiple-outline',
       value: value.sessions,
-      hint: 'Participant sessions with recorded activity',
+      hint: t('LogExplorer.overviewPanel.cards.sessions.hint'),
       tone: 'neutral',
     },
     {
       key: 'submitted',
-      label: 'Submitted',
+      label: t('LogExplorer.overviewPanel.cards.submitted.label'),
       icon: 'mdi-check-circle-outline',
       value: value.submittedSessions,
-      hint: 'Sessions with a recorded submission',
+      hint: t('LogExplorer.overviewPanel.cards.submitted.hint'),
       tone: 'success',
       filters: { eventType: 'STUDY_SUBMITTED' },
     },
     {
       key: 'events',
-      label: 'Recorded events',
+      label: t('LogExplorer.overviewPanel.cards.events.label'),
       icon: 'mdi-format-list-bulleted',
       value: value.events,
-      hint: 'All accepted log events',
+      hint: t('LogExplorer.overviewPanel.cards.events.hint'),
       tone: 'neutral',
       filters: {},
     },
     {
       key: 'warnings',
-      label: 'Warnings',
+      label: t('LogExplorer.overviewPanel.cards.warnings.label'),
       icon: 'mdi-alert-outline',
       value: value.warnings,
-      hint: 'Includes unfinished tasks and declined recordings',
+      hint: t('LogExplorer.overviewPanel.cards.warnings.hint'),
       tone: 'warning',
       filters: { level: 'warning' },
     },
     {
       key: 'errors',
-      label: 'Errors',
+      label: t('LogExplorer.overviewPanel.cards.errors.label'),
       icon: 'mdi-alert-circle-outline',
       value: value.errors,
-      hint: 'Recording or upload failures',
+      hint: t('LogExplorer.overviewPanel.cards.errors.hint'),
       tone: 'error',
       filters: { level: 'error' },
     },
@@ -192,9 +203,11 @@ const latestLabel = (event) =>
   [
     props.eventPresentation(event).primary,
     latestMeta(event),
-    levelOf(event) === 'info' ? null : `${levelOf(event)} level`,
+    levelOf(event) === 'info'
+      ? null
+      : t('LogExplorer.overviewPanel.levelSuffix', { level: levelOf(event) }),
     `${formatDate(event.occurredAt)} ${formatClock(event.occurredAt)}`,
-    'Open details',
+    t('LogExplorer.overviewPanel.openDetails'),
   ]
     .filter(Boolean)
     .join(', ')
@@ -208,8 +221,7 @@ const load = async () => {
     if (id === loadId) overview.value = result
   } catch {
     if (id === loadId) {
-      errorMessage.value =
-        'The overview could not be loaded. Check your access and try again.'
+      errorMessage.value = t('LogExplorer.overviewPanel.loadError')
     }
   } finally {
     if (id === loadId) loading.value = false

@@ -29,6 +29,14 @@ export const receiveCalibration = functions.onRequest({
         calib_points,
       } = req.body
 
+      logger.info('receiveCalibration payload ids', {
+        session_id,
+        user_id,
+        study_id,
+        fixedPoints: Array.isArray(fixed_points) ? fixed_points.length : null,
+        calibPoints: Array.isArray(calib_points) ? calib_points.length : null,
+      })
+
       if (!session_id) {
         return res.status(400).json({
           error: 'session_id is required',
@@ -68,17 +76,11 @@ export const receiveCalibration = functions.onRequest({
 
       await calibRef.set(calibrationData)
 
-      // Only update the user when a valid userId was provided -  this is used only to reload user doc snapshot
-      if (user_id) {
-        const userDocRef = db.collection('users').doc(user_id)
-        const userDoc = await userDocRef.get()
-
-        if (userDoc.exists) {
-          await userDocRef.update({
-            lastCalibrationId: calibId,
-          })
-        }
-      }
+      logger.info('receiveCalibration saved', {
+        calibId,
+        userId: calibrationData.userId,
+        sessionId: calibrationData.sessionId,
+      })
 
       return res.status(200).json({
         message: 'Calibration saved successfully',

@@ -1,4 +1,15 @@
 {
+  "studyPreview": {
+    "title": "Vista previa",
+    "notice": "Prueba el estudio sin guardar respuestas ni modificar resultados. Las grabaciones, la calibración y la conexión móvil están desactivadas. Los archivos adjuntos solo se mantienen en esta pestaña.",
+    "exit": "Salir de la vista previa",
+    "navigation": "Navegación de la vista previa",
+    "skipHint": "Explora los pasos sin rellenar respuestas.",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "finish": "Finalizar vista previa",
+    "finishMessage": "Esto es una vista previa. Tus respuestas se descartarán y no se enviarán."
+  },
   "language": "Idioma",
   "MobileTask": {
     "waitingTitle": "Esperando el inicio de la tarea",
@@ -548,14 +559,12 @@
     "hoursAgo": "hace {count}h",
     "daysAgo": "hace {count}d",
     "newNotification": "Tienes una nueva notificación.",
-    "notificationsPage": {
-      "types": {
-        "session": "Sesión",
-        "message": "Mensaje",
-        "collaboration": "Colaboración",
-        "notification": "Notificación",
-        "participant": "Participante"
-      }
+    "types": {
+      "session": "Sesión",
+      "message": "Mensaje",
+      "collaboration": "Colaboración",
+      "notification": "Notificación",
+      "participant": "Participante"
     }
   },
   "notifications": {
@@ -745,7 +754,7 @@
       "Session": "Sesión",
       "Sessions": "Sesiónes",
       "Preview": "Vista previa",
-      "Answer": "Responder",
+      "Answer": "Responder estudio",
       "Progress": "Progreso",
       "Results": "Resultados",
       "Analytics": "Análisis",
@@ -2542,7 +2551,7 @@
     "usetemplate": "¿Cómo uso una plantilla?",
     "usetemplateanswer": "Para utilizar una plantilla, ve a la página de Estudios. En la sección de Crear Plantillas, encontrarás tus plantillas personales. Además, puedes explorar plantillas públicas.",
     "previewtest": "¿Cómo previsualizo mi estudio?",
-    "previewtestanswer": "En la barra lateral izquierda, haz clic en la opción 'Vista previa', luego inicia el estudio respondiendo las preguntas y finalmente haz clic en el botón de la esquina inferior derecha para guardar y enviar la vista previa, que luego podrá ser analizada en la sección 'Respuestas'.",
+    "previewtestanswer": "En el menú lateral del estudio, haz clic en 'Vista previa' para probar el estudio sin guardar respuestas ni modificar resultados. Al salir o finalizar se descartan las respuestas temporales. Usa 'Responder estudio' para enviar una respuesta real.",
     "importcsv": "¿Cómo importo mi archivo CSV?",
     "importcsvanswer": "Para importar tu archivo CSV, ve a la sección 'Editar Estudio' y haz clic en el botón 'ACTUALIZAR'. Luego, selecciona tu archivo CSV que contiene las heurísticas.",
     "invitecooperators": "¿Cómo invito a colaboradores?",
@@ -4361,6 +4370,134 @@
       "completed": "Completada",
       "ended": "Finalizada",
       "unknown": "Desconocido"
+    }
+  },
+  "LogExplorer": {
+    "title": "Explorador de registros",
+    "subtitle": "Actividad del estudio y trazabilidad de entrega",
+    "events": "{count} evento | {count} eventos",
+    "timesShownIn": "Horas mostradas en {timezone}",
+    "deliveryNotice": "El envío de la actividad es asíncrono y puede retrasarse o estar incompleto.",
+    "logView": "Vista de registros",
+    "overview": "Resumen",
+    "allEvents": "Todos los eventos",
+    "participantTimeline": "Línea de tiempo del participante",
+    "participant": "Participante",
+    "refresh": "Actualizar",
+    "noParticipantSelected": "Ningún participante seleccionado",
+    "chooseParticipant": "Elige un participante para ver su actividad paso a paso.",
+    "filters": "Filtros",
+    "activeFilters": "{count} activos",
+    "hide": "Ocultar",
+    "show": "Mostrar",
+    "activity": "Actividad",
+    "eventType": "Tipo de evento",
+    "level": "Nivel",
+    "source": "Origen",
+    "dateRange": "Rango de fechas",
+    "fromDate": "Desde",
+    "throughDate": "Hasta",
+    "applyFilters": "Aplicar filtros",
+    "clear": "Limpiar",
+    "recordedActivity": "Actividad registrada",
+    "updatedAt": "Actualizado {time}",
+    "occurrence": "Ocurrencia",
+    "event": "Evento",
+    "openDetails": "Abrir detalles",
+    "noActivityFound": "No se encontró actividad",
+    "noEventsMatch": "Ningún evento coincide con los filtros aplicados.",
+    "rows": "Filas",
+    "previousPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "eventDetails": "Detalles del evento",
+    "closeDetails": "Cerrar detalles",
+    "browserTime": "Hora del navegador",
+    "occurred": "Ocurrió",
+    "taskStartedNote": "El cliente del estudio informa cuándo se abrió la pantalla de la tarea activa. Esto es evidencia de entrada a la tarea, no de interacción. Los errores del reloj del navegador pueden desordenar los eventos, así que no calcules la duración de la tarea con esta hora.",
+    "clientTimeNote": "Esta hora proviene del navegador del participante y puede ser inexacta o estar fuera de orden. La hora de recepción del servidor, más abajo, muestra cuándo llegó el evento, no cuándo actuó el participante.",
+    "selectedAnswers": "Respuestas seleccionadas",
+    "questionnaireActivity": "Actividad del cuestionario",
+    "structuredCountsNote": "Los conteos muestran cuántas veces cambió cada respuesta en este registro. Las respuestas seleccionadas y los valores de los controles deslizantes permanecen en Resultados.",
+    "updatesInRecord": "{count} actualización en este registro | {count} actualizaciones en este registro",
+    "answerEditedNote": "Los registros capturan la actividad de edición, no las respuestas escritas ni las calificaciones seleccionadas; revisa las respuestas y puntuaciones en Resultados. El tiempo activo de edición es tiempo de entrada del navegador, no el tiempo total dedicado a la pregunta.",
+    "questionResponseNote": "Una actualización agrupa los cambios hechos durante la misma interacción con la pregunta. Las calificaciones seleccionadas, las puntuaciones y el texto de los comentarios nunca se registran; revisa las respuestas en Resultados.",
+    "taskDurationNote": "La actividad cronometrada de la tarea puede excluir una etapa de cuestionario, por lo que no es la duración completa de la tarea.",
+    "serverReceipt": "Recepción del servidor",
+    "receivedByServer": "Recibido por el servidor",
+    "timeline": {
+      "activeSpan": "{span} desde la primera hasta la última actividad",
+      "submitted": "Enviado {date}",
+      "inProgress": "En curso · última actividad {date}",
+      "titles": {
+        "session": "Estudio abierto",
+        "consent": "Consentimiento aceptado",
+        "preTest": "Pre-test",
+        "postTest": "Post-test",
+        "submitted": "Estudio enviado",
+        "cardSort": "Card sorting",
+        "liveSession": "Sesión en vivo",
+        "other": "Otra actividad"
+      },
+      "task": "Tarea {index}",
+      "taskWithType": "Tarea {index} · {type}",
+      "heuristic": "Heurística {index}",
+      "outcomes": {
+        "completed": "Completada",
+        "not_completed": "No pudo terminar",
+        "inProgress": "En curso"
+      },
+      "recordings": {
+        "completed": "guardada",
+        "failed": "falló",
+        "permission_denied": "no permitida",
+        "cancelled": "cancelada"
+      },
+      "returnedToStudy": "Volvió al estudio",
+      "returnedOnce": "Volvió una vez",
+      "returnedTimes": "Volvió {count} veces",
+      "openedTimes": "Abierto {count} veces",
+      "questionsAnswered": "{count} pregunta respondida | {count} preguntas respondidas",
+      "questionsUpdated": "{count} pregunta actualizada | {count} preguntas actualizadas",
+      "ended": "Finalizada",
+      "live": "En vivo",
+      "sortTime": "tiempo de clasificación {time}",
+      "taskTime": "tiempo de tarea {time}",
+      "questionnaireUpdates": "{count} actualización del cuestionario | {count} actualizaciones del cuestionario"
+    },
+    "overviewPanel": {
+      "title": "Resumen",
+      "description": "Los conteos describen la evidencia registrada en los logs, no tasas de finalización ni personas únicas.",
+      "refresh": "Actualizar",
+      "logTotals": "Totales de registros",
+      "showInExplorer": "{label}: {value}. Mostrar en el explorador de registros",
+      "latestEvents": "Últimos eventos",
+      "viewAll": "Ver todo",
+      "noActivity": "Aún no se ha registrado actividad.",
+      "levelSuffix": "nivel {level}",
+      "openDetails": "Abrir detalles",
+      "loadError": "No se pudo cargar el resumen. Verifica tu acceso e inténtalo de nuevo.",
+      "cards": {
+        "sessions": {
+          "label": "Sesiones",
+          "hint": "Sesiones de participantes con actividad registrada"
+        },
+        "submitted": {
+          "label": "Enviados",
+          "hint": "Sesiones con un envío registrado"
+        },
+        "events": {
+          "label": "Eventos registrados",
+          "hint": "Todos los eventos de registro aceptados"
+        },
+        "warnings": {
+          "label": "Advertencias",
+          "hint": "Incluye tareas sin terminar y grabaciones rechazadas"
+        },
+        "errors": {
+          "label": "Errores",
+          "hint": "Fallos de grabación o de carga"
+        }
+      }
     }
   }
 }

@@ -1,4 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { config, flushPromises, mount } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
+import en from '@/app/plugins/locales/en.json'
 import { useDisplay } from 'vuetify'
 import LogsView from '@/shared/views/LogsView.vue'
 import {
@@ -6,6 +8,10 @@ import {
   getStudyLogCount,
   getStudyLogPage,
 } from '@/shared/services/studyLogQuery'
+
+config.global.plugins = [
+  createI18n({ legacy: false, locale: 'en', messages: { en } }),
+]
 
 jest.mock('vuetify', () => ({
   useDisplay: jest.fn(() => ({ smAndDown: false, xs: { value: false } })),

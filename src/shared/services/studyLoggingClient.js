@@ -113,7 +113,9 @@ export const sweepExpiredStudyLogging = async (
 }
 
 const sanitizeDetails = (eventType, details) => {
-  if (eventType === 'STUDY_VIEW_OPENED') return {}
+  if (eventType === 'STUDY_VIEW_OPENED' || eventType === 'CARD_SORT_STARTED') {
+    return {}
+  }
   if (eventType === 'TASK_STARTED') {
     const keys = Object.keys(details || {})
     const match = /^task:(0|[1-9]\d*)$/.exec(details?.taskRef || '')
@@ -766,8 +768,9 @@ export const createStructuredResponseTracker = ({
     checkpointDirtyScopes() {
       return Promise.all(
         [...scopes.entries()]
-          .filter(([, state]) =>
-            state.dirty.size || state.inFlight || state.episodes.size,
+          .filter(
+            ([, state]) =>
+              state.dirty.size || state.inFlight || state.episodes.size,
           )
           .map(([scopeRef]) => checkpoint(scopeRef)),
       )
