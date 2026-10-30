@@ -1,4 +1,15 @@
 {
+  "studyPreview": {
+    "title": "Preview",
+    "notice": "Try the study without saving answers or changing results. Recording, calibration and mobile pairing are disabled. Attachments stay in this tab.",
+    "exit": "Exit preview",
+    "navigation": "Preview navigation",
+    "skipHint": "Explore the steps without filling in answers.",
+    "previous": "Previous",
+    "next": "Next",
+    "finish": "Finish preview",
+    "finishMessage": "This was a preview. Your answers will be discarded, not submitted."
+  },
   "language": "Language",
   "MobileTask": {
     "waitingTitle": "Waiting for the task to start",
@@ -744,7 +755,7 @@
       "Session": "Session",
       "Sessions": "Sessions",
       "Preview": "Preview",
-      "Answer": "Answer",
+      "Answer": "Answer Study",
       "Progress": "Progress",
       "Results": "Results",
       "Analytics": "Analytics",
@@ -2629,7 +2640,7 @@
     "usetemplate": "How to use a template?",
     "usetemplateanswer": "To utilize a template, navigate to the Studies page. Under the Create Templates section, you'll find your personal templates. Additionally, you can explore public templates.",
     "previewtest": "How to preview your Study?",
-    "previewtestanswer": "On the leftside bar, click on the 'Preview' option then start the study answering the questions & finally clicking the bottom right button to save and submit the preview which can be later analysed in the 'Answers' section.",
+    "previewtestanswer": "In the study sidebar, click 'Preview' to try the study without saving answers or changing results. Exit or finish the preview to discard your temporary answers. Use 'Answer Study' to submit a real response.",
     "importcsv": "How to import my CSV?",
     "importcsvanswer": "To import your CSV, navigate to the 'Edit Study' section, then click the 'UPDATE' button. Select your CSV file containing the heuristics.",
     "invitecooperators": "How to invite cooperators?",

@@ -13,6 +13,13 @@ import MobileTaskView from '@/views/public/MobileTaskView.vue'
 
 export default [
   {
+    path: '/preview/:id',
+    name: 'StudyPreview',
+    props: (route) => ({ id: route.params.id, preview: true }),
+    meta: { authorize: [], layout: 'no-toolbar' },
+    component: TestView,
+  },
+  {
     path: '/testview/:id/:token?',
     name: 'TestView',
     props: true,

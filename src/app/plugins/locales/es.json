@@ -1,4 +1,15 @@
 {
+  "studyPreview": {
+    "title": "Vista previa",
+    "notice": "Prueba el estudio sin guardar respuestas ni modificar resultados. Las grabaciones, la calibración y la conexión móvil están desactivadas. Los archivos adjuntos solo se mantienen en esta pestaña.",
+    "exit": "Salir de la vista previa",
+    "navigation": "Navegación de la vista previa",
+    "skipHint": "Explora los pasos sin rellenar respuestas.",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "finish": "Finalizar vista previa",
+    "finishMessage": "Esto es una vista previa. Tus respuestas se descartarán y no se enviarán."
+  },
   "language": "Idioma",
   "MobileTask": {
     "waitingTitle": "Esperando el inicio de la tarea",
@@ -745,7 +756,7 @@
       "Session": "Sesión",
       "Sessions": "Sesiónes",
       "Preview": "Vista previa",
-      "Answer": "Responder",
+      "Answer": "Responder estudio",
       "Progress": "Progreso",
       "Results": "Resultados",
       "Analytics": "Análisis",
@@ -2542,7 +2553,7 @@
     "usetemplate": "¿Cómo uso una plantilla?",
     "usetemplateanswer": "Para utilizar una plantilla, ve a la página de Estudios. En la sección de Crear Plantillas, encontrarás tus plantillas personales. Además, puedes explorar plantillas públicas.",
     "previewtest": "¿Cómo previsualizo mi estudio?",
-    "previewtestanswer": "En la barra lateral izquierda, haz clic en la opción 'Vista previa', luego inicia el estudio respondiendo las preguntas y finalmente haz clic en el botón de la esquina inferior derecha para guardar y enviar la vista previa, que luego podrá ser analizada en la sección 'Respuestas'.",
+    "previewtestanswer": "En el menú lateral del estudio, haz clic en 'Vista previa' para probar el estudio sin guardar respuestas ni modificar resultados. Al salir o finalizar se descartan las respuestas temporales. Usa 'Responder estudio' para enviar una respuesta real.",
     "importcsv": "¿Cómo importo mi archivo CSV?",
     "importcsvanswer": "Para importar tu archivo CSV, ve a la sección 'Editar Estudio' y haz clic en el botón 'ACTUALIZAR'. Luego, selecciona tu archivo CSV que contiene las heurísticas.",
     "invitecooperators": "¿Cómo invito a colaboradores?",

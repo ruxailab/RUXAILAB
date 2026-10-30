@@ -72,7 +72,10 @@ const createRuntime = () => ({
   destroy: jest.fn(),
 })
 
-const mountView = (answer = {}, { dispatch } = {}) => {
+const mountView = (
+  answer = {},
+  { dispatch, preview = false, study = test, inspectSteps = false } = {},
+) => {
   useStore.mockReturnValue({
     getters: {
       user: { id: 'participant' },
@@ -82,8 +85,17 @@ const mountView = (answer = {}, { dispatch } = {}) => {
     dispatch: dispatch || jest.fn(() => Promise.resolve()),
   })
   return shallowMount(CardSortingTest, {
-    props: { test },
-    global: { mocks: { $t: (key) => key } },
+    props: { test: study, preview },
+    global: {
+      mocks: { $t: (key) => key },
+      stubs: inspectSteps
+        ? {
+            PreTestStep: false,
+            PostTestStep: false,
+            ShowInfo: { template: '<div><slot name="content" /></div>' },
+          }
+        : {},
+    },
   })
 }
 
@@ -104,8 +116,134 @@ describe('CardSortingTest activity logging', () => {
   let runtime
 
   beforeEach(() => {
+    window.scrollTo = jest.fn()
     runtime = createRuntime()
     createStudyLoggingRuntime.mockReset().mockReturnValue(runtime)
+  })
+
+  it.each([false, true])(
+    'previews every stage without allocating cards or completing answers (questionnaires: %s)',
+    async (withQuestionnaires) => {
+      const dispatch = jest.fn()
+      const study = {
+        ...test,
+        testStructure: {
+          ...test.testStructure,
+          preTest: withQuestionnaires
+            ? [{ title: 'Pre 1' }, { title: 'Pre 2' }]
+            : [],
+          postTest: withQuestionnaires
+            ? [{ title: 'Post 1' }, { title: 'Post 2' }]
+            : [],
+        },
+      }
+      const wrapper = mountView(
+        {},
+        { dispatch, preview: true, study, inspectSteps: true },
+      )
+      await flushPromises()
+      const vm = wrapper.vm
+      const originalSorting = JSON.stringify(vm.localAnswer.sorting)
+      const nav = () =>
+        wrapper.findComponent({ name: 'StudyPreviewNavigation' })
+      const next = async () => {
+        nav().vm.$emit('next')
+        await flushPromises()
+      }
+      const previous = async () => {
+        nav().vm.$emit('previous')
+        await flushPromises()
+      }
+      expect(nav().props('canPrevious')).toBe(false)
+      await previous()
+      expect(vm.start).toBe(true)
+      await next()
+      expect(vm.globalIndex).toBe(0)
+      await next()
+      expect(vm.globalIndex).toBe(1)
+      await next()
+      if (withQuestionnaires) {
+        expect(vm.globalIndex).toBe(2)
+        await next()
+        expect(
+          wrapper.findComponent({ name: 'PreTestStep' }).vm.$.setupState.step,
+        ).toBe(1)
+        await next()
+      }
+      expect(vm.globalIndex).toBe(4)
+      wrapper
+        .findComponent({ name: 'CardSortingTask' })
+        .vm.$emit('update:pending', 1)
+      await next()
+      if (withQuestionnaires) {
+        expect(vm.globalIndex).toBe(5)
+        await next()
+        expect(
+          wrapper.findComponent({ name: 'PostTestStep' }).vm.$.setupState.step,
+        ).toBe(1)
+        await next()
+      }
+      expect(wrapper.findComponent({ name: 'FinishStep' }).exists()).toBe(true)
+      expect(nav().props('canNext')).toBe(false)
+      await next()
+      expect(vm.globalIndex).toBe(6)
+      expect(vm.localAnswer.consentCompleted).toBe(false)
+      expect(vm.localAnswer.preTestCompleted).toBe(false)
+      expect(vm.localAnswer.postTestCompleted).toBe(false)
+      expect(JSON.stringify(vm.localAnswer.sorting)).toBe(originalSorting)
+      await previous()
+      if (withQuestionnaires) {
+        const post = wrapper.findComponent({ name: 'PostTestStep' })
+        expect(post.vm.$.setupState.step).toBe(1)
+        await previous()
+        expect(post.vm.$.setupState.step).toBe(0)
+        await previous()
+      }
+      expect(vm.globalIndex).toBe(4)
+      while (nav().props('canPrevious')) await previous()
+      expect(vm.start).toBe(true)
+      expect(dispatch).not.toHaveBeenCalled()
+      expect(createStudyLoggingRuntime).not.toHaveBeenCalled()
+      wrapper.unmount()
+    },
+  )
+
+  it('does not expose preview controls or bypass stages in Answer', async () => {
+    const wrapper = mountView()
+    await flushPromises()
+    expect(
+      wrapper.findComponent({ name: 'StudyPreviewNavigation' }).exists(),
+    ).toBe(false)
+    await wrapper.vm.navigatePreview(1)
+    expect(wrapper.vm.start).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('uses temporary answers in preview without saving or logging consent and submission', async () => {
+    const dispatch = jest.fn()
+    const answer = {
+      submitted: true,
+      consentCompleted: true,
+      fullName: 'Real response',
+    }
+    const wrapper = mountView(answer, { dispatch, preview: true })
+    await flushPromises()
+    expect(wrapper.vm.localAnswer.submitted).toBe(false)
+    expect(wrapper.vm.fullName).toBe('')
+    await reachConsentStep(wrapper)
+    wrapper.findComponent({ name: 'ConsentStep' }).vm.$emit('continue')
+    await flushPromises()
+    expect(wrapper.vm.localAnswer.consentCompleted).toBe(true)
+    wrapper.findComponent({ name: 'SubmitDialog' }).vm.$emit('submit')
+    await flushPromises()
+    wrapper.unmount()
+    expect(dispatch).not.toHaveBeenCalled()
+    expect(createStudyLoggingRuntime).not.toHaveBeenCalled()
+    expect(answer).toEqual({
+      submitted: true,
+      consentCompleted: true,
+      fullName: 'Real response',
+    })
   })
 
   it('creates a consent-gated card sorting runtime and waits for consent', async () => {
@@ -149,9 +287,10 @@ describe('CardSortingTest activity logging', () => {
   })
 
   it('does not report consent when saving it fails', async () => {
-    const dispatch = jest.fn(() => Promise.reject(new Error('offline')))
+    const dispatch = jest.fn(() => Promise.resolve())
     const wrapper = mountView({}, { dispatch })
     await reachConsentStep(wrapper)
+    dispatch.mockRejectedValueOnce(new Error('offline'))
 
     wrapper.findComponent({ name: 'ConsentStep' }).vm.$emit('continue')
     await flushPromises()

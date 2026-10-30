@@ -233,6 +233,7 @@
           :question-index="questionIndex"
           :test-id="testIdForImage"
           :disable="disable"
+          :preview="preview"
           @image-uploaded="handleImageUploaded"
         />
       </v-col>
@@ -298,6 +299,7 @@ import { useCommentImage } from '@/ux/Heuristic/composables/useCommentImage'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   answerHeu: { type: Object, default: () => ({}), required: true },
   heurisIndex: { type: Number, default: 0 },
   questionIndex: { type: Number, default: 0 },

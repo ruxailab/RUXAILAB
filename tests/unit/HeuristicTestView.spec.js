@@ -7,6 +7,7 @@ import HeuristicTestView from '@/ux/Heuristic/views/HeuristicTestView.vue'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
 import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswerStep.vue'
 import HeuristicsSettings from '@/ux/Heuristic/components/HeuristicsSettings.vue'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 jest.mock('vue-router', () => ({
   useRouter: jest.fn(),
@@ -97,6 +98,209 @@ describe('HeuristicTestView', () => {
 
   afterEach(() => {
     jest.useRealTimers()
+  })
+
+  it.each([false, true])(
+    'browses empty heuristics, questions and final submission without validation (preview: %s)',
+    async (preview) => {
+      const study = {
+        id: 'study-1',
+        testType: 'HEURISTIC',
+        testTitle: 'Study',
+        testAdmin: { userDocId: 'owner' },
+        testOptions: [{ text: 'Yes', value: 1 }],
+        studyMode: 'detailed',
+        testStructure: [
+          {
+            id: 0,
+            title: 'First',
+            questions: [
+              { id: 0, title: 'Question 1' },
+              { id: 1, title: 'Question 2' },
+            ],
+          },
+          {
+            id: 1,
+            title: 'Second',
+            questions: [
+              { id: 0, title: 'Question 3' },
+              { id: 1, title: 'Question 4' },
+            ],
+          },
+        ],
+      }
+      const store = {
+        getters: {
+          test: study,
+          user: { id: 'owner' },
+          currentUserTestAnswer: new HeuristicAnswer({ userDocId: 'owner' }),
+        },
+        dispatch: jest.fn().mockResolvedValue(study),
+        commit: jest.fn(),
+      }
+      useStore.mockReturnValue(store)
+      const wrapper = shallowMount(HeuristicTestView, {
+        props: { id: study.id, preview },
+        global: {
+          mocks: { $t: (key) => key },
+          stubs: { HeuristicAnswerStep: false },
+        },
+      })
+      await flushPromises()
+      const vm = wrapper.vm
+      if (!preview) {
+        expect(
+          wrapper.findComponent({ name: 'StudyPreviewNavigation' }).exists(),
+        ).toBe(false)
+        await vm.navigatePreview(1)
+        expect(vm.start).toBe(true)
+        wrapper.unmount()
+        return
+      }
+      const originalAnswers = JSON.stringify(
+        vm.currentUserTestAnswer.heuristicQuestions,
+      )
+      const nav = () =>
+        wrapper.findComponent({ name: 'StudyPreviewNavigation' })
+      const next = async () => {
+        nav().vm.$emit('next')
+        await flushPromises()
+      }
+      const previous = async () => {
+        nav().vm.$emit('previous')
+        await flushPromises()
+      }
+      expect(nav().props('canPrevious')).toBe(false)
+      await previous()
+      expect(vm.previewStepIndex).toBe(0)
+      await next()
+      expect(vm.previewStepIndex).toBe(1)
+      await next()
+      expect(
+        wrapper.findComponent({ name: 'HeuristicCardsStep' }).exists(),
+      ).toBe(true)
+      await next()
+      const answer = () =>
+        wrapper.findComponent(HeuristicAnswerStep).vm.$.setupState
+      expect(vm.heurisIndex).toBe(0)
+      expect(answer().currentQuestionIndex).toBe(0)
+      await next()
+      expect(answer().currentQuestionIndex).toBe(1)
+      await previous()
+      expect(answer().currentQuestionIndex).toBe(0)
+      await next()
+      await next()
+      expect(vm.heurisIndex).toBe(1)
+      expect(answer().currentQuestionIndex).toBe(0)
+      await next()
+      expect(answer().currentQuestionIndex).toBe(1)
+      await next()
+      expect(wrapper.findComponent({ name: 'FinishStep' }).exists()).toBe(true)
+      expect(vm.calculatedProgress).toBe(0)
+      expect(nav().props('canNext')).toBe(false)
+      await next()
+      expect(vm.previewStepIndex).toBe(5)
+      await previous()
+      expect(vm.heurisIndex).toBe(1)
+      expect(answer().currentQuestionIndex).toBe(1)
+      await previous()
+      await previous()
+      expect(vm.heurisIndex).toBe(0)
+      expect(answer().currentQuestionIndex).toBe(1)
+      while (nav().props('canPrevious')) await previous()
+      expect(vm.start).toBe(true)
+      expect(vm.previewStepIndex).toBe(0)
+      expect(JSON.stringify(vm.currentUserTestAnswer.heuristicQuestions)).toBe(
+        originalAnswers,
+      )
+      jest.runOnlyPendingTimers()
+      expect(store.dispatch.mock.calls.map(([action]) => action)).toEqual([
+        'getStudy',
+      ])
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).not.toHaveBeenCalled()
+      wrapper.unmount()
+    },
+  )
+
+  it('discards preview answers without reading, autosaving, submitting or logging real responses', async () => {
+    const savedAnswer = new HeuristicAnswer({
+      userDocId: 'owner',
+      submitted: true,
+      progress: 100,
+      heuristicQuestions: [
+        {
+          heuristicId: 0,
+          heuristicQuestions: [{ heuristicComment: 'Real response' }],
+        },
+      ],
+    })
+    const original = JSON.stringify(savedAnswer)
+    const study = {
+      id: 'study-1',
+      testType: 'HEURISTIC',
+      testTitle: 'Study',
+      testAdmin: { userDocId: 'owner' },
+      testOptions: [{ text: 'Yes', value: 1 }],
+      studyMode: 'detailed',
+      useFrequency: false,
+      useSeverity: false,
+      testStructure: [
+        {
+          id: 0,
+          title: 'Heuristic',
+          questions: [{ id: 0, title: 'Question' }],
+        },
+      ],
+    }
+    const store = {
+      getters: {
+        test: study,
+        user: { id: 'owner' },
+        currentUserTestAnswer: savedAnswer,
+      },
+      dispatch: jest.fn().mockResolvedValue(study),
+      commit: jest.fn(),
+    }
+    useStore.mockReturnValue(store)
+    const listener = jest.spyOn(window, 'addEventListener')
+    const wrapper = shallowMount(HeuristicTestView, {
+      props: { id: study.id, preview: true },
+      global: { mocks: { $t: (key) => key } },
+    })
+    await flushPromises()
+    expect(wrapper.vm.currentUserTestAnswer.submitted).toBe(false)
+    expect(
+      wrapper.vm.currentUserTestAnswer.heuristicQuestions[0]
+        .heuristicQuestions[0].heuristicComment,
+    ).toBe('')
+    expect(
+      listener.mock.calls.some(([event]) => event === 'beforeunload'),
+    ).toBe(false)
+    wrapper.vm.updateHeuristicAnswer(0, 0, {
+      mode: 'customOptions',
+      value: 1,
+      text: 'Yes',
+    })
+    expect(wrapper.vm.calculatedProgress).toBe(100)
+    jest.advanceTimersByTime(2000)
+    await wrapper.vm.autoSaveAnswer()
+    await wrapper.vm.manualSaveAnswer()
+    await wrapper.vm.submitAnswer()
+    expect(useRouter().push).toHaveBeenCalledWith('/heuristic/manager/study-1')
+    window.dispatchEvent(new Event('beforeunload'))
+    wrapper.unmount()
+    jest.runOnlyPendingTimers()
+    await flushPromises()
+    expect(store.dispatch.mock.calls.map(([action]) => action)).toEqual([
+      'getStudy',
+    ])
+    expect(
+      FirebaseFunctionsController.callHttpsCallableFunction,
+    ).not.toHaveBeenCalled()
+    expect(JSON.stringify(savedAnswer)).toBe(original)
+    listener.mockRestore()
   })
 
   it('keeps custom option value and timestamp when emitting answer payloads', async () => {

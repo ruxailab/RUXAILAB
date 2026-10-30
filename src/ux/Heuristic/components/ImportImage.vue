@@ -44,6 +44,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { showError } from '@/shared/utils/toast'
 import {
   getStorage,
   ref as storageRef,
@@ -52,6 +53,7 @@ import {
 } from 'firebase/storage'
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   heuristicId: {
     type: String,
     default: '',
@@ -86,8 +88,8 @@ const inputId = computed(
   () => `image-evidence-${props.heuristicId}-${props.questionId}`,
 )
 
-const currentUserTestAnswer = computed(
-  () => store.getters.currentUserTestAnswer,
+const currentUserTestAnswer = computed(() =>
+  props.preview ? null : store.getters.currentUserTestAnswer,
 )
 
 const findImageUrl = () => {
@@ -142,6 +144,22 @@ const uploadSelectedFile = async (file, index = 0) => {
     if (!file) {
       return
     }
+    if (props.preview) {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = () => reject(reader.error)
+        reader.readAsDataURL(file)
+      })
+      emit(
+        'imageUploaded',
+        dataUrl,
+        { name: file.name, size: file.size, type: file.type },
+        sourceHeuristicIndex,
+        sourceQuestionIndex,
+      )
+      return
+    }
     const storage = getStorage()
     const storagePath = `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${uniqueStorageName(file, index)}`
     const storageReference = storageRef(storage, storagePath)
@@ -161,6 +179,7 @@ const uploadSelectedFile = async (file, index = 0) => {
       sourceQuestionIndex,
     )
   } catch (error) {
+    showError('HeuristicsTable.ImportImage.uploadError')
     emit('imageUploaded', null, error)
   }
 }

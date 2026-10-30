@@ -138,11 +138,26 @@ import { ref, computed, watch } from 'vue'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   testTitle: String,
   preTest: Array,
   preTestAnswer: Array,
   preTestCompleted: Boolean,
 })
+
+const movePreviewQuestion = (direction) => {
+  if (!props.preview) return false
+  const nextStep = step.value + direction
+  if (nextStep < 0 || nextStep >= (props.preTest?.length ?? 0)) return false
+  step.value = nextStep
+  return true
+}
+
+const showLastPreviewQuestion = () => {
+  if (props.preview) step.value = Math.max(0, (props.preTest?.length ?? 0) - 1)
+}
+
+defineExpose({ movePreviewQuestion, showLastPreviewQuestion })
 
 const emit = defineEmits(['done', 'update:preTestAnswer', 'selection-changed'])
 
