@@ -263,6 +263,7 @@ import autoTable from 'jspdf-autotable'
 import { QuillEditor } from '@vueup/vue-quill'
 
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
+import logoFull from '@/assets/logo_full.png'
 
 /* ---------------------- Props ---------------------- */
 const props = defineProps({
@@ -535,7 +536,7 @@ async function downloadPdf() {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
 
   // === Logo (load once) ===
-  const logo = await loadLogo('/brand/logo_full.png', 10) // target height = 10pt
+  const logo = await loadLogo(logoFull, 10) // target height = 10pt
 
   // THEME
   const M = 48 // margin
