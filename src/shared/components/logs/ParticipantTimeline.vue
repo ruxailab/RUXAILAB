@@ -138,32 +138,8 @@ const stepDetails = (step) =>
         ? L('returnedOnce')
         : L('returnedTimes', { count: step.returns })),
   ].filter(Boolean)
-const summaryDetails = (step) => {
-  const summary = step.summary
-  if (step.kind === 'session' && summary.opens > 1)
-    return [L('openedTimes', { count: summary.opens })]
-  if (step.kind === 'preTest' || step.kind === 'postTest')
-    return summary.questions
-      ? [
-          L(
-            'questionsAnswered',
-            { count: summary.questions },
-            summary.questions,
-          ),
-        ]
-      : []
-  if (step.kind === 'cardSort')
-    return summary.durationSeconds === null
-      ? []
-      : [L('sortTime', { time: formatSpan(summary.durationSeconds * 1000) })]
-  if (step.kind === 'heuristic')
-    return [
-      L('questionsUpdated', { count: summary.questions }, summary.questions),
-    ]
-  if (step.kind === 'liveSession')
-    return [summary.ended ? L('ended') : L('live')]
-  if (step.kind !== 'task') return []
-  return [
+const taskDetails = (summary) =>
+  [
     L(
       OUTCOME_KEYS.includes(summary.outcome)
         ? `outcomes.${summary.outcome}`
@@ -186,6 +162,38 @@ const summaryDetails = (step) => {
         }`,
     ),
   ].filter(Boolean)
+const stageDetails = (summary) =>
+  summary.questions
+    ? [L('questionsAnswered', { count: summary.questions }, summary.questions)]
+    : []
+const cardSortDetails = (summary) =>
+  summary.durationSeconds === null
+    ? []
+    : [L('sortTime', { time: formatSpan(summary.durationSeconds * 1000) })]
+
+const summaryDetails = (step) => {
+  const summary = step.summary
+  switch (step.kind) {
+    case 'session':
+      return summary.opens > 1
+        ? [L('openedTimes', { count: summary.opens })]
+        : []
+    case 'preTest':
+    case 'postTest':
+      return stageDetails(summary)
+    case 'cardSort':
+      return cardSortDetails(summary)
+    case 'heuristic':
+      return [
+        L('questionsUpdated', { count: summary.questions }, summary.questions),
+      ]
+    case 'liveSession':
+      return [summary.ended ? L('ended') : L('live')]
+    case 'task':
+      return taskDetails(summary)
+    default:
+      return []
+  }
 }
 const stepSpan = (step) => formatSpan(step.endedAt - step.startedAt)
 const statusIcon = (status) =>

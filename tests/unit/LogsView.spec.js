@@ -57,6 +57,37 @@ const page = {
   lastCursor: null,
 }
 
+const eventTypeSelectStub = {
+  VSelect: {
+    name: 'VSelect',
+    props: ['items', 'itemTitle', 'itemValue', 'label'],
+    template: '<div />',
+  },
+}
+
+const mountWithEventTypeSelect = async (study) => {
+  Object.assign(mockStudy, study)
+  getParticipantLabels.mockResolvedValue([])
+  getStudyLogPage.mockResolvedValue(page)
+  getStudyLogCount.mockResolvedValue(1)
+  const wrapper = mount(LogsView, {
+    props: { id: 'study-1' },
+    global: { stubs: eventTypeSelectStub },
+  })
+  await flushPromises()
+  const eventType = wrapper
+    .findAllComponents({ name: 'VSelect' })
+    .find((select) => select.props('label') === 'Event type')
+  return { wrapper, items: eventType.props('items') }
+}
+
+const openFirstRow = async () => {
+  const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+  await flushPromises()
+  await wrapper.find('tbody tr').trigger('click')
+  return wrapper
+}
+
 describe('LogsView', () => {
   beforeEach(() => {
     useDisplay.mockReturnValue({ smAndDown: false, xs: { value: false } })
@@ -139,32 +170,11 @@ describe('LogsView', () => {
   })
 
   it('shows only user-test event types', async () => {
-    Object.assign(mockStudy, {
+    const { wrapper, items } = await mountWithEventTypeSelect({
       testType: 'USER',
       subType: 'USER_UNMODERATED',
     })
-    getParticipantLabels.mockResolvedValue([])
-    getStudyLogPage.mockResolvedValue(page)
-    getStudyLogCount.mockResolvedValue(1)
-
-    const wrapper = mount(LogsView, {
-      props: { id: 'study-1' },
-      global: {
-        stubs: {
-          VSelect: {
-            name: 'VSelect',
-            props: ['items', 'itemTitle', 'itemValue', 'label'],
-            template: '<div />',
-          },
-        },
-      },
-    })
-    await flushPromises()
-
-    const eventType = wrapper
-      .findAllComponents({ name: 'VSelect' })
-      .find((select) => select.props('label') === 'Event type')
-    expect(eventType.props('items')).toEqual([
+    expect(items).toEqual([
       { title: 'Study View Opened', value: 'STUDY_VIEW_OPENED' },
       { title: 'Answer Edited', value: 'ANSWER_EDITED' },
       { title: 'Consent Accepted', value: 'CONSENT_ACCEPTED' },
@@ -184,30 +194,11 @@ describe('LogsView', () => {
   })
 
   it('labels card sorting studies and offers only their event types', async () => {
-    Object.assign(mockStudy, { testType: 'CARD_SORTING' })
-    getParticipantLabels.mockResolvedValue([])
-    getStudyLogPage.mockResolvedValue(page)
-    getStudyLogCount.mockResolvedValue(1)
-
-    const wrapper = mount(LogsView, {
-      props: { id: 'study-1' },
-      global: {
-        stubs: {
-          VSelect: {
-            name: 'VSelect',
-            props: ['items', 'itemTitle', 'itemValue', 'label'],
-            template: '<div />',
-          },
-        },
-      },
+    const { wrapper, items } = await mountWithEventTypeSelect({
+      testType: 'CARD_SORTING',
     })
-    await flushPromises()
-
     expect(wrapper.text()).toContain('Card sorting')
-    const eventType = wrapper
-      .findAllComponents({ name: 'VSelect' })
-      .find((select) => select.props('label') === 'Event type')
-    expect(eventType.props('items')).toEqual([
+    expect(items).toEqual([
       { title: 'Study View Opened', value: 'STUDY_VIEW_OPENED' },
       { title: 'Consent Accepted', value: 'CONSENT_ACCEPTED' },
       { title: 'Answer Edited', value: 'ANSWER_EDITED' },
@@ -335,9 +326,7 @@ describe('LogsView', () => {
     })
     getStudyLogCount.mockResolvedValue(1)
 
-    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
-    await flushPromises()
-    await wrapper.find('tbody tr').trigger('click')
+    const wrapper = await openFirstRow()
 
     expect(wrapper.text()).toContain('Heuristic 2 · Question 1 · Comment field')
     expect(wrapper.text()).toContain('6 input events')
@@ -379,9 +368,7 @@ describe('LogsView', () => {
     })
     getStudyLogCount.mockResolvedValue(1)
 
-    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
-    await flushPromises()
-    await wrapper.find('tbody tr').trigger('click')
+    const wrapper = await openFirstRow()
 
     expect(wrapper.text()).toContain('Task 1')
     expect(wrapper.text()).toContain('Task 1 · Could not finish')
@@ -417,9 +404,7 @@ describe('LogsView', () => {
     })
     getStudyLogCount.mockResolvedValue(1)
 
-    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
-    await flushPromises()
-    await wrapper.find('tbody tr').trigger('click')
+    const wrapper = await openFirstRow()
 
     expect(wrapper.text()).toContain('Heuristic 2 · Question 3')
     expect(wrapper.text()).toContain('Changed')
@@ -510,9 +495,7 @@ describe('LogsView', () => {
     })
     getStudyLogCount.mockResolvedValue(1)
 
-    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
-    await flushPromises()
-    await wrapper.find('tbody tr').trigger('click')
+    const wrapper = await openFirstRow()
 
     expect(wrapper.text()).toContain('Task 1 · Questionnaire activity')
     expect(wrapper.text()).toContain('NASA-TLX · 2 updates')
