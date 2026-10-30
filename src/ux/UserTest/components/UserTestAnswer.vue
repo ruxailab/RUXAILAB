@@ -73,7 +73,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { statistics } from '@/ux/Heuristic/utils/statistics'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer'
@@ -105,8 +105,10 @@ const emit = defineEmits(['goToCoops'])
 
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 
-const tab = ref(0)
+// A participant deep link targets the individual analytics tab.
+const tab = ref(route.query.participant ? '1' : 0)
 const ind = ref(0)
 const intro = ref(null)
 

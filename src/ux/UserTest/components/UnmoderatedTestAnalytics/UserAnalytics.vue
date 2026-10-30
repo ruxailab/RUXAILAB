@@ -641,6 +641,15 @@
                     :task-definitions="testStructure.userTasks || []"
                     :test-answer="answers[dialogItem.userDocId]"
                     :from-eye-tracking="true"
+                    :participant="{
+                      fullName: dialogItem.fullName,
+                      email: dialogItem.email,
+                    }"
+                    :task-summary="taskSummaryRows[taskSelect] || null"
+                    :task-count="taskSummaryRows.length"
+                    :task-names="taskSummaryRows.map((row) => row.taskName)"
+                    :start-time="deepLinkStartTime"
+                    @navigate="onDialogNavigate"
                   />
                 </div>
               </v-col>
@@ -661,6 +670,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
 import { formatTime } from '@/shared/utils/timeUtils'
 import TaskDetailsModal from './TaskDetailsModal.vue'
 import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue'
@@ -1123,6 +1133,52 @@ const viewAnswers = (item) => {
   dialogItem.value = item
   showDialog.value = true
 }
+
+const route = useRoute()
+const router = useRouter()
+const deepLinkStartTime = ref(0)
+const DEEP_LINK_KEYS = ['participant', 'task', 't']
+
+// Accepts plain seconds ("84") or clock notation ("1:24", "1:01:24").
+function parseDeepLinkTime(value) {
+  if (typeof value !== 'string' || !value.trim()) return 0
+  const parts = value.trim().split(':').map(Number)
+  if (parts.some((part) => !Number.isFinite(part) || part < 0)) return 0
+  return parts.reduce((total, part) => total * 60 + part, 0)
+}
+
+function onDialogNavigate(index) {
+  deepLinkStartTime.value = 0
+  selectTask(index)
+}
+
+watch(showSessionAnalyticsDialog, (isOpen) => {
+  if (!isOpen) deepLinkStartTime.value = 0
+})
+
+// Opens /answer/:id?participant=<userDocId>&task=<n>&t=<time> once the
+// participant rows are available, then removes the params from the URL.
+watch(
+  [() => route.query.participant, tableData],
+  ([participant, rows]) => {
+    if (typeof participant !== 'string' || !participant) return
+    const row = rows.find((item) => item.userDocId === participant)
+    if (!row) return
+
+    const taskNumber = Number.parseInt(route.query.task, 10)
+    deepLinkStartTime.value = parseDeepLinkTime(route.query.t)
+    viewAnswers(row)
+    selectTask(
+      Number.isInteger(taskNumber) && taskNumber > 0 ? taskNumber - 1 : 0,
+      true,
+    )
+
+    const query = { ...route.query }
+    DEEP_LINK_KEYS.forEach((key) => delete query[key])
+    router.replace({ query }).catch(() => {})
+  },
+  { immediate: true },
+)
 
 const showTaskDetails = (session) => {
   const tasksWithNames = {}

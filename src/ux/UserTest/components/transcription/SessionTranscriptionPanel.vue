@@ -123,10 +123,7 @@
           <v-icon start>mdi-play</v-icon>
           Start Transcription
         </v-btn>
-        <div
-          v-if="!canTranscribe"
-          class="mt-3 text-body-2 text-grey-darken-1"
-        >
+        <div v-if="!canTranscribe" class="mt-3 text-body-2 text-grey-darken-1">
           {{ unavailableMessage }}
         </div>
         <v-alert
@@ -215,13 +212,27 @@
             {{ runMeta }}
           </div>
 
-          <v-list
-            v-if="segments.length"
-            density="comfortable"
-            class="pa-0"
-          >
+          <v-list v-if="segments.length" density="comfortable" class="pa-0">
             <template v-for="(segment, index) in segments" :key="segment.id">
-              <v-list-item class="px-0">
+              <v-list-item
+                :ref="(el) => setSegmentRef(segment.id, el)"
+                class="transcript-segment px-2"
+                :class="{
+                  'transcript-segment--active': segment.id === activeSegmentId,
+                  'transcript-segment--seekable': isSynced,
+                }"
+                :aria-label="
+                  isSynced
+                    ? $t('analytics.testDetails.transcriptJump', {
+                        time: formatTime(segment.start),
+                      })
+                    : undefined
+                "
+                :data-testid="`transcript-segment-${index}`"
+                v-on="
+                  isSynced ? { click: () => emit('seek', segment.start) } : {}
+                "
+              >
                 <template #prepend>
                   <div class="text-center mr-3" style="min-width: 48px">
                     <v-icon :color="roleColor(segment.role)">
@@ -236,7 +247,8 @@
                   {{ segment.text || '—' }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  {{ formatTime(segment.start) }} – {{ formatTime(segment.end) }}
+                  {{ formatTime(segment.start) }} –
+                  {{ formatTime(segment.end) }}
                 </v-list-item-subtitle>
               </v-list-item>
               <v-divider v-if="index < segments.length - 1" />
@@ -292,11 +304,15 @@ const props = defineProps({
   hasAudio: { type: Boolean, default: true },
   unavailableMessage: {
     type: String,
-    default: 'Audio recording or session identifiers are not available for this task.',
+    default:
+      'Audio recording or session identifiers are not available for this task.',
   },
+  // Playback position in the transcript's time base; null disables syncing.
+  currentTime: { type: Number, default: null },
+  isPlaying: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['saved', 'deleted'])
+const emit = defineEmits(['saved', 'deleted', 'seek', 'run-change'])
 const store = useStore()
 const { t } = useI18n()
 
@@ -382,6 +398,36 @@ const runOptions = computed(() =>
 
 const segments = computed(() => segmentsFor(selectedRun.value))
 
+watch(selectedRun, (run) => emit('run-change', run ?? null))
+
+const isSynced = computed(() => Number.isFinite(props.currentTime))
+
+const activeSegmentId = computed(() => {
+  if (!isSynced.value) return null
+  const time = props.currentTime
+  const active = segments.value.find(
+    (segment) => time >= segment.start && time < segment.end,
+  )
+  return active?.id ?? null
+})
+
+const segmentRefs = new Map()
+
+function setSegmentRef(id, component) {
+  const el = component?.$el ?? component
+  if (el) segmentRefs.set(id, el)
+  else segmentRefs.delete(id)
+}
+
+// Follow the spoken line only while playing, so reading isn't interrupted.
+watch(activeSegmentId, (id) => {
+  if (!id || !props.isPlaying) return
+  segmentRefs.get(id)?.scrollIntoView?.({
+    block: 'nearest',
+    behavior: 'smooth',
+  })
+})
+
 const summaryMetrics = computed(() => {
   const run = selectedRun.value
   const items = segments.value
@@ -390,8 +436,7 @@ const summaryMetrics = computed(() => {
     0,
   )
   const speakers = new Set(items.map((segment) => segment.role)).size
-  const language =
-    run?.evaluator?.language || run?.moderator?.language || '—'
+  const language = run?.evaluator?.language || run?.moderator?.language || '—'
 
   return [
     {
@@ -614,11 +659,26 @@ function formatDate(timestamp) {
   if (timestamp?.toDate) date = timestamp.toDate()
   else if (typeof timestamp?.seconds === 'number') {
     date = new Date(
-      timestamp.seconds * 1000 +
-        Math.floor((timestamp.nanoseconds || 0) / 1e6),
+      timestamp.seconds * 1000 + Math.floor((timestamp.nanoseconds || 0) / 1e6),
     )
   } else if (timestamp instanceof Date) date = timestamp
   else date = new Date(timestamp || Date.now())
   return date.toLocaleString()
 }
 </script>
+
+<style scoped>
+.transcript-segment {
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.transcript-segment--seekable {
+  cursor: pointer;
+}
+
+.transcript-segment--active {
+  background: rgba(251, 92, 108, 0.12);
+  box-shadow: inset 3px 0 0 #fb5c6c;
+}
+</style>
