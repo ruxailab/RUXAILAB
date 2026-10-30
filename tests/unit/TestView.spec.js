@@ -168,7 +168,7 @@ describe('TestView', () => {
       expect(wrapper.text()).toContain('studyPreview.notice')
       expect(wrapper.classes()).toContain('study-preview')
       expect(wrapper.find('.study-preview-banner').classes()).toEqual(
-        expect.arrayContaining(['bg-secondary', 'text-primary']),
+        expect.arrayContaining(['bg-secondary', 'text-white']),
       )
       expect(wrapper.find('.study-preview-content').exists()).toBe(true)
       wrapper.unmount()

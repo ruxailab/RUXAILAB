@@ -1,13 +1,13 @@
 <template>
   <div class="study-preview-navigation-space bg-secondary">
     <nav
-      class="study-preview-navigation bg-secondary text-primary"
+      class="study-preview-navigation bg-secondary text-white"
       :aria-label="$t('studyPreview.navigation')"
     >
       <span class="text-body-2">{{ $t('studyPreview.skipHint') }}</span>
       <div class="d-flex ga-2">
         <v-btn
-          color="primary"
+          color="white"
           variant="outlined"
           prepend-icon="mdi-chevron-left"
           :disabled="disabled || !canPrevious"
@@ -17,6 +17,7 @@
         </v-btn>
         <v-btn
           color="primary"
+          class="text-white"
           append-icon="mdi-chevron-right"
           :disabled="disabled || !canNext"
           @click="$emit('next')"
@@ -56,7 +57,7 @@ defineEmits(['previous', 'next'])
   gap: 12px;
   padding: 12px 24px;
   padding-bottom: max(12px, env(safe-area-inset-bottom));
-  color: rgb(var(--v-theme-primary));
+  color: #fff;
   background-color: rgb(var(--v-theme-secondary));
   border-top: 1px solid rgba(var(--v-theme-on-surface), 0.2);
 }

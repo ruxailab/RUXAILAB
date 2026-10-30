@@ -9,13 +9,18 @@
       color="secondary"
       variant="flat"
       density="compact"
-      class="study-preview-banner bg-secondary text-primary"
+      class="study-preview-banner bg-secondary text-white"
       role="status"
     >
       <strong>{{ $t('studyPreview.title') }}</strong>
       {{ $t('studyPreview.notice') }}
       <template #append>
-        <v-btn variant="outlined" size="small" @click="exitPreview">
+        <v-btn
+          color="white"
+          variant="outlined"
+          size="small"
+          @click="exitPreview"
+        >
           {{ $t('studyPreview.exit') }}
         </v-btn>
       </template>
@@ -440,6 +445,8 @@ watch(
   z-index: 2100;
 }
 
+.study-preview-banner :deep(.v-alert__prepend),
+.study-preview-banner :deep(.v-alert__content),
 .study-preview-banner :deep(.v-alert__append) {
   align-self: center;
 }
