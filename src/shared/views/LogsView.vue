@@ -6,9 +6,11 @@
           <v-icon size="30">mdi-text-box-search-outline</v-icon>
         </div>
         <div class="study-context__copy">
-          <div class="study-context__eyebrow">Log explorer</div>
+          <div class="study-context__eyebrow">
+            {{ $t('LogExplorer.title') }}
+          </div>
           <h1>{{ studyTitle }}</h1>
-          <p>Study activity and delivery trace</p>
+          <p>{{ $t('LogExplorer.subtitle') }}</p>
           <div class="study-context__chips">
             <span class="context-chip">
               <v-icon size="15">{{ studyTypeIcon }}</v-icon>
@@ -16,21 +18,26 @@
             </span>
             <span v-if="totalCount !== null" class="context-chip">
               <v-icon size="15">mdi-format-list-bulleted</v-icon>
-              {{ totalCount.toLocaleString() }}
-              {{ totalCount === 1 ? 'event' : 'events' }}
+              {{
+                $t(
+                  'LogExplorer.events',
+                  { count: totalCount.toLocaleString() },
+                  totalCount,
+                )
+              }}
             </span>
           </div>
         </div>
         <div class="study-context__time">
           <v-icon size="18">mdi-clock-outline</v-icon>
-          <span>Times shown in {{ timezone }}</span>
+          <span>{{ $t('LogExplorer.timesShownIn', { timezone }) }}</span>
         </div>
       </header>
 
       <div class="delivery-notice" role="status">
         <v-icon size="20" aria-hidden="true">mdi-information-outline</v-icon>
         <span>
-          Activity delivery is asynchronous and may be delayed or incomplete.
+          {{ $t('LogExplorer.deliveryNotice') }}
         </span>
       </div>
 
@@ -41,16 +48,16 @@
           density="comfortable"
           variant="outlined"
           divided
-          aria-label="Log view"
+          :aria-label="$t('LogExplorer.logView')"
         >
           <v-btn value="overview" prepend-icon="mdi-view-dashboard-outline">
-            Overview
+            {{ $t('LogExplorer.overview') }}
           </v-btn>
           <v-btn value="events" prepend-icon="mdi-format-list-bulleted">
-            All events
+            {{ $t('LogExplorer.allEvents') }}
           </v-btn>
           <v-btn value="timeline" prepend-icon="mdi-timeline-text-outline">
-            Participant timeline
+            {{ $t('LogExplorer.participantTimeline') }}
           </v-btn>
         </v-btn-toggle>
       </div>
@@ -66,13 +73,13 @@
       <section
         v-if="viewMode === 'timeline'"
         class="events-surface timeline-surface"
-        aria-label="Participant timeline"
+        :aria-label="$t('LogExplorer.participantTimeline')"
       >
         <div class="events-toolbar">
           <v-autocomplete
             v-model="timelineParticipant"
             :items="participantLabels"
-            label="Participant"
+            :label="$t('LogExplorer.participant')"
             prepend-inner-icon="mdi-account-outline"
             density="compact"
             variant="outlined"
@@ -88,7 +95,7 @@
             :disabled="!timelineParticipant"
             @click="loadTimeline"
           >
-            Refresh
+            {{ $t('LogExplorer.refresh') }}
           </v-btn>
         </div>
         <v-progress-linear
@@ -113,8 +120,8 @@
           <div class="empty-logs__icon">
             <v-icon size="34">mdi-timeline-text-outline</v-icon>
           </div>
-          <h3>No participant selected</h3>
-          <p>Choose a participant to see their activity step by step.</p>
+          <h3>{{ $t('LogExplorer.noParticipantSelected') }}</h3>
+          <p>{{ $t('LogExplorer.chooseParticipant') }}</p>
         </div>
       </section>
 
@@ -124,9 +131,9 @@
         aria-labelledby="log-filter-heading"
       >
         <div class="surface-heading">
-          <h2 id="log-filter-heading">Filters</h2>
+          <h2 id="log-filter-heading">{{ $t('LogExplorer.filters') }}</h2>
           <span v-if="activeFilterCount" class="filter-count">
-            {{ activeFilterCount }} active
+            {{ $t('LogExplorer.activeFilters', { count: activeFilterCount }) }}
           </span>
           <v-btn
             class="mobile-filter-toggle"
@@ -138,18 +145,20 @@
             :aria-expanded="filtersExpanded"
             @click="filtersExpanded = !filtersExpanded"
           >
-            {{ filtersExpanded ? 'Hide' : 'Show' }}
+            {{
+              filtersExpanded ? $t('LogExplorer.hide') : $t('LogExplorer.show')
+            }}
           </v-btn>
         </div>
 
         <div v-show="filtersExpanded" class="filter-layout">
           <fieldset class="filter-group filter-group--primary">
-            <legend>Activity</legend>
+            <legend>{{ $t('LogExplorer.activity') }}</legend>
             <div class="primary-filter-grid">
               <v-autocomplete
                 v-model="draft.participantLabel"
                 :items="participantLabels"
-                label="Participant"
+                :label="$t('LogExplorer.participant')"
                 prepend-inner-icon="mdi-account-outline"
                 clearable
                 density="compact"
@@ -162,7 +171,7 @@
                 :items="eventTypes"
                 item-title="title"
                 item-value="value"
-                label="Event type"
+                :label="$t('LogExplorer.eventType')"
                 prepend-inner-icon="mdi-shape-outline"
                 clearable
                 density="compact"
@@ -172,7 +181,7 @@
               <v-select
                 v-model="draft.level"
                 :items="levels"
-                label="Level"
+                :label="$t('LogExplorer.level')"
                 prepend-inner-icon="mdi-alert-circle-outline"
                 clearable
                 density="compact"
@@ -184,7 +193,7 @@
                 :items="sources"
                 item-title="title"
                 item-value="value"
-                label="Source"
+                :label="$t('LogExplorer.source')"
                 prepend-inner-icon="mdi-source-branch"
                 clearable
                 density="compact"
@@ -196,12 +205,12 @@
 
           <div class="filter-lower-row">
             <fieldset class="filter-group filter-group--dates">
-              <legend>Date range</legend>
+              <legend>{{ $t('LogExplorer.dateRange') }}</legend>
               <div class="date-filter-grid">
                 <v-text-field
                   v-model="draft.startDate"
                   type="date"
-                  label="From date"
+                  :label="$t('LogExplorer.fromDate')"
                   density="compact"
                   variant="outlined"
                   hide-details="auto"
@@ -209,7 +218,7 @@
                 <v-text-field
                   v-model="draft.endDate"
                   type="date"
-                  label="Through date"
+                  :label="$t('LogExplorer.throughDate')"
                   density="compact"
                   variant="outlined"
                   hide-details="auto"
@@ -224,14 +233,14 @@
                 :loading="loading"
                 @click="applyFilters"
               >
-                Apply filters
+                {{ $t('LogExplorer.applyFilters') }}
               </v-btn>
               <v-btn
                 variant="text"
                 :disabled="loading || !hasDraftFilters"
                 @click="clearFilters"
               >
-                Clear
+                {{ $t('LogExplorer.clear') }}
               </v-btn>
             </div>
           </div>
@@ -255,12 +264,14 @@
       >
         <div class="events-toolbar">
           <div class="events-title-row">
-            <h2 id="log-events-heading">Recorded activity</h2>
+            <h2 id="log-events-heading">
+              {{ $t('LogExplorer.recordedActivity') }}
+            </h2>
             <span class="range-label">{{ visibleRange }}</span>
           </div>
           <div class="refresh-area">
             <span v-if="updatedAt" class="updated-at">
-              Updated {{ formatTime(updatedAt) }}
+              {{ $t('LogExplorer.updatedAt', { time: formatTime(updatedAt) }) }}
             </span>
             <v-btn
               prepend-icon="mdi-refresh"
@@ -269,7 +280,7 @@
               :loading="loading"
               @click="refresh"
             >
-              Refresh
+              {{ $t('LogExplorer.refresh') }}
             </v-btn>
             <LogExportDialog
               :study-id="id"
@@ -293,11 +304,15 @@
               </colgroup>
               <thead>
                 <tr>
-                  <th scope="col">Occurrence</th>
-                  <th scope="col">Participant</th>
-                  <th scope="col">Event</th>
-                  <th scope="col">Level</th>
-                  <th scope="col"><span class="sr-only">Open details</span></th>
+                  <th scope="col">{{ $t('LogExplorer.occurrence') }}</th>
+                  <th scope="col">{{ $t('LogExplorer.participant') }}</th>
+                  <th scope="col">{{ $t('LogExplorer.event') }}</th>
+                  <th scope="col">{{ $t('LogExplorer.level') }}</th>
+                  <th scope="col">
+                    <span class="sr-only">{{
+                      $t('LogExplorer.openDetails')
+                    }}</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -403,15 +418,15 @@
           <div class="empty-logs__icon">
             <v-icon size="34">mdi-text-box-search-outline</v-icon>
           </div>
-          <h3>No activity found</h3>
-          <p>No events match the applied filters.</p>
+          <h3>{{ $t('LogExplorer.noActivityFound') }}</h3>
+          <p>{{ $t('LogExplorer.noEventsMatch') }}</p>
         </div>
 
         <div class="pagination-bar">
           <v-select
             v-model="pageSize"
             :items="[10, 20, 50]"
-            label="Rows"
+            :label="$t('LogExplorer.rows')"
             density="compact"
             variant="outlined"
             hide-details
@@ -423,7 +438,7 @@
               icon="mdi-chevron-left"
               variant="text"
               size="small"
-              aria-label="Previous page"
+              :aria-label="$t('LogExplorer.previousPage')"
               :disabled="loading || pageIndex === 0"
               @click="previousPage"
             />
@@ -431,7 +446,7 @@
               icon="mdi-chevron-right"
               variant="text"
               size="small"
-              aria-label="Next page"
+              :aria-label="$t('LogExplorer.nextPage')"
               :disabled="loading || !currentPage?.hasNextPage"
               @click="nextPage"
             />
@@ -454,7 +469,9 @@
             <v-icon size="22">{{ levelIcon(selectedEvent.level) }}</v-icon>
           </div>
           <div class="drawer-heading__copy">
-            <div class="surface-kicker">Event details</div>
+            <div class="surface-kicker">
+              {{ $t('LogExplorer.eventDetails') }}
+            </div>
             <h2>{{ eventPresentation(selectedEvent).primary }}</h2>
             <p v-if="eventPresentation(selectedEvent).secondary">
               {{ eventPresentation(selectedEvent).secondary }}
@@ -464,7 +481,7 @@
             icon="mdi-close"
             variant="text"
             size="small"
-            aria-label="Close details"
+            :aria-label="$t('LogExplorer.closeDetails')"
             @click="selectedEvent = null"
           />
         </div>
@@ -482,7 +499,7 @@
 
         <dl class="event-summary">
           <div>
-            <dt>Participant</dt>
+            <dt>{{ $t('LogExplorer.participant') }}</dt>
             <dd>
               <span
                 class="participant-token"
@@ -500,7 +517,9 @@
           <div>
             <dt>
               {{
-                isClientReportedEvent(selectedEvent) ? 'Browser time' : 'Occurred'
+                isClientReportedEvent(selectedEvent)
+                  ? $t('LogExplorer.browserTime')
+                  : $t('LogExplorer.occurred')
               }}
             </dt>
             <dd>{{ formatDateTime(selectedEvent.occurredAt) }}</dd>
@@ -511,17 +530,13 @@
           v-if="selectedEvent.eventType === 'TASK_STARTED'"
           class="event-time-note"
         >
-          The study client reports when the active task screen opened. This is
-          evidence of task entry, not interaction. Browser clock errors can
-          misorder events, so do not calculate task duration from this time.
+          {{ $t('LogExplorer.taskStartedNote') }}
         </p>
         <p
           v-else-if="isClientReportedEvent(selectedEvent)"
           class="event-time-note"
         >
-          This time comes from the participant’s browser and may be inaccurate
-          or out of order. Server receipt time below shows when the event
-          arrived, not when the participant acted.
+          {{ $t('LogExplorer.clientTimeNote') }}
         </p>
 
         <section
@@ -532,13 +547,12 @@
           <h3 id="structured-activity-heading">
             {{
               STAGE_LABELS[selectedEvent.details?.scopeRef]
-                ? 'Selected answers'
-                : 'Questionnaire activity'
+                ? $t('LogExplorer.selectedAnswers')
+                : $t('LogExplorer.questionnaireActivity')
             }}
           </h3>
           <p>
-            Counts show how often each response changed in this record.
-            Selected answers and slider values remain in Results.
+            {{ $t('LogExplorer.structuredCountsNote') }}
           </p>
           <dl class="detail-grid">
             <template
@@ -546,7 +560,15 @@
               :key="item.itemRef"
             >
               <dt>{{ item.label }}</dt>
-              <dd>{{ pluralized(item.changes, 'update') }} in this record</dd>
+              <dd>
+                {{
+                  $t(
+                    'LogExplorer.updatesInRecord',
+                    { count: item.changes },
+                    item.changes,
+                  )
+                }}
+              </dd>
             </template>
           </dl>
         </section>
@@ -556,24 +578,19 @@
           class="drawer-details"
           aria-labelledby="event-specific-heading"
         >
-          <h3 id="event-specific-heading">Event details</h3>
+          <h3 id="event-specific-heading">
+            {{ $t('LogExplorer.eventDetails') }}
+          </h3>
           <p v-if="selectedEvent.eventType === 'ANSWER_EDITED'">
-            Logs capture edit activity, not written answers or selected
-            ratings; review responses and scores in Results. Active edit span is
-            browser input time, not total time spent on the question.
+            {{ $t('LogExplorer.answerEditedNote') }}
           </p>
           <p
             v-else-if="selectedEvent.eventType === 'QUESTION_RESPONSE_UPDATED'"
           >
-            One update groups changes made during the same question interaction.
-            Selected ratings, scores, and comment text are never logged; review
-            responses in Results.
+            {{ $t('LogExplorer.questionResponseNote') }}
           </p>
-          <p
-            v-if="detailEntries.some(([key]) => key === 'taskDurationMs')"
-          >
-            Timed task activity can exclude a questionnaire stage, so it is not
-            a full task duration.
+          <p v-if="detailEntries.some(([key]) => key === 'taskDurationMs')">
+            {{ $t('LogExplorer.taskDurationNote') }}
           </p>
           <dl class="detail-grid">
             <template v-for="[key, value] in detailEntries" :key="key">
@@ -583,13 +600,10 @@
           </dl>
         </section>
 
-        <details
-          v-if="selectedEvent.receivedAt"
-          class="delivery-diagnostics"
-        >
-          <summary>Server receipt</summary>
+        <details v-if="selectedEvent.receivedAt" class="delivery-diagnostics">
+          <summary>{{ $t('LogExplorer.serverReceipt') }}</summary>
           <dl class="detail-grid">
-            <dt>Received by server</dt>
+            <dt>{{ $t('LogExplorer.receivedByServer') }}</dt>
             <dd>{{ formatDateTime(selectedEvent.receivedAt) }}</dd>
           </dl>
         </details>
@@ -756,8 +770,7 @@ const STUDY_TYPE_ICONS = Object.freeze({
   FOCUS_GROUP: 'mdi-account-group-outline',
 })
 const studyTypeIcon = computed(
-  () =>
-    STUDY_TYPE_ICONS[study.value.testType] || 'mdi-account-check-outline',
+  () => STUDY_TYPE_ICONS[study.value.testType] || 'mdi-account-check-outline',
 )
 const hasDraftFilters = computed(() => Object.values(draft).some(Boolean))
 const activeFilterCount = computed(
@@ -940,7 +953,9 @@ const structuredActivityItems = (event) =>
       changes: Number.isFinite(Number(item.changes)) ? Number(item.changes) : 0,
       label: structuredItemLabel(item.itemRef),
     }))
-    .sort((left, right) => compareStructuredItemRefs(left.itemRef, right.itemRef))
+    .sort((left, right) =>
+      compareStructuredItemRefs(left.itemRef, right.itemRef),
+    )
 const STAGE_LABELS = Object.freeze({
   preTest: 'Pre-test',
   postTest: 'Post-test',
@@ -951,7 +966,10 @@ const structuredStageQuestions = (event) =>
     .filter(Boolean)
     .map((match) => Number(match[1]) + 1)
 const structuredActivityCount = (event) =>
-  structuredActivityItems(event).reduce((total, item) => total + item.changes, 0)
+  structuredActivityItems(event).reduce(
+    (total, item) => total + item.changes,
+    0,
+  )
 const eventPresentation = (event) => {
   const details = event?.details || {}
   const taskIndex = parseTaskRef(details.taskRef)
@@ -977,21 +995,23 @@ const eventPresentation = (event) => {
       secondary = `Question ${field.index + 1}`
     } else if (field.section === 'task') {
       primary = `${taskName(field.index)} · ${action}`
-      const fieldLabel = field.field === 'comment' ? 'Observations' : 'Answer field'
+      const fieldLabel =
+        field.field === 'comment' ? 'Observations' : 'Answer field'
       secondary = [instrument, fieldLabel].filter(Boolean).join(' · ')
     }
-  } else if (
-    event?.eventType === 'ANSWER_EDITED' &&
-    heuristicField
-  ) {
-    primary = typeof event.message === 'string' && event.message.trim()
-      ? event.message.trim()
-      : 'Answer field edited'
+  } else if (event?.eventType === 'ANSWER_EDITED' && heuristicField) {
+    primary =
+      typeof event.message === 'string' && event.message.trim()
+        ? event.message.trim()
+        : 'Answer field edited'
     secondary = `Heuristic ${heuristicField.heuristicIndex + 1} · Question ${heuristicField.questionIndex + 1} · ${formatIdentifier(heuristicField.field)} field`
   } else if (event?.eventType === 'TASK_STARTED' && taskIndex !== null) {
     primary = `${taskName(taskIndex)} · Started`
     secondary = instrument
-  } else if (event?.eventType === 'TASK_ATTEMPT_FINISHED' && taskIndex !== null) {
+  } else if (
+    event?.eventType === 'TASK_ATTEMPT_FINISHED' &&
+    taskIndex !== null
+  ) {
     const outcome =
       details.outcome === 'completed'
         ? 'Completed'
@@ -1055,12 +1075,8 @@ const eventPresentation = (event) => {
   if (!primary) {
     const message =
       typeof event?.message === 'string' ? event.message.trim() : ''
-    primary =
-      message || formatIdentifier(event?.eventType) || 'Unknown event'
-    if (
-      event?.eventType === 'TASK_ATTEMPT_FINISHED' &&
-      taskIndex !== null
-    ) {
+    primary = message || formatIdentifier(event?.eventType) || 'Unknown event'
+    if (event?.eventType === 'TASK_ATTEMPT_FINISHED' && taskIndex !== null) {
       secondary = taskName(taskIndex)
     }
   }
@@ -1069,7 +1085,8 @@ const eventPresentation = (event) => {
   if (
     secondary &&
     [primary, typeLabel].some(
-      (value) => value && secondary.toLocaleLowerCase() === value.toLocaleLowerCase(),
+      (value) =>
+        value && secondary.toLocaleLowerCase() === value.toLocaleLowerCase(),
     )
   ) {
     secondary = null
@@ -1091,8 +1108,10 @@ const eventAriaLabel = (event) => {
 const detailEntries = computed(() => {
   const event = selectedEvent.value
   const details = event?.details || {}
-  const hasPositiveValue = (value) => Number.isFinite(Number(value)) && Number(value) > 0
-  const hasLength = (value) => Number.isFinite(Number(value)) && Number(value) >= 0
+  const hasPositiveValue = (value) =>
+    Number.isFinite(Number(value)) && Number(value) > 0
+  const hasLength = (value) =>
+    Number.isFinite(Number(value)) && Number(value) >= 0
   if (event?.eventType === 'STRUCTURED_RESPONSE_ACTIVITY') return []
   if (event?.eventType === 'ANSWER_EDITED') {
     const field = parseFieldRef(details.fieldRef)
@@ -1170,7 +1189,8 @@ const detailEntries = computed(() => {
       'answerChanges',
       'commentInputChanges',
     ]) {
-      if (hasPositiveValue(details[key])) entries.push([key, Number(details[key])])
+      if (hasPositiveValue(details[key]))
+        entries.push([key, Number(details[key])])
     }
     return entries
   }
@@ -1394,7 +1414,9 @@ const formatDetailValue = (key, value) => {
   if (key === 'taskDurationMs') return formatDuration(value)
   if (key === 'changedFields') {
     return value
-      .filter((field) => ['frequency', 'severity', 'answer', 'comment'].includes(field))
+      .filter((field) =>
+        ['frequency', 'severity', 'answer', 'comment'].includes(field),
+      )
       .map(formatIdentifier)
       .join(', ')
   }

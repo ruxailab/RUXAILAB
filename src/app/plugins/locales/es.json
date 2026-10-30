@@ -4371,5 +4371,131 @@
       "ended": "Finalizada",
       "unknown": "Desconocido"
     }
+  },
+  "LogExplorer": {
+    "title": "Explorador de registros",
+    "subtitle": "Actividad del estudio y trazabilidad de entrega",
+    "events": "{count} evento | {count} eventos",
+    "timesShownIn": "Horas mostradas en {timezone}",
+    "deliveryNotice": "El envío de la actividad es asíncrono y puede retrasarse o estar incompleto.",
+    "logView": "Vista de registros",
+    "overview": "Resumen",
+    "allEvents": "Todos los eventos",
+    "participantTimeline": "Línea de tiempo del participante",
+    "participant": "Participante",
+    "refresh": "Actualizar",
+    "noParticipantSelected": "Ningún participante seleccionado",
+    "chooseParticipant": "Elige un participante para ver su actividad paso a paso.",
+    "filters": "Filtros",
+    "activeFilters": "{count} activos",
+    "hide": "Ocultar",
+    "show": "Mostrar",
+    "activity": "Actividad",
+    "eventType": "Tipo de evento",
+    "level": "Nivel",
+    "source": "Origen",
+    "dateRange": "Rango de fechas",
+    "fromDate": "Desde",
+    "throughDate": "Hasta",
+    "applyFilters": "Aplicar filtros",
+    "clear": "Limpiar",
+    "recordedActivity": "Actividad registrada",
+    "updatedAt": "Actualizado {time}",
+    "occurrence": "Ocurrencia",
+    "event": "Evento",
+    "openDetails": "Abrir detalles",
+    "noActivityFound": "No se encontró actividad",
+    "noEventsMatch": "Ningún evento coincide con los filtros aplicados.",
+    "rows": "Filas",
+    "previousPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "eventDetails": "Detalles del evento",
+    "closeDetails": "Cerrar detalles",
+    "browserTime": "Hora del navegador",
+    "occurred": "Ocurrió",
+    "taskStartedNote": "El cliente del estudio informa cuándo se abrió la pantalla de la tarea activa. Esto es evidencia de entrada a la tarea, no de interacción. Los errores del reloj del navegador pueden desordenar los eventos, así que no calcules la duración de la tarea con esta hora.",
+    "clientTimeNote": "Esta hora proviene del navegador del participante y puede ser inexacta o estar fuera de orden. La hora de recepción del servidor, más abajo, muestra cuándo llegó el evento, no cuándo actuó el participante.",
+    "selectedAnswers": "Respuestas seleccionadas",
+    "questionnaireActivity": "Actividad del cuestionario",
+    "structuredCountsNote": "Los conteos muestran cuántas veces cambió cada respuesta en este registro. Las respuestas seleccionadas y los valores de los controles deslizantes permanecen en Resultados.",
+    "updatesInRecord": "{count} actualización en este registro | {count} actualizaciones en este registro",
+    "answerEditedNote": "Los registros capturan la actividad de edición, no las respuestas escritas ni las calificaciones seleccionadas; revisa las respuestas y puntuaciones en Resultados. El tiempo activo de edición es tiempo de entrada del navegador, no el tiempo total dedicado a la pregunta.",
+    "questionResponseNote": "Una actualización agrupa los cambios hechos durante la misma interacción con la pregunta. Las calificaciones seleccionadas, las puntuaciones y el texto de los comentarios nunca se registran; revisa las respuestas en Resultados.",
+    "taskDurationNote": "La actividad cronometrada de la tarea puede excluir una etapa de cuestionario, por lo que no es la duración completa de la tarea.",
+    "serverReceipt": "Recepción del servidor",
+    "receivedByServer": "Recibido por el servidor",
+    "timeline": {
+      "activeSpan": "{span} desde la primera hasta la última actividad",
+      "submitted": "Enviado {date}",
+      "inProgress": "En curso · última actividad {date}",
+      "titles": {
+        "session": "Estudio abierto",
+        "consent": "Consentimiento aceptado",
+        "preTest": "Pre-test",
+        "postTest": "Post-test",
+        "submitted": "Estudio enviado",
+        "liveSession": "Sesión en vivo",
+        "other": "Otra actividad"
+      },
+      "task": "Tarea {index}",
+      "taskWithType": "Tarea {index} · {type}",
+      "heuristic": "Heurística {index}",
+      "outcomes": {
+        "completed": "Completada",
+        "not_completed": "No pudo terminar",
+        "inProgress": "En curso"
+      },
+      "recordings": {
+        "completed": "guardada",
+        "failed": "falló",
+        "permission_denied": "no permitida",
+        "cancelled": "cancelada"
+      },
+      "returnedToStudy": "Volvió al estudio",
+      "returnedOnce": "Volvió una vez",
+      "returnedTimes": "Volvió {count} veces",
+      "openedTimes": "Abierto {count} veces",
+      "questionsAnswered": "{count} pregunta respondida | {count} preguntas respondidas",
+      "questionsUpdated": "{count} pregunta actualizada | {count} preguntas actualizadas",
+      "ended": "Finalizada",
+      "live": "En vivo",
+      "taskTime": "tiempo de tarea {time}",
+      "questionnaireUpdates": "{count} actualización del cuestionario | {count} actualizaciones del cuestionario"
+    },
+    "overviewPanel": {
+      "title": "Resumen",
+      "description": "Los conteos describen la evidencia registrada en los logs, no tasas de finalización ni personas únicas.",
+      "refresh": "Actualizar",
+      "logTotals": "Totales de registros",
+      "showInExplorer": "{label}: {value}. Mostrar en el explorador de registros",
+      "latestEvents": "Últimos eventos",
+      "viewAll": "Ver todo",
+      "noActivity": "Aún no se ha registrado actividad.",
+      "levelSuffix": "nivel {level}",
+      "openDetails": "Abrir detalles",
+      "loadError": "No se pudo cargar el resumen. Verifica tu acceso e inténtalo de nuevo.",
+      "cards": {
+        "sessions": {
+          "label": "Sesiones",
+          "hint": "Sesiones de participantes con actividad registrada"
+        },
+        "submitted": {
+          "label": "Enviados",
+          "hint": "Sesiones con un envío registrado"
+        },
+        "events": {
+          "label": "Eventos registrados",
+          "hint": "Todos los eventos de registro aceptados"
+        },
+        "warnings": {
+          "label": "Advertencias",
+          "hint": "Incluye tareas sin terminar y grabaciones rechazadas"
+        },
+        "errors": {
+          "label": "Errores",
+          "hint": "Fallos de grabación o de carga"
+        }
+      }
+    }
   }
 }

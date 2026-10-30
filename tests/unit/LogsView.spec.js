@@ -1,4 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { config, flushPromises, mount } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
+import en from '@/app/plugins/locales/en.json'
 import { useDisplay } from 'vuetify'
 import LogsView from '@/shared/views/LogsView.vue'
 import {
@@ -7,6 +9,10 @@ import {
   getStudyLogCount,
   getStudyLogPage,
 } from '@/shared/services/studyLogQuery'
+
+config.global.plugins = [
+  createI18n({ legacy: false, locale: 'en', messages: { en } }),
+]
 
 const mockStudy = {
   testTitle: 'Heuristic logging testing',
@@ -814,8 +820,13 @@ describe('LogsView', () => {
     const wrapper = mount(LogsView, { props: { id: 'study-1' } })
     await flushPromises()
 
-    expect(wrapper.findAll('tbody .message-cell').map((cell) => cell.text())).toEqual(
-      taskTypes.map(([, taskTypeLabel], index) => `Task ${index + 1} · Started${taskTypeLabel}`),
+    expect(
+      wrapper.findAll('tbody .message-cell').map((cell) => cell.text()),
+    ).toEqual(
+      taskTypes.map(
+        ([, taskTypeLabel], index) =>
+          `Task ${index + 1} · Started${taskTypeLabel}`,
+      ),
     )
     wrapper.unmount()
   })
@@ -892,9 +903,7 @@ describe('LogsView', () => {
     expect(wrapper.find('.event-summary').text()).toContain('Participant')
     expect(wrapper.find('.event-summary').text()).toContain('Browser time')
     expect(wrapper.find('.event-summary').text()).not.toContain('Received')
-    expect(wrapper.find('.drawer-details').text()).toContain(
-      '0 → 5 characters',
-    )
+    expect(wrapper.find('.drawer-details').text()).toContain('0 → 5 characters')
     expect(wrapper.find('.drawer-details').text()).toContain('2 input events')
     expect(wrapper.find('.drawer-details').text()).toContain('1.3 s')
     expect(wrapper.find('.drawer-details').text()).not.toContain('Paste events')
@@ -941,7 +950,8 @@ describe('LogsView', () => {
             mediaType: ['screen', 'webcam', 'audio', 'screen'][index],
             outcome,
             stage: 'permission',
-            reason: outcome === 'permission_denied' ? 'permissionDenied' : undefined,
+            reason:
+              outcome === 'permission_denied' ? 'permissionDenied' : undefined,
           },
         })),
         {
@@ -986,7 +996,13 @@ describe('LogsView', () => {
     getParticipantLabels.mockResolvedValue([])
     getStudyLogPage.mockResolvedValue(page)
     getStudyLogCount.mockResolvedValue(1)
-    const event = (rowKey, minute, eventType, details = {}, level = 'info') => ({
+    const event = (
+      rowKey,
+      minute,
+      eventType,
+      details = {},
+      level = 'info',
+    ) => ({
       rowKey,
       participantLabel: 'P-001',
       occurredAt: new Date(Date.UTC(2026, 8, 30, 12, minute)),
@@ -996,17 +1012,29 @@ describe('LogsView', () => {
     })
     getParticipantEvents.mockResolvedValue([
       event('submit', 9, 'STUDY_SUBMITTED'),
-      event('finish', 6, 'TASK_ATTEMPT_FINISHED', {
-        taskRef: 'task:0',
-        taskType: 'sus',
-        outcome: 'not_completed',
-      }, 'warning'),
-      event('record', 5, 'MEDIA_RECORDING_OUTCOME', {
-        taskRef: 'task:0',
-        mediaType: 'webcam',
-        outcome: 'failed',
-        stage: 'permission',
-      }, 'error'),
+      event(
+        'finish',
+        6,
+        'TASK_ATTEMPT_FINISHED',
+        {
+          taskRef: 'task:0',
+          taskType: 'sus',
+          outcome: 'not_completed',
+        },
+        'warning',
+      ),
+      event(
+        'record',
+        5,
+        'MEDIA_RECORDING_OUTCOME',
+        {
+          taskRef: 'task:0',
+          mediaType: 'webcam',
+          outcome: 'failed',
+          stage: 'permission',
+        },
+        'error',
+      ),
       event('start', 4, 'TASK_STARTED', { taskRef: 'task:0', taskType: 'sus' }),
       event('return', 7, 'STUDY_VIEW_OPENED'),
       event('consent', 1, 'CONSENT_ACCEPTED'),
@@ -1074,4 +1102,3 @@ describe('LogsView', () => {
     wrapper.unmount()
   })
 })
-

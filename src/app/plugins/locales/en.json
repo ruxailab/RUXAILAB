@@ -4442,5 +4442,131 @@
       "ended": "Ended",
       "unknown": "Unknown"
     }
+  },
+  "LogExplorer": {
+    "title": "Log explorer",
+    "subtitle": "Study activity and delivery trace",
+    "events": "{count} event | {count} events",
+    "timesShownIn": "Times shown in {timezone}",
+    "deliveryNotice": "Activity delivery is asynchronous and may be delayed or incomplete.",
+    "logView": "Log view",
+    "overview": "Overview",
+    "allEvents": "All events",
+    "participantTimeline": "Participant timeline",
+    "participant": "Participant",
+    "refresh": "Refresh",
+    "noParticipantSelected": "No participant selected",
+    "chooseParticipant": "Choose a participant to see their activity step by step.",
+    "filters": "Filters",
+    "activeFilters": "{count} active",
+    "hide": "Hide",
+    "show": "Show",
+    "activity": "Activity",
+    "eventType": "Event type",
+    "level": "Level",
+    "source": "Source",
+    "dateRange": "Date range",
+    "fromDate": "From date",
+    "throughDate": "Through date",
+    "applyFilters": "Apply filters",
+    "clear": "Clear",
+    "recordedActivity": "Recorded activity",
+    "updatedAt": "Updated {time}",
+    "occurrence": "Occurrence",
+    "event": "Event",
+    "openDetails": "Open details",
+    "noActivityFound": "No activity found",
+    "noEventsMatch": "No events match the applied filters.",
+    "rows": "Rows",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "eventDetails": "Event details",
+    "closeDetails": "Close details",
+    "browserTime": "Browser time",
+    "occurred": "Occurred",
+    "taskStartedNote": "The study client reports when the active task screen opened. This is evidence of task entry, not interaction. Browser clock errors can misorder events, so do not calculate task duration from this time.",
+    "clientTimeNote": "This time comes from the participant’s browser and may be inaccurate or out of order. Server receipt time below shows when the event arrived, not when the participant acted.",
+    "selectedAnswers": "Selected answers",
+    "questionnaireActivity": "Questionnaire activity",
+    "structuredCountsNote": "Counts show how often each response changed in this record. Selected answers and slider values remain in Results.",
+    "updatesInRecord": "{count} update in this record | {count} updates in this record",
+    "answerEditedNote": "Logs capture edit activity, not written answers or selected ratings; review responses and scores in Results. Active edit span is browser input time, not total time spent on the question.",
+    "questionResponseNote": "One update groups changes made during the same question interaction. Selected ratings, scores, and comment text are never logged; review responses in Results.",
+    "taskDurationNote": "Timed task activity can exclude a questionnaire stage, so it is not a full task duration.",
+    "serverReceipt": "Server receipt",
+    "receivedByServer": "Received by server",
+    "timeline": {
+      "activeSpan": "{span} from first to last activity",
+      "submitted": "Submitted {date}",
+      "inProgress": "In progress · last activity {date}",
+      "titles": {
+        "session": "Study opened",
+        "consent": "Consent accepted",
+        "preTest": "Pre-test",
+        "postTest": "Post-test",
+        "submitted": "Study submitted",
+        "liveSession": "Live session",
+        "other": "Other activity"
+      },
+      "task": "Task {index}",
+      "taskWithType": "Task {index} · {type}",
+      "heuristic": "Heuristic {index}",
+      "outcomes": {
+        "completed": "Completed",
+        "not_completed": "Could not finish",
+        "inProgress": "In progress"
+      },
+      "recordings": {
+        "completed": "saved",
+        "failed": "failed",
+        "permission_denied": "not allowed",
+        "cancelled": "cancelled"
+      },
+      "returnedToStudy": "Returned to study",
+      "returnedOnce": "Returned once",
+      "returnedTimes": "Returned {count} times",
+      "openedTimes": "Opened {count} times",
+      "questionsAnswered": "{count} question answered | {count} questions answered",
+      "questionsUpdated": "{count} question updated | {count} questions updated",
+      "ended": "Ended",
+      "live": "Live",
+      "taskTime": "task time {time}",
+      "questionnaireUpdates": "{count} questionnaire update | {count} questionnaire updates"
+    },
+    "overviewPanel": {
+      "title": "Overview",
+      "description": "Counts describe recorded log evidence, not completion rates or unique people.",
+      "refresh": "Refresh",
+      "logTotals": "Log totals",
+      "showInExplorer": "{label}: {value}. Show in Log Explorer",
+      "latestEvents": "Latest events",
+      "viewAll": "View all",
+      "noActivity": "No activity has been recorded yet.",
+      "levelSuffix": "{level} level",
+      "openDetails": "Open details",
+      "loadError": "The overview could not be loaded. Check your access and try again.",
+      "cards": {
+        "sessions": {
+          "label": "Sessions",
+          "hint": "Participant sessions with recorded activity"
+        },
+        "submitted": {
+          "label": "Submitted",
+          "hint": "Sessions with a recorded submission"
+        },
+        "events": {
+          "label": "Recorded events",
+          "hint": "All accepted log events"
+        },
+        "warnings": {
+          "label": "Warnings",
+          "hint": "Includes unfinished tasks and declined recordings"
+        },
+        "errors": {
+          "label": "Errors",
+          "hint": "Recording or upload failures"
+        }
+      }
+    }
   }
 }

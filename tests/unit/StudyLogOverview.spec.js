@@ -1,6 +1,12 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { config, flushPromises, mount } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
+import en from '@/app/plugins/locales/en.json'
 import StudyLogOverview from '@/shared/components/logs/StudyLogOverview.vue'
 import { getStudyLogOverview } from '@/shared/services/studyLogOverview'
+
+config.global.plugins = [
+  createI18n({ legacy: false, locale: 'en', messages: { en } }),
+]
 
 jest.mock('@/app/plugins/firebase', () => ({ db: {} }))
 jest.mock('@/shared/services/studyLogOverview', () => ({
