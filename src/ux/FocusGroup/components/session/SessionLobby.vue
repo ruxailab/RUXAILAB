@@ -2,7 +2,7 @@
   <v-row class="session-lobby lobby-bg pa-0 ma-0" align="center">
     <v-col md="8" class="ma-5 pa-5">
       <img
-        src="@/assets/logo_full_white.png"
+        src="@/assets/logo_full_white.svg"
         alt="RUXAILAB"
         class="mb-10"
         style="max-width: 260px"
@@ -138,7 +138,7 @@ defineEmits(['start'])
   height: 140%;
   margin-right: -450px;
   margin-top: 100px;
-  background-image: url(../../../../assets/logo_small_red.png);
+  background-image: url(../../../../assets/logo_small_red.svg);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;

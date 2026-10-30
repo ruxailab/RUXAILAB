@@ -2,7 +2,7 @@
   <div class="signup-wrapper">
     <Loading />
     <div class="logo-side d-none d-md-flex align-center justify-center">
-      <img src="@/assets/logo_full.png" alt="RUXAILAB" class="logo-img" />
+      <img src="@/assets/logo_full.svg" alt="RUXAILAB" class="logo-img" />
     </div>
 
     <!-- RIGHT: FORM -->

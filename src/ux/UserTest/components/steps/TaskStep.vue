@@ -681,7 +681,7 @@
 <script setup>
 import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import redXLogo from '@/assets/logo_small_red.png'
+import redXLogo from '@/assets/logo_small_red.svg'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import TipButton from '@/ux/UserTest/components/TipButton.vue'
 import AudioRecorder from '@/shared/components/AudioRecorder.vue'

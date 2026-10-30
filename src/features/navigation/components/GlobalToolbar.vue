@@ -125,8 +125,8 @@ import LocaleChanger from '@/features/language/components/LocaleChanger.vue'
 import HelpButton from '@/features/navigation/components/HelpButton.vue'
 import UserMenu from './UserMenu.vue'
 import NotificationButton from './NotificationButton.vue'
-import logoFull from '@/assets/logo_full_white.png'
-import logoSmall from '@/assets/logo_small_red.png'
+import logoFull from '@/assets/logo_full_white.svg'
+import logoSmall from '@/assets/logo_small_red.svg'
 
 // Emits
 defineEmits(['toggle-mobile-drawer', 'toggle-dashboard-drawer'])

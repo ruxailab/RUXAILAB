@@ -110,7 +110,7 @@
           class="ma-5 pa-5"
         >
           <img
-            src="../../../assets/logo_full_white.png"
+            src="../../../assets/logo_full_white.svg"
             alt="RUXAILAB"
             class="mb-10"
             style="max-width: 300px"

@@ -14,7 +14,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
-import redXLogo from '@/assets/logo_small_red.png'
+import redXLogo from '@/assets/logo_small_red.svg'
 
 const store = useStore()
 

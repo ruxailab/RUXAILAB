@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf'
-import logoFull from '@/assets/logo_full.png'
+import logoFull from '@/assets/logo_full.svg'
 
 export const downloadAnonymousParticipantIdentifier = ({
   identifier,

@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import logoSrc from '@/assets/logo_full_white.png'
+import logoSrc from '@/assets/logo_full_white.svg'
 import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
 
 defineProps({

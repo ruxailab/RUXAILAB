@@ -1,14 +1,14 @@
 <template>
   <div class="invite-wrapper">
     <div class="logo-side d-none d-md-flex align-center justify-center">
-      <img src="@/assets/logo_full.png" alt="RUXAILAB" class="logo-img" />
+      <img src="@/assets/logo_full.svg" alt="RUXAILAB" class="logo-img" />
     </div>
 
     <div class="form-side d-flex align-center justify-center">
       <div class="invite-box">
         <div class="d-md-none text-center mb-6">
           <img
-            src="@/assets/logo_full.png"
+            src="@/assets/logo_full.svg"
             alt="RUXAILAB"
             class="mobile-logo-img"
           />
