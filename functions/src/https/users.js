@@ -33,7 +33,7 @@ export const deleteAuth = functions.onCall({
       if (err instanceof functions.https.HttpsError) {
         throw err
       }
-      throw new functions.https.HttpsError('internal', err.message || 'Error deleting user')
+      throw new functions.https.HttpsError('internal', err?.message || 'Error deleting user')
     }
   }
 })
