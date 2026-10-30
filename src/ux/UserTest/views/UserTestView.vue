@@ -618,7 +618,6 @@
 <script setup>
 import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 import SubmitDialog from '@/shared/components/SubmitDialog.vue'
-import { doc, onSnapshot } from 'firebase/firestore'
 import {
   ref,
   computed,
@@ -646,7 +645,7 @@ import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import EyeTrackingCalibrationStep from '@/ux/UserTest/components/calibration/EyeTrackingCalibrationStep.vue'
-import { auth, db } from '@/app/plugins/firebase'
+import { auth } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import StepAnnouncementOverlay from '@/shared/components/StepAnnouncementOverlay.vue'
 import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
@@ -1147,7 +1146,15 @@ function handleIrisData(data) {
   localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
 }
 
+let unsubscribeCalibration = null
+
+const stopCalibrationListener = () => {
+  unsubscribeCalibration?.()
+  unsubscribeCalibration = null
+}
+
 const handleCalibrationFinished = () => {
+  stopCalibrationListener()
   calibrationCompleted.value = true
   stopCalibrationPopupPolling()
   if (calibrationPopup.value && !calibrationPopup.value.closed) {
@@ -1181,7 +1188,7 @@ const handleCalibrationMessage = (event) => {
   }
 }
 
-const openCalibration = () => {
+const openCalibration = async () => {
   if (!user.value?.id && !anonymousUserDocId.value) {
     initializeAnonymousUser()
   }
@@ -1192,6 +1199,11 @@ const openCalibration = () => {
   )
   calibrationInProgress.value = true
 
+  stopCalibrationListener()
+  unsubscribeCalibration = await store.dispatch('subscribeToCalibration', {
+    authId,
+    onCreated: handleCalibrationFinished,
+  })
   startCalibrationPopupPolling()
 }
 
@@ -2100,29 +2112,11 @@ onMounted(async () => {
   await autoComplete()
   calculateProgress(localTestAnswer, test.value?.testStructure)
   initializeStudyLogging()
-  if (!user.value?.id) return
-
-  let firstSnapshot = true
-
-  const userRef = doc(db, 'users', user.value.id)
-
-  onSnapshot(userRef, (docSnap) => {
-    if (!docSnap.exists()) return
-    const data = docSnap.data()
-
-    if (firstSnapshot) {
-      firstSnapshot = false
-      return
-    }
-
-    if (data.lastCalibrationId) {
-      handleCalibrationFinished()
-    }
-  })
 })
 
 onBeforeUnmount(() => {
   studyLogging?.destroy()
+  stopCalibrationListener()
   stopCalibrationPopupPolling()
   if (
     videoRecorder.value &&
