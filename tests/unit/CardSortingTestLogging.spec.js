@@ -144,6 +144,7 @@ describe('CardSortingTest activity logging', () => {
       await flushPromises()
       const vm = wrapper.vm
       const originalSorting = JSON.stringify(vm.localAnswer.sorting)
+      expect(wrapper.classes()).toContain('study-preview-start')
       const nav = () =>
         wrapper.findComponent({ name: 'StudyPreviewNavigation' })
       const next = async () => {
@@ -159,6 +160,7 @@ describe('CardSortingTest activity logging', () => {
       expect(vm.start).toBe(true)
       await next()
       expect(vm.globalIndex).toBe(0)
+      expect(wrapper.classes()).not.toContain('study-preview-start')
       await next()
       expect(vm.globalIndex).toBe(1)
       await next()

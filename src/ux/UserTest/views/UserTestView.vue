@@ -2,6 +2,7 @@
   <div
     v-if="test"
     class="session-backdrop"
+    :class="{ 'study-preview-start': preview && start }"
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"

@@ -361,20 +361,6 @@ The following commands are commonly used during development. Refer to the projec
 | `npm run build-prod` | Builds the application using production mode.     |
 | `npm run lint`       | Runs the configured linting checks, if available. |
 
-## Previewing a study
-
-Use **Preview** in the study sidebar to try a heuristic, unmoderated user, or
-card-sorting study without submitting a real response. Preview is available to
-members with dashboard access, starts with fresh temporary answers, and never
-saves responses, progress, activity logs, or results. Attachments remain in the
-browser tab; recording, eye-tracking calibration, and mobile pairing are disabled.
-Exit or finish the preview to discard the temporary answers and return to the
-study dashboard. Use **Answer Study** for normal participation and saved responses.
-The preview-only **Previous** and **Next** controls let you browse the configured
-steps, tasks, and questionnaires without filling in required fields or marking
-answers as complete. You can return to earlier steps without losing temporary input.
-Moderated sessions and Focus Groups do not offer this standalone preview.
-
 ## Contributing
 
 Contributions to RUXAILAB are welcome.

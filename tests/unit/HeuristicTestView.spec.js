@@ -149,6 +149,10 @@ describe('HeuristicTestView', () => {
       await flushPromises()
       const vm = wrapper.vm
       if (!preview) {
+        vm.start = false
+        await flushPromises()
+        expect(wrapper.find('.speed-dial-container').exists()).toBe(true)
+        vm.start = true
         expect(
           wrapper.findComponent({ name: 'StudyPreviewNavigation' }).exists(),
         ).toBe(false)
@@ -160,6 +164,7 @@ describe('HeuristicTestView', () => {
       const originalAnswers = JSON.stringify(
         vm.currentUserTestAnswer.heuristicQuestions,
       )
+      expect(wrapper.classes()).toContain('study-preview-start')
       const nav = () =>
         wrapper.findComponent({ name: 'StudyPreviewNavigation' })
       const next = async () => {
@@ -175,10 +180,12 @@ describe('HeuristicTestView', () => {
       expect(vm.previewStepIndex).toBe(0)
       await next()
       expect(vm.previewStepIndex).toBe(1)
+      expect(wrapper.classes()).not.toContain('study-preview-start')
       await next()
       expect(
         wrapper.findComponent({ name: 'HeuristicCardsStep' }).exists(),
       ).toBe(true)
+      expect(wrapper.find('.speed-dial-container').exists()).toBe(false)
       await next()
       const answer = () =>
         wrapper.findComponent(HeuristicAnswerStep).vm.$.setupState

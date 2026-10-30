@@ -17,6 +17,10 @@ it('disables the preview controls at boundaries and during loading', async () =>
     },
   })
   const [previous, next] = wrapper.findAll('button')
+  expect(wrapper.classes()).toContain('bg-secondary')
+  expect(wrapper.find('nav').classes()).toEqual(
+    expect.arrayContaining(['bg-secondary', 'text-primary']),
+  )
   expect(previous.element.disabled).toBe(true)
   await previous.trigger('click')
   expect(wrapper.emitted('previous')).toBeUndefined()

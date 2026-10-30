@@ -1,6 +1,10 @@
 <template>
   <div
     class="session-backdrop"
+    :class="{
+      'study-preview-start':
+        preview && start && currentPage === TEST_PAGES.welcome,
+    }"
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"
@@ -433,7 +437,7 @@
       </v-row>
     </v-container>
 
-    <div v-if="showSaveBtn && !start" class="speed-dial-container">
+    <div v-if="!preview && showSaveBtn && !start" class="speed-dial-container">
       <v-speed-dial
         v-model="fab"
         location="top center"

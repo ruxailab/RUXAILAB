@@ -1,5 +1,8 @@
 <template>
-  <div class="session-backdrop">
+  <div
+    class="session-backdrop"
+    :class="{ 'study-preview-start': preview && start }"
+  >
     <SessionBackdropMark />
 
     <div v-if="showStepAnnouncement" class="step-announcement-container">

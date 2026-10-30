@@ -59,7 +59,7 @@ const mountTestView = ({ store, router, route, props = {} }) =>
         'v-container': { template: '<div><slot /></div>' },
         'v-row': { template: '<div><slot /></div>' },
         'v-col': { template: '<div><slot /></div>' },
-        'v-alert': { template: '<div><slot /></div>' },
+        'v-alert': { template: '<div><slot /><slot name="append" /></div>' },
         'v-card': { template: '<div><slot /></div>' },
         'v-card-actions': { template: '<div><slot /></div>' },
         'v-card-text': { template: '<div><slot /></div>' },
@@ -166,6 +166,11 @@ describe('TestView', () => {
         wrapper.findComponent({ name: component }).attributes('preview'),
       ).toBe('true')
       expect(wrapper.text()).toContain('studyPreview.notice')
+      expect(wrapper.classes()).toContain('study-preview')
+      expect(wrapper.find('.study-preview-banner').classes()).toEqual(
+        expect.arrayContaining(['bg-secondary', 'text-primary']),
+      )
+      expect(wrapper.find('.study-preview-content').exists()).toBe(true)
       wrapper.unmount()
     },
   )
@@ -210,6 +215,8 @@ describe('TestView', () => {
     expect(store.dispatch).not.toHaveBeenCalledWith('getCurrentTestAnswerDoc')
     await wrapper.setProps({ preview: false })
     await flushPromises()
+    expect(wrapper.classes()).not.toContain('study-preview')
+    expect(wrapper.find('.study-preview-content').exists()).toBe(false)
     expect(store.dispatch).toHaveBeenCalledWith('getCurrentTestAnswerDoc')
     expect(
       wrapper

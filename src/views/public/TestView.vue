@@ -6,17 +6,24 @@
     <v-alert
       v-if="preview"
       type="info"
+      color="secondary"
       variant="flat"
-      class="study-preview-banner"
+      density="compact"
+      class="study-preview-banner bg-secondary text-primary"
       role="status"
     >
       <strong>{{ $t('studyPreview.title') }}</strong>
       {{ $t('studyPreview.notice') }}
-      <v-btn variant="outlined" size="small" class="ml-4" @click="exitPreview">
-        {{ $t('studyPreview.exit') }}
-      </v-btn>
+      <template #append>
+        <v-btn variant="outlined" size="small" @click="exitPreview">
+          {{ $t('studyPreview.exit') }}
+        </v-btn>
+      </template>
     </v-alert>
-    <div v-if="test.testType === STUDY_TYPES.HEURISTIC">
+    <div
+      v-if="test.testType === STUDY_TYPES.HEURISTIC"
+      :class="{ 'study-preview-content': preview }"
+    >
       <HeuristicTestView :id="id" :token="token" :preview="preview" />
     </div>
 
@@ -25,6 +32,7 @@
         test.testType === STUDY_TYPES.USER &&
         test.subType === USER_STUDY_SUBTYPES.UNMODERATED
       "
+      :class="{ 'study-preview-content': preview }"
     >
       <UserTestView :preview="preview" />
     </div>
@@ -38,7 +46,10 @@
       <ModeratedTestView ref="moderatedTestViewRef" :token="token" />
     </div>
 
-    <div v-if="test.testType === STUDY_TYPES.CARD_SORTING">
+    <div
+      v-if="test.testType === STUDY_TYPES.CARD_SORTING"
+      :class="{ 'study-preview-content': preview }"
+    >
       <CardSortingTest :test="test" :preview="preview" />
     </div>
   </div>
@@ -408,16 +419,77 @@ watch(
 </script>
 
 <style scoped>
-.study-preview :deep(.start-screen) {
-  position: relative;
-  height: auto;
-  min-height: calc(100dvh - 110px);
-  overflow: visible;
+.study-preview {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .study-preview-banner {
+  flex: 0 0 56px;
+  height: 56px;
+  max-height: 56px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  overflow-y: auto;
   position: sticky;
   top: 0;
   z-index: 2100;
+}
+
+.study-preview-banner :deep(.v-alert__append) {
+  align-self: center;
+}
+
+.study-preview-content {
+  flex: 1;
+  min-height: 0;
+}
+
+.study-preview-content :deep(.session-backdrop) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.study-preview-content :deep(.session-backdrop-mark) {
+  position: absolute;
+}
+
+.study-preview-content :deep(.session-backdrop-content) {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.study-preview :deep(.start-screen) {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.study-preview-content :deep(.study-preview-start .session-backdrop-content) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.study-preview-content :deep(.study-preview-start .start-screen > .v-col) {
+  max-height: 100%;
+  margin-block: 0 !important;
+}
+
+.study-preview-content :deep(.study-preview-navigation-space) {
+  flex-shrink: 0;
+  height: auto;
+}
+
+.study-preview-content :deep(.study-preview-navigation) {
+  position: static;
 }
 </style>

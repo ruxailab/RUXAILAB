@@ -137,6 +137,7 @@ it.each([false, true])(
     try {
       const vm = await mountView({ preview: true }, { inspectSteps: true })
       const initialAnswer = JSON.stringify(vm.localTestAnswer)
+      expect(wrapper.classes()).toContain('study-preview-start')
       const nav = () =>
         wrapper.findComponent({ name: 'StudyPreviewNavigation' })
       const next = async () => {
@@ -152,6 +153,7 @@ it.each([false, true])(
       expect(vm.start).toBe(true)
       await next()
       expect(vm.globalIndex).toBe(0)
+      expect(wrapper.classes()).not.toContain('study-preview-start')
       await next()
       expect(vm.globalIndex).toBe(1)
       if (withQuestionnaires) {
