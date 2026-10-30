@@ -1,6 +1,10 @@
 <template>
   <div
     class="session-backdrop"
+    :class="{
+      'study-preview-start':
+        preview && start && currentPage === TEST_PAGES.welcome,
+    }"
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"
@@ -19,16 +23,28 @@
     <Snackbar />
     <SubmitDialog
       v-model="dialog"
-      :title="$t('HeuristicsTestView.messages.submitTest')"
-      :message="$t('HeuristicsTestView.messages.submitOnce')"
+      :title="
+        $t(
+          preview
+            ? 'studyPreview.finish'
+            : 'HeuristicsTestView.messages.submitTest',
+        )
+      "
+      :message="
+        $t(
+          preview
+            ? 'studyPreview.finishMessage'
+            : 'HeuristicsTestView.messages.submitOnce',
+        )
+      "
       :cancel-label="$t('buttons.cancel')"
-      :submit-label="$t('buttons.submit')"
+      :submit-label="$t(preview ? 'studyPreview.exit' : 'buttons.submit')"
       @cancel="dialog = false"
       @submit="(submitAnswer(), (dialog = false))"
     />
 
     <AutoSaveStatusBanner
-      v-if="!start && !currentUserTestAnswer?.submitted"
+      v-if="!preview && !start && !currentUserTestAnswer?.submitted"
       :message="saveStatusMessage"
       :status-type="saveStatusType"
       :is-saving="autoSaveInProgress"
@@ -328,11 +344,14 @@
                   review == true &&
                   !showHeuristicCards
                 "
+                ref="heuristicAnswerStep"
+                :key="preview ? heurisIndex : undefined"
                 :heuristic="heuristics[heurisIndex]"
                 :heuristics="heuristics"
                 :heuris-index="heurisIndex"
                 :current-user-test-answer="currentUserTestAnswer"
                 :test="test"
+                :preview="preview"
                 @back="showHeuristicCards = true"
                 @select-heuristic="handleHeurisClick"
                 @finish-evaluation="finishEvaluation"
@@ -392,15 +411,23 @@
               <div
                 v-if="
                   currentPage === TEST_PAGES.answers &&
-                  calculatedProgress == 100 &&
+                  (preview || calculatedProgress == 100) &&
                   review == false
                 "
               >
                 <FinishStep
                   :final-message="$t('finishTest.finalMessage')"
                   :congratulations="$t('finishTest.congratulations')"
-                  :submit-message="$t('finishTest.submitMessage')"
-                  :submit-btn="$t('buttons.submit')"
+                  :submit-message="
+                    $t(
+                      preview
+                        ? 'studyPreview.finishMessage'
+                        : 'finishTest.submitMessage',
+                    )
+                  "
+                  :submit-btn="
+                    $t(preview ? 'studyPreview.finish' : 'buttons.submit')
+                  "
                   @submit="dialog = true"
                 />
               </div>
@@ -410,7 +437,7 @@
       </v-row>
     </v-container>
 
-    <div v-if="showSaveBtn && !start" class="speed-dial-container">
+    <div v-if="!preview && showSaveBtn && !start" class="speed-dial-container">
       <v-speed-dial
         v-model="fab"
         location="top center"
@@ -430,7 +457,7 @@
           </v-btn>
         </template>
 
-        <v-tooltip location="left">
+        <v-tooltip v-if="!preview" location="left">
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
@@ -479,11 +506,20 @@
         </v-tooltip>
       </v-speed-dial>
     </div>
+    <StudyPreviewNavigation
+      v-if="preview"
+      :can-previous="previewStepIndex > 0"
+      :can-next="previewStepIndex < heuristics.length + 3"
+      :disabled="!answerInitialized"
+      @previous="navigatePreview(-1)"
+      @next="navigatePreview(1)"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, onBeforeMount, onUnmounted } from 'vue'
+import { ref, computed, watch, nextTick, onBeforeMount, onUnmounted } from 'vue'
+import StudyPreviewNavigation from '@/shared/components/StudyPreviewNavigation.vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -520,6 +556,7 @@ import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 const props = defineProps({
   id: { type: String, default: '' },
   token: { type: String, default: null },
+  preview: { type: Boolean, default: false },
 })
 
 const store = useStore()
@@ -529,6 +566,7 @@ const { t } = useI18n()
 let studyLogging = null
 
 const initializeStudyLogging = () => {
+  if (props.preview) return null
   if (studyLogging || !user.value?.id || !test.value?.id) return studyLogging
   studyLogging = createStudyLoggingRuntime({
     ownerUid: user.value.id,
@@ -582,6 +620,41 @@ const TEST_PAGES = {
 const currentPage = ref(TEST_PAGES.welcome)
 const answerInitialized = ref(false)
 const returningToInstructions = ref(false)
+const heuristicAnswerStep = ref(null)
+
+const previewStepIndex = computed(() => {
+  if (currentPage.value === TEST_PAGES.welcome) return 0
+  if (currentPage.value === TEST_PAGES.instructions) return 1
+  if (!review.value) return heuristics.value.length + 3
+  return showHeuristicCards.value ? 2 : heurisIndex.value + 3
+})
+
+const navigatePreview = async (direction) => {
+  if (!props.preview || !answerInitialized.value) return
+  if (
+    previewStepIndex.value >= 3 &&
+    previewStepIndex.value < heuristics.value.length + 3 &&
+    heuristicAnswerStep.value?.movePreviewQuestion?.(direction)
+  )
+    return
+  const destination = previewStepIndex.value + direction
+  if (destination < 0 || destination > heuristics.value.length + 3) return
+  pauseTimer(heurisIndex.value)
+  start.value = destination <= 1
+  currentPage.value =
+    destination === 0
+      ? TEST_PAGES.welcome
+      : destination === 1
+        ? TEST_PAGES.instructions
+        : TEST_PAGES.answers
+  review.value = destination !== heuristics.value.length + 3
+  showHeuristicCards.value = destination === 2
+  index.value = 1
+  dialog.value = false
+  if (destination >= 3 && review.value) heurisIndex.value = destination - 3
+  await nextTick()
+  if (direction < 0) heuristicAnswerStep.value?.showLastPreviewQuestion?.()
+}
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -875,7 +948,8 @@ const verifyTimerState = (heuristic) => {
 }
 
 const startTimer = (heuristicIndex) => {
-  if (start.value || currentUserTestAnswer.value?.submitted) return
+  if (props.preview || start.value || currentUserTestAnswer.value?.submitted)
+    return
 
   const heuristic =
     currentUserTestAnswer.value?.heuristicQuestions?.[heuristicIndex]
@@ -938,6 +1012,10 @@ const navigateToStep = (step) => {
 }
 
 const openInstructionsPage = () => {
+  if (props.preview) {
+    currentPage.value = TEST_PAGES.instructions
+    return
+  }
   const startScreen = document.querySelector('.start-screen')
   if (startScreen) {
     startScreen.classList.add('leaving')
@@ -1512,6 +1590,7 @@ const reportSaveFailure = (error) => {
 }
 
 const autoSaveAnswer = async () => {
+  if (props.preview) return
   if (
     !answerInitialized.value ||
     !currentUserTestAnswer.value ||
@@ -1575,6 +1654,7 @@ const getOrderedHeuristicsForSave = () => {
 
 // Manual save function (with toast)
 const manualSaveAnswer = async () => {
+  if (props.preview) return
   if (!currentUserTestAnswer.value) {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
@@ -1623,6 +1703,11 @@ const manualSaveAnswer = async () => {
 const debouncedAutoSave = debounce(autoSaveAnswer, 1500)
 
 const submitAnswer = async () => {
+  if (props.preview) {
+    debouncedAutoSave.cancel()
+    exitEvaluation()
+    return
+  }
   if (!currentUserTestAnswer.value) {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
@@ -1659,6 +1744,10 @@ const submitAnswer = async () => {
 }
 
 const exitEvaluation = () => {
+  if (props.preview) {
+    router.push(`/heuristic/manager/${test.value.id}`)
+    return
+  }
   if (hasTestDashboardAccess.value) {
     router.push(`/heuristic/dashboard/${test.value.id}`)
   } else {
@@ -1947,9 +2036,9 @@ const restoreProgress = () => {
 const setTest = async () => {
   logined.value = true
   answerInitialized.value = false
-  await store.dispatch('getCurrentTestAnswerDoc')
+  if (!props.preview) await store.dispatch('getCurrentTestAnswerDoc')
   currentUserTestAnswer.value = normalizeCurrentUserTestAnswer(
-    store.getters.currentUserTestAnswer,
+    props.preview ? null : store.getters.currentUserTestAnswer,
   )
   initializeHeuristicsOrder()
   answerInitialized.value = populateWithHeuristicQuestions()
@@ -1990,6 +2079,7 @@ watch(heurisIndex, (newIndex, oldIndex) => {
   if (rightView.value) {
     rightView.value.scrollTop = 0
   }
+  if (props.preview) return
   // Auto-save when navigating between heuristics
   if (!start.value) {
     if (trackTimeEnabled.value) {
@@ -2026,11 +2116,11 @@ onBeforeMount(async () => {
   await store.dispatch('getStudy', { id: props.id })
 
   // Then load user's answers
-  await store.dispatch('getCurrentTestAnswerDoc')
+  if (!props.preview) await store.dispatch('getCurrentTestAnswerDoc')
 
   // Load answer data into local reactive state
   currentUserTestAnswer.value = normalizeCurrentUserTestAnswer(
-    store.getters.currentUserTestAnswer,
+    props.preview ? null : store.getters.currentUserTestAnswer,
   )
 
   // Randomize only for fresh runs; keep deterministic order for resumed runs.
@@ -2044,10 +2134,11 @@ onBeforeMount(async () => {
   restoreProgress()
 
   // Setup auto-save on unload
-  setupAutoSaveOnUnload()
+  if (!props.preview) setupAutoSaveOnUnload()
 })
 
 onUnmounted(() => {
+  debouncedAutoSave.cancel()
   studyLogging?.destroy()
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {

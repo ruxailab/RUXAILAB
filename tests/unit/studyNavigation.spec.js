@@ -6,6 +6,7 @@ import {
   getInviteAcceptanceDestination,
   getStudyRouteBase,
   getTestViewAccessRedirect,
+  supportsStudyPreview,
 } from '@/shared/utils/studyNavigation'
 import {
   hasStudyCapability,
@@ -220,6 +221,7 @@ describe('study navigation', () => {
 
     expect(titlesFor(study, evaluator, 'heuristic')).toEqual([
       'Dashboard',
+      'Preview',
       'Answer',
       'Results',
     ])
@@ -229,6 +231,7 @@ describe('study navigation', () => {
     expect(titlesFor(studyWith('USER'), owner)).toEqual([
       'Dashboard',
       'Test',
+      'Preview',
       'Answer',
       'Progress',
       'Results',
@@ -245,22 +248,25 @@ describe('study navigation', () => {
     const study = studyWith('FOCUS_GROUP')
     expect(titlesFor(study, owner)).toContain('Logs')
     expect(
-      titlesFor(
-        studyWith('FOCUS_GROUP', 'observer', STUDY_ROLE.OBSERVATOR),
-        { id: 'observer', accessLevel: 1 },
-      ),
+      titlesFor(studyWith('FOCUS_GROUP', 'observer', STUDY_ROLE.OBSERVATOR), {
+        id: 'observer',
+        accessLevel: 1,
+      }),
     ).not.toContain('Logs')
   })
 
   it('exposes Focus Group analytics to answer-review-capable members only', () => {
     const study = studyWith('FOCUS_GROUP')
     expect(titlesFor(study, owner)).toContain('Analytics')
-    expect(titlesFor(study, { id: 'participant', accessLevel: 1 })).not.toContain('Analytics')
+    expect(
+      titlesFor(study, { id: 'participant', accessLevel: 1 }),
+    ).not.toContain('Analytics')
   })
 
   it('groups study navigation by the user task', () => {
     expect(groupsFor(studyWith('USER'), owner)).toEqual([
       'overview',
+      'evaluation',
       'evaluation',
       'evaluation',
       'evaluation',
@@ -281,6 +287,7 @@ describe('study navigation', () => {
     expect(titlesFor(study, user)).toEqual([
       'Dashboard',
       'Test',
+      'Preview',
       'Answer',
       'Results',
       'Cooperators',
@@ -299,7 +306,7 @@ describe('study navigation', () => {
     const user = { id: 'observator', accessLevel: 1 }
     const study = studyWith('USER', user.id, STUDY_ROLE.OBSERVATOR)
 
-    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Results'])
+    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Preview', 'Results'])
   })
 
   it('adds Answer and Cooperators for a moderated Observator', () => {
@@ -324,7 +331,12 @@ describe('study navigation', () => {
       isPublic: true,
     }
 
-    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Answer', 'Results'])
+    expect(titlesFor(study, user)).toEqual([
+      'Dashboard',
+      'Preview',
+      'Answer',
+      'Results',
+    ])
   })
 
   it('shows Answer for a Guest only when the heuristic study is public', () => {
@@ -334,10 +346,12 @@ describe('study navigation', () => {
 
     expect(titlesFor(privateStudy, user, 'heuristic')).toEqual([
       'Dashboard',
+      'Preview',
       'Results',
     ])
     expect(titlesFor(publicStudy, user, 'heuristic')).toEqual([
       'Dashboard',
+      'Preview',
       'Answer',
       'Results',
     ])
@@ -350,6 +364,7 @@ describe('study navigation', () => {
     expect(titlesFor(study, user, 'heuristic')).toEqual([
       'Dashboard',
       'Test',
+      'Preview',
       'Answer',
       'Results',
       'Cooperators',
@@ -364,6 +379,59 @@ describe('study navigation', () => {
     const study = studyWith('USER', user.id, STUDY_ROLE.USER)
 
     expect(titlesFor(study, user)).toEqual([])
+  })
+
+  it.each(['HEURISTIC', 'USER', 'CARD_SORTING'])(
+    'separates Preview from Answer for %s studies',
+    (testType) => {
+      const study = studyWith(testType)
+      const items = buildStudyNavigator({ study, user: owner, type: 'study' })
+      expect(items.find((item) => item.title === 'Preview')?.path).toBe(
+        '/preview/study-1',
+      )
+      expect(items.find((item) => item.title === 'Answer')?.path).toBe(
+        '/testview/study-1',
+      )
+      expect(
+        getTestViewAccessRedirect({ study, user: owner, preview: true }),
+      ).toBeNull()
+    },
+  )
+
+  it('lets dashboard-only members preview without granting permission to answer', () => {
+    const user = { id: 'guest', accessLevel: 1 }
+    const study = studyWith('HEURISTIC', user.id, STUDY_ROLE.GUEST)
+    expect(getTestViewAccessRedirect({ study, user, preview: true })).toBeNull()
+    expect(getTestViewAccessRedirect({ study, user })).not.toBeNull()
+  })
+
+  it('denies preview to public participants, pending members, and anonymous users', () => {
+    const user = { id: 'participant', accessLevel: 1 }
+    const study = { ...studyWith('USER'), isPublic: true }
+    expect(
+      getTestViewAccessRedirect({ study, user, preview: true }),
+    ).not.toBeNull()
+    expect(
+      getTestViewAccessRedirect({ study, user: null, preview: true }),
+    ).not.toBeNull()
+    study.cooperators = [
+      { userDocId: user.id, accessLevel: STUDY_ROLE.MANAGER, accepted: false },
+    ]
+    expect(
+      getTestViewAccessRedirect({ study, user, preview: true }),
+    ).not.toBeNull()
+  })
+
+  it.each([
+    { testType: 'FOCUS_GROUP' },
+    { testType: 'USER', subType: USER_STUDY_SUBTYPES.MODERATED },
+  ])('does not offer a standalone Preview for live sessions: %o', (method) => {
+    const study = { ...studyWith(method.testType), ...method }
+    expect(supportsStudyPreview(study)).toBe(false)
+    expect(titlesFor(study, owner)).not.toContain('Preview')
+    expect(
+      getTestViewAccessRedirect({ study, user: owner, preview: true }),
+    ).not.toBeNull()
   })
 
   it('filters manager dashboard cards through the same capability policy', () => {

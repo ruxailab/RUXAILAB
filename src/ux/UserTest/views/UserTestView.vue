@@ -2,6 +2,7 @@
   <div
     v-if="test"
     class="session-backdrop"
+    :class="{ 'study-preview-start': preview && start }"
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"
@@ -19,6 +20,7 @@
     <div>
       <IrisTracker
         v-if="
+          !preview &&
           hasEyeTracking &&
           globalIndex === (hasEyeTracking ? 5 : 4) &&
           test.testStructure.userTasks[taskIndex]?.hasEye
@@ -44,10 +46,22 @@
 
     <SubmitDialog
       :model-value="dialog"
-      :title="$t('HeuristicsTestView.messages.submitTest')"
-      :message="$t('HeuristicsTestView.messages.submitOnce')"
+      :title="
+        $t(
+          preview
+            ? 'studyPreview.finish'
+            : 'HeuristicsTestView.messages.submitTest',
+        )
+      "
+      :message="
+        $t(
+          preview
+            ? 'studyPreview.finishMessage'
+            : 'HeuristicsTestView.messages.submitOnce',
+        )
+      "
       :cancel-label="$t('buttons.cancel')"
-      :submit-label="$t('buttons.submit')"
+      :submit-label="$t(preview ? 'studyPreview.exit' : 'buttons.submit')"
       @cancel="dialog = false"
       @submit="handleSubmit"
     />
@@ -445,6 +459,8 @@
 
           <PreTestStep
             v-if="globalIndex === 2 && taskIndex === 0"
+            ref="preTestStepComponent"
+            :preview="preview"
             :test-title="test.testTitle"
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localTestAnswer.preTestAnswer"
@@ -491,12 +507,14 @@
               localTestAnswer?.tasks?.[taskIndex]
             "
             ref="taskStepComponent"
+            :key="preview ? taskIndex : undefined"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="
               localTestAnswer.tasks[taskIndex].taskObservations
             "
             :task="test.testStructure.userTasks[taskIndex]"
+            :preview="preview"
             :task-index="taskIndex"
             :test-id="testId"
             :user-doc-id="user?.id || anonymousUserDocId"
@@ -584,8 +602,12 @@
             v-if="
               hasPostTest &&
               globalIndex === (hasEyeTracking ? 6 : 5) &&
-              (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)
+              (preview ||
+                !localTestAnswer.postTestCompleted ||
+                localTestAnswer.submitted)
             "
+            ref="postTestStepComponent"
+            :preview="preview"
             :test-title="test.testTitle"
             :post-test="test.testStructure.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer"
@@ -600,24 +622,39 @@
           <FinishStep
             v-if="
               globalIndex === (hasEyeTracking ? 7 : 6) &&
-              localTestAnswer.postTestCompleted &&
+              (preview || localTestAnswer.postTestCompleted) &&
               !localTestAnswer.submitted
             "
             :final-message="$t('finishTest.finalMessage')"
             :congratulations="test.testStructure.finalMessage"
-            :submit-message="$t('finishTest.submitMessage')"
-            :submit-btn="$t('buttons.submit')"
+            :submit-message="
+              $t(
+                preview
+                  ? 'studyPreview.finishMessage'
+                  : 'finishTest.submitMessage',
+              )
+            "
+            :submit-btn="$t(preview ? 'studyPreview.finish' : 'buttons.submit')"
             @submit="dialog = true"
           />
         </v-col>
       </v-row>
     </v-container>
+    <StudyPreviewNavigation
+      v-if="preview"
+      :can-previous="previewStepIndex > 0"
+      :can-next="previewStepIndex < previewSteps.length - 1"
+      :disabled="!answerLoaded"
+      @previous="navigatePreview(-1)"
+      @next="navigatePreview(1)"
+    />
   </div>
 </template>
 
 <script setup>
 import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 import SubmitDialog from '@/shared/components/SubmitDialog.vue'
+import StudyPreviewNavigation from '@/shared/components/StudyPreviewNavigation.vue'
 import {
   ref,
   computed,
@@ -674,6 +711,10 @@ import {
   mobileTaskId,
 } from '@/ux/UserTest/utils/mobileTaskPageState'
 
+const props = defineProps({
+  preview: { type: Boolean, default: false },
+})
+
 const fullName = ref('')
 const logined = ref(null)
 // Start stays disabled until the saved answer is known, so a submitted study
@@ -712,6 +753,8 @@ const truncateDescription = (description) => {
 const rightView = ref(null)
 const videoRecorder = ref(null)
 const taskStepComponent = ref(null)
+const preTestStepComponent = ref(null)
+const postTestStepComponent = ref(null)
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
   return taskStepComponent.value?.$refs?.timerComponent || null
@@ -755,6 +798,7 @@ const participantUid = () =>
   (auth?.currentUser?.isAnonymous ? auth.currentUser.uid : null)
 
 const initializeStudyLogging = () => {
+  if (props.preview) return null
   if (studyLogging || !participantUid() || !test.value?.id) return studyLogging
   studyLogging = createStudyLoggingRuntime({
     ownerUid: participantUid(),
@@ -782,7 +826,7 @@ const handleLoggingInput = (event) =>
 const handleLoggingFocusout = (event) =>
   initializeStudyLogging()?.editHandlers.focusout(event)
 
-const mediaUrls = computed(() => store.getters.mediaUrls)
+const mediaUrls = computed(() => (props.preview ? {} : store.getters.mediaUrls))
 const test = computed(() => store.getters.test)
 const testId = computed(() => store.getters.test?.id || null)
 const user = computed(() => {
@@ -790,8 +834,8 @@ const user = computed(() => {
   return store.getters.user
 })
 
-const currentUserTestAnswer = computed(
-  () => store.getters.currentUserTestAnswer || {},
+const currentUserTestAnswer = computed(() =>
+  props.preview ? {} : store.getters.currentUserTestAnswer || {},
 )
 
 const mobileCompanion = useMobileTaskCompanion({
@@ -809,7 +853,7 @@ const {
 } = mobileCompanion
 const acceptedMobileOutcome = ref(null)
 const studyAllowsMobileTaskInstructions = computed(
-  () => test.value?.allowMobileTaskInstructions !== false,
+  () => !props.preview && test.value?.allowMobileTaskInstructions !== false,
 )
 const mobileInstructionsEligible = computed(() =>
   isMobileTaskIndexEligible(taskIndex.value),
@@ -874,8 +918,10 @@ function submitCurrentMobileOutcome(outcome) {
   })
 }
 
-const hasEyeTracking = computed(() =>
-  test.value?.testStructure?.userTasks?.some((task) => task.hasEye),
+const hasEyeTracking = computed(
+  () =>
+    !props.preview &&
+    test.value?.testStructure?.userTasks?.some((task) => task.hasEye),
 )
 const isOnTaskStage = computed(
   () => globalIndex.value === (hasEyeTracking.value ? 5 : 4),
@@ -969,6 +1015,64 @@ const goToPreTasksOrTasks = () => {
   void enterPendingTask()
 }
 
+const previewSteps = computed(() => [
+  { start: true, globalIndex: 0 },
+  { globalIndex: 0 },
+  { globalIndex: 1 },
+  ...(hasPreTest.value ? [{ globalIndex: 2 }] : []),
+  ...(showPreTasksStep.value ? [{ globalIndex: 3 }] : []),
+  ...(test.value?.testStructure?.userTasks || []).map((_, taskIndex) => ({
+    globalIndex: 4,
+    taskIndex,
+  })),
+  ...(hasPostTest.value ? [{ globalIndex: 5 }] : []),
+  { globalIndex: 6 },
+])
+
+const previewStepIndex = computed(() =>
+  start.value
+    ? 0
+    : previewSteps.value.findIndex(
+        (step) =>
+          !step.start &&
+          step.globalIndex === globalIndex.value &&
+          (step.taskIndex === undefined || step.taskIndex === taskIndex.value),
+      ),
+)
+
+const navigatePreview = async (direction) => {
+  if (!props.preview || !answerLoaded.value) return
+  const questionnaire =
+    globalIndex.value === 2
+      ? preTestStepComponent.value
+      : globalIndex.value === 5
+        ? postTestStepComponent.value
+        : null
+  if (!start.value && questionnaire?.movePreviewQuestion?.(direction)) return
+  if (
+    !start.value &&
+    globalIndex.value === 4 &&
+    taskStepComponent.value?.movePreviewStep?.(direction)
+  )
+    return
+
+  const destination = previewSteps.value[previewStepIndex.value + direction]
+  if (!destination) return
+  start.value = Boolean(destination.start)
+  globalIndex.value = destination.globalIndex
+  taskIndex.value = destination.taskIndex ?? 0
+  dialog.value = false
+  await nextTick()
+  if (direction < 0) {
+    if (destination.globalIndex === 4)
+      taskStepComponent.value?.showLastPreviewStep?.()
+    if (destination.globalIndex === 2)
+      preTestStepComponent.value?.showLastPreviewQuestion?.()
+    if (destination.globalIndex === 5)
+      postTestStepComponent.value?.showLastPreviewQuestion?.()
+  }
+}
+
 const hasPostTest = computed(() => {
   return (
     test.value?.testStructure?.postTest != null &&
@@ -1034,6 +1138,7 @@ const isStartTestDisabled = computed(() => {
     test.value.testStructure.userTasks.length > 0
 
   if (!hasValidTasks) return true
+  if (props.preview) return false
 
   // Check if status is different from 'active'
   if (test.value.status !== 'active') return true
@@ -1060,6 +1165,7 @@ const testDisabledReason = computed(() => {
     test.value.testStructure.userTasks.length > 0
 
   if (!hasValidTasks) return 'Test has no tasks configured'
+  if (props.preview) return null
 
   if (test.value.status !== 'active') return 'Test is not active'
 
@@ -1189,6 +1295,11 @@ const handleCalibrationMessage = (event) => {
 }
 
 const openCalibration = async () => {
+  if (props.preview) {
+    handleCalibrationFinished()
+    goToPreTasksOrTasks()
+    return
+  }
   if (!user.value?.id && !anonymousUserDocId.value) {
     initializeAnonymousUser()
   }
@@ -1245,6 +1356,11 @@ const handleDownloadAnonymousIdentifier = () => {
   })
 }
 const savePartialAnswer = async () => {
+  if (props.preview) {
+    accumulateTestTime()
+    calculateProgress(localTestAnswer, test.value?.testStructure)
+    return
+  }
   attachMediaToTasks(localTestAnswer, mediaUrls.value)
   const recordingsToSave = recordingOutcomes
     .beforeSave()
@@ -1310,6 +1426,10 @@ const saveAnswer = async () => {
 }
 
 const submitAnswer = async () => {
+  if (props.preview) {
+    router.push(`/userTest/unmoderated/manager/${test.value.id}`)
+    return
+  }
   try {
     isLoading.value = true
     await mobileCompanion.endSession()
@@ -1399,6 +1519,11 @@ const startTest = async () => {
       message: t('UserTestView.messages.noTasks'),
     })
     router.push(`/missions/${test.value.id}`)
+    return
+  }
+
+  if (props.preview) {
+    start.value = false
     return
   }
 
@@ -1681,7 +1806,7 @@ const completeStep = async (id, type, userCompleted = true) => {
         if (!hasPostTest.value) {
           localTestAnswer.postTestCompleted = true
         }
-        void mobileCompanion.completeTaskPhase()
+        if (!props.preview) void mobileCompanion.completeTaskPhase()
       }
       if (userCompleted) {
         store.commit('SET_TOAST', {
@@ -1778,7 +1903,7 @@ const initializeAnonymousUser = () => {
 const setTest = async () => {
   try {
     logined.value = true
-    await store.dispatch('getCurrentTestAnswerDoc')
+    if (!props.preview) await store.dispatch('getCurrentTestAnswerDoc')
     if (!currentUserTestAnswer.value) {
       currentUserTestAnswer.value = new UserStudyEvaluatorAnswer()
     }

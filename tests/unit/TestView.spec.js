@@ -59,7 +59,7 @@ const mountTestView = ({ store, router, route, props = {} }) =>
         'v-container': { template: '<div><slot /></div>' },
         'v-row': { template: '<div><slot /></div>' },
         'v-col': { template: '<div><slot /></div>' },
-        'v-alert': { template: '<div><slot /></div>' },
+        'v-alert': { template: '<div><slot /><slot name="append" /></div>' },
         'v-card': { template: '<div><slot /></div>' },
         'v-card-actions': { template: '<div><slot /></div>' },
         'v-card-text': { template: '<div><slot /></div>' },
@@ -68,6 +68,7 @@ const mountTestView = ({ store, router, route, props = {} }) =>
         'v-progress-circular': true,
         'v-spacer': true,
       },
+      mocks: { $t: (key) => key },
     },
   })
 
@@ -128,6 +129,130 @@ describe('TestView', () => {
     expect(wrapper.text()).toContain(
       "You do not have access to the page you're trying to access.",
     )
+    wrapper.unmount()
+  })
+
+  it.each([
+    ['HEURISTIC', 'HeuristicTestView'],
+    ['USER', 'UserTestView'],
+    ['CARD_SORTING', 'CardSortingTest'],
+  ])(
+    'opens %s preview without loading answers or accepting invitations',
+    async (testType, component) => {
+      const study = {
+        id: 'study-1',
+        testType,
+        subType: 'USER_UNMODERATED',
+        testAdmin: { userDocId: 'user-1' },
+      }
+      route.query = { inviteToken: 'unused-token' }
+      store.dispatch.mockImplementation(async (action) => {
+        if (action === 'getStudy') {
+          store.getters.test = study
+          return study
+        }
+      })
+      const wrapper = mountTestView({
+        store,
+        router,
+        route,
+        props: { preview: true },
+      })
+      await flushPromises()
+      expect(store.dispatch.mock.calls.map(([action]) => action)).toEqual([
+        'getStudy',
+      ])
+      expect(
+        wrapper.findComponent({ name: component }).attributes('preview'),
+      ).toBe('true')
+      expect(wrapper.text()).toContain('studyPreview.notice')
+      expect(wrapper.classes()).toContain('study-preview')
+      expect(wrapper.find('.study-preview-banner').classes()).toEqual(
+        expect.arrayContaining(['bg-secondary', 'text-white']),
+      )
+      expect(wrapper.find('.study-preview-content').exists()).toBe(true)
+      wrapper.unmount()
+    },
+  )
+
+  it('does not mount an answering view when preview access is denied', async () => {
+    const study = { id: 'study-1', testType: 'HEURISTIC', isPublic: true }
+    store.getters.test = study
+    store.dispatch.mockResolvedValue(study)
+    const wrapper = mountTestView({
+      store,
+      router,
+      route,
+      props: { preview: true },
+    })
+    expect(wrapper.findComponent({ name: 'HeuristicTestView' }).exists()).toBe(
+      false,
+    )
+    await flushPromises()
+    expect(router.replace).toHaveBeenCalledWith('/admin')
+    expect(wrapper.findComponent({ name: 'HeuristicTestView' }).exists()).toBe(
+      false,
+    )
+    expect(store.dispatch).not.toHaveBeenCalledWith('getCurrentTestAnswerDoc')
+    wrapper.unmount()
+  })
+
+  it('reloads the correct answer mode when switching between Preview and Answer', async () => {
+    const study = {
+      id: 'study-1',
+      testType: 'HEURISTIC',
+      testAdmin: { userDocId: 'user-1' },
+    }
+    store.getters.test = study
+    store.dispatch.mockResolvedValue(study)
+    const wrapper = mountTestView({
+      store,
+      router,
+      route,
+      props: { preview: true },
+    })
+    await flushPromises()
+    expect(store.dispatch).not.toHaveBeenCalledWith('getCurrentTestAnswerDoc')
+    await wrapper.setProps({ preview: false })
+    await flushPromises()
+    expect(wrapper.classes()).not.toContain('study-preview')
+    expect(wrapper.find('.study-preview-content').exists()).toBe(false)
+    expect(store.dispatch).toHaveBeenCalledWith('getCurrentTestAnswerDoc')
+    expect(
+      wrapper
+        .findComponent({ name: 'HeuristicTestView' })
+        .attributes('preview'),
+    ).toBe('false')
+    expect(wrapper.text()).not.toContain('studyPreview.notice')
+    store.dispatch.mockClear()
+    await wrapper.setProps({ preview: true })
+    await flushPromises()
+    expect(store.dispatch.mock.calls.map(([action]) => action)).toEqual([
+      'getStudy',
+    ])
+    expect(
+      wrapper
+        .findComponent({ name: 'HeuristicTestView' })
+        .attributes('preview'),
+    ).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('does not turn a normal Answer URL into a preview through query parameters', async () => {
+    const study = { id: 'study-1', testType: 'HEURISTIC', isPublic: true }
+    route.query = { preview: 'true' }
+    store.getters.test = study
+    store.dispatch.mockResolvedValue(study)
+    const wrapper = mountTestView({ store, router, route })
+    await flushPromises()
+    expect(store.dispatch).toHaveBeenCalledWith('getCurrentTestAnswerDoc')
+    expect(
+      wrapper
+        .findComponent({ name: 'HeuristicTestView' })
+        .attributes('preview'),
+    ).toBe('false')
+    expect(wrapper.text()).not.toContain('studyPreview.notice')
+    wrapper.unmount()
   })
 
   describe('invitation links', () => {
