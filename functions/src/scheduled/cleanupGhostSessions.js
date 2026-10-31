@@ -29,6 +29,43 @@ export function shouldDeleteFocusGroupRoom(roomData, cutoffTime) {
   )
 }
 
+/**
+ * Whether anyone is still in a call, by the presence the clients write into
+ * RTDB. Members live under two branches of `calls/{roomId}`: `participants`
+ * for ordinary testers and `staff` for moderators and observers (see
+ * `memberBranch` in VideoCallMesh.vue), so a call hosted by a moderator alone
+ * has an empty `participants` map and must still count as occupied.
+ *
+ * Scope: this reads RTDB presence only. `ModeratedTestView.startTestOnce`
+ * writes it whatever video provider the study uses — the facilitator when it
+ * opens a call node that did not exist yet, participants and observers as
+ * they arrive — and `VideoCallMesh.joinRoom` writes it for every role on the
+ * mesh provider. `VideoCallLiveKit` keeps presence in the SFU and never
+ * writes it here, so one case is still uncovered: a LiveKit call whose node
+ * was created by somebody who has since left, leaving no facilitator entry
+ * because the node already existed when the facilitator opened the room.
+ * That call looks empty and is swept on staleness alone, as it was before
+ * this guard existed.
+ *
+ * On that provider the signal is unreliable in the other direction too: the
+ * media runs over the SFU, not RTDB, so a dropped RTDB socket fires the
+ * clients' `onDisconnect` handlers while the call carries on, and nothing
+ * re-asserts presence on reconnect. Both directions want the same thing — a
+ * liveness signal out of LiveKit itself, whose credentials currently live
+ * only in the standalone token server — rather than a change to this
+ * function.
+ *
+ * @param {Object} callData - The call's RTDB value ({} for a missing node).
+ * @returns {boolean}
+ */
+export function hasConnectedCallMember(callData) {
+  return ['participants', 'staff'].some((branch) =>
+    Object.values(callData?.[branch] || {}).some(
+      (member) => member?.connected === true,
+    ),
+  )
+}
+
 // Run every 6 hours
 export const cleanupGhostSessions = onSchedule(
   'every 6 hours',
@@ -45,12 +82,27 @@ export const cleanupGhostSessions = onSchedule(
       const changes = {}
       let deletedCount = 0
 
+      // `calls` is read up front: the rooms sweep below needs to know who is
+      // connected, and that lives under `calls/{roomId}`, not on the room.
+      const [roomsSnapshot, callsSnapshot] = await Promise.all([
+        roomsRef.get(),
+        callsRef.get(),
+      ])
+
       // 1. Process Rooms
-      const roomsSnapshot = await roomsRef.get()
       if (roomsSnapshot.exists()) {
         roomsSnapshot.forEach((child) => {
           const roomId = child.key
           const roomData = child.val()
+
+          // Never drop a call somebody is still in, as far as RTDB presence
+          // can tell (see `hasConnectedCallMember` for what that does and
+          // does not cover). Staleness alone is not enough: `lastUpdate` is
+          // only written on specific actions, so a long, quiet-but-active
+          // call looks identical to a ghost by that field. This is the same
+          // rule `shouldDeleteFocusGroupRoom` already applies to the
+          // focusGroupSessions sweep below.
+          if (hasConnectedCallMember(callsSnapshot.child(roomId).val())) return
 
           const createdAt = roomData.createdAt || 0
           const lastUpdate = roomData.lastUpdate || 0
@@ -66,12 +118,14 @@ export const cleanupGhostSessions = onSchedule(
       }
 
       // 2. Process Calls (Check for orphans)
-      const callsSnapshot = await callsRef.get()
       if (callsSnapshot.exists()) {
         callsSnapshot.forEach((child) => {
           const callId = child.key
           // If we already marked this call for deletion via room check, skip
           if (changes[`calls/${callId}`] === null) return
+
+          // An orphaned call is still a live call if anyone is connected.
+          if (hasConnectedCallMember(child.val())) return
 
           // If a call exists but NO room exists for it, it is an orphan -> DELETE.
           const roomExists = roomsSnapshot.hasChild(callId)
@@ -104,6 +158,40 @@ export const cleanupGhostSessions = onSchedule(
             deletedCount++
           }
         })
+      }
+
+      // 4. Re-check who is in the marked calls, as late as possible. The
+      // decisions above come from point-in-time snapshots, and joining a call
+      // writes only under `calls/{roomId}` — never `rooms/{roomId}` — so a
+      // room that was stale when it was read still looks stale once somebody
+      // joins it. Without this, whoever joins while the sweep is running has
+      // the call deleted underneath them.
+      //
+      // This narrows the window rather than closing it: RTDB has no
+      // conditional multi-path write, and a transaction on `calls/{roomId}`
+      // could not cover the `rooms/{roomId}` delete that goes with it. What
+      // it does do is cut the exposure from the whole sweep — which includes
+      // the `focusGroupSessions` read above — down to this one write.
+      const markedCallIds = Object.keys(changes)
+        .filter((path) => path.startsWith('calls/'))
+        .map((path) => path.slice('calls/'.length))
+
+      if (markedCallIds.length > 0) {
+        const latestCallsSnapshot = await callsRef.get()
+
+        markedCallIds
+          .filter((callId) =>
+            hasConnectedCallMember(latestCallsSnapshot.child(callId).val()),
+          )
+          .forEach((callId) => {
+            // Section 1 always marks `rooms/{id}` and `calls/{id}` together,
+            // so sparing the call spares its room; an orphan has no room key
+            // to drop and the delete is a no-op. Either way that is one
+            // room's worth of `deletedCount`.
+            delete changes[`calls/${callId}`]
+            delete changes[`rooms/${callId}`]
+            deletedCount--
+          })
       }
 
       if (deletedCount > 0) {
