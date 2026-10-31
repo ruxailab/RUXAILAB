@@ -195,6 +195,36 @@ export function buildDendrogramTree(cardTitles, submittedAnswers) {
   return clusters[0]
 }
 
+export function cutDendrogramTree(tree, maxDistance) {
+  if (!tree) return []
+
+  const groups = []
+  const collectLeaves = (node) => {
+    if (!node.left && !node.right) return [node.label]
+    return [
+      ...(node.left ? collectLeaves(node.left) : []),
+      ...(node.right ? collectLeaves(node.right) : []),
+    ]
+  }
+  const visit = (node) => {
+    if (!node.left && !node.right) {
+      groups.push([node.label])
+      return
+    }
+
+    if (node.height <= maxDistance) {
+      groups.push(collectLeaves(node))
+      return
+    }
+
+    if (node.left) visit(node.left)
+    if (node.right) visit(node.right)
+  }
+
+  visit(tree)
+  return groups
+}
+
 /**
  * Assign leaf order (depth-first) and compute SVG layout coordinates.
  * Horizontal dendrogram: x = distance from similarity, y = leaf index.
@@ -302,6 +332,22 @@ export function layoutDendrogram(tree, options = {}) {
     plotOriginX,
     heightScale,
   }
+}
+
+/**
+ * Format duration in seconds to a human-readable string (e.g., "45s", "2m 30s", "1h 5m").
+ */
+export function formatDuration(seconds) {
+  if (seconds == null || isNaN(seconds) || seconds < 0) return '—'
+  const total = Math.round(Number(seconds))
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
+  if (h > 0) {
+    return `${h}h ${m}m`
+  }
+  if (m === 0) return `${s}s`
+  return `${m}m ${s}s`
 }
 
 export { UNASSIGNED_KEY }

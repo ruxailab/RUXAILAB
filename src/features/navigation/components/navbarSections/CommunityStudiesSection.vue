@@ -340,7 +340,7 @@ const filteredTests = computed(() => {
     }
 
     return (
-      matchesSearch &&
+      matchesSearchQuery &&
       matchesMethod &&
       matchesStatus &&
       matchesOwnership &&

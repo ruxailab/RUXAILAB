@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="create-study-view">
-    <v-container class="">
+    <v-container class="py-0">
       <!-- Stepper Header -->
       <StepperHeader
         :current-step="3"
@@ -13,6 +13,22 @@
         :title="$t('studyCreation.chooseStudyType')"
         :subtitle="$t('studyCreation.selectStudyType')"
       />
+
+      <div
+        v-if="methodTags.length"
+        class="d-flex flex-wrap justify-center mt-6 mb-8"
+      >
+        <v-chip
+          v-for="tag in methodTags"
+          :key="tag.label"
+          :color="tag.color"
+          size="small"
+          class="ma-1"
+        >
+          <v-icon start size="14">{{ tag.icon }}</v-icon>
+          {{ tag.label }}
+        </v-chip>
+      </div>
 
       <!-- Options Grid -->
       <v-row v-if="selectedOption !== 'template'" justify="center" class="mb-8">
@@ -93,12 +109,48 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import {
+  METHOD_CATEGORIES,
+  METHOD_DEFINITIONS,
+} from '@/shared/constants/methodDefinitions'
 
 const router = useRouter()
 const store = useStore()
 const { t, tm } = useI18n()
 const selectedOption = ref('')
 const studyMethod = computed(() => store.state.Tests.studyMethod)
+const methodDefinitionKeys = {
+  MANUAL: 'ACCESSIBILITY_MANUAL',
+  AUTOMATIC: 'ACCESSIBILITY_AUTOMATIC',
+}
+const methodDefinition = computed(() => {
+  const definitionKey =
+    methodDefinitionKeys[studyMethod.value] || studyMethod.value
+  return METHOD_DEFINITIONS[definitionKey] || null
+})
+const methodTags = computed(() => {
+  if (!methodDefinition.value) return []
+
+  const method = methodDefinition.value
+  const category = METHOD_CATEGORIES[method.category]
+  const tags = [
+    {
+      label: t(`methods.definitions.${method.id}`),
+      color: method.color,
+      icon: method.icon,
+    },
+  ]
+
+  if (category) {
+    tags.push({
+      label: t(`methods.categories.${category.id}`),
+      color: category.color,
+      icon: category.icon,
+    })
+  }
+
+  return tags
+})
 const selectedStudyType = computed(
   () => selectedOption.value || store.state.Tests.studyType,
 )

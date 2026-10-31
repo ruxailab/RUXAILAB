@@ -7,6 +7,12 @@
         :class="{ 'welcome-centered': localStep === 0 }"
       >
         <template v-if="localStep === 0">
+          <StudyTypeBadges
+            v-if="study"
+            :test="study"
+            color="primary"
+            class="justify-center mb-4"
+          />
           <h2 class="split welcome-title text-h4 mb-4 text-primary">
             {{ $t('UserTestView.WelcomeStep.welcome') }}
           </h2>
@@ -139,12 +145,14 @@
 
 <script setup>
 import ShowInfo from '@/shared/components/ShowInfo.vue'
+import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 import { VStepperVertical } from 'vuetify/labs/VStepperVertical'
 import { computed, onMounted, onBeforeUnmount, nextTick, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import { animateWelcomeText } from '@/shared/utils/animations'
 
 const props = defineProps({
+  study: { type: Object, default: null },
   stepperValue: { type: Number, required: true },
   welcomeMessage: { type: String, default: '' },
   hasEyeTracking: { type: Boolean, default: false },

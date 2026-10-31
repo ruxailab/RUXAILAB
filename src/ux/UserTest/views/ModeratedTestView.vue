@@ -26,6 +26,9 @@
             class="mb-10"
             style="max-width: 300px"
           />
+          <div class="mb-3">
+            <StudyTypeBadges :test="test" color="white" />
+          </div>
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
@@ -601,6 +604,7 @@
 </template>
 
 <script setup>
+import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 import {
   ref as dbRef,
   onValue,
@@ -616,15 +620,15 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { onBeforeUnmount } from 'vue'
-import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
+import ConsentStep from '@/shared/components/steps/ConsentStep.vue'
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue'
 import ModeratorWelcomeStep from '@/ux/UserTest/components/steps/ModeratorWelcomeStep.vue'
-import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue'
+import PreTestStep from '@/shared/components/steps/PreTestStep.vue'
 import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue'
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue'
-import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
-import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
-import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
+import PostTestStep from '@/shared/components/steps/PostTestStep.vue'
+import FinishStep from '@/shared/components/steps/FinishStep.vue'
+import SubmitDialog from '@/shared/components/SubmitDialog.vue'
 import StepAnnouncementOverlay from '@/shared/components/StepAnnouncementOverlay.vue'
 import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
 import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'

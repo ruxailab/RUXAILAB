@@ -1,8 +1,15 @@
 <template>
   <ShowInfo hide-col>
     <template #content>
-      <div class="study-welcome test-content pa-6 rounded-xl text-center fade-in">
+      <div
+        class="study-welcome test-content pa-6 rounded-xl text-center fade-in"
+      >
         <div class="study-welcome__content">
+          <StudyTypeBadges
+            v-if="study"
+            :test="study"
+            class="justify-center mb-4"
+          />
           <h1 class="text-h5 font-weight-bold mb-4 text-primary">
             {{ welcomeTitle }}
           </h1>
@@ -49,19 +56,17 @@
             style="overflow-y: visible; max-height: none"
           >
             <v-stepper-header>
-              <template v-for="(step, index) in steps" :key="`${step}-${index}`">
+              <template
+                v-for="(step, index) in steps"
+                :key="`${step}-${index}`"
+              >
                 <v-divider v-if="index > 0" />
                 <v-stepper-item :value="index + 1" :title="step" />
               </template>
             </v-stepper-header>
           </v-stepper>
 
-          <v-stepper-vertical
-            v-else
-            :items="steps"
-            hide-actions
-            class="my-6"
-          />
+          <v-stepper-vertical v-else :items="steps" hide-actions class="my-6" />
 
           <p class="text-body-1 mb-6 text-grey-darken-3">
             {{ ready }}
@@ -86,8 +91,13 @@
 import { useDisplay } from 'vuetify'
 import { VStepperVertical } from 'vuetify/labs/VStepperVertical'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
+import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 
 defineProps({
+  study: {
+    type: Object,
+    default: null,
+  },
   sections: {
     type: Array,
     default: () => [],

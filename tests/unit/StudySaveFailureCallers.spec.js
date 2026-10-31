@@ -7,6 +7,11 @@ const mockRouter = { push: jest.fn() }
 const mockRuntime = {
   resumeAfterConsent: jest.fn(),
   submitted: jest.fn(),
+  cardSortStarted: jest.fn(),
+  cardSortFinished: jest.fn(),
+  checkpointStructuredScope: jest.fn(),
+  seedStructuredScope: jest.fn(),
+  editHandlers: { focusin: jest.fn(), input: jest.fn(), focusout: jest.fn() },
   destroy: jest.fn(),
 }
 jest.mock('vuex', () => ({ useStore: () => mockStore }))

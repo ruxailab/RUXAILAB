@@ -130,14 +130,9 @@
                     </div>
                   </div>
 
-                  <div
-                    v-if="task?.hasCamRecord"
-                    class="recording-feature-card"
-                  >
+                  <div v-if="task?.hasCamRecord" class="recording-feature-card">
                     <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">
-                        mdi-camera
-                      </v-icon>
+                      <v-icon size="48" color="secondary"> mdi-camera </v-icon>
                     </div>
                     <div class="feature-content">
                       <h4
@@ -458,7 +453,7 @@
                 block
                 variant="outlined"
                 class="mr-2"
-                :disabled="isWaitingForUploadToFinish"
+                :disabled="isWaitingForUploadToFinish || isSubmittingOutcome"
                 :class="{
                   'mb-3': $vuetify.display.xs,
                   'mr-2': $vuetify.display.smAndUp,
@@ -479,7 +474,8 @@
                 block
                 variant="flat"
                 class="ml-2"
-                :disabled="isWaitingForUploadToFinish"
+                :disabled="isWaitingForUploadToFinish || isSubmittingOutcome"
+                :loading="isSubmittingOutcome"
                 :class="{ 'ml-2': $vuetify.display.smAndUp }"
                 @click="handleShowPostForm(true)"
               >
@@ -500,9 +496,9 @@
               <!-- SUS Form -->
               <div v-if="task?.taskType === 'sus'">
                 <SusForm
-                  @response-changed="onStructuredResponseChanged"
                   v-model="localSusAnswers"
                   :task-index="taskIndex"
+                  @response-changed="onStructuredResponseChanged"
                   @update:model-value="(val) => emit('update:susAnswers', val)"
                 />
               </div>
@@ -512,11 +508,21 @@
                 <nasaTlxForm
                   :nasa-tlx="nasaTlxAnswers"
                   @update:nasa-tlx="onUpdateNasaTlx"
-                  @slider-focus="(event) => onStructuredSlider('nasa-tlx', 'focus', event)"
-                  @slider-start="(event) => onStructuredSlider('nasa-tlx', 'start', event)"
-                  @slider-change="(event) => onStructuredSlider('nasa-tlx', 'change', event)"
-                  @slider-end="(event) => onStructuredSlider('nasa-tlx', 'end', event)"
-                  @slider-blur="(event) => onStructuredSlider('nasa-tlx', 'blur', event)"
+                  @slider-focus="
+                    (event) => onStructuredSlider('nasa-tlx', 'focus', event)
+                  "
+                  @slider-start="
+                    (event) => onStructuredSlider('nasa-tlx', 'start', event)
+                  "
+                  @slider-change="
+                    (event) => onStructuredSlider('nasa-tlx', 'change', event)
+                  "
+                  @slider-end="
+                    (event) => onStructuredSlider('nasa-tlx', 'end', event)
+                  "
+                  @slider-blur="
+                    (event) => onStructuredSlider('nasa-tlx', 'blur', event)
+                  "
                 />
               </div>
 
@@ -525,11 +531,21 @@
                 <sartForm
                   :sart="sartAnswers"
                   @update:sart="onUpdateSart"
-                  @slider-focus="(event) => onStructuredSlider('sart', 'focus', event)"
-                  @slider-start="(event) => onStructuredSlider('sart', 'start', event)"
-                  @slider-change="(event) => onStructuredSlider('sart', 'change', event)"
-                  @slider-end="(event) => onStructuredSlider('sart', 'end', event)"
-                  @slider-blur="(event) => onStructuredSlider('sart', 'blur', event)"
+                  @slider-focus="
+                    (event) => onStructuredSlider('sart', 'focus', event)
+                  "
+                  @slider-start="
+                    (event) => onStructuredSlider('sart', 'start', event)
+                  "
+                  @slider-change="
+                    (event) => onStructuredSlider('sart', 'change', event)
+                  "
+                  @slider-end="
+                    (event) => onStructuredSlider('sart', 'end', event)
+                  "
+                  @slider-blur="
+                    (event) => onStructuredSlider('sart', 'blur', event)
+                  "
                 />
               </div>
 
@@ -537,8 +553,8 @@
               <div v-else-if="task?.taskType === 'tam-1'">
                 <TamForm1
                   v-model="localTamAnswers"
-                  @response-changed="onStructuredResponseChanged"
                   :task-index="taskIndex"
+                  @response-changed="onStructuredResponseChanged"
                   @update:model-value="(val) => emit('update:tamAnswers', val)"
                 />
               </div>
@@ -547,8 +563,8 @@
               <div v-else-if="task?.taskType === 'tam-2'">
                 <TamForm2
                   v-model="localTamAnswers"
-                  @response-changed="onStructuredResponseChanged"
                   :task-index="taskIndex"
+                  @response-changed="onStructuredResponseChanged"
                   @update:model-value="(val) => emit('update:tamAnswers', val)"
                 />
               </div>
@@ -557,8 +573,8 @@
               <div v-else-if="task?.taskType === 'tam-3'">
                 <TamForm3
                   v-model="localTamAnswers"
-                  @response-changed="onStructuredResponseChanged"
                   :task-index="taskIndex"
+                  @response-changed="onStructuredResponseChanged"
                   @update:model-value="(val) => emit('update:tamAnswers', val)"
                 />
               </div>
@@ -639,7 +655,7 @@
       </div>
 
       <AudioRecorder
-        v-if="task?.hasAudioRecord"
+        v-if="!preview && task?.hasAudioRecord"
         ref="audioRecorder"
         :test-id="testId"
         :task-index="taskIndex"
@@ -653,7 +669,7 @@
       />
 
       <ScreenRecorder
-        v-if="task?.hasScreenRecord"
+        v-if="!preview && task?.hasScreenRecord"
         ref="screenRecorder"
         :test-id="testId"
         :task-index="taskIndex"
@@ -664,7 +680,7 @@
       />
 
       <VideoRecorder
-        v-if="task?.hasCamRecord"
+        v-if="!preview && task?.hasCamRecord"
         ref="videoRecorder"
         :test-id="testId"
         :user-doc-id="userDocId"
@@ -683,11 +699,11 @@ import { useI18n } from 'vue-i18n'
 import redXLogo from '@/assets/logo_small_red.png'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import TipButton from '@/ux/UserTest/components/TipButton.vue'
-import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
+import AudioRecorder from '@/shared/components/AudioRecorder.vue'
 import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue'
-import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue'
-import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue'
-import ScreenShareInstructions from '@/ux/UserTest/components/ScreenShareInstructions.vue'
+import VideoRecorder from '@/shared/components/VideoRecorder.vue'
+import ScreenRecorder from '@/shared/components/ScreenRecorder.vue'
+import ScreenShareInstructions from '@/shared/components/ScreenShareInstructions.vue'
 import Timer from '@/ux/UserTest/components/Timer.vue'
 import SusForm from '@/ux/UserTest/SusForm.vue'
 import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue'
@@ -695,10 +711,12 @@ import TamForm1 from '@/ux/UserTest/components/TamForm1.vue'
 import TamForm2 from '@/ux/UserTest/components/TamForm2.vue'
 import TamForm3 from '@/ux/UserTest/components/TamForm3.vue'
 import sartForm from '@/ux/UserTest/components/sartForm.vue'
+import { isReturnToTaskOnlyType } from '@/ux/UserTest/utils/mobileTaskPageState'
 
 const { t } = useI18n()
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   task: Object,
   taskName: String,
   taskDescription: String,
@@ -720,6 +738,12 @@ const props = defineProps({
   videoUrl: String,
   remoteStream: MediaStream, // props that receive the remote video stream in case of moderated test
   shouldRecordModerator: Boolean, // props that indicate whether to record the moderator's video
+  mobileInstructionsEligible: { type: Boolean, default: false },
+  mobileInstructionsEnabled: { type: Boolean, default: false },
+  autoOpenTaskLink: { type: Boolean, default: false },
+  resumeAtStageThree: { type: Boolean, default: false },
+  activateMobileTask: { type: Function, default: null },
+  submitMobileOutcome: { type: Function, default: null },
 })
 const emit = defineEmits([
   'done',
@@ -746,6 +770,7 @@ const emit = defineEmits([
   'structured-slider-end',
   'structured-slider-blur',
   'task-questionnaire-entered',
+  'mobile-outcome-accepted',
 ])
 
 onBeforeUnmount(() => {
@@ -948,7 +973,7 @@ function nextPreviewStep() {
   goToStartTaskStage()
 }
 
-const stage = ref(introStage())
+const stage = ref(props.resumeAtStageThree ? 3 : introStage())
 
 watch(previewSteps, (steps) => {
   if (previewStepIndex.value > steps.length - 1) {
@@ -959,7 +984,22 @@ watch(previewSteps, (steps) => {
   }
 })
 
+watch(
+  () => props.resumeAtStageThree,
+  (resume) => {
+    if (resume && stage.value < 3 && !postFlowStarted) {
+      stage.value = 3
+    }
+  },
+)
+
 const hasOpenedTool = ref(false)
+const isSubmittingOutcome = ref(false)
+let taskToolWindow = null
+let postFlowStarted = false
+let outcomeRequestStarted = false
+let postFormOpened = false
+let postFormUsesTaskWindow = false
 const audioRecorder = ref(null)
 const videoRecorder = ref(null)
 const screenRecorder = ref(null)
@@ -1040,8 +1080,78 @@ function goToStartTaskStage() {
   resetPreviewStepper()
 }
 
+function taskLinkUrl() {
+  const link = props.task?.taskLink || props.taskLink
+  if (!link) return ''
+  return link.startsWith('http://') || link.startsWith('https://')
+    ? link
+    : `https://${link}`
+}
+
+function releaseTaskWindow() {
+  const opened = taskToolWindow
+  if (postFormUsesTaskWindow) {
+    try {
+      opened?.focus()
+    } catch {
+      // The form tab stays open after the site is replaced.
+    }
+    return
+  }
+  taskToolWindow = null
+  if (!opened && !props.mobileInstructionsEnabled) return
+  if (opened) {
+    try {
+      opened.close()
+    } catch {
+      // The browser can reject closing a tab. The task still continues.
+    }
+  }
+  try {
+    window.focus()
+  } catch {
+    // Focusing the study tab is best-effort and must not block progress.
+  }
+}
+
+function shouldAutoOpenTaskPage() {
+  const mobileSession =
+    props.mobileInstructionsEnabled && props.mobileInstructionsEligible
+  return props.autoOpenTaskLink || mobileSession
+}
+
+function openTaskPageWindow() {
+  const url = taskLinkUrl()
+  if (!url) return null
+  const opened = window.open(url, '_blank')
+  if (!opened) return null
+  hasOpenedTool.value = true
+  if (props.mobileInstructionsEnabled) taskToolWindow = opened
+  return opened
+}
+
+function openTaskPage() {
+  if (!shouldAutoOpenTaskPage()) return
+  openTaskPageWindow()
+}
+
+async function notifyMobileActivation() {
+  if (
+    !props.mobileInstructionsEnabled ||
+    !props.mobileInstructionsEligible ||
+    typeof props.activateMobileTask !== 'function'
+  ) {
+    return
+  }
+  try {
+    await props.activateMobileTask()
+  } catch {
+    // The phone is not required. The computer task already started.
+  }
+}
+
 async function startTask() {
-  if (props.task?.hasScreenRecord) {
+  if (!props.preview && props.task?.hasScreenRecord) {
     showScreenSharePrompt.value = true
     return
   }
@@ -1061,7 +1171,8 @@ async function confirmScreenShare() {
     const screenStarted = await startMediaRecorders({ screenOnly: true })
     if (!screenStarted) return
     showScreenSharePrompt.value = false
-    await proceedWithTaskStart({ skipScreen: true })
+    const started = await proceedWithTaskStart({ skipScreen: true })
+    if (!started) screenRecorder.value?.abortCapture?.()
   } finally {
     isRequestingScreenShare.value = false
   }
@@ -1069,11 +1180,14 @@ async function confirmScreenShare() {
 
 async function proceedWithTaskStart({ skipScreen = false } = {}) {
   isPreparingTaskTools.value = true
+  let started = false
   try {
     const mediaStarted = await startMediaRecorders({ skipScreen })
     if (!mediaStarted) {
       screenRecorder.value?.abortCapture?.()
-      return
+      audioRecorder.value?.abortCapture?.()
+      videoRecorder.value?.abortCapture?.()
+      return false
     }
 
     const enteredActiveStage = stage.value !== 3
@@ -1088,21 +1202,67 @@ async function proceedWithTaskStart({ skipScreen = false } = {}) {
         if (timer && timer.startTimer) timer.startTimer()
       }, 100)
     })
+    started = true
   } finally {
     isPreparingTaskTools.value = false
+  }
+  if (!started) {
+    releaseTaskWindow()
+    return false
+  }
+  // Sharing prompts finish first. The task page opens only after that.
+  openTaskPage()
+  await notifyMobileActivation()
+  return true
+}
+
+function postFormUrl() {
+  if (props.task?.taskType !== 'post-form' || !props.task?.postForm) return ''
+  const link = props.task.postForm
+  return link.startsWith('http://') || link.startsWith('https://')
+    ? link
+    : `https://${link}`
+}
+
+/**
+ * Replaces the site tab with the Google Form. A phone finish has no user
+ * gesture, so `window.open` would be blocked.
+ *
+ * @returns {boolean}
+ */
+function showPostFormInTaskWindow() {
+  const url = postFormUrl()
+  const opened = taskToolWindow
+  if (!url || !opened || opened.closed) return false
+  if (postFormOpened) return postFormUsesTaskWindow
+  try {
+    opened.location.href = url
+    opened.focus()
+    postFormOpened = true
+    postFormUsesTaskWindow = true
+    return true
+  } catch {
+    return false
+  }
+}
+
+function openPostFormIfNeeded() {
+  if (postFormOpened) return
+  if (showPostFormInTaskWindow()) return
+  const url = postFormUrl()
+  if (!url) return
+  postFormOpened = true
+  const opened = window.open(url, '_blank')
+  if (!opened) return
+  try {
+    opened.focus()
+  } catch {
+    /* best-effort */
   }
 }
 
 function openTool() {
-  const link = props.task?.taskLink || props.taskLink
-  if (link) {
-    const url =
-      link.startsWith('http://') || link.startsWith('https://')
-        ? link
-        : `https://${link}`
-    window.open(url, '_blank')
-    hasOpenedTool.value = true
-  }
+  openTaskPageWindow()
 }
 
 const showPostForm = ref({ userCompleted: undefined })
@@ -1111,21 +1271,61 @@ async function startMediaRecorders({
   skipScreen = false,
   screenOnly = false,
 } = {}) {
+  if (props.preview) return true
+  if (screenOnly) {
+    if (props.task?.hasScreenRecord && screenRecorder.value) {
+      const prepare =
+        screenRecorder.value.prepareScreen || screenRecorder.value.captureScreen
+      const screenPrepared = await prepare({
+        requireEntireScreen: hasExternalLink.value,
+      })
+      if (!screenPrepared) return false
+    }
+    return true
+  }
+
+  let screenReady =
+    skipScreen && Boolean(props.task?.hasScreenRecord && screenRecorder.value)
   if (!skipScreen && props.task?.hasScreenRecord && screenRecorder.value) {
-    const screenStarted = await screenRecorder.value.captureScreen({
+    const prepare =
+      screenRecorder.value.prepareScreen || screenRecorder.value.captureScreen
+    screenReady = await prepare({
       requireEntireScreen: hasExternalLink.value,
     })
-    if (!screenStarted) return false
+    if (!screenReady) return false
   }
-  if (screenOnly) return true
 
+  let audioReady = false
   if (props.task?.hasAudioRecord && audioRecorder.value) {
-    await audioRecorder.value.startAudioRecording()
+    const prepare =
+      audioRecorder.value.prepareAudio ||
+      audioRecorder.value.startAudioRecording
+    audioReady = await prepare()
   }
+
+  let camReady = false
   if (props.task?.hasCamRecord && videoRecorder.value) {
     // Camera is optional: missing device / denied permission must not block the task
-    await videoRecorder.value.startRecording()
+    const prepare =
+      videoRecorder.value.prepareCam || videoRecorder.value.startRecording
+    camReady = await prepare()
   }
+
+  if (screenReady && screenRecorder.value.startNow) {
+    const started = screenRecorder.value.startNow()
+    if (!started) {
+      audioRecorder.value?.abortCapture?.()
+      videoRecorder.value?.abortCapture?.()
+      return false
+    }
+  }
+  if (audioReady && audioRecorder.value.startNow) {
+    audioRecorder.value.startNow()
+  }
+  if (camReady && videoRecorder.value.startNow) {
+    videoRecorder.value.startNow()
+  }
+
   return true
 }
 
@@ -1141,8 +1341,11 @@ function abortAllMedia() {
   screenRecorder.value?.abortCapture?.()
 }
 
-function handleShowPostForm(userCompleted) {
-  if (isWaitingForUploadToFinish.value) return
+function beginPostTaskFlow(userCompleted) {
+  if (postFlowStarted || stage.value > 3) return
+  postFlowStarted = true
+  showPostFormInTaskWindow()
+  releaseTaskWindow()
 
   forceStopAllMedia()
 
@@ -1159,17 +1362,7 @@ function handleShowPostForm(userCompleted) {
   }
 
   showPostForm.value.userCompleted = userCompleted
-
-  if (props.task?.taskType === 'post-form' && props.task?.postForm) {
-    const link = props.task?.postForm
-    if (link) {
-      const url =
-        link.startsWith('http://') || link.startsWith('https://')
-          ? link
-          : `https://${link}`
-      window.open(url, '_blank')
-    }
-  }
+  openPostFormIfNeeded()
 
   // Questionnaire first, then the optional comment. The timer is already stopped.
   if (hasPostTaskQuestionnaire.value) {
@@ -1183,6 +1376,100 @@ function handleShowPostForm(userCompleted) {
 function goToObservationStep() {
   stage.value = 5
 }
+
+async function handleShowPostForm(userCompleted) {
+  if (
+    isWaitingForUploadToFinish.value ||
+    postFlowStarted ||
+    outcomeRequestStarted
+  ) {
+    return
+  }
+  outcomeRequestStarted = true
+  isSubmittingOutcome.value = true
+  openPostFormIfNeeded()
+  let resolvedCompleted = userCompleted
+  try {
+    if (
+      props.mobileInstructionsEnabled &&
+      props.mobileInstructionsEligible &&
+      typeof props.submitMobileOutcome === 'function'
+    ) {
+      const pressed = userCompleted ? 'completed' : 'not_completed'
+      const settled = await props.submitMobileOutcome(pressed)
+      if (settled?.success) {
+        resolvedCompleted = settled.completed === true
+        emit('mobile-outcome-accepted', settled)
+      }
+    }
+    beginPostTaskFlow(resolvedCompleted)
+  } finally {
+    isSubmittingOutcome.value = false
+  }
+}
+
+function continueFromAcceptedOutcome(completed) {
+  if (isReturnToTaskOnlyType(props.task?.taskType)) {
+    releaseTaskWindow()
+    return
+  }
+  beginPostTaskFlow(completed === true)
+}
+
+function returnToTaskFromMobile() {
+  releaseTaskWindow()
+}
+
+const previewTaskSteps = computed(() => [
+  ...previewSteps.value.map((_, previewIndex) => ({ stage: 1, previewIndex })),
+  { stage: 2 },
+  { stage: 3 },
+  ...(hasPostTaskQuestionnaire.value ? [{ stage: 4 }] : []),
+  { stage: 5 },
+])
+
+function setPreviewTaskStep(step) {
+  if (timerInterval) {
+    clearInterval(timerInterval)
+    timerInterval = null
+  }
+  if (finishTimeout) {
+    clearTimeout(finishTimeout)
+    finishTimeout = null
+  }
+  postFlowStarted = false
+  outcomeRequestStarted = false
+  isWaitingForUploadToFinish.value = false
+  taskStartTime = null
+  elapsedTimeDisplay.value = '0:00'
+  stage.value = step.stage
+  previewStepIndex.value = step.previewIndex ?? 0
+}
+
+function movePreviewStep(direction) {
+  if (!props.preview) return false
+  const currentIndex = previewTaskSteps.value.findIndex(
+    (step) =>
+      step.stage === stage.value &&
+      (step.stage !== 1 || step.previewIndex === previewStepIndex.value),
+  )
+  const destination = previewTaskSteps.value[currentIndex + direction]
+  if (!destination) return false
+  setPreviewTaskStep(destination)
+  return true
+}
+
+function showLastPreviewStep() {
+  if (!props.preview) return
+  setPreviewTaskStep(previewTaskSteps.value[previewTaskSteps.value.length - 1])
+}
+
+defineExpose({
+  continueFromAcceptedOutcome,
+  returnToTaskFromMobile,
+  movePreviewStep,
+  showLastPreviewStep,
+})
 
 function emitDoneOrCouldNotFinish(savedTime) {
   if (showPostForm.value.userCompleted) {
@@ -1239,10 +1526,17 @@ watch(
     }
     abortAllMedia()
     resetToTaskIntro()
+    if (props.resumeAtStageThree) stage.value = 3
     taskStartTime = null
     elapsedTimeDisplay.value = '0:00'
     showPostForm.value = { userCompleted: undefined }
     hasOpenedTool.value = false
+    postFlowStarted = false
+    outcomeRequestStarted = false
+    postFormOpened = false
+    postFormUsesTaskWindow = false
+    isSubmittingOutcome.value = false
+    taskToolWindow = null
     isPreparingTaskTools.value = false
     showScreenSharePrompt.value = false
     isRequestingScreenShare.value = false

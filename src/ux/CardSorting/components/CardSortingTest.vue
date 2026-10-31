@@ -1,5 +1,11 @@
 <template>
-  <div class="session-backdrop">
+  <div
+    class="session-backdrop"
+    :class="{ 'study-preview-start': preview && start }"
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+  >
     <SessionBackdropMark />
 
     <div v-if="showStepAnnouncement" class="step-announcement-container">
@@ -10,47 +16,30 @@
       />
     </div>
 
-    <v-dialog v-model="showScreenSharePrompt" persistent max-width="640">
-      <v-card class="pa-4 pa-sm-6" rounded="xl">
-        <ScreenShareInstructions compact />
-        <v-card-actions class="px-0 pt-5 pb-0">
-          <v-btn
-            variant="text"
-            :disabled="isRequestingScreenShare"
-            @click="cancelScreenSharePrompt"
-          >
-            {{ $t('screenShare.backButton') }}
-          </v-btn>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            variant="flat"
-            :loading="isRequestingScreenShare"
-            prepend-icon="mdi-monitor-share"
-            @click="confirmScreenShare"
-          >
-            {{ $t('screenShare.shareButton') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <SubmitDialog
       :model-value="dialog"
-      :title="$t('HeuristicsTestView.messages.submitTest')"
-      :message="$t('HeuristicsTestView.messages.submitOnce')"
+      :title="
+        $t(
+          preview
+            ? 'studyPreview.finish'
+            : 'HeuristicsTestView.messages.submitTest',
+        )
+      "
+      :message="
+        $t(
+          preview
+            ? 'studyPreview.finishMessage'
+            : 'HeuristicsTestView.messages.submitOnce',
+        )
+      "
       :cancel-label="$t('buttons.cancel')"
-      :submit-label="$t('buttons.submit')"
+      :submit-label="$t(preview ? 'studyPreview.exit' : 'buttons.submit')"
       @cancel="dialog = false"
       @submit="handleSubmit"
     />
 
     <v-container fluid class="session-backdrop-content pa-0">
-      <v-row
-        v-if="start"
-        class="start-screen pa-0 ma-0"
-        align="center"
-      >
+      <v-row v-if="start" class="start-screen pa-0 ma-0" align="center">
         <SessionBackdropMark position="absolute" />
         <v-col md="8" class="ma-5 pa-5">
           <img
@@ -59,6 +48,9 @@
             class="mb-10"
             style="max-width: 300px"
           />
+          <div class="mb-3">
+            <StudyTypeBadges :test="test" color="white" />
+          </div>
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
@@ -146,9 +138,10 @@
 
                   <v-stepper-item
                     :value="hasPreTest ? 3 : 2"
-                    :title="$t('UserTestView.stepper.tasks')"
+                    :title="$t('CardSorting.cardClassification')"
                     :complete="
-                      stepperValue >= 3 && !isCurrentCardStep(hasPreTest ? 3 : 2)
+                      stepperValue >= 3 &&
+                      !isCurrentCardStep(hasPreTest ? 3 : 2)
                     "
                     :icon="
                       isCurrentCardStep(hasPreTest ? 3 : 2)
@@ -191,7 +184,8 @@
                     :value="completionStepValue"
                     :title="$t('UserTestView.stepper.completion')"
                     :complete="
-                      stepperValue >= 4 && !isCurrentCardStep(completionStepValue)
+                      stepperValue >= 4 &&
+                      !isCurrentCardStep(completionStepValue)
                     "
                     :icon="
                       isCurrentCardStep(completionStepValue)
@@ -200,9 +194,8 @@
                     "
                     complete-icon="mdi-check"
                     :class="{
-                      'stepper-item--current': isCurrentCardStep(
-                        completionStepValue,
-                      ),
+                      'stepper-item--current':
+                        isCurrentCardStep(completionStepValue),
                     }"
                   />
                 </v-stepper-header>
@@ -212,6 +205,7 @@
 
           <StudyWelcomeStep
             v-if="globalIndex === 0"
+            :study="test"
             :sections="welcomeSections"
             :welcome-title="$t('CardSorting.welcomeTitle')"
             :description="$t('CardSorting.welcomeDescription')"
@@ -240,227 +234,111 @@
 
           <PreTestStep
             v-if="globalIndex === 2 && hasPreTest"
+            ref="preTestStepComponent"
+            :preview="preview"
             :test-title="test.testTitle"
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localAnswer.preTestAnswer"
             :pre-test-completed="localAnswer.preTestCompleted"
-            @done="completeStep('preTest')"
+            @update:pre-test-answer="(val) => (localAnswer.preTestAnswer = val)"
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePreTestDone"
           />
 
           <div v-if="globalIndex === 4">
-            <!-- Recording intro (mirrors UserTest TaskStep stage 1) -->
-            <ShowInfo
-              v-if="hasAnyRecording && !sortingStarted"
-              :title="test.testTitle"
-            >
-              <template #content>
-                <div class="test-content pa-4 rounded-xl">
-                  <v-card
-                    variant="outlined"
-                    color="secondary"
-                    class="my-6 mx-auto"
-                    max-width="1000"
-                  >
-                    <v-card-text class="pa-4">
-                      <div class="d-flex align-center mb-3">
-                        <v-icon color="secondary" size="24" class="mr-2">
-                          mdi-play-circle-outline
-                        </v-icon>
-                        <h3 class="text-h6 font-weight-bold text-secondary">
-                          {{ $t('CardSorting.sortingPreview') }}
-                        </h3>
-                      </div>
-
-                      <p class="text-body-1 text-left mb-4 text-grey-darken-3">
-                        {{ $t('CardSorting.recordingInfo') }}
-                      </p>
-
-                      <div class="recording-features-grid mb-4">
-                        <div
-                          v-if="recordingFlags.hasScreenRecord"
-                          class="recording-feature-card"
-                        >
-                          <div class="feature-icon-container">
-                            <v-icon size="48" color="secondary">
-                              mdi-monitor-screenshot
-                            </v-icon>
-                          </div>
-                          <div class="feature-content">
-                            <h4
-                              class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                            >
-                              {{ $t('CreateTask.taskPreview.screenRecord') }}
-                            </h4>
-                            <p class="text-body-2 text-grey-darken-3">
-                              {{
-                                $t('CreateTask.taskPreview.screenRecordDesc')
-                              }}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div
-                          v-if="recordingFlags.hasCamRecord"
-                          class="recording-feature-card"
-                        >
-                          <div class="feature-icon-container">
-                            <v-icon size="48" color="secondary">
-                              mdi-camera
-                            </v-icon>
-                          </div>
-                          <div class="feature-content">
-                            <h4
-                              class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                            >
-                              {{ $t('CreateTask.taskPreview.camera') }}
-                            </h4>
-                            <p class="text-body-2 text-grey-darken-3">
-                              {{ $t('CreateTask.taskPreview.cameraDesc') }}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div
-                          v-if="recordingFlags.hasAudioRecord"
-                          class="recording-feature-card"
-                        >
-                          <div class="feature-icon-container">
-                            <v-icon size="48" color="secondary">
-                              mdi-microphone
-                            </v-icon>
-                          </div>
-                          <div class="feature-content">
-                            <h4
-                              class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                            >
-                              {{ $t('CreateTask.taskPreview.audioRecord') }}
-                            </h4>
-                            <p class="text-body-2 text-grey-darken-3">
-                              {{ $t('CreateTask.taskPreview.audioRecordDesc') }}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ScreenShareInstructions
-                        v-if="recordingFlags.hasScreenRecord"
-                        class="mt-4"
-                      />
-                    </v-card-text>
-                  </v-card>
-
-                  <div class="d-flex justify-center">
-                    <v-btn
-                      color="primary"
-                      variant="flat"
-                      size="large"
-                      :loading="startingRecording"
-                      @click="onStartSorting"
-                    >
-                      {{ $t('CardSorting.startSorting') }}
-                    </v-btn>
-                  </div>
-                </div>
-              </template>
-            </ShowInfo>
-
-            <template v-else>
-              <CardSortingTask
-                v-model="localAnswer.sorting"
-                :test="test"
-                @update:pending="pendingCards = $event"
-              />
-              <v-container class="d-flex justify-end pt-0">
-                <v-btn
-                  color="primary"
-                  variant="flat"
-                  size="large"
-                  :disabled="pendingCards > 0 || isWaitingForUploadToFinish"
-                  :loading="isWaitingForUploadToFinish"
-                  @click="finishSorting"
-                >
-                  {{
-                    isWaitingForUploadToFinish
-                      ? $t('CardSorting.uploadingRecordings')
-                      : pendingCards > 0
-                        ? $t('CardSorting.allocateAll', {
-                            count: pendingCards,
-                          })
-                        : $t('buttons.continue')
-                  }}
-                </v-btn>
-              </v-container>
-            </template>
-
-            <AudioRecorder
-              v-if="recordingFlags.hasAudioRecord"
-              ref="audioRecorder"
-              :test-id="test.id"
-              :task-index="0"
-              :user-doc-id="user?.id"
-              @show-loading="onShowLoading"
-              @stop-show-loading="onStopShowLoading"
+            <CardSortingTask
+              v-model="localAnswer.sorting"
+              :test="test"
+              @update:pending="pendingCards = $event"
+              @update:unnamed="unnamedCategories = $event"
             />
-            <ScreenRecorder
-              v-if="recordingFlags.hasScreenRecord"
-              ref="screenRecorder"
-              :test-id="test.id"
-              :task-index="0"
-              :user-doc-id="user?.id"
-              @show-loading="onShowLoading"
-              @stop-show-loading="onStopShowLoading"
-            />
-            <VideoRecorder
-              v-if="recordingFlags.hasCamRecord"
-              ref="videoRecorder"
-              :test-id="test.id"
-              :user-doc-id="user?.id"
-              :task-index="0"
-              @show-loading="onShowLoading"
-              @stop-show-loading="onStopShowLoading"
-            />
+            <v-container class="d-flex justify-end pt-0">
+              <v-btn
+                color="primary"
+                variant="flat"
+                size="large"
+                :disabled="pendingCards > 0 || unnamedCategories > 0"
+                @click="finishSorting"
+              >
+                {{
+                  pendingCards > 0
+                    ? $t('CardSorting.allocateAll', {
+                        count: pendingCards,
+                      })
+                    : unnamedCategories > 0
+                      ? $t('CardSorting.nameAllCategories', {
+                          count: unnamedCategories,
+                        })
+                      : $t('buttons.continue')
+                }}
+              </v-btn>
+            </v-container>
           </div>
 
           <PostTestStep
             v-if="
               hasPostTest &&
               globalIndex === 5 &&
-              (!localAnswer.postTestCompleted || localAnswer.submitted)
+              (preview ||
+                !localAnswer.postTestCompleted ||
+                localAnswer.submitted)
             "
+            ref="postTestStepComponent"
+            :preview="preview"
             :test-title="test.testTitle"
             :post-test="test.testStructure.postTest"
             :post-test-answer="localAnswer.postTestAnswer"
             :post-test-completed="localAnswer.postTestCompleted"
-            @done="completeStep('postTest')"
+            @update:post-test-answer="
+              (val) => (localAnswer.postTestAnswer = val)
+            "
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePostTestDone"
           />
 
           <FinishStep
             v-if="
               globalIndex === 6 &&
-              localAnswer.postTestCompleted &&
+              (preview || localAnswer.postTestCompleted) &&
               !localAnswer.submitted
             "
             :final-message="$t('finishTest.finalMessage')"
             :congratulations="test.testStructure.finalMessage"
-            :submit-message="$t('finishTest.submitMessage')"
-            :submit-btn="$t('buttons.submit')"
+            :submit-message="
+              $t(
+                preview
+                  ? 'studyPreview.finishMessage'
+                  : 'finishTest.submitMessage',
+              )
+            "
+            :submit-btn="$t(preview ? 'studyPreview.finish' : 'buttons.submit')"
             @submit="dialog = true"
           />
         </v-col>
       </v-row>
     </v-container>
+    <StudyPreviewNavigation
+      v-if="preview"
+      :can-previous="previewStepIndex > 0"
+      :can-next="previewStepIndex < previewSteps.length - 1"
+      @previous="navigatePreview(-1)"
+      @next="navigatePreview(1)"
+    />
   </div>
 </template>
 
 <script setup>
+import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
 import {
   computed,
   reactive,
   ref,
+  watch,
+  nextTick,
   onMounted,
   onBeforeUnmount,
-  nextTick,
 } from 'vue'
+import StudyPreviewNavigation from '@/shared/components/StudyPreviewNavigation.vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -468,24 +346,23 @@ import StudyWelcomeStep from '@/shared/components/StudyWelcomeStep.vue'
 import StepAnnouncementOverlay from '@/shared/components/StepAnnouncementOverlay.vue'
 import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
 import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
-import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
-import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue'
-import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
-import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
-import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
-import ShowInfo from '@/shared/components/ShowInfo.vue'
-import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
-import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue'
-import ScreenShareInstructions from '@/ux/UserTest/components/ScreenShareInstructions.vue'
-import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue'
+import ConsentStep from '@/shared/components/steps/ConsentStep.vue'
+import PreTestStep from '@/shared/components/steps/PreTestStep.vue'
+import PostTestStep from '@/shared/components/steps/PostTestStep.vue'
+import FinishStep from '@/shared/components/steps/FinishStep.vue'
+import SubmitDialog from '@/shared/components/SubmitDialog.vue'
 import CardSortingTask from './CardSortingTask.vue'
 import CardSortingEvaluatorAnswer from '../models/CardSortingEvaluatorAnswer'
-import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showSuccess, showInfo } from '@/shared/utils/toast'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import {
+  createStructuredActivityHandlers,
+  structuredValuesForStage,
+} from '@/ux/UserTest/utils/structuredActivity'
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   test: {
     type: Object,
     required: true,
@@ -504,28 +381,22 @@ const {
 } = useStepAnnouncement({ scroll: true })
 
 const user = computed(() => store.getters.user)
-const currentCardSortingAnswer = computed(
-  () => store.getters.currentCardSortingAnswer,
+const currentCardSortingAnswer = computed(() =>
+  props.preview ? null : store.getters.currentCardSortingAnswer,
 )
-const mediaUrls = computed(() => store.getters.mediaUrls)
 
 const fullName = ref('')
 const globalIndex = ref(0)
 const start = ref(true)
 const pendingCards = ref(0)
+const unnamedCategories = ref(0)
 const submitting = ref(false)
 const dialog = ref(false)
-const sortingStarted = ref(false)
-const startingRecording = ref(false)
-const showScreenSharePrompt = ref(false)
-const isRequestingScreenShare = ref(false)
-const uploadingCount = ref(0)
-const isWaitingForUploadToFinish = ref(false)
-let finishTimeout = null
+const preTestStepComponent = ref(null)
+const postTestStepComponent = ref(null)
 
-const audioRecorder = ref(null)
-const screenRecorder = ref(null)
-const videoRecorder = ref(null)
+/** Timestamp (ms) when the card sorting task step started. */
+const sortingStartedAt = ref(null)
 
 const localAnswer = reactive(
   new CardSortingEvaluatorAnswer({
@@ -539,11 +410,13 @@ const localAnswer = reactive(
 fullName.value = localAnswer.fullName || ''
 if (localAnswer.submitted) start.value = false
 
-// Activity logging records only that the study was opened, consented to and
-// submitted. Card and category names are participant free text and never
+// Activity logging records metadata only: consent, pre/post-test edit and
+// selection activity, when card sorting started and how long it took, and
+// submission. Card and category names are participant free text and never
 // reach logging.
 let studyLogging = null
 const initializeStudyLogging = () => {
+  if (props.preview) return null
   if (studyLogging || !user.value?.id || !props.test?.id) return studyLogging
   studyLogging = createStudyLoggingRuntime({
     ownerUid: user.value.id,
@@ -556,6 +429,46 @@ const initializeStudyLogging = () => {
     void studyLogging.resumeAfterConsent()
   }
   return studyLogging
+}
+
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
+
+const { seedStructuredScope, handleStructuredSelectionChanged } =
+  createStructuredActivityHandlers(initializeStudyLogging)
+
+const STAGE_BY_INDEX = { 2: 'preTest', 5: 'postTest' }
+const seedStage = (stage) =>
+  seedStructuredScope(
+    stage,
+    structuredValuesForStage(
+      stage,
+      props.test?.testStructure?.[stage],
+      localAnswer[`${stage}Answer`],
+    ),
+  )
+
+watch(globalIndex, (index, previous) => {
+  const previousStage = STAGE_BY_INDEX[previous]
+  if (previousStage) {
+    void initializeStudyLogging()?.checkpointStructuredScope(previousStage)
+  }
+  if (STAGE_BY_INDEX[index]) seedStage(STAGE_BY_INDEX[index])
+  if (index === 4) void initializeStudyLogging()?.cardSortStarted()
+})
+
+const handlePreTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('preTest')
+  await completeStep('preTest')
+}
+
+const handlePostTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('postTest')
+  await completeStep('postTest')
 }
 
 const cardSortingConfigurationIssues = computed(() => {
@@ -604,7 +517,16 @@ const truncateDescription = (description) => {
 }
 
 const startTest = () => {
+  if (props.preview) {
+    start.value = false
+    return
+  }
   if (!canStartCardSorting.value) return
+
+  if (!localAnswer.testStartedAt) {
+    localAnswer.testStartedAt = Date.now()
+    void savePartial().catch(() => showError('CardSorting.saveError'))
+  }
 
   const startScreen = document.querySelector('.start-screen')
   if (startScreen) startScreen.classList.add('leaving')
@@ -615,25 +537,12 @@ const startTest = () => {
 }
 
 const handleWelcomeStart = async () => {
+  if (!localAnswer.testStartedAt) {
+    localAnswer.testStartedAt = Date.now()
+  }
   await safelyAnnounce(t('UserTestView.stepper.consent'), 1)
   globalIndex.value = 1
 }
-
-const recordingFlags = computed(() => {
-  const options = props.test?.testStructure?.cardSorting?.options || {}
-  return {
-    hasScreenRecord: !!options.hasScreenRecord,
-    hasCamRecord: !!options.hasCamRecord,
-    hasAudioRecord: !!options.hasAudioRecord,
-  }
-})
-
-const hasAnyRecording = computed(
-  () =>
-    recordingFlags.value.hasScreenRecord ||
-    recordingFlags.value.hasCamRecord ||
-    recordingFlags.value.hasAudioRecord,
-)
 
 const hasPreTest = computed(() => {
   return (
@@ -649,6 +558,44 @@ const hasPostTest = computed(() => {
   )
 })
 
+const previewSteps = computed(() => [
+  -1,
+  0,
+  1,
+  ...(hasPreTest.value ? [2] : []),
+  4,
+  ...(hasPostTest.value ? [5] : []),
+  6,
+])
+
+const previewStepIndex = computed(() =>
+  previewSteps.value.indexOf(start.value ? -1 : globalIndex.value),
+)
+
+const navigatePreview = async (direction) => {
+  if (!props.preview) return
+  const questionnaire =
+    globalIndex.value === 2
+      ? preTestStepComponent.value
+      : globalIndex.value === 5
+        ? postTestStepComponent.value
+        : null
+  if (!start.value && questionnaire?.movePreviewQuestion?.(direction)) return
+  const destination = previewSteps.value[previewStepIndex.value + direction]
+  if (destination === undefined) return
+  start.value = destination === -1
+  globalIndex.value = destination === -1 ? 0 : destination
+  dialog.value = false
+  window.scrollTo({ top: 0, behavior: 'auto' })
+  await nextTick()
+  if (direction < 0) {
+    if (destination === 2)
+      preTestStepComponent.value?.showLastPreviewQuestion?.()
+    if (destination === 5)
+      postTestStepComponent.value?.showLastPreviewQuestion?.()
+  }
+}
+
 const welcomeSections = computed(() => {
   const message = props.test?.testStructure?.welcomeMessage
   if (!message) return []
@@ -660,7 +607,7 @@ const welcomeSteps = computed(() => {
   if (hasPreTest.value) {
     steps.push(t('CardSorting.welcomeSteps.preTest'))
   }
-  steps.push(t('CardSorting.title'))
+  steps.push(t('CardSorting.cardClassification'))
   if (hasPostTest.value) {
     steps.push(t('CardSorting.welcomeSteps.postTest'))
   }
@@ -692,8 +639,7 @@ const activeStepperItem = computed(() => {
   return completionStepValue.value
 })
 
-const isCurrentCardStep = (value) =>
-  activeStepperItem.value === Number(value)
+const isCurrentCardStep = (value) => activeStepperItem.value === Number(value)
 
 const progress = computed(() => {
   const steps = [
@@ -726,32 +672,19 @@ function buildPostTestAnswer() {
   }))
 }
 
-function attachMediaToAnswer(answer, urls) {
-  if (!urls) return
-  const medias = urls[0] || urls['0']
-  if (!medias) return
-
-  for (const type in medias) {
-    if (type === 'sizes') {
-      const sizes = medias[type]
-      if (sizes.screenRecordURL) answer.screenSize = sizes.screenRecordURL
-      if (sizes.audioRecordURL) answer.audioSize = sizes.audioRecordURL
-      if (sizes.webcamRecordURL) answer.webcamSize = sizes.webcamRecordURL
-      continue
-    }
-    const field = MEDIA_FIELD_MAP?.[type] || type
-    if (medias[type] != null) answer[field] = medias[type]
-  }
-}
-
 const savePartial = async () => {
+  if (props.preview) return
   if (!user.value) return
   localAnswer.userDocId = user.value.id
   localAnswer.fullName = fullName.value
   localAnswer.invited = true
   localAnswer.lastUpdate = Date.now()
   localAnswer.progress = Math.round(progress.value)
-  attachMediaToAnswer(localAnswer, mediaUrls.value)
+  if (localAnswer.testStartedAt && !localAnswer.submitted) {
+    localAnswer.totalDurationSeconds = Math.round(
+      (Date.now() - localAnswer.testStartedAt) / 1000,
+    )
+  }
 
   await store.dispatch('saveTestAnswer', {
     data: new CardSortingEvaluatorAnswer({ ...localAnswer }),
@@ -760,124 +693,16 @@ const savePartial = async () => {
   })
 }
 
-function onShowLoading() {
-  uploadingCount.value++
-}
-
-function onStopShowLoading() {
-  uploadingCount.value--
-  if (uploadingCount.value < 0) uploadingCount.value = 0
-
-  if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
-    proceedAfterSorting()
-  }
-}
-
-function forceStopAllMedia() {
-  audioRecorder.value?.stopAudioRecording?.()
-  videoRecorder.value?.stopRecording?.()
-  screenRecorder.value?.stopRecording?.()
-}
-
-async function startMediaRecorders({
-  skipScreen = false,
-  screenOnly = false,
-} = {}) {
-  if (
-    !skipScreen &&
-    recordingFlags.value.hasScreenRecord &&
-    screenRecorder.value
-  ) {
-    const screenStarted = await screenRecorder.value.captureScreen({
-      requireEntireScreen: false,
-    })
-    if (!screenStarted) return false
-  }
-  if (screenOnly) return true
-
-  if (recordingFlags.value.hasAudioRecord && audioRecorder.value) {
-    await audioRecorder.value.startAudioRecording()
-  }
-  if (recordingFlags.value.hasCamRecord && videoRecorder.value) {
-    const videoStarted = await videoRecorder.value.startRecording()
-    if (!videoStarted) return false
-  }
-  return true
-}
-
-function onStartSorting() {
-  if (recordingFlags.value.hasScreenRecord) {
-    showScreenSharePrompt.value = true
-    return
-  }
-  startSortingWithRecording()
-}
-
-function cancelScreenSharePrompt() {
-  if (isRequestingScreenShare.value) return
-  showScreenSharePrompt.value = false
-}
-
-async function confirmScreenShare() {
-  isRequestingScreenShare.value = true
-  try {
-    await nextTick()
-    const screenStarted = await startMediaRecorders({ screenOnly: true })
-    if (!screenStarted) return
-    showScreenSharePrompt.value = false
-    await startSortingWithRecording({ skipScreen: true })
-  } finally {
-    isRequestingScreenShare.value = false
-  }
-}
-
-async function startSortingWithRecording({ skipScreen = false } = {}) {
-  startingRecording.value = true
-  try {
-    await nextTick()
-    const mediaStarted = await startMediaRecorders({ skipScreen })
-    if (!mediaStarted) {
-      screenRecorder.value?.abortCapture?.()
-      return
-    }
-    sortingStarted.value = true
-  } finally {
-    startingRecording.value = false
-  }
-}
-
 async function finishSorting() {
-  if (hasAnyRecording.value) {
-    forceStopAllMedia()
-
-    if (uploadingCount.value > 0) {
-      isWaitingForUploadToFinish.value = true
-      return
-    }
-
-    isWaitingForUploadToFinish.value = true
-    finishTimeout = setTimeout(() => {
-      if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
-        proceedAfterSorting()
-      }
-    }, 500)
-    return
-  }
-
-  await proceedAfterSorting()
-}
-
-async function proceedAfterSorting() {
-  isWaitingForUploadToFinish.value = false
-  if (finishTimeout) {
-    clearTimeout(finishTimeout)
-    finishTimeout = null
-  }
   await completeStep('sorting')
 }
 
 const completeStep = async (type) => {
   try {
+    if (!localAnswer.testStartedAt) {
+      localAnswer.testStartedAt = Date.now()
+    }
+
     if (type === 'consent') {
       const consentAcceptedAt = new Date().toISOString()
       localAnswer.consentCompleted = true
@@ -886,10 +711,10 @@ const completeStep = async (type) => {
         await safelyAnnounce(t('UserTestView.stepper.preTest'), 2)
         globalIndex.value = 2
       } else {
-        await safelyAnnounce(t('UserTestView.stepper.tasks'), 2)
+        await safelyAnnounce(t('CardSorting.cardClassification'), 2)
         localAnswer.preTestCompleted = true
         globalIndex.value = 4
-        if (!hasAnyRecording.value) sortingStarted.value = true
+        sortingStartedAt.value = Date.now()
       }
       await savePartial()
       if (user.value) {
@@ -899,15 +724,20 @@ const completeStep = async (type) => {
     }
 
     if (type === 'preTest') {
-      await safelyAnnounce(t('UserTestView.stepper.tasks'), 3)
+      await safelyAnnounce(t('CardSorting.cardClassification'), 3)
       localAnswer.preTestCompleted = true
       globalIndex.value = 4
-      if (!hasAnyRecording.value) sortingStarted.value = true
+      sortingStartedAt.value = Date.now()
       await savePartial()
       return
     }
 
     if (type === 'sorting') {
+      if (sortingStartedAt.value !== null) {
+        localAnswer.sortingDurationSeconds = Math.round(
+          (Date.now() - sortingStartedAt.value) / 1000,
+        )
+      }
       if (hasPostTest.value) {
         await safelyAnnounce(t('UserTestView.stepper.postTest'), 4)
         globalIndex.value = 5
@@ -917,6 +747,7 @@ const completeStep = async (type) => {
         globalIndex.value = 6
       }
       await savePartial()
+      void initializeStudyLogging()?.cardSortFinished()
       return
     }
 
@@ -944,10 +775,19 @@ const handleSubmit = () => {
 }
 
 const submit = async () => {
+  if (props.preview) {
+    router.push(`/cardSorting/manager/${props.test.id}`)
+    return
+  }
   try {
     submitting.value = true
     localAnswer.submitted = true
     localAnswer.progress = 100
+    if (localAnswer.testStartedAt) {
+      localAnswer.totalDurationSeconds = Math.round(
+        (Date.now() - localAnswer.testStartedAt) / 1000,
+      )
+    }
     await savePartial()
     void initializeStudyLogging()?.submitted()
     showSuccess('CardSorting.answerSubmitted')
@@ -965,20 +805,18 @@ onMounted(() => {
   if (localAnswer.submitted) {
     globalIndex.value = 6
     localAnswer.postTestCompleted = true
-  }
-  if (!hasAnyRecording.value) {
-    sortingStarted.value = true
+  } else if (
+    localAnswer.preTestCompleted &&
+    !localAnswer.postTestCompleted &&
+    localAnswer.sortingDurationSeconds === null
+  ) {
+    // Participant is resuming a session that was already at the card sorting
+    // step — restart the timer from now so elapsed time keeps accumulating.
+    sortingStartedAt.value = Date.now()
   }
 })
 
 onBeforeUnmount(() => {
-  if (finishTimeout) {
-    clearTimeout(finishTimeout)
-    finishTimeout = null
-  }
-  forceStopAllMedia()
-  uploadingCount.value = 0
-  isWaitingForUploadToFinish.value = false
   studyLogging?.destroy()
 })
 </script>
@@ -1106,30 +944,5 @@ onBeforeUnmount(() => {
 
 .v-stepper-item {
   padding: 1rem;
-}
-
-.recording-features-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-.recording-feature-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 16px;
-  border: 1px solid rgba(var(--v-theme-outline), 0.2);
-  border-radius: 12px;
-}
-
-.feature-icon-container {
-  flex-shrink: 0;
-}
-
-@media (min-width: 768px) {
-  .recording-features-grid {
-    grid-template-columns: 1fr 1fr;
-  }
 }
 </style>

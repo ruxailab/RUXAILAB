@@ -1,7 +1,35 @@
 <template>
-  <div v-if="test && !redirecting">
-    <div v-if="test.testType === STUDY_TYPES.HEURISTIC">
-      <HeuristicTestView :id="id" :token="token" />
+  <div
+    v-if="test && !loading && !redirecting"
+    :class="{ 'study-preview': preview }"
+  >
+    <v-alert
+      v-if="preview"
+      type="info"
+      color="secondary"
+      variant="flat"
+      density="compact"
+      class="study-preview-banner bg-secondary text-white"
+      role="status"
+    >
+      <strong>{{ $t('studyPreview.title') }}</strong>
+      {{ $t('studyPreview.notice') }}
+      <template #append>
+        <v-btn
+          color="white"
+          variant="outlined"
+          size="small"
+          @click="exitPreview"
+        >
+          {{ $t('studyPreview.exit') }}
+        </v-btn>
+      </template>
+    </v-alert>
+    <div
+      v-if="test.testType === STUDY_TYPES.HEURISTIC"
+      :class="{ 'study-preview-content': preview }"
+    >
+      <HeuristicTestView :id="id" :token="token" :preview="preview" />
     </div>
 
     <div
@@ -9,8 +37,9 @@
         test.testType === STUDY_TYPES.USER &&
         test.subType === USER_STUDY_SUBTYPES.UNMODERATED
       "
+      :class="{ 'study-preview-content': preview }"
     >
-      <UserTestView />
+      <UserTestView :preview="preview" />
     </div>
 
     <div
@@ -22,8 +51,11 @@
       <ModeratedTestView ref="moderatedTestViewRef" :token="token" />
     </div>
 
-    <div v-if="test.testType === STUDY_TYPES.CARD_SORTING">
-      <CardSortingTest :test="test" />
+    <div
+      v-if="test.testType === STUDY_TYPES.CARD_SORTING"
+      :class="{ 'study-preview-content': preview }"
+    >
+      <CardSortingTest :test="test" :preview="preview" />
     </div>
   </div>
 
@@ -46,7 +78,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -60,7 +92,10 @@ import {
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 
-import { getTestViewAccessRedirect } from '@/shared/utils/studyNavigation'
+import {
+  getStudyRouteBase,
+  getTestViewAccessRedirect,
+} from '@/shared/utils/studyNavigation'
 import { usesTestViewToken } from '@/shared/utils/studyAccessPolicy'
 import { isSignInPath } from '@/shared/utils/authRedirect'
 import { showError } from '@/shared/utils/toast'
@@ -77,6 +112,7 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  preview: { type: Boolean, default: false },
 })
 
 const store = useStore()
@@ -121,9 +157,12 @@ const accessError = ref('')
 |--------------------------------------------------------------------------
 */
 
-const inviteToken = computed(
-  () => route.query.inviteToken || props.token || null,
+const inviteToken = computed(() =>
+  props.preview ? null : route.query.inviteToken || props.token || null,
 )
+
+const exitPreview = () =>
+  router.push(`/${getStudyRouteBase(test.value)}/manager/${props.id}`)
 
 const isAnonymousInvitation = computed(
   () =>
@@ -166,7 +205,7 @@ const loadStudy = async () => {
     id: props.id,
   })
 
-  if (loaded) {
+  if (loaded && !props.preview) {
     await store.dispatch('getCurrentTestAnswerDoc')
   }
 
@@ -204,6 +243,7 @@ const handleLoadedStudy = async (loadedStudy) => {
     token: props.token,
     invitation: invitation.value,
     redirectTo: route.fullPath,
+    preview: props.preview,
   })
 
   if (!destination) {
@@ -280,96 +320,183 @@ const loadInvitation = async () => {
 |--------------------------------------------------------------------------
 */
 
-onBeforeMount(async () => {
-  loading.value = true
-  redirecting.value = false
-  accessError.value = ''
-  invitation.value = null
+watch(
+  () => [props.id, props.preview],
+  async () => {
+    loading.value = true
+    redirecting.value = false
+    accessError.value = ''
+    invitation.value = null
 
-  try {
-    if (inviteToken.value && !store.getters.user) {
-      await loadInvitation()
-      if (isAnonymousInvitation.value) await joinAnonymously()
-    }
+    try {
+      if (inviteToken.value && !store.getters.user) {
+        await loadInvitation()
+        if (isAnonymousInvitation.value) await joinAnonymously()
+      }
 
-    const loadedStudy = await loadStudy()
+      const loadedStudy = await loadStudy()
 
-    if (!loadedStudy) {
-      await denyAccess()
-      return
-    }
-
-    /*
-     * Unmoderated studies ignore the second URL segment. Drop it from old
-     * links so the participant lands on the clean study URL.
-     */
-    if (props.token && !usesTestViewToken(loadedStudy)) {
-      await router.replace({
-        name: 'TestView',
-        params: { id: props.id },
-        query: route.query,
-        hash: route.hash,
-      })
-    }
-
-    /*
-     * Moderated sessions have their own access flow.
-     */
-    if (
-      loadedStudy.testType === STUDY_TYPES.USER &&
-      loadedStudy.subType === USER_STUDY_SUBTYPES.MODERATED &&
-      props.token
-    ) {
-      const loadedSession = await loadSession(loadedStudy)
-
-      if (!loadedSession) {
+      if (!loadedStudy) {
         await denyAccess()
         return
       }
 
-      return
-    }
+      if (props.preview) {
+        await handleLoadedStudy(loadedStudy)
+        return
+      }
 
-    /*
-     * Resolve the invitation before checking regular access.
-     */
-    if (inviteToken.value) {
-      const hasInvitation = await loadInvitation()
+      /*
+       * Unmoderated studies ignore the second URL segment. Drop it from old
+       * links so the participant lands on the clean study URL.
+       */
+      if (props.token && !usesTestViewToken(loadedStudy)) {
+        await router.replace({
+          name: 'TestView',
+          params: { id: props.id },
+          query: route.query,
+          hash: route.hash,
+        })
+      }
 
-      if (hasInvitation) {
-        /*
-         * Anonymous invitation:
-         *
-         * A valid public invitation allows the participant
-         * to enter the study without STUDY_ANSWER capability.
-         */
-        if (isAnonymousInvitation.value) {
+      /*
+       * Moderated sessions have their own access flow.
+       */
+      if (
+        loadedStudy.testType === STUDY_TYPES.USER &&
+        loadedStudy.subType === USER_STUDY_SUBTYPES.MODERATED &&
+        props.token
+      ) {
+        const loadedSession = await loadSession(loadedStudy)
+
+        if (!loadedSession) {
+          await denyAccess()
+          return
+        }
+
+        return
+      }
+
+      /*
+       * Resolve the invitation before checking regular access.
+       */
+      if (inviteToken.value) {
+        const hasInvitation = await loadInvitation()
+
+        if (hasInvitation) {
+          /*
+           * Anonymous invitation:
+           *
+           * A valid public invitation allows the participant
+           * to enter the study without STUDY_ANSWER capability.
+           */
+          if (isAnonymousInvitation.value) {
+            await handleLoadedStudy(loadedStudy)
+
+            return
+          }
+
+          /*
+           * Authenticated invitation:
+           *
+           * There is no acceptance screen anymore.
+           * Let the normal access policy determine whether
+           * the current user can enter the study.
+           */
           await handleLoadedStudy(loadedStudy)
 
           return
         }
-
-        /*
-         * Authenticated invitation:
-         *
-         * There is no acceptance screen anymore.
-         * Let the normal access policy determine whether
-         * the current user can enter the study.
-         */
-        await handleLoadedStudy(loadedStudy)
-
-        return
       }
-    }
 
-    /*
-     * No valid invitation:
-     *
-     * Fall back to the normal study access flow.
-     */
-    await handleLoadedStudy(loadedStudy)
-  } finally {
-    loading.value = false
-  }
-})
+      /*
+       * No valid invitation:
+       *
+       * Fall back to the normal study access flow.
+       */
+      await handleLoadedStudy(loadedStudy)
+    } finally {
+      loading.value = false
+    }
+  },
+  { immediate: true },
+)
 </script>
+
+<style scoped>
+.study-preview {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.study-preview-banner {
+  flex: 0 0 56px;
+  height: 56px;
+  max-height: 56px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  z-index: 2100;
+}
+
+.study-preview-banner :deep(.v-alert__prepend),
+.study-preview-banner :deep(.v-alert__content),
+.study-preview-banner :deep(.v-alert__append) {
+  align-self: center;
+}
+
+.study-preview-content {
+  flex: 1;
+  min-height: 0;
+}
+
+.study-preview-content :deep(.session-backdrop) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.study-preview-content :deep(.session-backdrop-mark) {
+  position: absolute;
+}
+
+.study-preview-content :deep(.session-backdrop-content) {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.study-preview :deep(.start-screen) {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.study-preview-content :deep(.study-preview-start .session-backdrop-content) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.study-preview-content :deep(.study-preview-start .start-screen > .v-col) {
+  max-height: 100%;
+  margin-block: 0 !important;
+}
+
+.study-preview-content :deep(.study-preview-navigation-space) {
+  flex-shrink: 0;
+  height: auto;
+}
+
+.study-preview-content :deep(.study-preview-navigation) {
+  position: static;
+}
+</style>

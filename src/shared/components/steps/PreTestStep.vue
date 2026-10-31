@@ -40,7 +40,11 @@
             </p>
           </div>
 
-          <div v-else-if="currentItem" class="question-shell mx-auto mb-8">
+          <div
+            v-else-if="currentItem"
+            class="question-shell mx-auto mb-8"
+            @keydown.enter.prevent="handleEnter"
+          >
             <h2
               class="text-h5 text-sm-h4 font-weight-bold text-secondary text-center mb-3"
             >
@@ -134,11 +138,26 @@ import { ref, computed, watch } from 'vue'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   testTitle: String,
   preTest: Array,
   preTestAnswer: Array,
   preTestCompleted: Boolean,
 })
+
+const movePreviewQuestion = (direction) => {
+  if (!props.preview) return false
+  const nextStep = step.value + direction
+  if (nextStep < 0 || nextStep >= (props.preTest?.length ?? 0)) return false
+  step.value = nextStep
+  return true
+}
+
+const showLastPreviewQuestion = () => {
+  if (props.preview) step.value = Math.max(0, (props.preTest?.length ?? 0) - 1)
+}
+
+defineExpose({ movePreviewQuestion, showLastPreviewQuestion })
 
 const emit = defineEmits(['done', 'update:preTestAnswer', 'selection-changed'])
 
@@ -174,6 +193,14 @@ const next = () => {
 
 const prev = () => {
   if (step.value > 0) step.value--
+}
+
+const handleEnter = () => {
+  if (!hasQuestions.value || isLastStep.value) {
+    emit('done')
+    return
+  }
+  next()
 }
 
 const updateAnswer = (index, value) => {

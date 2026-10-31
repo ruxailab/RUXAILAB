@@ -40,6 +40,10 @@ const publicPages = [
   '/invite',
 ]
 
+function isOpenPath(path) {
+  return publicPages.includes(path) || path.startsWith('/mobile-task/')
+}
+
 router.beforeEach(async (to, from, next) => {
   const {
     authorize = [],
@@ -73,7 +77,7 @@ router.beforeEach(async (to, from, next) => {
       authUser &&
       !authUser.isAnonymous &&
       authUser.emailVerified === false &&
-      !publicPages.includes(to.path)
+      !isOpenPath(to.path)
     ) {
       return next('/verify-email')
     }
@@ -92,7 +96,7 @@ router.beforeEach(async (to, from, next) => {
   /**
    * 4. Allow public pages without authentication
    */
-  if (publicPages.includes(to.path)) {
+  if (isOpenPath(to.path)) {
     return next()
   }
 

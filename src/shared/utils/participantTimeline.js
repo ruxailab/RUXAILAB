@@ -33,6 +33,9 @@ export const stepKeyFor = (event) => {
       return 'session'
     case 'CONSENT_ACCEPTED':
       return 'consent'
+    case 'CARD_SORT_STARTED':
+    case 'CARD_SORT_FINISHED':
+      return 'cardSort'
     case 'STUDY_SUBMITTED':
       return 'submitted'
     case 'SESSION_STARTED':
@@ -70,6 +73,7 @@ const STEP_ORDER = {
   task: 3,
   heuristic: 3,
   liveSession: 3,
+  cardSort: 3,
   postTest: 4,
   submitted: 5,
   other: 6,
@@ -149,6 +153,12 @@ const summaryFor = (kind, events) => {
   if (kind === 'preTest' || kind === 'postTest')
     return { questions: questionsTouched(events, kind) }
   if (kind === 'heuristic') return { questions: heuristicQuestions(events) }
+  if (kind === 'cardSort') {
+    const seconds = events.find(
+      (event) => event.eventType === 'CARD_SORT_FINISHED',
+    )?.details?.sortingDurationSeconds
+    return { durationSeconds: Number.isFinite(seconds) ? seconds : null }
+  }
   if (kind === 'session') return { opens: events.length }
   if (kind === 'liveSession')
     return {

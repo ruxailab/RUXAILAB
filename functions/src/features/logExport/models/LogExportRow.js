@@ -60,6 +60,8 @@ export const EXPORTED_DETAILS = Object.freeze({
   STUDY_VIEW_OPENED: {},
   CONSENT_ACCEPTED: {},
   STUDY_SUBMITTED: {},
+  CARD_SORT_STARTED: {},
+  CARD_SORT_FINISHED: { sortingDurationSeconds: count },
   TASK_STARTED: { taskRef: reference, taskType: token },
   ANSWER_EDITED: {
     fieldRef: reference,

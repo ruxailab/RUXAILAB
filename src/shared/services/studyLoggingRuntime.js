@@ -356,6 +356,20 @@ export const createStudyLoggingRuntime = ({
         occurredAt,
       )
     },
+    async cardSortStarted(occurredAt) {
+      if (!ownerUid || !studyId) return null
+      try {
+        const eventId = await record('CARD_SORT_STARTED', {}, occurredAt)
+        if (eventId) void Promise.resolve(logger.flush()).catch(() => {})
+        return eventId
+      } catch {
+        return null
+      }
+    },
+    // The server verifies this against the saved answer, so save it first.
+    cardSortFinished() {
+      return finishFlushAndRequest('CARD_SORT_FINISHED')
+    },
     submitted() {
       return finishFlushAndRequest('STUDY_SUBMITTED')
     },

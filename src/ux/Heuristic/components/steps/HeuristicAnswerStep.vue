@@ -194,6 +194,7 @@
                 :question-index="currentQuestionIndex"
                 :answer-heu="answerForQuestion(currentQuestionIndex)"
                 :disabled="currentUserTestAnswer?.submitted"
+                :preview="preview"
                 @update-image="
                   (imageUrl, sourceHeurisIndex, sourceQuestionIndex) =>
                     $emit(
@@ -266,6 +267,7 @@ import HeuristicOptionsAnalysisSection from '@/ux/Heuristic/components/steps/Heu
 import HeuristicRecommendationSection from '@/ux/Heuristic/components/steps/HeuristicRecommendationSection.vue'
 
 const props = defineProps({
+  preview: { type: Boolean, default: false },
   heuristic: { type: Object, default: null },
   heuristics: { type: Array, default: () => [] },
   heurisIndex: { type: Number, required: true },
@@ -505,6 +507,20 @@ const goToQuestion = (questionIndex) => {
   currentQuestionIndex.value = questionIndex
 }
 
+const movePreviewQuestion = (direction) => {
+  if (!props.preview) return false
+  const nextIndex = currentQuestionIndex.value + direction
+  if (nextIndex < 0 || nextIndex >= questions.value.length) return false
+  goToQuestion(nextIndex)
+  return true
+}
+
+const showLastPreviewQuestion = () => {
+  if (props.preview) goToQuestion(questions.value.length - 1)
+}
+
+defineExpose({ movePreviewQuestion, showLastPreviewQuestion })
+
 const responseRef = (questionIndex) =>
   `heuristic:${canonicalHeuristicIndex.value}:question:${questionIndex}`
 
@@ -647,7 +663,7 @@ watch(
   () => [props.heurisIndex, selectedAnswerMode.value],
   () => {
     currentQuestionIndex.value = 0
-    initializeSharedAnswerMode()
+    if (!props.preview) initializeSharedAnswerMode()
   },
   { immediate: true },
 )

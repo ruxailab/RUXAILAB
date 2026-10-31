@@ -41,13 +41,11 @@ CARD_SORTING:
 - cardSorting.categories: [{ "title": "...", "description": "" }]
 - cardSorting.options:
   - allow_create_categories: true when the user can create categories ("possa criar", open/hybrid); false for closed
-  - hasScreenRecord: true when the user asks to save/record the screen
-  - hasCamRecord / hasAudioRecord as requested
 - Modes:
   - closed: allow_create_categories=false AND categories length >= 1
   - open: allow_create_categories=true AND categories=[]
   - hybrid: allow_create_categories=true AND categories length >= 1
-- Example shape (hybrid + screen record):
+- Example shape (hybrid):
 {
   "testType": "CARD_SORTING",
   "subType": "CARD_SORTING",
@@ -74,10 +72,7 @@ CARD_SORTING:
         "card_image": false,
         "category_description": false,
         "category_image": false,
-        "allow_create_categories": true,
-        "hasScreenRecord": true,
-        "hasCamRecord": false,
-        "hasAudioRecord": false
+        "allow_create_categories": true
       }
     }
   },

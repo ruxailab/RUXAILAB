@@ -41,9 +41,16 @@
               :test-id="route.params.id"
               :video-call="videoCallConfig"
               :show-video-call-config="isModerated"
+              :show-mobile-task-instructions="
+                showMobileTaskInstructionsSetting
+              "
+              :allow-mobile-task-instructions="allowMobileTaskInstructions"
               @update:welcome-message="updateWelcomeMessage"
               @update:final-message="updateFinalMessage"
               @update:video-call="onVideoCallConfigChange"
+              @update:allow-mobile-task-instructions="
+                onAllowMobileTaskInstructionsChange
+              "
             />
           </div>
 
@@ -142,6 +149,7 @@ const welcomeMessage = ref('')
 const finalMessage = ref('')
 const consent = ref('')
 const videoCallConfig = ref({ ...DEFAULT_VIDEO_CALL_CONFIG })
+const allowMobileTaskInstructions = ref(true)
 const index = ref(0)
 const route = useRoute()
 let unsubscribe = null
@@ -218,6 +226,21 @@ const updateConsent = (value) => {
 const isModerated = computed(
   () => test.value?.subType === USER_STUDY_SUBTYPES.MODERATED,
 )
+const showMobileTaskInstructionsSetting = computed(
+  () =>
+    !props.isTemplate &&
+    test.value?.subType !== USER_STUDY_SUBTYPES.MODERATED,
+)
+
+const getAllowMobileTaskInstructions = () => {
+  allowMobileTaskInstructions.value =
+    test.value?.allowMobileTaskInstructions !== false
+}
+
+const onAllowMobileTaskInstructionsChange = (value) => {
+  allowMobileTaskInstructions.value = value !== false
+  markFieldDirty('allowMobileTaskInstructions')
+}
 
 const getTasks = () => {
   const tasksData = test.value?.testStructure?.userTasks || []
@@ -276,7 +299,11 @@ const save = async () => {
       testStructure.videoCall = structuredClone(videoCallConfig.value)
     }
 
-    const rawData = { ...test.value, testStructure: testStructure }
+    const rawData = {
+      ...test.value,
+      testStructure: testStructure,
+      allowMobileTaskInstructions: allowMobileTaskInstructions.value,
+    }
     const study = instantiateStudyByType(rawData.testType, rawData)
     const savedFieldVersions = new Map(dirtyStudyFields)
     const result = await store.dispatch('updateStudy', study)
@@ -337,6 +364,9 @@ const subscribeToTest = () => {
       if (!dirtyStudyFields.has('preTest')) getPreTest()
       if (!dirtyStudyFields.has('postTest')) getPostTest()
       if (!dirtyStudyFields.has('userTasks')) getTasks()
+      if (!dirtyStudyFields.has('allowMobileTaskInstructions')) {
+        getAllowMobileTaskInstructions()
+      }
     })
   }
 }
@@ -348,6 +378,7 @@ onMounted(() => {
     getFinalMessage()
     getConsent()
     getVideoCallConfig()
+    getAllowMobileTaskInstructions()
     getPreTest()
     getPostTest()
     getTasks()
@@ -364,6 +395,7 @@ onMounted(() => {
     }
     lastCalibrationConfig = calibrationConfig
   })
+  getAllowMobileTaskInstructions()
   subscribeToTest()
 })
 

@@ -637,9 +637,6 @@
                     :selected-task="taskSelect"
                     :selected-task-name="taskSummaryRows[taskSelect]?.taskName"
                     :task-id="taskSummaryRows[taskSelect]?.taskId"
-                    :has-audio-record="
-                      taskSummaryRows[taskSelect]?.hasAudioRecord
-                    "
                     :answers-doc-id="answersDocId"
                     :task-definitions="testStructure.userTasks || []"
                     :test-answer="answers[dialogItem.userDocId]"
@@ -891,10 +888,7 @@ const getTaskRecordings = (taskAnswer, taskDefinition) => {
       key: 'audio',
       label: 'Audio',
       icon: 'mdi-microphone',
-      active:
-        !!taskDefinition?.hasAudioRecord ||
-        !!taskAnswer?.audioRecordURL ||
-        !!taskAnswer?.moderatorAudioURL,
+      active: !!taskAnswer?.audioRecordURL || !!taskAnswer?.moderatorAudioURL,
     },
     {
       key: 'screen',
@@ -965,7 +959,6 @@ const taskSummaryRows = computed(() => {
       answerPreview: getTaskAnswerPreview(taskAnswer, taskDefinition),
       observationPreview: observationText,
       hasObservations: observationText !== '-',
-      hasAudioRecord: !!taskDefinition?.hasAudioRecord,
       tipPressCount,
       hasTipAvailable,
       tipUsage:

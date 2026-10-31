@@ -381,7 +381,7 @@ import TemplateHeader from '@/shared/models/TemplateHeader'
 import TemplateAuthor from '@/shared/models/TemplateAuthor'
 import Template from '@/shared/models/Template'
 import { useI18n } from 'vue-i18n'
-import { instantiateStudyByType } from '../constants/methodDefinitions'
+import { instantiateStudyByType, STUDY_TYPES } from '../constants/methodDefinitions'
 import StudyAdmin from '@/shared/models/StudyAdmin'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
 import { useDateLocale } from '@/shared/composables/useDateLocale'
@@ -781,6 +781,11 @@ const duplicateStudy = async () => {
       updateDate: Date.now(),
       status: test.value.status,
       endDate: test.value.endDate,
+    }
+
+    if (test.value?.testType === STUDY_TYPES.USER) {
+      rawData.allowMobileTaskInstructions =
+        test.value.allowMobileTaskInstructions !== false
     }
 
     const study = instantiateStudyByType(rawData.testType, rawData)

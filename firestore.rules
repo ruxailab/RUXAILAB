@@ -20,6 +20,7 @@ service cloud.firestore {
 
     function isSuperAdmin() {
       return signedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         currentUser().data.accessLevel == 0;
     }
 
@@ -153,6 +154,18 @@ service cloud.firestore {
         allow write: if false;
       }
 
+      // Phone pairing for unmoderated task instructions. Not a study session.
+      // Only the owning participant can read the companion. Nobody writes it
+      // from the client. The document id is the uid. The phone channel lives
+      // in Realtime Database at mobileTaskLive/{token}.
+      match /mobileTaskCompanions/{companionId} {
+        allow read: if authenticated() &&
+          request.auth.uid == companionId &&
+          (resource == null ||
+            resource.data.participantUid == request.auth.uid);
+        allow write: if false;
+      }
+
     }
 
     match /answers/{answerId} {
@@ -276,7 +289,7 @@ service cloud.firestore {
       allow write: if false;
     }
     match /calibrations/{document=**} {
-      allow read, write: if signedIn();
+      allow read, write: if authenticated();
     }
     // Invitation tokens grant study access, so only trusted functions read
     // or write them (validateInvite / resolveInvite check a token).

@@ -269,6 +269,14 @@ export default {
       const updatedTaskMedia = {
         ...currentTaskMedia,
         [mediaType]: url,
+        syncedStart: true,
+      }
+
+      if (
+        userId &&
+        state.testAnswerDocument?.taskAnswers?.[userId]?.tasks?.[taskIndex]
+      ) {
+        state.testAnswerDocument.taskAnswers[userId].tasks[taskIndex].syncedStart = true
       }
 
       if (size) {

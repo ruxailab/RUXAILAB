@@ -2,6 +2,7 @@
   <div
     v-if="test"
     class="session-backdrop"
+    :class="{ 'study-preview-start': preview && start }"
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"
@@ -19,6 +20,7 @@
     <div>
       <IrisTracker
         v-if="
+          !preview &&
           hasEyeTracking &&
           globalIndex === (hasEyeTracking ? 5 : 4) &&
           test.testStructure.userTasks[taskIndex]?.hasEye
@@ -44,10 +46,22 @@
 
     <SubmitDialog
       :model-value="dialog"
-      :title="$t('HeuristicsTestView.messages.submitTest')"
-      :message="$t('HeuristicsTestView.messages.submitOnce')"
+      :title="
+        $t(
+          preview
+            ? 'studyPreview.finish'
+            : 'HeuristicsTestView.messages.submitTest',
+        )
+      "
+      :message="
+        $t(
+          preview
+            ? 'studyPreview.finishMessage'
+            : 'HeuristicsTestView.messages.submitOnce',
+        )
+      "
       :cancel-label="$t('buttons.cancel')"
-      :submit-label="$t('buttons.submit')"
+      :submit-label="$t(preview ? 'studyPreview.exit' : 'buttons.submit')"
       @cancel="dialog = false"
       @submit="handleSubmit"
     />
@@ -110,6 +124,9 @@
             class="mb-10"
             style="max-width: 300px"
           />
+          <div class="mb-3">
+            <StudyTypeBadges :test="test" color="white" />
+          </div>
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
@@ -417,6 +434,7 @@
 
           <WelcomeStep
             v-if="globalIndex === 0"
+            :study="test"
             :stepper-value="stepperValue"
             :has-eye-tracking="hasEyeTracking"
             :has-pre-test="hasPreTest"
@@ -441,6 +459,8 @@
 
           <PreTestStep
             v-if="globalIndex === 2 && taskIndex === 0"
+            ref="preTestStepComponent"
+            :preview="preview"
             :test-title="test.testTitle"
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localTestAnswer.preTestAnswer"
@@ -456,7 +476,7 @@
             v-if="globalIndex === 3 && hasEyeTracking"
             :calibration-in-progress="calibrationInProgress"
             :calibration-completed="calibrationCompleted"
-            @done="globalIndex = hasPreTest ? 4 : 5"
+            @done="goToPreTasksOrTasks"
             @close-calibration="closeCalibration()"
             @open-calibration="openCalibration()"
             @mark-completed="handleCalibrationFinished()"
@@ -464,12 +484,18 @@
 
           <PreTasksStep
             v-if="
-              hasPreTest &&
+              showPreTasksStep &&
               globalIndex === (hasEyeTracking ? 4 : 3) &&
               taskIndex === 0
             "
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
+            :has-pre-test="hasPreTest"
             :has-recording="hasRecording"
+            :show-mobile-task-instructions="studyAllowsMobileTaskInstructions"
+            :mobile-instructions-busy="mobileInstructionsBusy"
+            :mobile-instructions-error="mobileInstructionsError"
+            :mobile-companion-pairing-path="mobileCompanionPairingPath"
+            :mobile-phone-connected="mobilePhoneConnected"
             @start-tasks="handleStartTasks"
           />
 
@@ -481,12 +507,14 @@
               localTestAnswer?.tasks?.[taskIndex]
             "
             ref="taskStepComponent"
+            :key="preview ? taskIndex : undefined"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
             v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
             v-model:task-observations="
               localTestAnswer.tasks[taskIndex].taskObservations
             "
             :task="test.testStructure.userTasks[taskIndex]"
+            :preview="preview"
             :task-index="taskIndex"
             :test-id="testId"
             :user-doc-id="user?.id || anonymousUserDocId"
@@ -496,6 +524,13 @@
             :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
             :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
+            :mobile-instructions-eligible="mobileInstructionsEligible"
+            :mobile-instructions-enabled="mobileInstructionsEnabled"
+            auto-open-task-link
+            :resume-at-stage-three="resumeMobileTask"
+            :activate-mobile-task="activateCurrentMobileTask"
+            :submit-mobile-outcome="submitCurrentMobileOutcome"
+            @mobile-outcome-accepted="rememberAcceptedOutcome"
             @recording-result="handleRecordingResult"
             @update:sus-answers="
               (val) => {
@@ -567,8 +602,12 @@
             v-if="
               hasPostTest &&
               globalIndex === (hasEyeTracking ? 6 : 5) &&
-              (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)
+              (preview ||
+                !localTestAnswer.postTestCompleted ||
+                localTestAnswer.submitted)
             "
+            ref="postTestStepComponent"
+            :preview="preview"
             :test-title="test.testTitle"
             :post-test="test.testStructure.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer"
@@ -583,24 +622,39 @@
           <FinishStep
             v-if="
               globalIndex === (hasEyeTracking ? 7 : 6) &&
-              localTestAnswer.postTestCompleted &&
+              (preview || localTestAnswer.postTestCompleted) &&
               !localTestAnswer.submitted
             "
             :final-message="$t('finishTest.finalMessage')"
             :congratulations="test.testStructure.finalMessage"
-            :submit-message="$t('finishTest.submitMessage')"
-            :submit-btn="$t('buttons.submit')"
+            :submit-message="
+              $t(
+                preview
+                  ? 'studyPreview.finishMessage'
+                  : 'finishTest.submitMessage',
+              )
+            "
+            :submit-btn="$t(preview ? 'studyPreview.finish' : 'buttons.submit')"
             @submit="dialog = true"
           />
         </v-col>
       </v-row>
     </v-container>
+    <StudyPreviewNavigation
+      v-if="preview"
+      :can-previous="previewStepIndex > 0"
+      :can-next="previewStepIndex < previewSteps.length - 1"
+      :disabled="!answerLoaded"
+      @previous="navigatePreview(-1)"
+      @next="navigatePreview(1)"
+    />
   </div>
 </template>
 
 <script setup>
-import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
-import { doc, onSnapshot } from 'firebase/firestore'
+import StudyTypeBadges from '@/shared/components/StudyTypeBadges.vue'
+import SubmitDialog from '@/shared/components/SubmitDialog.vue'
+import StudyPreviewNavigation from '@/shared/components/StudyPreviewNavigation.vue'
 import {
   ref,
   computed,
@@ -617,18 +671,18 @@ import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar'
 import { nanoid } from 'nanoid'
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue'
-import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
-import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue'
+import ConsentStep from '@/shared/components/steps/ConsentStep.vue'
+import PreTestStep from '@/shared/components/steps/PreTestStep.vue'
 import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue'
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue'
-import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
-import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
+import PostTestStep from '@/shared/components/steps/PostTestStep.vue'
+import FinishStep from '@/shared/components/steps/FinishStep.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import EyeTrackingCalibrationStep from '@/ux/UserTest/components/calibration/EyeTrackingCalibrationStep.vue'
-import { auth, db } from '@/app/plugins/firebase'
+import { auth } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import StepAnnouncementOverlay from '@/shared/components/StepAnnouncementOverlay.vue'
 import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
@@ -645,7 +699,21 @@ import {
   structuredValuesForStage as structuredValuesForStageOf,
   structuredValuesForTask,
 } from '@/ux/UserTest/utils/structuredActivity'
-import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
+import {
+  firstOpenTaskIndex,
+  taskDestination,
+} from '@/ux/UserTest/utils/unmoderatedNavigation'
+import { useMobileTaskCompanion } from '@/ux/UserTest/composables/useMobileTaskCompanion'
+import {
+  applyAcceptedOutcome,
+  isMobileTaskIndexEligible,
+  isReturnToTaskOnlyType,
+  mobileTaskId,
+} from '@/ux/UserTest/utils/mobileTaskPageState'
+
+const props = defineProps({
+  preview: { type: Boolean, default: false },
+})
 
 const fullName = ref('')
 const logined = ref(null)
@@ -685,6 +753,8 @@ const truncateDescription = (description) => {
 const rightView = ref(null)
 const videoRecorder = ref(null)
 const taskStepComponent = ref(null)
+const preTestStepComponent = ref(null)
+const postTestStepComponent = ref(null)
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
   return taskStepComponent.value?.$refs?.timerComponent || null
@@ -728,6 +798,7 @@ const participantUid = () =>
   (auth?.currentUser?.isAnonymous ? auth.currentUser.uid : null)
 
 const initializeStudyLogging = () => {
+  if (props.preview) return null
   if (studyLogging || !participantUid() || !test.value?.id) return studyLogging
   studyLogging = createStudyLoggingRuntime({
     ownerUid: participantUid(),
@@ -755,7 +826,7 @@ const handleLoggingInput = (event) =>
 const handleLoggingFocusout = (event) =>
   initializeStudyLogging()?.editHandlers.focusout(event)
 
-const mediaUrls = computed(() => store.getters.mediaUrls)
+const mediaUrls = computed(() => (props.preview ? {} : store.getters.mediaUrls))
 const test = computed(() => store.getters.test)
 const testId = computed(() => store.getters.test?.id || null)
 const user = computed(() => {
@@ -763,12 +834,97 @@ const user = computed(() => {
   return store.getters.user
 })
 
-const currentUserTestAnswer = computed(
-  () => store.getters.currentUserTestAnswer || {},
+const currentUserTestAnswer = computed(() =>
+  props.preview ? {} : store.getters.currentUserTestAnswer || {},
 )
 
-const hasEyeTracking = computed(() =>
-  test.value?.testStructure?.userTasks?.some((task) => task.hasEye),
+const mobileCompanion = useMobileTaskCompanion({
+  getStudyId: () => test.value?.id || null,
+  getAnswerId: () => test.value?.answersDocId || null,
+  getOwnerUid: () => auth.currentUser?.uid || null,
+})
+const {
+  enabled: mobileInstructionsEnabled,
+  busy: mobileInstructionsBusy,
+  error: mobileInstructionsError,
+  pairingPath: mobileCompanionPairingPath,
+  phoneConnected: mobilePhoneConnected,
+  lastReturnToTaskAt: mobileReturnToTaskAt,
+} = mobileCompanion
+const acceptedMobileOutcome = ref(null)
+const studyAllowsMobileTaskInstructions = computed(
+  () => !props.preview && test.value?.allowMobileTaskInstructions !== false,
+)
+const mobileInstructionsEligible = computed(() =>
+  isMobileTaskIndexEligible(taskIndex.value),
+)
+const resumeMobileTask = computed(() => {
+  if (
+    !studyAllowsMobileTaskInstructions.value ||
+    !mobileCompanion.enabled.value ||
+    !mobileInstructionsEligible.value
+  ) {
+    return false
+  }
+  const active = mobileCompanion.companion.value?.activeTask
+  if (!active?.attemptId) return false
+  return Number(active.taskIndex) === taskIndex.value
+})
+
+function rememberAcceptedOutcome(outcome) {
+  if (!outcome?.success) return
+  acceptedMobileOutcome.value = outcome
+  const task = localTestAnswer.tasks?.[outcome.taskIndex]
+  if (task) applyAcceptedOutcome(task, outcome)
+}
+
+function continueFromPhoneOutcome(outcome) {
+  const task = localTestAnswer.tasks?.[taskIndex.value]
+  const alreadyAttempted = task?.attempted === true
+  const studyTask = test.value?.testStructure?.userTasks?.[taskIndex.value]
+  if (isReturnToTaskOnlyType(studyTask?.taskType)) {
+    taskStepComponent.value?.returnToTaskFromMobile()
+    return
+  }
+  rememberAcceptedOutcome(outcome)
+  if (!alreadyAttempted) {
+    taskStepComponent.value?.continueFromAcceptedOutcome(
+      outcome.completed === true,
+    )
+  }
+}
+
+function activateCurrentMobileTask() {
+  if (!studyAllowsMobileTaskInstructions.value) return null
+  const index = taskIndex.value
+  const task = test.value?.testStructure?.userTasks?.[index]
+  return mobileCompanion.activate({
+    taskIndex: index,
+    taskId: mobileTaskId(task, index),
+    title: typeof task?.taskName === 'string' ? task.taskName : '',
+    description:
+      typeof task?.taskDescription === 'string' ? task.taskDescription : '',
+    taskType: typeof task?.taskType === 'string' ? task.taskType : '',
+  })
+}
+
+function submitCurrentMobileOutcome(outcome) {
+  if (!studyAllowsMobileTaskInstructions.value) {
+    return Promise.resolve(null)
+  }
+  return mobileCompanion.submitOutcome({
+    taskIndex: taskIndex.value,
+    outcome,
+  })
+}
+
+const hasEyeTracking = computed(
+  () =>
+    !props.preview &&
+    test.value?.testStructure?.userTasks?.some((task) => task.hasEye),
+)
+const isOnTaskStage = computed(
+  () => globalIndex.value === (hasEyeTracking.value ? 5 : 4),
 )
 
 const hasRecording = computed(() =>
@@ -789,6 +945,133 @@ const hasPreTest = computed(() => {
     test.value?.testStructure?.preTest.length > 0
   )
 })
+
+const showPreTasksStep = computed(
+  () =>
+    hasPreTest.value ||
+    studyAllowsMobileTaskInstructions.value ||
+    hasRecording.value,
+)
+
+const isOnPreTasksStage = computed(
+  () =>
+    showPreTasksStep.value &&
+    globalIndex.value === (hasEyeTracking.value ? 4 : 3) &&
+    taskIndex.value === 0,
+)
+
+const openTaskFlowDestination = async (destination) => {
+  if (destination.kind === 'task') {
+    await showTaskTitleAnnouncement(destination.taskIndex)
+    taskIndex.value = destination.taskIndex
+    globalIndex.value = hasEyeTracking.value ? 5 : 4
+    return
+  }
+
+  const postTasksAnnouncement =
+    destination.kind === 'postTest'
+      ? getPostTasksAnnouncement()
+      : {
+          title: t('UserTestView.WelcomeStep.steps.submission'),
+          stage: 4,
+        }
+  await safelyShowNextStepAnnouncement(
+    postTasksAnnouncement.title,
+    postTasksAnnouncement.stage,
+  )
+  globalIndex.value = destination.globalIndex
+  if (!hasPostTest.value) {
+    localTestAnswer.postTestCompleted = true
+  }
+}
+
+const enterPendingTask = async () => {
+  const tasks = Array.isArray(localTestAnswer.tasks)
+    ? localTestAnswer.tasks
+    : []
+  const nextIndex = firstOpenTaskIndex(tasks)
+  if (nextIndex >= 0) {
+    await openTaskFlowDestination({ kind: 'task', taskIndex: nextIndex })
+    return
+  }
+
+  await openTaskFlowDestination(
+    taskDestination({
+      taskIndex: Math.max(tasks.length - 1, 0),
+      taskCount: tasks.length,
+      hasEyeTracking: hasEyeTracking.value,
+      hasPostTest: hasPostTest.value,
+      postTestCompleted: localTestAnswer.postTestCompleted,
+    }),
+  )
+}
+
+const goToPreTasksOrTasks = () => {
+  if (showPreTasksStep.value) {
+    taskIndex.value = 0
+    globalIndex.value = hasEyeTracking.value ? 4 : 3
+    return
+  }
+  void enterPendingTask()
+}
+
+const previewSteps = computed(() => [
+  { start: true, globalIndex: 0 },
+  { globalIndex: 0 },
+  { globalIndex: 1 },
+  ...(hasPreTest.value ? [{ globalIndex: 2 }] : []),
+  ...(showPreTasksStep.value ? [{ globalIndex: 3 }] : []),
+  ...(test.value?.testStructure?.userTasks || []).map((_, taskIndex) => ({
+    globalIndex: 4,
+    taskIndex,
+  })),
+  ...(hasPostTest.value ? [{ globalIndex: 5 }] : []),
+  { globalIndex: 6 },
+])
+
+const previewStepIndex = computed(() =>
+  start.value
+    ? 0
+    : previewSteps.value.findIndex(
+        (step) =>
+          !step.start &&
+          step.globalIndex === globalIndex.value &&
+          (step.taskIndex === undefined || step.taskIndex === taskIndex.value),
+      ),
+)
+
+const navigatePreview = async (direction) => {
+  if (!props.preview || !answerLoaded.value) return
+  const questionnaire =
+    globalIndex.value === 2
+      ? preTestStepComponent.value
+      : globalIndex.value === 5
+        ? postTestStepComponent.value
+        : null
+  if (!start.value && questionnaire?.movePreviewQuestion?.(direction)) return
+  if (
+    !start.value &&
+    globalIndex.value === 4 &&
+    taskStepComponent.value?.movePreviewStep?.(direction)
+  )
+    return
+
+  const destination = previewSteps.value[previewStepIndex.value + direction]
+  if (!destination) return
+  start.value = Boolean(destination.start)
+  globalIndex.value = destination.globalIndex
+  taskIndex.value = destination.taskIndex ?? 0
+  dialog.value = false
+  await nextTick()
+  if (direction < 0) {
+    if (destination.globalIndex === 4)
+      taskStepComponent.value?.showLastPreviewStep?.()
+    if (destination.globalIndex === 2)
+      preTestStepComponent.value?.showLastPreviewQuestion?.()
+    if (destination.globalIndex === 5)
+      postTestStepComponent.value?.showLastPreviewQuestion?.()
+  }
+}
 
 const hasPostTest = computed(() => {
   return (
@@ -855,6 +1138,7 @@ const isStartTestDisabled = computed(() => {
     test.value.testStructure.userTasks.length > 0
 
   if (!hasValidTasks) return true
+  if (props.preview) return false
 
   // Check if status is different from 'active'
   if (test.value.status !== 'active') return true
@@ -881,6 +1165,7 @@ const testDisabledReason = computed(() => {
     test.value.testStructure.userTasks.length > 0
 
   if (!hasValidTasks) return 'Test has no tasks configured'
+  if (props.preview) return null
 
   if (test.value.status !== 'active') return 'Test is not active'
 
@@ -967,7 +1252,15 @@ function handleIrisData(data) {
   localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
 }
 
+let unsubscribeCalibration = null
+
+const stopCalibrationListener = () => {
+  unsubscribeCalibration?.()
+  unsubscribeCalibration = null
+}
+
 const handleCalibrationFinished = () => {
+  stopCalibrationListener()
   calibrationCompleted.value = true
   stopCalibrationPopupPolling()
   if (calibrationPopup.value && !calibrationPopup.value.closed) {
@@ -1001,7 +1294,12 @@ const handleCalibrationMessage = (event) => {
   }
 }
 
-const openCalibration = () => {
+const openCalibration = async () => {
+  if (props.preview) {
+    handleCalibrationFinished()
+    goToPreTasksOrTasks()
+    return
+  }
   if (!user.value?.id && !anonymousUserDocId.value) {
     initializeAnonymousUser()
   }
@@ -1012,6 +1310,11 @@ const openCalibration = () => {
   )
   calibrationInProgress.value = true
 
+  stopCalibrationListener()
+  unsubscribeCalibration = await store.dispatch('subscribeToCalibration', {
+    authId,
+    onCreated: handleCalibrationFinished,
+  })
   startCalibrationPopupPolling()
 }
 
@@ -1053,6 +1356,11 @@ const handleDownloadAnonymousIdentifier = () => {
   })
 }
 const savePartialAnswer = async () => {
+  if (props.preview) {
+    accumulateTestTime()
+    calculateProgress(localTestAnswer, test.value?.testStructure)
+    return
+  }
   attachMediaToTasks(localTestAnswer, mediaUrls.value)
   const recordingsToSave = recordingOutcomes
     .beforeSave()
@@ -1118,8 +1426,13 @@ const saveAnswer = async () => {
 }
 
 const submitAnswer = async () => {
+  if (props.preview) {
+    router.push(`/userTest/unmoderated/manager/${test.value.id}`)
+    return
+  }
   try {
     isLoading.value = true
+    await mobileCompanion.endSession()
     localTestAnswer.submitted = true
     await initializeStudyLogging()?.checkpointStructuredScopes()
     await saveAnswer()
@@ -1209,6 +1522,11 @@ const startTest = async () => {
     return
   }
 
+  if (props.preview) {
+    start.value = false
+    return
+  }
+
   await requestFullscreenIfAvailable()
 
   // Primero añadimos la clase para la animación de salida
@@ -1245,9 +1563,7 @@ const handleWelcomeStart = async () => {
 }
 
 const handleStartTasks = async () => {
-  await showTaskTitleAnnouncement(0)
-  taskIndex.value = 0
-  globalIndex.value = hasEyeTracking.value ? 5 : 4
+  await enterPendingTask()
 }
 
 const showTaskTitleAnnouncement = async (idx) => {
@@ -1313,9 +1629,36 @@ const callTimerSave = () => {
   }
 }
 
+function applyMobileOutcomeBeforeSave(finishedTaskIndex) {
+  const outcome = acceptedMobileOutcome.value
+  if (
+    !outcome?.success ||
+    Number(outcome.taskIndex) !== finishedTaskIndex ||
+    !localTestAnswer.tasks?.[finishedTaskIndex]
+  ) {
+    return
+  }
+  applyAcceptedOutcome(localTestAnswer.tasks[finishedTaskIndex], outcome)
+}
+
+async function saveFinishedTask(finishedTaskIndex, completed, occurredAt) {
+  await completeStep(finishedTaskIndex, 'tasks', completed)
+  applyMobileOutcomeBeforeSave(finishedTaskIndex)
+  attachMediaToTasks(localTestAnswer, mediaUrls.value)
+  if (await persistStepProgress()) {
+    acceptedMobileOutcome.value = null
+    void initializeStudyLogging()?.taskFinished(finishedTaskIndex, occurredAt)
+  }
+}
+
 async function handleTaskFinish(userCompleted) {
   const finishedObservedAt = new Date().toISOString()
   const finishedTaskIndex = taskIndex.value
+  const outcome = acceptedMobileOutcome.value
+  const completed =
+    outcome?.success && Number(outcome.taskIndex) === finishedTaskIndex
+      ? outcome.completed === true
+      : userCompleted
   await initializeStudyLogging()?.checkpointStructuredScope(
     `task:${finishedTaskIndex}`,
   )
@@ -1329,26 +1672,16 @@ async function handleTaskFinish(userCompleted) {
       async (val) => {
         if (!val) {
           unwatch()
-          await completeStep(finishedTaskIndex, 'tasks', userCompleted)
-          attachMediaToTasks(localTestAnswer, mediaUrls.value)
-          if (await persistStepProgress()) {
-            void initializeStudyLogging()?.taskFinished(
-              finishedTaskIndex,
-              finishedObservedAt,
-            )
-          }
+          await saveFinishedTask(
+            finishedTaskIndex,
+            completed,
+            finishedObservedAt,
+          )
         }
       },
     )
   } else {
-    await completeStep(finishedTaskIndex, 'tasks', userCompleted)
-    attachMediaToTasks(localTestAnswer, mediaUrls.value)
-    if (await persistStepProgress()) {
-      void initializeStudyLogging()?.taskFinished(
-        finishedTaskIndex,
-        finishedObservedAt,
-      )
-    }
+    await saveFinishedTask(finishedTaskIndex, completed, finishedObservedAt)
   }
 }
 
@@ -1401,9 +1734,12 @@ const completeStep = async (id, type, userCompleted = true) => {
       if (hasPreTest.value) {
         globalIndex.value = 2 // PreTest
       } else {
-        // No pre-test: go to calibration if eye tracking is enabled, otherwise go to tasks
-        globalIndex.value = hasEyeTracking.value ? 3 : 4
         localTestAnswer.preTestCompleted = true
+        if (hasEyeTracking.value) {
+          globalIndex.value = 3
+        } else {
+          goToPreTasksOrTasks()
+        }
       }
       const consentSaved = await persistStepProgress()
       if (!consentSaved) return
@@ -1419,9 +1755,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
 
     if (type === 'eyeCalibration') {
-      // After calibration: go to PreTasksStep if there was a pre-test, otherwise go directly to tasks
-      globalIndex.value = hasPreTest.value ? 4 : 5
-      taskIndex.value = 0
+      goToPreTasksOrTasks()
       eyeCalibrationStepDone.value = true
     }
 
@@ -1472,6 +1806,7 @@ const completeStep = async (id, type, userCompleted = true) => {
         if (!hasPostTest.value) {
           localTestAnswer.postTestCompleted = true
         }
+        if (!props.preview) void mobileCompanion.completeTaskPhase()
       }
       if (userCompleted) {
         store.commit('SET_TOAST', {
@@ -1568,7 +1903,7 @@ const initializeAnonymousUser = () => {
 const setTest = async () => {
   try {
     logined.value = true
-    await store.dispatch('getCurrentTestAnswerDoc')
+    if (!props.preview) await store.dispatch('getCurrentTestAnswerDoc')
     if (!currentUserTestAnswer.value) {
       currentUserTestAnswer.value = new UserStudyEvaluatorAnswer()
     }
@@ -1842,8 +2177,55 @@ watch(
   async () => {
     if (user.value) {
       noExistUser.value = false
-      if (logined.value) await setTest()
+      if (logined.value) {
+        await setTest()
+      }
     }
+  },
+)
+
+watch(
+  () => [
+    studyAllowsMobileTaskInstructions.value,
+    isOnPreTasksStage.value,
+    isOnTaskStage.value,
+    test.value?.id,
+    test.value?.answersDocId,
+    user.value?.id || anonymousUserDocId.value,
+  ],
+  async ([allowed, onPreTasks, onTasks, studyId, answerId, ownerId]) => {
+    if (
+      !allowed ||
+      (!onPreTasks && !onTasks) ||
+      !studyId ||
+      !answerId ||
+      !ownerId
+    )
+      return
+    await mobileCompanion.ensureEnabled()
+  },
+)
+
+watch(
+  () => [
+    mobileCompanion.companion.value?.lastOutcome?.attemptId,
+    mobileCompanion.companion.value?.activeTask?.attemptId,
+    taskIndex.value,
+    Boolean(taskStepComponent.value),
+  ],
+  () => {
+    const outcome = mobileCompanion.outcomeMatchingActiveTask(taskIndex.value)
+    if (!outcome?.success || !taskStepComponent.value) return
+    if (acceptedMobileOutcome.value?.attemptId === outcome.attemptId) return
+    continueFromPhoneOutcome(outcome)
+  },
+)
+
+watch(
+  () => mobileReturnToTaskAt.value,
+  (value) => {
+    if (!value) return
+    taskStepComponent.value?.returnToTaskFromMobile()
   },
 )
 
@@ -1855,29 +2237,11 @@ onMounted(async () => {
   await autoComplete()
   calculateProgress(localTestAnswer, test.value?.testStructure)
   initializeStudyLogging()
-  if (!user.value?.id) return
-
-  let firstSnapshot = true
-
-  const userRef = doc(db, 'users', user.value.id)
-
-  onSnapshot(userRef, (docSnap) => {
-    if (!docSnap.exists()) return
-    const data = docSnap.data()
-
-    if (firstSnapshot) {
-      firstSnapshot = false
-      return
-    }
-
-    if (data.lastCalibrationId) {
-      handleCalibrationFinished()
-    }
-  })
 })
 
 onBeforeUnmount(() => {
   studyLogging?.destroy()
+  stopCalibrationListener()
   stopCalibrationPopupPolling()
   if (
     videoRecorder.value &&

@@ -19,6 +19,7 @@
         :question-index="questionIndex"
         :answer-heu="answerHeu"
         :disable="disabled"
+        :preview="preview"
         open-by-default
         :show-comments="false"
         @update-image="
@@ -64,6 +65,7 @@
 import AddCommentBtn from '@/ux/Heuristic/components/AddCommentBtn.vue'
 
 defineProps({
+  preview: { type: Boolean, default: false },
   heurisIndex: { type: Number, required: true },
   questionIndex: { type: Number, required: true },
   answerHeu: { type: Object, default: null },

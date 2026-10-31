@@ -11,6 +11,10 @@ jest.mock('vue-i18n', () => ({
   useI18n: () => ({ t: (key) => key }),
 }))
 
+jest.mock('@/shared/utils/toast', () => ({
+  showError: jest.fn(),
+}))
+
 describe('HeuristicAnswerStep logging fields', () => {
   it('uses the canonical study index when heuristics are displayed out of order', () => {
     const canonicalFirst = {

@@ -30,7 +30,10 @@ jest.mock('nanoid', () => ({ nanoid: () => 'anonymous-participant' }))
 jest.mock('vuex', () => ({ useStore: () => mockStore }))
 jest.mock('vue-router', () => ({ useRouter: () => mockRouter }))
 jest.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
-jest.mock('@/app/plugins/firebase', () => ({ db: {} }))
+jest.mock('@/app/plugins/firebase', () => ({
+  db: {},
+  auth: { currentUser: { uid: 'participant' } },
+}))
 jest.mock('firebase/firestore', () => ({
   doc: jest.fn(),
   onSnapshot: jest.fn(),
@@ -71,9 +74,20 @@ const deferred = () => {
   return { promise, resolve }
 }
 let wrapper
-const mountView = async () => {
+const mountView = async (props = {}, { inspectSteps = false } = {}) => {
   wrapper = shallowMount(UserTestView, {
-    global: { mocks: { $t: (key) => key, $vuetify: { display: {} } } },
+    props,
+    global: {
+      mocks: { $t: (key) => key, $vuetify: { display: {} } },
+      stubs: inspectSteps
+        ? {
+            TaskStep: false,
+            PreTestStep: false,
+            PostTestStep: false,
+            ShowInfo: { template: '<div><slot name="content" /></div>' },
+          }
+        : {},
+    },
   })
   await flushPromises()
   return wrapper.vm
@@ -103,6 +117,251 @@ beforeEach(() => {
   mockStore.dispatch.mockResolvedValue(undefined)
 })
 afterEach(() => wrapper?.unmount())
+
+it.each([false, true])(
+  'browses empty preview tasks and questionnaires forwards and backwards (optional questionnaires: %s)',
+  async (withQuestionnaires) => {
+    mockStore.getters.test.testStructure.userTasks = [
+      { taskType: 'sus', hasEye: true, taskLink: 'https://example.com' },
+      { taskType: 'no-answer' },
+    ]
+    if (withQuestionnaires) {
+      for (const key of ['preTest', 'postTest']) {
+        mockStore.getters.test.testStructure[key] = [
+          { title: 'First question', textField: true },
+          { title: 'Second question', textField: true },
+        ]
+      }
+    }
+    const open = jest.spyOn(window, 'open')
+    try {
+      const vm = await mountView({ preview: true }, { inspectSteps: true })
+      const initialAnswer = JSON.stringify(vm.localTestAnswer)
+      expect(wrapper.classes()).toContain('study-preview-start')
+      const nav = () =>
+        wrapper.findComponent({ name: 'StudyPreviewNavigation' })
+      const next = async () => {
+        nav().vm.$emit('next')
+        await flushPromises()
+      }
+      const previous = async () => {
+        nav().vm.$emit('previous')
+        await flushPromises()
+      }
+      expect(nav().props('canPrevious')).toBe(false)
+      await vm.navigatePreview(-1)
+      expect(vm.start).toBe(true)
+      await next()
+      expect(vm.globalIndex).toBe(0)
+      expect(wrapper.classes()).not.toContain('study-preview-start')
+      await next()
+      expect(vm.globalIndex).toBe(1)
+      if (withQuestionnaires) {
+        await next()
+        expect(vm.globalIndex).toBe(2)
+        const preTest = wrapper.findComponent({ name: 'PreTestStep' })
+        await next()
+        expect(preTest.vm.$.setupState.step).toBe(1)
+        await previous()
+        expect(preTest.vm.$.setupState.step).toBe(0)
+        await next()
+      }
+      await next()
+      expect(vm.globalIndex).toBe(3)
+      await next()
+      expect(vm.globalIndex).toBe(4)
+      const task = () => wrapper.findComponent(TaskStep).vm.$.setupState
+      expect(task().stage).toBe(1)
+      expect(task().currentPreviewStep).toBe('recording')
+      await next()
+      expect(task().currentPreviewStep).toBe('link')
+      await next()
+      expect(task().stage).toBe(2)
+      await next()
+      expect(task().stage).toBe(3)
+      await next()
+      expect(task().stage).toBe(4)
+      expect(task().shouldDisableFinishButton).toBe(true)
+      await next()
+      expect(task().stage).toBe(5)
+      await next()
+      expect(vm.taskIndex).toBe(1)
+      expect(task().stage).toBe(2)
+      await previous()
+      expect(vm.taskIndex).toBe(0)
+      expect(task().stage).toBe(5)
+      await next()
+      expect(vm.taskIndex).toBe(1)
+      await next()
+      expect(task().stage).toBe(3)
+      await next()
+      expect(task().stage).toBe(5)
+      await next()
+      if (withQuestionnaires) {
+        expect(vm.globalIndex).toBe(5)
+        await next()
+        expect(
+          wrapper.findComponent({ name: 'PostTestStep' }).vm.$.setupState.step,
+        ).toBe(1)
+        await next()
+      }
+      expect(wrapper.findComponent({ name: 'FinishStep' }).exists()).toBe(true)
+      expect(nav().props('canNext')).toBe(false)
+      await next()
+      expect(vm.globalIndex).toBe(6)
+      expect(JSON.stringify(vm.localTestAnswer)).toBe(initialAnswer)
+      await previous()
+      if (withQuestionnaires) {
+        expect(vm.globalIndex).toBe(5)
+        expect(
+          wrapper.findComponent({ name: 'PostTestStep' }).vm.$.setupState.step,
+        ).toBe(1)
+        await previous()
+        await previous()
+      }
+      expect(vm.taskIndex).toBe(1)
+      expect(task().stage).toBe(5)
+      expect(open).not.toHaveBeenCalled()
+      expect(mockStore.dispatch).not.toHaveBeenCalled()
+      expect(mockRuntime.taskFinished).not.toHaveBeenCalled()
+      expect(mockRuntime.resumeAfterConsent).not.toHaveBeenCalled()
+    } finally {
+      open.mockRestore()
+    }
+  },
+)
+
+it('does not expose navigation or bypass validation in normal Answer mode', async () => {
+  const vm = await mountView()
+  expect(
+    wrapper.findComponent({ name: 'StudyPreviewNavigation' }).exists(),
+  ).toBe(false)
+  await vm.navigatePreview(1)
+  expect(vm.start).toBe(true)
+})
+
+it.each([0, 1])(
+  'skips unconfigured preview stages without requiring task completion (tasks: %s)',
+  async (taskCount) => {
+    mockStore.getters.test.testStructure.userTasks = Array.from(
+      { length: taskCount },
+      () => ({ taskType: 'no-answer' }),
+    )
+    const vm = await mountView({ preview: true }, { inspectSteps: true })
+    const initialAnswer = JSON.stringify(vm.localTestAnswer)
+    expect(vm.showPreTasksStep).toBe(false)
+    expect(vm.previewSteps.map((step) => step.globalIndex)).toEqual([
+      0,
+      0,
+      1,
+      ...Array(taskCount).fill(4),
+      6,
+    ])
+    await vm.navigatePreview(1)
+    await vm.navigatePreview(1)
+    await vm.navigatePreview(1)
+    if (taskCount) {
+      expect(vm.globalIndex).toBe(4)
+      const task = wrapper.findComponent(TaskStep).vm.$.setupState
+      expect(task.stage).toBe(2)
+      await vm.navigatePreview(1)
+      expect(task.stage).toBe(3)
+      await vm.navigatePreview(1)
+      expect(task.stage).toBe(5)
+      await vm.navigatePreview(1)
+    }
+    expect(vm.globalIndex).toBe(6)
+    expect(wrapper.findComponent({ name: 'FinishStep' }).exists()).toBe(true)
+    expect(JSON.stringify(vm.localTestAnswer)).toBe(initialAnswer)
+    expect(mockStore.dispatch).not.toHaveBeenCalled()
+  },
+)
+
+it('keeps preview answers, completion, calibration and logging isolated from real responses', async () => {
+  const saved = mockStore.getters.currentUserTestAnswer
+  saved.submitted = true
+  mockStore.getters.test.status = 'draft'
+  mockStore.getters.test.endDate = '2000-01-01'
+  const vm = await mountView({ preview: true })
+  expect(vm.localTestAnswer.submitted).toBe(false)
+  expect(vm.localTestAnswer.tasks[0].taskAnswer).toBe('')
+  expect(vm.isStartTestDisabled).toBe(false)
+  expect(vm.studyAllowsMobileTaskInstructions).toBe(false)
+  vm.localTestAnswer.tasks[0].taskAnswer = 'Temporary response'
+  await vm.savePartialAnswer()
+  vm.openCalibration()
+  await flushPromises()
+  expect(vm.calibrationPopup).toBeNull()
+  await vm.submitAnswer()
+  expect(mockRouter.push).toHaveBeenCalledWith(
+    '/userTest/unmoderated/manager/study-1',
+  )
+  expect(mockStore.dispatch).not.toHaveBeenCalled()
+  expect(mockRuntime.resumeAfterConsent).not.toHaveBeenCalled()
+  expect(mockRuntime.submitted).not.toHaveBeenCalled()
+  expect(saved.tasks[0].taskAnswer).toBe('private-answer')
+  expect(saved.submitted).toBe(true)
+})
+
+it.each([false, true])(
+  'skips eye-tracking calibration in preview and reaches the task (pre-test: %s)',
+  async (hasPreTest) => {
+    mockStore.getters.test.testStructure.userTasks[0].hasEye = true
+    if (hasPreTest) {
+      mockStore.getters.test.testStructure.preTest = [{ question: 'Question' }]
+    }
+    const open = jest.spyOn(window, 'open')
+    try {
+      const vm = await mountView({ preview: true })
+      expect(vm.hasEyeTracking).toBe(false)
+      vm.start = false
+      await vm.completeStep(0, 'consent')
+      if (hasPreTest) {
+        expect(vm.globalIndex).toBe(2)
+        await vm.completeStep(0, 'preTest')
+      }
+      expect(vm.globalIndex).toBe(3)
+      expect(vm.isOnPreTasksStage).toBe(true)
+      await vm.enterPendingTask()
+      expect(vm.globalIndex).toBe(4)
+      expect(vm.isOnTaskStage).toBe(true)
+      expect(vm.taskIndex).toBe(0)
+      await vm.handleTaskFinish(true)
+      expect(vm.localTestAnswer.tasks[0].attempted).toBe(true)
+      expect(vm.localTestAnswer.postTestCompleted).toBe(true)
+      expect(vm.globalIndex).toBe(6)
+      expect(open).not.toHaveBeenCalled()
+      expect(mockStore.dispatch).not.toHaveBeenCalled()
+    } finally {
+      open.mockRestore()
+    }
+  },
+)
+
+it('retains the calibration stage when answering an eye-tracking study normally', async () => {
+  mockStore.getters.test.testStructure.userTasks[0].hasEye = true
+  const vm = await mountView()
+  expect(vm.hasEyeTracking).toBe(true)
+  await vm.completeStep(0, 'consent')
+  expect(vm.globalIndex).toBe(3)
+  expect(vm.isOnPreTasksStage).toBe(false)
+  expect(vm.isOnTaskStage).toBe(false)
+})
+
+it('advances out of a calibration screen already open in preview without opening a popup', async () => {
+  mockStore.getters.test.testStructure.userTasks[0].hasEye = true
+  const open = jest.spyOn(window, 'open')
+  try {
+    const vm = await mountView({ preview: true })
+    vm.openCalibration()
+    await flushPromises()
+    expect(vm.isOnPreTasksStage).toBe(true)
+    expect(open).not.toHaveBeenCalled()
+    expect(mockStore.dispatch).not.toHaveBeenCalled()
+  } finally {
+    open.mockRestore()
+  }
+})
 
 it('emits completion only after the uploaded reference is attached and answer persistence resolves', async () => {
   const vm = await mountView()
@@ -345,6 +604,266 @@ it('does not observe a task when screen-share setup is cancelled or denied', asy
   await taskStep.confirmScreenShare()
   expect(captureScreen).toHaveBeenCalledTimes(1)
   expect(wrapper.emitted('taskStarted')).toBeUndefined()
+})
+
+function mountSharingTaskStep({
+  task,
+  captureScreen = jest.fn().mockResolvedValue(true),
+  startAudioRecording = jest.fn().mockResolvedValue(undefined),
+  startRecording = jest.fn().mockResolvedValue(true),
+  extraProps = {},
+} = {}) {
+  wrapper = shallowMount(TaskStep, {
+    props: { task, taskIndex: 0, ...extraProps },
+    global: {
+      mocks: { $vuetify: { display: {} } },
+      stubs: {
+        ShowInfo: { template: '<div><slot name="content" /></div>' },
+        ScreenRecorder: {
+          template: '<div />',
+          setup() {
+            return { captureScreen, abortCapture: jest.fn() }
+          },
+        },
+        AudioRecorder: {
+          template: '<div />',
+          setup() {
+            return { startAudioRecording, abortCapture: jest.fn() }
+          },
+        },
+        VideoRecorder: {
+          template: '<div />',
+          setup() {
+            return { startRecording, abortCapture: jest.fn() }
+          },
+        },
+      },
+    },
+  })
+  return wrapper.vm.$.setupState
+}
+
+it.each(['sus', 'nasa-tlx', 'sart', 'tam-1', 'tam-2', 'tam-3'])(
+  'previews the %s questionnaire without setup, validation or task-completion events',
+  async (taskType) => {
+    const captureScreen = jest.fn()
+    const startAudioRecording = jest.fn()
+    const startRecording = jest.fn()
+    const task = mountSharingTaskStep({
+      task: {
+        taskType,
+        hasScreenRecord: true,
+        hasAudioRecord: true,
+        hasCamRecord: true,
+        taskLink: 'https://example.com',
+        postForm: 'https://example.com/form',
+      },
+      captureScreen,
+      startAudioRecording,
+      startRecording,
+      extraProps: {
+        preview: true,
+        doneTaskDisabled: true,
+        autoOpenTaskLink: true,
+      },
+    })
+    const open = jest.spyOn(window, 'open')
+    try {
+      expect(task.movePreviewStep(-1)).toBe(false)
+      for (const [stage, previewIndex] of [
+        [1, 1],
+        [1, 2],
+        [2, 0],
+        [3, 0],
+        [4, 0],
+        [5, 0],
+      ]) {
+        expect(task.movePreviewStep(1)).toBe(true)
+        await nextTick()
+        expect(task.stage).toBe(stage)
+        expect(task.previewStepIndex).toBe(previewIndex)
+      }
+      expect(task.movePreviewStep(1)).toBe(false)
+      expect(task.shouldDisableFinishButton).toBe(true)
+      expect(task.movePreviewStep(-1)).toBe(true)
+      expect(task.stage).toBe(4)
+      expect(wrapper.emitted('taskStarted')).toBeUndefined()
+      expect(wrapper.emitted('startTask')).toBeUndefined()
+      expect(wrapper.emitted('done')).toBeUndefined()
+      expect(wrapper.emitted('couldNotFinish')).toBeUndefined()
+      expect(wrapper.emitted('timer-stopped')).toBeUndefined()
+      expect(captureScreen).not.toHaveBeenCalled()
+      expect(startAudioRecording).not.toHaveBeenCalled()
+      expect(startRecording).not.toHaveBeenCalled()
+      expect(open).not.toHaveBeenCalled()
+    } finally {
+      open.mockRestore()
+    }
+  },
+)
+
+it('does not allow task preview navigation in Answer mode', () => {
+  const task = mountSharingTaskStep({ task: { taskType: 'sus' } })
+  expect(task.stage).toBe(2)
+  expect(task.movePreviewStep(1)).toBe(false)
+  task.showLastPreviewStep()
+  expect(task.stage).toBe(2)
+})
+
+it('allows preview tasks to run without mounting recorders or requesting media permissions', async () => {
+  const captureScreen = jest.fn()
+  const startAudioRecording = jest.fn()
+  const startRecording = jest.fn()
+  const taskStep = mountSharingTaskStep({
+    task: {
+      taskType: 'no-answer',
+      hasScreenRecord: true,
+      hasAudioRecord: true,
+      hasCamRecord: true,
+    },
+    captureScreen,
+    startAudioRecording,
+    startRecording,
+    extraProps: { preview: true },
+  })
+  expect(wrapper.findComponent({ name: 'AudioRecorder' }).exists()).toBe(false)
+  expect(wrapper.findComponent({ name: 'ScreenRecorder' }).exists()).toBe(false)
+  expect(wrapper.findComponent({ name: 'VideoRecorder' }).exists()).toBe(false)
+  await taskStep.startTask()
+  expect(taskStep.stage).toBe(3)
+  expect(taskStep.showScreenSharePrompt).toBe(false)
+  expect(wrapper.emitted('taskStarted')).toHaveLength(1)
+  expect(captureScreen).not.toHaveBeenCalled()
+  expect(startAudioRecording).not.toHaveBeenCalled()
+  expect(startRecording).not.toHaveBeenCalled()
+})
+
+it('opens the unmoderated task page only after sharing permissions finish', async () => {
+  const open = jest.spyOn(window, 'open').mockReturnValue({})
+  let resolveScreen
+  let resolveAudio
+  let resolveCamera
+  const captureScreen = jest.fn(
+    () =>
+      new Promise((resolve) => {
+        resolveScreen = resolve
+      }),
+  )
+  const startAudioRecording = jest.fn(
+    () =>
+      new Promise((resolve) => {
+        resolveAudio = resolve
+      }),
+  )
+  const startRecording = jest.fn(
+    () =>
+      new Promise((resolve) => {
+        resolveCamera = resolve
+      }),
+  )
+  const taskStep = mountSharingTaskStep({
+    task: {
+      taskType: 'no-answer',
+      hasScreenRecord: true,
+      hasAudioRecord: true,
+      hasCamRecord: true,
+      taskLink: 'example.com/task',
+    },
+    captureScreen,
+    startAudioRecording,
+    startRecording,
+    extraProps: { autoOpenTaskLink: true },
+  })
+
+  try {
+    const pending = taskStep.confirmScreenShare()
+    await flushPromises()
+    expect(captureScreen).toHaveBeenCalledTimes(1)
+    expect(startAudioRecording).not.toHaveBeenCalled()
+    expect(open).not.toHaveBeenCalled()
+
+    resolveScreen(true)
+    await flushPromises()
+    expect(startAudioRecording).toHaveBeenCalledTimes(1)
+    expect(startRecording).not.toHaveBeenCalled()
+    expect(open).not.toHaveBeenCalled()
+
+    resolveAudio()
+    await flushPromises()
+    expect(startRecording).toHaveBeenCalledTimes(1)
+    expect(open).not.toHaveBeenCalled()
+
+    resolveCamera(true)
+    await pending
+    expect(open).toHaveBeenCalledTimes(1)
+    expect(open).toHaveBeenCalledWith('https://example.com/task', '_blank')
+    expect(wrapper.emitted('taskStarted')).toHaveLength(1)
+  } finally {
+    open.mockRestore()
+  }
+})
+
+it('does not open the task page when screen sharing is denied', async () => {
+  const open = jest.spyOn(window, 'open').mockReturnValue({})
+  const startAudioRecording = jest.fn().mockResolvedValue(undefined)
+  const taskStep = mountSharingTaskStep({
+    task: {
+      taskType: 'no-answer',
+      hasScreenRecord: true,
+      hasAudioRecord: true,
+      taskLink: 'https://example.com/task',
+    },
+    captureScreen: jest.fn().mockResolvedValue(false),
+    startAudioRecording,
+    extraProps: { autoOpenTaskLink: true },
+  })
+
+  try {
+    await taskStep.confirmScreenShare()
+    expect(startAudioRecording).not.toHaveBeenCalled()
+    expect(open).not.toHaveBeenCalled()
+    expect(wrapper.emitted('taskStarted')).toBeUndefined()
+  } finally {
+    open.mockRestore()
+  }
+})
+
+it('opens the task page after microphone and camera when the task has no screen share', async () => {
+  const open = jest.spyOn(window, 'open').mockReturnValue({})
+  let resolveAudio
+  const startAudioRecording = jest.fn(
+    () =>
+      new Promise((resolve) => {
+        resolveAudio = resolve
+      }),
+  )
+  const startRecording = jest.fn().mockResolvedValue(true)
+  const taskStep = mountSharingTaskStep({
+    task: {
+      taskType: 'no-answer',
+      hasAudioRecord: true,
+      hasCamRecord: true,
+      taskLink: 'https://example.com/page',
+    },
+    startAudioRecording,
+    startRecording,
+    extraProps: { autoOpenTaskLink: true },
+  })
+
+  try {
+    const pending = taskStep.startTask()
+    await flushPromises()
+    expect(startAudioRecording).toHaveBeenCalledTimes(1)
+    expect(startRecording).not.toHaveBeenCalled()
+    expect(open).not.toHaveBeenCalled()
+
+    resolveAudio()
+    await pending
+    expect(startRecording).toHaveBeenCalledTimes(1)
+    expect(open).toHaveBeenCalledWith('https://example.com/page', '_blank')
+  } finally {
+    open.mockRestore()
+  }
 })
 
 it('normalizes fresh and partial TAM answers by configured task type', () => {

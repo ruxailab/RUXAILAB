@@ -6,7 +6,7 @@
         class="test-content pre-tasks-content pa-6 rounded-xl text-center"
         :class="{ 'pre-tasks-content--recording': showRecordingInfo }"
       >
-        <template v-if="!showRecordingInfo">
+        <template v-if="showIntroScreen && !showRecordingInfo">
           <p class="split welcome-body text-h6 mb-6 text-grey-darken-3">
             {{ $t('UserTestView.PreTasksStep.description') }}
             <strong class="mx-1">{{ numTasks }}</strong>
@@ -16,6 +16,15 @@
           <p class="pre-tasks-instruction mb-6 text-grey-darken-3">
             {{ $t('UserTestView.PreTasksStep.instruction') }}
           </p>
+
+          <div v-if="showMobileTaskInstructions" class="pre-tasks-qr mb-6">
+            <MobileTaskCompanionPanel
+              :busy="mobileInstructionsBusy"
+              :error="mobileInstructionsError"
+              :pairing-path="mobileCompanionPairingPath"
+              :connected="mobilePhoneConnected"
+            />
+          </div>
 
           <v-btn
             color="primary"
@@ -117,20 +126,51 @@
 </template>
 <script setup>
 import ShowInfo from '@/shared/components/ShowInfo.vue'
+import MobileTaskCompanionPanel from '@/ux/UserTest/components/MobileTaskCompanionPanel.vue'
 import { animateWelcomeText } from '@/shared/utils/animations'
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const props = defineProps({
   numTasks: Number,
+  hasPreTest: {
+    type: Boolean,
+    default: true,
+  },
   hasRecording: {
     type: Boolean,
     default: true,
   },
+  showMobileTaskInstructions: {
+    type: Boolean,
+    default: false,
+  },
+  mobileInstructionsBusy: {
+    type: Boolean,
+    default: false,
+  },
+  mobileInstructionsError: {
+    type: Boolean,
+    default: false,
+  },
+  mobileCompanionPairingPath: {
+    type: String,
+    default: '',
+  },
+  mobilePhoneConnected: {
+    type: Boolean,
+    default: false,
+  },
 })
 const emit = defineEmits(['startTasks'])
 
+const showIntroScreen = computed(
+  () => props.hasPreTest || props.showMobileTaskInstructions,
+)
+
 const preTasksContent = ref(null)
-const showRecordingInfo = ref(false)
+const showRecordingInfo = ref(
+  props.hasRecording && !props.hasPreTest && !props.showMobileTaskInstructions,
+)
 let cleanupSplitAnimation = () => {}
 
 function onContinue() {
@@ -154,7 +194,7 @@ async function runSplitAnimation() {
 }
 
 onMounted(async () => {
-  await runSplitAnimation()
+  if (showIntroScreen.value) await runSplitAnimation()
 })
 
 onBeforeUnmount(() => {
@@ -222,5 +262,10 @@ onBeforeUnmount(() => {
   font-size: 1.4rem;
   line-height: 1.6;
   text-align: center;
+}
+
+.pre-tasks-qr {
+  width: 100%;
+  max-width: 28rem;
 }
 </style>

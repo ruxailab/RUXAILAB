@@ -16,5 +16,14 @@
     "source.fixAll": "explicit",
     "source.fixAll.eslint": "explicit"
   },
-  "i18n-ally.localesPaths": ["src/features/language", "src/app/plugins/locales"]
+  "i18n-ally.localesPaths": [
+    "src/features/language",
+    "src/app/plugins/locales"
+  ],
+  "chat.tools.terminal.autoApprove": {
+    "/^git status --short; lsof -nP -iTCP -sTCP:LISTEN \\| head -25$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
 }

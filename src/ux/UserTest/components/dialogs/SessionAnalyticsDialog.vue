@@ -232,6 +232,7 @@
                     :study-id="testAnswer?.studyId || null"
                     :transcription-doc-id="resolvedTranscriptionDocId"
                     :can-transcribe="canTranscribe"
+                    :has-audio="hasAudioFiles"
                     :unavailable-message="transcriptionUnavailableMessage"
                     @saved="onTranscriptionSaved"
                     @deleted="onTranscriptionDeleted"
@@ -385,7 +386,6 @@ const props = defineProps({
   testAnswer: { type: Object, default: null },
   answersDocId: { type: String, default: '' },
   taskId: { type: [String, Number], default: null },
-  hasAudioRecord: { type: Boolean, default: false },
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -570,12 +570,16 @@ const hasSentimentData = computed(
   () => Boolean(props.taskAnswer?.webcamRecordURL) || hasTaskAudio.value,
 )
 
-const hasTranscriptionData = computed(
+const hasAudioFiles = computed(
   () =>
-    Boolean(props.hasAudioRecord) ||
     Boolean(props.taskAnswer?.audioRecordURL) ||
-    Boolean(props.taskAnswer?.moderatorAudioURL) ||
-    Boolean(props.taskAnswer?.transcriptionDocId),
+    Boolean(props.taskAnswer?.moderatorAudioURL),
+)
+
+// Audio being enabled on the task is not enough: the recording may have been
+// blocked or failed to upload, leaving nothing to transcribe.
+const hasTranscriptionData = computed(
+  () => hasAudioFiles.value || Boolean(props.taskAnswer?.transcriptionDocId),
 )
 
 const resolvedTaskId = computed(() => {
@@ -590,12 +594,6 @@ const canLoadTranscriptions = computed(
     Boolean(props.answersDocId) &&
     Boolean(props.userId) &&
     Boolean(resolvedTaskId.value),
-)
-
-const hasAudioFiles = computed(
-  () =>
-    Boolean(props.taskAnswer?.audioRecordURL) ||
-    Boolean(props.taskAnswer?.moderatorAudioURL),
 )
 
 const canTranscribe = computed(
@@ -661,7 +659,9 @@ const displayTaskName = computed(() => {
 
 const mockEyeTracking = { accuracy: 92, fixations: 34 }
 const DRIFT_SECONDS = 0.35
-const AUDIO_LEAD_SECONDS = 1
+const audioLeadSeconds = computed(() =>
+  props.taskAnswer?.syncedStart ? 0 : 1,
+)
 let holdVideosForAudioLead = false
 
 function videoElements() {
@@ -675,7 +675,7 @@ function mountedMedia() {
 function playbackDuration(media) {
   if (!Number.isFinite(media.duration) || media.duration <= 0) return 0
   if (media === taskAudio.value && videoElements().length) {
-    return Math.max(0, media.duration - AUDIO_LEAD_SECONDS)
+    return Math.max(0, media.duration - audioLeadSeconds.value)
   }
   return media.duration
 }
@@ -689,19 +689,20 @@ function seekMedia(media, time) {
 }
 
 function audioTargetFor(videoTime) {
-  return videoTime + AUDIO_LEAD_SECONDS
+  return videoTime + audioLeadSeconds.value
 }
 
 function audioIsLeading(videoTime) {
   const audio = taskAudio.value
   if (!audio) return false
+  if (audioLeadSeconds.value === 0) return true
   const target = audioTargetFor(videoTime)
   return Math.abs(audio.currentTime - target) <= 0.15
 }
 
 function audioIsInsideLeadIn(videoTime) {
   const audio = taskAudio.value
-  if (!audio) return false
+  if (!audio || audioLeadSeconds.value === 0) return false
   return (
     audio.currentTime >= videoTime - 0.05 &&
     audio.currentTime < audioTargetFor(videoTime) - 0.05
@@ -769,7 +770,7 @@ function startVideoSync() {
       } else if (!videosWaiting) {
         videoCurrentTime.value = Math.max(
           0,
-          audio.currentTime - AUDIO_LEAD_SECONDS,
+          audio.currentTime - audioLeadSeconds.value,
         )
       }
       rafId = requestAnimationFrame(loop)
@@ -840,8 +841,10 @@ const togglePlay = async () => {
     else seekMedia(video, time)
   })
 
-  const startVideosNow = !audio || audioIsLeading(time)
-  holdVideosForAudioLead = Boolean(audio) && !startVideosNow
+  const startVideosNow =
+    !audio || audioLeadSeconds.value === 0 || audioIsLeading(time)
+  holdVideosForAudioLead =
+    Boolean(audio) && audioLeadSeconds.value > 0 && !startVideosNow
 
   if (audio) {
     if (audioIsLeading(time)) seekMedia(audio, audioTargetFor(time))
@@ -882,7 +885,7 @@ const onSeek = (time) => {
 
   const audio = taskAudio.value
   if (audio) {
-    const restartLeadIn = time <= 0.05
+    const restartLeadIn = audioLeadSeconds.value > 0 && time <= 0.05
     seekMedia(audio, restartLeadIn ? 0 : audioTargetFor(time))
     if (isPlaying.value && restartLeadIn) {
       holdVideosForAudioLead = true
