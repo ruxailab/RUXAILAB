@@ -45,9 +45,15 @@ export function shouldDeleteFocusGroupRoom(roomData, cutoffTime) {
  * was created by somebody who has since left, leaving no facilitator entry
  * because the node already existed when the facilitator opened the room.
  * That call looks empty and is swept on staleness alone, as it was before
- * this guard existed. Closing it needs a liveness signal out of LiveKit
- * itself (its credentials currently live only in the standalone token
- * server), not a change to this function.
+ * this guard existed.
+ *
+ * On that provider the signal is unreliable in the other direction too: the
+ * media runs over the SFU, not RTDB, so a dropped RTDB socket fires the
+ * clients' `onDisconnect` handlers while the call carries on, and nothing
+ * re-asserts presence on reconnect. Both directions want the same thing — a
+ * liveness signal out of LiveKit itself, whose credentials currently live
+ * only in the standalone token server — rather than a change to this
+ * function.
  *
  * @param {Object} callData - The call's RTDB value ({} for a missing node).
  * @returns {boolean}

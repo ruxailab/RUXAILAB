@@ -269,6 +269,36 @@ describe('cleanupGhostSessions handler -> join during the sweep', () => {
     expect(changes).toEqual({})
   })
 
+  it('keeps every other decision in the pass intact', async () => {
+    // All four sections at once: two stale rooms, an orphaned call and a
+    // focus group room, with one of the rooms joined mid-sweep. Only that
+    // room and its call come out of `changes`.
+    const changes = await runJob({
+      rooms: { joined: { createdAt: STALE }, ghost: { createdAt: STALE } },
+      calls: {
+        joined: { participants: {} },
+        ghost: { participants: {} },
+        orphan: { participants: { u1: { connected: false } } },
+      },
+      focusGroupSessions: { fg1: { status: 'ended', lastUpdate: STALE } },
+      callsOnRecheck: {
+        joined: { participants: { u1: { connected: true } } },
+        ghost: { participants: {} },
+        orphan: { participants: { u1: { connected: false } } },
+      },
+    })
+
+    expect(changes).toEqual({
+      'rooms/ghost': null,
+      'calls/ghost': null,
+      'calls/orphan': null,
+      'focusGroupSessions/fg1': null,
+      'focusGroupBackroom/fg1': null,
+    })
+    expect(changes).not.toHaveProperty('rooms/joined')
+    expect(changes).not.toHaveProperty('calls/joined')
+  })
+
   it('leaves the focus group sweep to run on its own', async () => {
     // The re-check only drops `rooms`/`calls` entries; a focus group room
     // marked for deletion must survive it.
