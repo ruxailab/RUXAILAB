@@ -114,14 +114,14 @@
           </v-row>
           <v-card-text>
             <v-checkbox
-              v-model="options.card_description"
+              :model-value="options.card_description"
               :label="$t('CardSorting.showCardDescription')"
-              @update:model-value="onChange()"
+              @update:model-value="updateOption('card_description', $event)"
             />
             <v-checkbox
-              v-model="options.card_image"
+              :model-value="options.card_image"
               :label="$t('CardSorting.showImage')"
-              @update:model-value="onChange()"
+              @update:model-value="updateOption('card_image', $event)"
             />
           </v-card-text>
         </v-card>
@@ -147,31 +147,35 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import CardSortingForm from './dialogs/CardSortingForm.vue'
 import CardSortingImportDialog from './dialogs/CardSortingImportDialog.vue'
-import { useStore } from 'vuex'
 import { CardSortingStudyOptions } from '../models/CardSortingStudyOptions'
 import { CardSortingStudyCard } from '../models/CardSortingStudyCard'
+
+// The parent owns the unsaved draft. Reading from the store here would
+// overwrite unsaved edits every time this tab is remounted.
+const props = defineProps({
+  cards: {
+    type: Array,
+    default: () => [],
+  },
+  options: {
+    type: Object,
+    default: () => ({}),
+  },
+})
 
 // Emits
 const emit = defineEmits(['change', 'cards', 'options'])
 
-// Store
-const store = useStore()
-
-// Computeds
-const test = computed(() => store.getters.test)
-
 // Variables
-const cards = ref([])
 const editedIndex = ref(-1)
 const card = ref(new CardSortingStudyCard())
 const dialog = ref(false)
 const importDialog = ref(false)
-const options = ref(new CardSortingStudyOptions())
 const existingTitles = computed(() =>
-  cards.value.map((item) => item.title).filter(Boolean),
+  props.cards.map((item) => item.title).filter(Boolean),
 )
 const headers = ref([
   {
@@ -198,10 +202,17 @@ const headers = ref([
 ])
 
 // Methods
-const onChange = () => {
+const updateCards = (cards) => {
+  emit('cards', cards)
   emit('change')
-  emit('options', options.value)
-  emit('cards', cards.value)
+}
+
+const updateOption = (key, value) => {
+  emit(
+    'options',
+    new CardSortingStudyOptions({ ...props.options, [key]: value }),
+  )
+  emit('change')
 }
 
 const resetEditor = () => {
@@ -219,10 +230,10 @@ const openImport = () => {
 }
 
 const importItems = (titles) => {
-  titles.forEach((title) => {
-    cards.value.push(new CardSortingStudyCard({ title }))
-  })
-  onChange()
+  updateCards([
+    ...props.cards,
+    ...titles.map((title) => new CardSortingStudyCard({ title })),
+  ])
 }
 
 const onDialogChange = (isOpen) => {
@@ -234,46 +245,27 @@ const onDialogChange = (isOpen) => {
 
 const save = (newCardRaw) => {
   const newCard = new CardSortingStudyCard(newCardRaw)
+  const nextCards = [...props.cards]
 
   if (editedIndex.value > -1) {
-    cards.value[editedIndex.value] = newCard
+    nextCards[editedIndex.value] = newCard
   } else {
-    cards.value.push(newCard)
+    nextCards.push(newCard)
   }
 
   resetEditor()
-  onChange()
+  updateCards(nextCards)
 }
 
 const editItem = (item) => {
-  editedIndex.value = cards.value.indexOf(item)
+  editedIndex.value = props.cards.indexOf(item)
   card.value = new CardSortingStudyCard(item)
   dialog.value = true
 }
 
 const deleteItem = (item) => {
-  const index = cards.value.indexOf(item)
-  cards.value.splice(index, 1)
-  onChange()
+  const index = props.cards.indexOf(item)
+  if (index === -1) return
+  updateCards(props.cards.filter((_, i) => i !== index))
 }
-
-const getCards = () => {
-  const cardSorting = test.value?.testStructure?.cardSorting
-  if (!cardSorting) return
-
-  cards.value = (cardSorting.cards || []).map(
-    (item) => new CardSortingStudyCard(item),
-  )
-  options.value = new CardSortingStudyOptions(cardSorting.options)
-  emit('options', options.value)
-  emit('cards', cards.value)
-}
-
-watch(
-  () => test.value?.testStructure?.cardSorting,
-  () => {
-    getCards()
-  },
-  { immediate: true },
-)
 </script>

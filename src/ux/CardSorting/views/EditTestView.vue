@@ -19,86 +19,92 @@
         <ButtonSave :visible="change" @click="save" />
 
         <div>
-        <VTabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
-          <VTab @click="index = 0">
-            {{ $t('CardSorting.test') }}
-          </VTab>
-          <VTab @click="index = 1">
-            {{ $t('ModeratedTest.consentForm') }}
-          </VTab>
-          <VTab @click="index = 2">
-            {{ $t('ModeratedTest.preTest') }}
-          </VTab>
-          <VTab @click="index = 3">
-            {{ $t('CardSorting.categories') }}
-          </VTab>
-          <VTab @click="index = 4">
-            {{ $t('CardSorting.cards') }}
-          </VTab>
-          <VTab @click="index = 5">
-            {{ $t('ModeratedTest.postTest') }}
-          </VTab>
-        </VTabs>
+          <VTabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
+            <VTab @click="index = 0">
+              {{ $t('CardSorting.test') }}
+            </VTab>
+            <VTab @click="index = 1">
+              {{ $t('ModeratedTest.consentForm') }}
+            </VTab>
+            <VTab @click="index = 2">
+              {{ $t('ModeratedTest.preTest') }}
+            </VTab>
+            <VTab @click="index = 3">
+              {{ $t('CardSorting.categories') }}
+            </VTab>
+            <VTab @click="index = 4">
+              {{ $t('CardSorting.cards') }}
+            </VTab>
+            <VTab @click="index = 5">
+              {{ $t('ModeratedTest.postTest') }}
+            </VTab>
+          </VTabs>
 
-        <VCol cols="12">
-          <!-- TEST -->
-          <div v-if="index === 0">
-            <TestConfigForm
-              :welcome="welcomeMessage"
-              :final-message="finalMessage"
-              @update:welcome-message="
-                ((welcomeMessage = $event), (change = true))
-              "
-              @update:final-message="((finalMessage = $event), (change = true))"
-            />
-          </div>
+          <VCol cols="12">
+            <!-- TEST -->
+            <div v-if="index === 0">
+              <TestConfigForm
+                :welcome="welcomeMessage"
+                :final-message="finalMessage"
+                @update:welcome-message="
+                  ((welcomeMessage = $event), (change = true))
+                "
+                @update:final-message="
+                  ((finalMessage = $event), (change = true))
+                "
+              />
+            </div>
 
-          <!-- CONSENT FORM -->
-          <div v-if="index === 1" rounded="xxl">
-            <TextareaForm
-              v-model="consent"
-              :title="$t('ModeratedTest.consentForm')"
-              :subtitle="$t('ModeratedTest.consentFormSubtitle')"
-              @update:value="((consent = $event), (change = true))"
-            />
-          </div>
+            <!-- CONSENT FORM -->
+            <div v-if="index === 1" rounded="xxl">
+              <TextareaForm
+                v-model="consent"
+                :title="$t('ModeratedTest.consentForm')"
+                :subtitle="$t('ModeratedTest.consentFormSubtitle')"
+                @update:value="((consent = $event), (change = true))"
+              />
+            </div>
 
-          <!-- PRE-TEST -->
-          <v-card v-if="index === 2" rounded="xxl">
-            <UserVariables
-              type="pre-test"
-              @change="change = true"
-              @update="store.dispatch('setPreTest', $event)"
-            />
-          </v-card>
+            <!-- PRE-TEST -->
+            <v-card v-if="index === 2" rounded="xxl">
+              <UserVariables
+                type="pre-test"
+                @change="change = true"
+                @update="store.dispatch('setPreTest', $event)"
+              />
+            </v-card>
 
-          <!-- CATEGORIES -->
-          <div v-if="index === 3" rounded="xxl">
-            <CategoriesEditCardSorting
-              @change="change = true"
-              @categories="categories = $event"
-              @options="optionsCategories = $event"
-            />
-          </div>
+            <!-- CATEGORIES -->
+            <div v-if="index === 3" rounded="xxl">
+              <CategoriesEditCardSorting
+                :categories="categories"
+                :options="optionsCategories"
+                @change="change = true"
+                @categories="categories = $event"
+                @options="optionsCategories = $event"
+              />
+            </div>
 
-          <!-- CARDS -->
-          <div v-if="index === 4" rounded="xxl">
-            <CardsEditCardSorting
-              @change="change = true"
-              @cards="cards = $event"
-              @options="optionsCards = $event"
-            />
-          </div>
+            <!-- CARDS -->
+            <div v-if="index === 4" rounded="xxl">
+              <CardsEditCardSorting
+                :cards="cards"
+                :options="optionsCards"
+                @change="change = true"
+                @cards="cards = $event"
+                @options="optionsCards = $event"
+              />
+            </div>
 
-          <!-- POS-TEST -->
-          <v-card v-if="index === 5" rounded="xxl">
-            <UserVariables
-              type="post-test"
-              @change="change = true"
-              @update="store.dispatch('setPostTest', $event)"
-            />
-          </v-card>
-        </VCol>
+            <!-- POS-TEST -->
+            <v-card v-if="index === 5" rounded="xxl">
+              <UserVariables
+                type="post-test"
+                @change="change = true"
+                @update="store.dispatch('setPostTest', $event)"
+              />
+            </v-card>
+          </VCol>
         </div>
       </template>
     </v-container>

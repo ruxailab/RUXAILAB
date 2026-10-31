@@ -114,20 +114,22 @@
           </v-row>
           <v-card-text>
             <v-checkbox
-              v-model="options.category_description"
+              :model-value="options.category_description"
               :label="$t('CardSorting.showCategoryDescription')"
-              @update:model-value="onChange()"
+              @update:model-value="updateOption('category_description', $event)"
             />
             <v-checkbox
-              v-model="options.category_image"
+              :model-value="options.category_image"
               :label="$t('CardSorting.showImage')"
-              @update:model-value="onChange()"
+              @update:model-value="updateOption('category_image', $event)"
             />
             <v-divider class="my-3" />
             <v-checkbox
-              v-model="options.allow_create_categories"
+              :model-value="options.allow_create_categories"
               :label="$t('CardSorting.allowCreateCategories')"
-              @update:model-value="onChange()"
+              @update:model-value="
+                updateOption('allow_create_categories', $event)
+              "
             />
             <p class="text-caption text-medium-emphasis mt-1">
               {{
@@ -162,32 +164,36 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { useStore } from 'vuex'
+import { computed, ref } from 'vue'
 import { CardSortingStudyCategory } from '../models/CardSortingStudyCategory'
 import { CardSortingStudyOptions } from '../models/CardSortingStudyOptions'
 import CardSortingForm from './dialogs/CardSortingForm.vue'
 import CardSortingImportDialog from './dialogs/CardSortingImportDialog.vue'
 
+// The parent owns the unsaved draft. Reading from the store here would
+// overwrite unsaved edits every time this tab is remounted.
+const props = defineProps({
+  categories: {
+    type: Array,
+    default: () => [],
+  },
+  options: {
+    type: Object,
+    default: () => ({}),
+  },
+})
+
 // Emits
 const emit = defineEmits(['change', 'categories', 'options'])
 
-// Store
-const store = useStore()
-
-// Computeds
-const test = computed(() => store.getters.test)
-
 // Variables
-const categories = ref([])
 const editedIndex = ref(-1)
 const dialog = ref(false)
 const importDialog = ref(false)
 const category = ref(new CardSortingStudyCategory())
 const existingTitles = computed(() =>
-  categories.value.map((item) => item.title).filter(Boolean),
+  props.categories.map((item) => item.title).filter(Boolean),
 )
-const options = ref(new CardSortingStudyOptions())
 const headers = ref([
   {
     title: 'Name',
@@ -212,10 +218,17 @@ const headers = ref([
   },
 ])
 
-const onChange = () => {
+const updateCategories = (categories) => {
+  emit('categories', categories)
   emit('change')
-  emit('options', options.value)
-  emit('categories', categories.value)
+}
+
+const updateOption = (key, value) => {
+  emit(
+    'options',
+    new CardSortingStudyOptions({ ...props.options, [key]: value }),
+  )
+  emit('change')
 }
 
 const resetEditor = () => {
@@ -233,10 +246,10 @@ const openImport = () => {
 }
 
 const importItems = (titles) => {
-  titles.forEach((title) => {
-    categories.value.push(new CardSortingStudyCategory({ title }))
-  })
-  onChange()
+  updateCategories([
+    ...props.categories,
+    ...titles.map((title) => new CardSortingStudyCategory({ title })),
+  ])
 }
 
 const onDialogChange = (isOpen) => {
@@ -247,47 +260,28 @@ const onDialogChange = (isOpen) => {
 }
 
 const editItem = (item) => {
-  editedIndex.value = categories.value.indexOf(item)
+  editedIndex.value = props.categories.indexOf(item)
   category.value = new CardSortingStudyCategory({ ...item })
   dialog.value = true
 }
 
 const deleteItem = (item) => {
-  const index = categories.value.indexOf(item)
-  categories.value.splice(index, 1)
-  onChange()
+  const index = props.categories.indexOf(item)
+  if (index === -1) return
+  updateCategories(props.categories.filter((_, i) => i !== index))
 }
 
 const save = (newCategoryRaw) => {
   const newCategory = new CardSortingStudyCategory(newCategoryRaw)
+  const nextCategories = [...props.categories]
 
   if (editedIndex.value > -1) {
-    categories.value[editedIndex.value] = newCategory
+    nextCategories[editedIndex.value] = newCategory
   } else {
-    categories.value.push(newCategory)
+    nextCategories.push(newCategory)
   }
 
   resetEditor()
-  onChange()
+  updateCategories(nextCategories)
 }
-
-const getCards = () => {
-  const cardSorting = test.value?.testStructure?.cardSorting
-  if (!cardSorting) return
-
-  categories.value = (cardSorting.categories || []).map(
-    (cat) => new CardSortingStudyCategory(cat),
-  )
-  options.value = new CardSortingStudyOptions(cardSorting.options)
-  emit('options', options.value)
-  emit('categories', categories.value)
-}
-
-watch(
-  () => test.value?.testStructure?.cardSorting,
-  () => {
-    getCards()
-  },
-  { immediate: true },
-)
 </script>
