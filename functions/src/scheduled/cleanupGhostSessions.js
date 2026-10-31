@@ -30,11 +30,21 @@ export function shouldDeleteFocusGroupRoom(roomData, cutoffTime) {
 }
 
 /**
- * Whether anyone is still in a call. Members live under two branches of
- * `calls/{roomId}`: `participants` for ordinary testers and `staff` for
- * moderators and observers (see `memberBranch` in VideoCallMesh.vue), so a
- * call hosted by a moderator alone has an empty `participants` map and must
- * still count as occupied.
+ * Whether anyone is still in a call, by the presence the clients write into
+ * RTDB. Members live under two branches of `calls/{roomId}`: `participants`
+ * for ordinary testers and `staff` for moderators and observers (see
+ * `memberBranch` in VideoCallMesh.vue), so a call hosted by a moderator alone
+ * has an empty `participants` map and must still count as occupied.
+ *
+ * Scope: this reads RTDB presence only. `ModeratedTestView.startTestOnce`
+ * writes it for participants and observers whichever video provider the study
+ * uses, and `VideoCallMesh.joinRoom` writes it for every role on the mesh
+ * provider. `VideoCallLiveKit` keeps presence in the SFU and never writes it
+ * here, so a LiveKit call with nobody but the moderator connected has no RTDB
+ * presence to find and is still swept on staleness alone, exactly as before
+ * this guard existed. Covering that needs a liveness signal out of LiveKit
+ * itself (its credentials currently live only in the standalone token
+ * server), not a change to this function.
  *
  * @param {Object} callData - The call's RTDB value ({} for a missing node).
  * @returns {boolean}
@@ -76,11 +86,13 @@ export const cleanupGhostSessions = onSchedule(
           const roomId = child.key
           const roomData = child.val()
 
-          // Never drop a call somebody is still in. Staleness alone is not
-          // enough: `lastUpdate` is only written on specific actions, so a
-          // long, quiet-but-active call looks identical to a ghost by that
-          // field. This is the same rule `shouldDeleteFocusGroupRoom`
-          // already applies to the focusGroupSessions sweep below.
+          // Never drop a call somebody is still in, as far as RTDB presence
+          // can tell (see `hasConnectedCallMember` for what that does and
+          // does not cover). Staleness alone is not enough: `lastUpdate` is
+          // only written on specific actions, so a long, quiet-but-active
+          // call looks identical to a ghost by that field. This is the same
+          // rule `shouldDeleteFocusGroupRoom` already applies to the
+          // focusGroupSessions sweep below.
           if (hasConnectedCallMember(callsSnapshot.child(roomId).val())) return
 
           const createdAt = roomData.createdAt || 0
@@ -137,6 +149,40 @@ export const cleanupGhostSessions = onSchedule(
             deletedCount++
           }
         })
+      }
+
+      // 4. Re-check who is in the marked calls, as late as possible. The
+      // decisions above come from point-in-time snapshots, and joining a call
+      // writes only under `calls/{roomId}` — never `rooms/{roomId}` — so a
+      // room that was stale when it was read still looks stale once somebody
+      // joins it. Without this, whoever joins while the sweep is running has
+      // the call deleted underneath them.
+      //
+      // This narrows the window rather than closing it: RTDB has no
+      // conditional multi-path write, and a transaction on `calls/{roomId}`
+      // could not cover the `rooms/{roomId}` delete that goes with it. What
+      // it does do is cut the exposure from the whole sweep — which includes
+      // the `focusGroupSessions` read above — down to this one write.
+      const markedCallIds = Object.keys(changes)
+        .filter((path) => path.startsWith('calls/'))
+        .map((path) => path.slice('calls/'.length))
+
+      if (markedCallIds.length > 0) {
+        const latestCallsSnapshot = await callsRef.get()
+
+        markedCallIds
+          .filter((callId) =>
+            hasConnectedCallMember(latestCallsSnapshot.child(callId).val()),
+          )
+          .forEach((callId) => {
+            // Section 1 always marks `rooms/{id}` and `calls/{id}` together,
+            // so sparing the call spares its room; an orphan has no room key
+            // to drop and the delete is a no-op. Either way that is one
+            // room's worth of `deletedCount`.
+            delete changes[`calls/${callId}`]
+            delete changes[`rooms/${callId}`]
+            deletedCount--
+          })
       }
 
       if (deletedCount > 0) {

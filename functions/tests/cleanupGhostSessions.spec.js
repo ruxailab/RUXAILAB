@@ -14,7 +14,16 @@ jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
       ref: (path) =>
         path === undefined
           ? { update: mockUpdate }
-          : { get: async () => refs[path] ?? snapshot({}) },
+          : {
+              // An array stands for successive reads of the same path, so a
+              // test can change what `calls` holds between the sweep's first
+              // read and its re-check; the last entry repeats.
+              get: async () => {
+                const value = refs[path]
+                if (!Array.isArray(value)) return value ?? snapshot({})
+                return value.length > 1 ? value.shift() : value[0]
+              },
+            },
     }),
   },
 }))
@@ -36,15 +45,25 @@ function snapshot(data) {
   }
 }
 
-const { shouldDeleteFocusGroupRoom, hasConnectedCallMember, cleanupGhostSessions } =
-  await import('../src/scheduled/cleanupGhostSessions.js')
+const {
+  shouldDeleteFocusGroupRoom,
+  hasConnectedCallMember,
+  cleanupGhostSessions,
+} = await import('../src/scheduled/cleanupGhostSessions.js')
 
 const STALE = Date.now() - 24 * 60 * 60 * 1000
 
 /** Runs the scheduled handler over the given RTDB contents. */
-const runJob = async ({ rooms = {}, calls = {}, focusGroupSessions = {} }) => {
+const runJob = async ({
+  rooms = {},
+  calls = {},
+  focusGroupSessions = {},
+  callsOnRecheck,
+}) => {
   refs.rooms = snapshot(rooms)
-  refs.calls = snapshot(calls)
+  refs.calls = callsOnRecheck
+    ? [snapshot(calls), snapshot(callsOnRecheck)]
+    : snapshot(calls)
   refs.focusGroupSessions = snapshot(focusGroupSessions)
   await cleanupGhostSessions({})
   return mockUpdate.mock.calls[0]?.[0] ?? {}
@@ -119,9 +138,9 @@ describe('hasConnectedCallMember', () => {
 
   it('sees a connected moderator or observer in the staff branch', () => {
     // Moderators and observers join under `staff`, never `participants`.
-    expect(hasConnectedCallMember({ staff: { mod: { connected: true } } })).toBe(
-      true,
-    )
+    expect(
+      hasConnectedCallMember({ staff: { mod: { connected: true } } }),
+    ).toBe(true)
   })
 
   it('is false once everyone has disconnected', () => {
@@ -198,5 +217,71 @@ describe('cleanupGhostSessions handler -> rooms/calls sweep', () => {
     })
 
     expect(changes).toEqual({ 'calls/orphan': null })
+  })
+})
+
+describe('cleanupGhostSessions handler -> join during the sweep', () => {
+  // Joining writes under `calls/{roomId}` and never touches
+  // `rooms/{roomId}`, so a room stays stale-looking across a join: without
+  // the re-check, whoever joins between the sweep's read and its write has
+  // the call deleted underneath them.
+  it('spares a stale room somebody joins after it was read', async () => {
+    const changes = await runJob({
+      rooms: { r1: { createdAt: STALE } },
+      calls: { r1: { participants: {} } },
+      callsOnRecheck: { r1: { participants: { u1: { connected: true } } } },
+    })
+
+    expect(changes).toEqual({})
+    expect(mockUpdate).not.toHaveBeenCalled()
+  })
+
+  it('spares a moderator-only join during the sweep', async () => {
+    const changes = await runJob({
+      rooms: { r1: { createdAt: STALE } },
+      calls: {},
+      callsOnRecheck: { r1: { staff: { mod: { connected: true } } } },
+    })
+
+    expect(changes).toEqual({})
+  })
+
+  it('still sweeps the rooms nobody joined', async () => {
+    const changes = await runJob({
+      rooms: { live: { createdAt: STALE }, ghost: { createdAt: STALE } },
+      calls: { live: { participants: {} }, ghost: { participants: {} } },
+      callsOnRecheck: {
+        live: { participants: { u1: { connected: true } } },
+        ghost: { participants: {} },
+      },
+    })
+
+    expect(changes).toEqual({ 'rooms/ghost': null, 'calls/ghost': null })
+  })
+
+  it('spares an orphaned call somebody joins after it was read', async () => {
+    const changes = await runJob({
+      rooms: {},
+      calls: { orphan: { participants: { u1: { connected: false } } } },
+      callsOnRecheck: { orphan: { participants: { u1: { connected: true } } } },
+    })
+
+    expect(changes).toEqual({})
+  })
+
+  it('leaves the focus group sweep to run on its own', async () => {
+    // The re-check only drops `rooms`/`calls` entries; a focus group room
+    // marked for deletion must survive it.
+    const changes = await runJob({
+      rooms: { r1: { createdAt: STALE } },
+      calls: { r1: { participants: {} } },
+      callsOnRecheck: { r1: { participants: { u1: { connected: true } } } },
+      focusGroupSessions: { fg1: { status: 'ended', lastUpdate: STALE } },
+    })
+
+    expect(changes).toEqual({
+      'focusGroupSessions/fg1': null,
+      'focusGroupBackroom/fg1': null,
+    })
   })
 })
