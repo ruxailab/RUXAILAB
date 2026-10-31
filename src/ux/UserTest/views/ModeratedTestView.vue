@@ -601,7 +601,15 @@
 </template>
 
 <script setup>
-import { ref as dbRef, onValue, update, get, remove } from 'firebase/database'
+import {
+  ref as dbRef,
+  onValue,
+  onDisconnect,
+  serverTimestamp,
+  update,
+  get,
+  remove,
+} from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -1668,6 +1676,24 @@ const startTestOnce = async () => {
         cameraEnabled: !isObserverMember,
         microphoneEnabled: !isObserverMember,
       },
+    })
+
+    // Drop this member's presence if the browser goes away before the call
+    // starts. `joinRoom` registers its own handler, but only once the member
+    // actually joins — a participant sits in the waiting lobby until the
+    // moderator opens the call, and the moderator may never arrive. Without
+    // this, closing the tab there leaves `connected: true` behind for good,
+    // and `cleanupGhostSessions` never sweeps a call somebody is connected
+    // to, so the room and the call would both leak. `joinRoom` registers and
+    // cancels at this exact path, so it keeps overriding this one once the
+    // member is really in the call.
+    //
+    // The server stamps the time it applies this, not the time it was
+    // queued here, so `now` would be wrong: it is this member's join time.
+    onDisconnect(memberRef).update({
+      connected: false,
+      presenceStatus: 'disconnected',
+      presenceUpdatedAt: serverTimestamp(),
     })
   }
 

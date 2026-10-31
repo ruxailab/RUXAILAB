@@ -3,6 +3,7 @@ import { nextTick, reactive } from 'vue'
 
 const mockStore = { getters: {}, dispatch: jest.fn(), commit: jest.fn() }
 const mockUpdates = []
+const mockDisconnects = []
 const mockRuntime = {
   resumeAfterConsent: jest.fn(),
   seedStructuredScope: jest.fn(),
@@ -30,6 +31,15 @@ jest.mock('firebase/database', () => ({
   },
   get: async () => ({ exists: () => false, val: () => null }),
   remove: async () => {},
+  serverTimestamp: () => ({ '.sv': 'timestamp' }),
+  onDisconnect: (target) => ({
+    update: async (value) => {
+      mockDisconnects.push({ path: target?.path, value })
+    },
+    remove: async () => {
+      mockDisconnects.push({ path: target?.path, value: null })
+    },
+  }),
 }))
 jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
   FirebaseFunctionsController: {},
@@ -116,6 +126,7 @@ beforeEach(() => {
   mockCreateRuntime.mockImplementation(() => mockRuntime)
   mockStore.dispatch.mockResolvedValue(undefined)
   mockUpdates.length = 0
+  mockDisconnects.length = 0
 })
 afterEach(() => wrapper?.unmount())
 
@@ -276,6 +287,30 @@ describe('moderated session', () => {
     await wrapper.vm.startTest()
 
     expect(requestFullscreen).toHaveBeenCalledTimes(1)
+  })
+
+  it('clears its lobby presence if the tab closes before the call starts', async () => {
+    // A waiting participant is written as `connected: true` before the call
+    // component mounts, so nothing else has registered a disconnect handler
+    // for them yet. cleanupGhostSessions never sweeps a call somebody is
+    // connected to, so without this the room leaks when they just close the
+    // tab while waiting for a moderator who never arrives.
+    wrapper = await mountModerated({
+      session: { participants: [{ userDocId: 'participant', role: 5 }] },
+    })
+
+    await wrapper.vm.startTest()
+    await flushPromises()
+
+    const registered = mockDisconnects.find(
+      (item) => item.path === 'calls/study-1/participants/participant',
+    )
+
+    expect(registered).toBeDefined()
+    expect(registered.value).toMatchObject({
+      connected: false,
+      presenceStatus: 'disconnected',
+    })
   })
 
   it('shares finished tasks and submission with the facilitator', async () => {
