@@ -37,12 +37,15 @@ export function shouldDeleteFocusGroupRoom(roomData, cutoffTime) {
  * has an empty `participants` map and must still count as occupied.
  *
  * Scope: this reads RTDB presence only. `ModeratedTestView.startTestOnce`
- * writes it for participants and observers whichever video provider the study
- * uses, and `VideoCallMesh.joinRoom` writes it for every role on the mesh
- * provider. `VideoCallLiveKit` keeps presence in the SFU and never writes it
- * here, so a LiveKit call with nobody but the moderator connected has no RTDB
- * presence to find and is still swept on staleness alone, exactly as before
- * this guard existed. Covering that needs a liveness signal out of LiveKit
+ * writes it whatever video provider the study uses — the facilitator when it
+ * opens a call node that did not exist yet, participants and observers as
+ * they arrive — and `VideoCallMesh.joinRoom` writes it for every role on the
+ * mesh provider. `VideoCallLiveKit` keeps presence in the SFU and never
+ * writes it here, so one case is still uncovered: a LiveKit call whose node
+ * was created by somebody who has since left, leaving no facilitator entry
+ * because the node already existed when the facilitator opened the room.
+ * That call looks empty and is swept on staleness alone, as it was before
+ * this guard existed. Closing it needs a liveness signal out of LiveKit
  * itself (its credentials currently live only in the standalone token
  * server), not a change to this function.
  *
