@@ -34,3 +34,7 @@ ui-debug.log
 *.sw?
 /test-results/
 /blob-report/
+
+# Local-only notes / manual verification screenshots (do not push)
+GSOC_PROGRESS.md
+/assets/
