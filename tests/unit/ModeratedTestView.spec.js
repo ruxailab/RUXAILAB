@@ -313,6 +313,34 @@ describe('moderated session', () => {
     })
   })
 
+  it('clears the facilitator presence it writes before the call mounts', async () => {
+    // The facilitator is written as connected while opening the room, before
+    // any call component exists. On the mesh provider `joinRoom` takes over,
+    // but on LiveKit nothing does, so this is the only handler that node
+    // ever gets — and cleanupGhostSessions would otherwise read it as a
+    // live call forever.
+    document.documentElement.requestFullscreen = jest.fn(async () => {})
+    wrapper = await mountModerated({
+      userId: 'owner',
+      session: { staff: [{ userDocId: 'owner', role: 'FACILITATOR' }] },
+    })
+
+    await wrapper.vm.startTest()
+    await flushPromises()
+
+    expect(wrapper.vm.isModerator).toBe(true)
+
+    const registered = mockDisconnects.find(
+      (item) => item.path === 'calls/study-1/staff/owner',
+    )
+
+    expect(registered).toBeDefined()
+    expect(registered.value).toMatchObject({
+      connected: false,
+      presenceStatus: 'disconnected',
+    })
+  })
+
   it('shares finished tasks and submission with the facilitator', async () => {
     wrapper = await mountModerated({
       userTasks: [{ taskType: 'sus' }, { taskType: 'sus' }],

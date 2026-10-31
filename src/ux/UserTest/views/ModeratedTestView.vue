@@ -1886,6 +1886,23 @@ const startTestOnce = async () => {
           status: payload.status,
           [`staff/${moderatorEntry.userDocId}`]: moderatorEntry,
         })
+
+        // Same reason as the participant handler above: this writes the
+        // facilitator as connected before any call component is mounted, and
+        // on the LiveKit provider nothing ever registers one of these, so
+        // without it closing the tab pins the room in RTDB for good. On the
+        // mesh provider `joinRoom` registers `remove()` on the whole
+        // `calls/{roomId}` node, which supersedes this one.
+        onDisconnect(
+          dbRef(
+            database,
+            `calls/${roomId.value}/staff/${moderatorEntry.userDocId}`,
+          ),
+        ).update({
+          connected: false,
+          presenceStatus: 'disconnected',
+          presenceUpdatedAt: serverTimestamp(),
+        })
       }
     }
   }
