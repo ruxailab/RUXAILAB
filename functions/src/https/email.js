@@ -168,7 +168,14 @@ export const sendEmail = functions.onCall({
         error: err,
       })
 
-      return err
+      if (err instanceof functions.https.HttpsError) {
+        throw err
+      }
+
+      throw new functions.https.HttpsError(
+        'internal',
+        err?.message || 'Error sending email',
+      )
     }
   },
 })
