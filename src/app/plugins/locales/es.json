@@ -257,6 +257,8 @@
     "analyzeProject": "Analizar el proyecto y los evaluadores",
     "comment": "Comentario",
     "comments": "Comentarios",
+    "evaluator": "Evaluador",
+    "evaluators": "Evaluadores",
     "image": "Imagen",
     "images": "Imágenes",
     "close": "Cerrar",
@@ -1378,8 +1380,11 @@
       "evaluators": "Evaluadores",
       "heuristics": "Heurísticas",
       "analytics": "Análisis",
+      "evaluatorNumber": "Evaluador {n}",
       "totalTime": "Tiempo total",
-      "lastUpdate": "Última actualización"
+      "lastUpdate": "Última actualización",
+      "averageTime": "Tiempo promedio por evaluador",
+      "timeStdDev": "Desviación estándar del tiempo"
     },
     "statistics": {
       "usabilityPercentage": "Porcentaje de usabilidad",
@@ -1397,12 +1402,27 @@
         "pending": "Pendientes"
       },
       "stats": {
+        "average": "Promedio",
         "max": "Máx.",
         "min": "Mín.",
         "stdDev": "Desv. estándar",
         "evaluators": "Evaluadores"
       },
+      "warnings": {
+        "title": "Impacto de las advertencias",
+        "hint": "Cuánto cambia la evaluación al tener en cuenta las advertencias",
+        "description": "Las preguntas respondidas como imposibles de verificar analizando solo el sitio web se han marcado como advertencias. El cambio porcentual se calculó en dos escenarios: la puntuación más alta posible y la más baja posible.",
+        "scenarios": {
+          "max": "Umbral promedio máximo de advertencias",
+          "min": "Umbral promedio mínimo de advertencias"
+        }
+      },
       "charts": {
+        "imagesByHeuristic": {
+          "title": "Imágenes por heurística",
+          "subtitle": "Distribución horizontal por heurística",
+          "empty": "Sin datos de imágenes"
+        },
         "responsesByOption": {
           "title": "Tipo de respuesta"
         }
