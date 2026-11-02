@@ -169,7 +169,10 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import List from '@/shared/components/tables/ListComponent.vue'
-import { getSessionStatus } from '@/shared/utils/sessionsUtils'
+import {
+  getSessionStatus,
+  isWithinDateRange,
+} from '@/shared/utils/sessionsUtils'
 import { matchesSearch } from '@/shared/utils/searchUtils'
 import {
   STUDY_TYPES,
@@ -305,21 +308,10 @@ const filteredSessions = computed(() => {
       selectedSessionOwnershipFilter.value === 'all' ||
       selectedSessionOwnershipFilter.value === ownership
 
-    let matchesDate = true
-
-    if (selectedSessionDateRange.value.length > 1 && session.scheduledAt) {
-      const sessionDate = new Date(session.scheduledAt)
-
-      const start = new Date(selectedSessionDateRange.value[0])
-
-      const end = new Date(
-        selectedSessionDateRange.value[
-          selectedSessionDateRange.value.length - 1
-        ],
-      )
-
-      matchesDate = sessionDate >= start && sessionDate <= end
-    }
+    const matchesDate = isWithinDateRange(
+      session.scheduledAt,
+      selectedSessionDateRange.value,
+    )
 
     return (
       matchesSearchQuery && matchesStatus && matchesOwnership && matchesDate

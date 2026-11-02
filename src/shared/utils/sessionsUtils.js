@@ -29,6 +29,19 @@ export function getNextSession(sessions, now = new Date()) {
   return upcoming[0]?.session ?? null
 }
 
+export function isWithinDateRange(value, range) {
+  if (!Array.isArray(range) || range.length < 2 || !value) return true
+  const date = toDate(value)
+  if (!date) return false
+
+  const start = new Date(range[0])
+  start.setHours(0, 0, 0, 0)
+  const end = new Date(range[range.length - 1])
+  end.setHours(23, 59, 59, 999)
+
+  return date >= start && date <= end
+}
+
 export function getSessionStatus(testDate, lifecycleStatus) {
   if (lifecycleStatus === 'ended') return SESSION_STATUSES.ENDED
   if (!testDate) return SESSION_STATUSES.UNKNOWN
