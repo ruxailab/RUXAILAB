@@ -1817,12 +1817,12 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-.task-nav-btn {
+.task-nav .task-nav-btn.v-btn {
   color: #fff;
   text-transform: none;
   letter-spacing: normal;
   border-radius: 0;
-  height: 32px !important;
+  height: 32px;
 }
 
 .task-nav-divider {
@@ -1843,19 +1843,19 @@ onBeforeUnmount(() => {
 }
 
 /* The timeline is fixed to the bottom of the viewport; reserve its space. */
-.dialog-body {
+.dialog-body.v-card-text {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   grid-template-rows: minmax(0, 1fr);
   gap: 16px;
-  padding: 16px 16px 104px !important;
+  padding: 16px 16px 104px;
   overflow: hidden;
   background: rgba(var(--v-theme-on-surface), 0.02);
 }
 
-.dialog-body--cinema {
+.dialog-body.v-card-text.dialog-body--cinema {
   grid-template-columns: minmax(0, 1fr);
 }
 
@@ -2018,7 +2018,7 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 959px) {
-  .dialog-body {
+  .dialog-body.v-card-text {
     display: flex;
     flex-direction: column;
     overflow-y: auto;

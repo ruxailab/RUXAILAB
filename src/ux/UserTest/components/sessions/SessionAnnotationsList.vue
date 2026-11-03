@@ -40,7 +40,11 @@
             'annotation-item--editing': annotation.id === editingId,
           }"
           :data-testid="`annotation-${annotation.id}`"
+          role="button"
+          tabindex="0"
           @click="onItemClick(annotation)"
+          @keydown.enter.self.prevent="onItemClick(annotation)"
+          @keydown.space.self.prevent="onItemClick(annotation)"
         >
           <span
             class="annotation-icon"
@@ -55,7 +59,12 @@
               · {{ annotation.typeLabel }} · {{ annotation.authorName }}
             </div>
 
-            <div v-if="annotation.id === editingId" class="mt-1" @click.stop>
+            <div
+              v-if="annotation.id === editingId"
+              class="mt-1"
+              @click.stop
+              @keydown.stop
+            >
               <v-text-field
                 ref="editInput"
                 v-model="draft"
@@ -92,6 +101,7 @@
             v-if="annotation.id !== editingId"
             class="annotation-actions"
             @click.stop
+            @keydown.stop
           >
             <v-btn
               icon="mdi-pencil-outline"
