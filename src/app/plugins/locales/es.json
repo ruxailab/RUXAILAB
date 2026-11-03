@@ -950,6 +950,7 @@
     "viewBlog": "Ver blog",
     "date": "Fecha",
     "time": "Hora",
+    "studyType": "Tipo de estudio",
     "status": {
       "active": "Activo",
       "pending": "Pendiente",
@@ -971,7 +972,8 @@
       "today": "Hoy",
       "joinNow": "Únete ahora",
       "webinarEnded": "Webinar finalizado",
-      "startingToday": "Empieza hoy"
+      "startingToday": "Empieza hoy",
+      "startSession": "Iniciar sesión"
     },
     "cards": {
       "recentActivity": "Actividad Reciente",
