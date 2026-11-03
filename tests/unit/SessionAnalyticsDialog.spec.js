@@ -1,6 +1,15 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import { createI18n } from 'vue-i18n'
+
+jest.mock('@/app/plugins/firebase', () => ({
+  db: {},
+  auth: {},
+  storage: {},
+  database: {},
+  fbFunctions: {},
+}))
+
 import SessionAnalyticsDialog from '@/ux/UserTest/components/dialogs/SessionAnalyticsDialog.vue'
 
 const mockUpdateTaskMarker = jest.fn()
