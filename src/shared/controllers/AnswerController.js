@@ -158,6 +158,41 @@ export default class AnswerController extends Controller {
     })
   }
 
+  // Firestore can't apply arrayUnion and arrayRemove to the same field in one
+  // write. Adding first means a failed second write leaves a duplicate rather
+  // than losing the annotation.
+  async updateTaskMarker({
+    answersDocId,
+    userDocId,
+    taskId,
+    previous,
+    marker,
+  }) {
+    await this.addTaskMarker({ answersDocId, userDocId, taskId, marker })
+    return this.removeTaskMarker({
+      answersDocId,
+      userDocId,
+      taskId,
+      marker: previous,
+    })
+  }
+
+  async updateTaskSegment({
+    answersDocId,
+    userDocId,
+    taskId,
+    previous,
+    segment,
+  }) {
+    await this.addTaskSegment({ answersDocId, userDocId, taskId, segment })
+    return this.removeTaskSegment({
+      answersDocId,
+      userDocId,
+      taskId,
+      segment: previous,
+    })
+  }
+
   async addTaskSegment({ answersDocId, userDocId, taskId, segment }) {
     const fieldPath = `taskAnswers.${userDocId}.tasks.${taskId}.segments`
     return super.update(COLLECTION, answersDocId, {

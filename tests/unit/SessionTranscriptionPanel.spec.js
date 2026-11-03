@@ -124,3 +124,33 @@ it('still shows an existing transcription when the audio file is gone', async ()
   expect(wrapper.text()).not.toContain('No audio was recorded')
   expect(wrapper.find('.status-chip').text()).toBe('Transcription Complete')
 })
+
+it('highlights the spoken line and seeks when a line is clicked', async () => {
+  mockGetRuns.mockResolvedValue([
+    {
+      id: 'run-1',
+      evaluator: {
+        segments: [
+          { start: 0, end: 4, text: 'Hello' },
+          { start: 4, end: 9, text: 'Where is checkout?' },
+        ],
+      },
+    },
+  ])
+
+  const wrapper = await mountPanel({
+    answersDocId: 'answers-1',
+    userDocId: 'user-1',
+    taskId: '0',
+    currentTime: 5,
+  })
+
+  const second = wrapper.find('[data-testid="transcript-segment-1"]')
+  expect(second.classes()).toContain('transcript-segment--active')
+  expect(
+    wrapper.find('[data-testid="transcript-segment-0"]').classes(),
+  ).not.toContain('transcript-segment--active')
+
+  await second.trigger('click')
+  expect(wrapper.emitted('seek')).toEqual([[4]])
+})

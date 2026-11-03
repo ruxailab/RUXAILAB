@@ -6,6 +6,8 @@
       color="#FB5C6C"
       variant="tonal"
       size="small"
+      :title="$t('analytics.testDetails.timeline.togglePlay')"
+      :aria-label="$t('analytics.testDetails.timeline.togglePlay')"
       @click="$emit('togglePlay')"
     >
       <v-icon>{{ isPlaying ? 'mdi-pause' : 'mdi-play' }}</v-icon>
@@ -19,6 +21,54 @@
       @mousedown="startDrag"
     >
       <div class="timeline-track" :style="{ width: progress + '%' }" />
+
+      <!-- Silences detected from the transcription -->
+      <v-tooltip
+        v-for="silence in silences"
+        :key="`silence-${silence.start}`"
+        location="top"
+      >
+        <template #activator="{ props: tooltipProps }">
+          <button
+            v-bind="tooltipProps"
+            type="button"
+            class="timeline-silence"
+            data-testid="timeline-silence"
+            :aria-label="
+              $t('analytics.testDetails.timeline.silence', {
+                duration: formatDuration(silence),
+              })
+            "
+            :style="{
+              left: segmentPosition(silence.start) + '%',
+              width:
+                segmentWidth({
+                  startTime: silence.start,
+                  endTime: silence.end,
+                }) + '%',
+            }"
+            @click.stop="$emit('seek', silence.start)"
+          />
+        </template>
+        <div class="marker-tooltip">
+          <div class="d-flex align-center ga-1 font-weight-bold">
+            <v-icon size="14">mdi-volume-off</v-icon>
+            {{
+              $t('analytics.testDetails.timeline.silence', {
+                duration: formatDuration(silence),
+              })
+            }}
+          </div>
+          <div>
+            {{
+              $t('analytics.testDetails.timeline.silenceHint', {
+                start: formatTime(silence.start),
+                end: formatTime(silence.end),
+              })
+            }}
+          </div>
+        </div>
+      </v-tooltip>
 
       <!-- Segments (tramos) -->
       <v-tooltip v-for="segment in segments" :key="segment.id" location="top">
@@ -41,8 +91,10 @@
               class="marker-author-dot"
               :style="{ backgroundColor: segment.color || '#1E88E5' }"
             />
-            {{ segment.authorName || 'Unknown' }} ·
-            {{ formatTime(segment.startTime) }} -
+            {{
+              segment.authorName || $t('analytics.testDetails.unknownAuthor')
+            }}
+            · {{ formatTime(segment.startTime) }} -
             {{ formatTime(segment.endTime) }}
           </div>
           <div>{{ segment.comment }}</div>
@@ -87,7 +139,8 @@
               class="marker-author-dot"
               :style="{ backgroundColor: marker.color || '#1E88E5' }"
             />
-            {{ marker.authorName || 'Unknown' }} · {{ formatTime(marker.time) }}
+            {{ marker.authorName || $t('analytics.testDetails.unknownAuthor') }}
+            · {{ formatTime(marker.time) }}
           </div>
           <div>{{ marker.comment }}</div>
         </div>
@@ -104,6 +157,7 @@
       v-model="addMenuOpen"
       :close-on-content-click="false"
       location="top"
+      @after-enter="focusMarkerComment"
     >
       <template #activator="{ props: menuProps }">
         <v-btn
@@ -112,7 +166,7 @@
           variant="tonal"
           size="small"
           color="grey-darken-1"
-          title="Add point of interest"
+          :title="$t('analytics.testDetails.timeline.addPoint')"
           @click="openAddMenu"
         >
           <v-icon size="18">mdi-map-marker-plus-outline</v-icon>
@@ -120,20 +174,26 @@
       </template>
       <v-card min-width="280" class="pa-3">
         <div class="text-caption font-weight-medium mb-2">
-          Add point of interest at {{ formatTime(currentTime) }}
+          {{
+            $t('analytics.testDetails.timeline.addPointAt', {
+              time: formatTime(currentTime),
+            })
+          }}
         </div>
         <v-textarea
+          ref="markerCommentInput"
           v-model="newMarkerComment"
           rows="2"
           density="compact"
           variant="outlined"
           hide-details
           autofocus
-          placeholder="Add a comment..."
+          :placeholder="$t('analytics.testDetails.timeline.commentPlaceholder')"
+          @keydown.enter.exact.prevent="confirmAddMarker"
         />
         <div class="d-flex justify-end mt-2 ga-2">
           <v-btn size="small" variant="text" @click="addMenuOpen = false">
-            Cancel
+            {{ $t('analytics.testDetails.timeline.cancel') }}
           </v-btn>
           <v-btn
             size="small"
@@ -142,7 +202,7 @@
             :disabled="!newMarkerComment.trim()"
             @click="confirmAddMarker"
           >
-            Add
+            {{ $t('analytics.testDetails.timeline.add') }}
           </v-btn>
         </div>
       </v-card>
@@ -158,7 +218,7 @@
         prepend-icon="mdi-selection-drag"
         @click="setSegmentStart"
       >
-        Start segment
+        {{ $t('analytics.testDetails.timeline.startSegment') }}
       </v-btn>
 
       <template v-else>
@@ -166,18 +226,21 @@
           {{ formatTime(segmentDraftStart) }} - {{ formatTime(currentTime) }}
         </v-chip>
         <v-text-field
+          ref="segmentCommentInput"
           v-model="newSegmentComment"
           density="compact"
           variant="outlined"
           hide-details
-          placeholder="Comment for this segment"
+          :placeholder="$t('analytics.testDetails.timeline.segmentPlaceholder')"
           class="segment-comment-input"
+          @keydown.enter.prevent="confirmAddSegment"
+          @keydown.esc.stop="cancelSegmentMarking"
         />
         <v-btn
           icon="mdi-close"
           size="small"
           variant="text"
-          title="Cancel segment"
+          :title="$t('analytics.testDetails.timeline.cancelSegment')"
           @click="cancelSegmentMarking"
         />
         <v-btn
@@ -187,7 +250,7 @@
           :disabled="!newSegmentComment.trim()"
           @click="confirmAddSegment"
         >
-          Save segment
+          {{ $t('analytics.testDetails.timeline.saveSegment') }}
         </v-btn>
       </template>
     </div>
@@ -195,7 +258,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { formatTime } from '@/shared/utils/timeUtils'
 
 const props = defineProps({
@@ -204,6 +267,8 @@ const props = defineProps({
   isPlaying: { type: Boolean, default: false },
   markers: { type: Array, default: () => [] },
   segments: { type: Array, default: () => [] },
+  // [{ start, end }] in seconds, on the same clock as `currentTime`.
+  silences: { type: Array, default: () => [] },
 })
 
 const emit = defineEmits(['seek', 'togglePlay', 'add-marker', 'add-segment'])
@@ -213,6 +278,8 @@ const addMenuOpen = ref(false)
 const newMarkerComment = ref('')
 const newSegmentComment = ref('')
 const segmentDraftStart = ref(null)
+const markerCommentInput = ref(null)
+const segmentCommentInput = ref(null)
 
 const progress = computed(() => {
   if (!props.duration || props.duration === 0) return 0
@@ -239,6 +306,8 @@ const segmentWidth = (segment) => {
   )
 }
 
+const formatDuration = ({ start, end }) => `${Math.round(end - start)} s`
+
 const seek = (event) => {
   const rect = bar.value.getBoundingClientRect()
   const x = event.clientX - rect.left
@@ -264,6 +333,11 @@ function stopDrag() {
 function openAddMenu() {
   newMarkerComment.value = ''
   addMenuOpen.value = true
+  focusMarkerComment()
+}
+
+function focusMarkerComment() {
+  nextTick(() => markerCommentInput.value?.focus())
 }
 
 function confirmAddMarker() {
@@ -278,6 +352,7 @@ function confirmAddMarker() {
 function setSegmentStart() {
   segmentDraftStart.value = props.currentTime
   newSegmentComment.value = ''
+  nextTick(() => segmentCommentInput.value?.focus())
 }
 
 function cancelSegmentMarking() {
@@ -296,6 +371,8 @@ function confirmAddSegment() {
   segmentDraftStart.value = null
   newSegmentComment.value = ''
 }
+
+defineExpose({ openAddMenu, setSegmentStart })
 </script>
 
 <style scoped>
@@ -374,6 +451,26 @@ function confirmAddSegment() {
 
 .timeline-segment:hover {
   opacity: 0.65;
+}
+
+.timeline-silence {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(71, 84, 103, 0.55) 0 3px,
+    rgba(71, 84, 103, 0.15) 3px 6px
+  );
+  cursor: pointer;
+  z-index: 1;
+}
+
+.timeline-silence:hover {
+  background: rgba(71, 84, 103, 0.7);
 }
 
 .timeline-segment-draft {
