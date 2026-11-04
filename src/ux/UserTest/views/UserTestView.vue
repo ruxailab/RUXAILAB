@@ -702,6 +702,7 @@ import {
 import {
   firstOpenTaskIndex,
   taskDestination,
+  welcomeStartStage,
 } from '@/ux/UserTest/utils/unmoderatedNavigation'
 import { useMobileTaskCompanion } from '@/ux/UserTest/composables/useMobileTaskCompanion'
 import {
@@ -1557,6 +1558,37 @@ const persistStepProgress = async () => {
 const handleWelcomeStart = async () => {
   if (!localTestAnswer.submitted && totalTestTimeStartedAt.value === null) {
     totalTestTimeStartedAt.value = Date.now()
+  }
+  // A returning participant who already consented is not asked again; the
+  // stage numbers match the ones shown when moving on from consent or pre-test.
+  const stage = welcomeStartStage({
+    answer: localTestAnswer,
+    hasPreTest: hasPreTest.value,
+    hasEyeTracking: hasEyeTracking.value,
+  })
+  if (stage === 'preTest') {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.preTest'), 2)
+    globalIndex.value = 2
+    return
+  }
+  if (stage === 'calibration') {
+    await safelyShowNextStepAnnouncement(
+      t('UserTestView.stepper.calibration'),
+      hasPreTest.value ? 3 : 2,
+    )
+    globalIndex.value = 3
+    return
+  }
+  if (stage === 'tasks') {
+    // Without the pre-tasks step, the task announcement comes from the task flow.
+    if (showPreTasksStep.value) {
+      await safelyShowNextStepAnnouncement(
+        t('UserTestView.stepper.tasks'),
+        hasPreTest.value ? 3 : 2,
+      )
+    }
+    goToPreTasksOrTasks()
+    return
   }
   await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
   globalIndex.value = 1
