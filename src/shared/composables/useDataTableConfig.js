@@ -22,6 +22,9 @@ const getSortableOwner = (item, type) => {
   if (type === 'publicTemplates') {
     return item.header?.templateAuthor?.userEmail ?? ''
   }
+  if (type === 'sessions') {
+    return item.study?.testAdmin?.email ?? item.study?.testAuthorEmail ?? ''
+  }
 
   return item.testAdmin?.email ?? item.testAuthorEmail ?? ''
 }
@@ -33,6 +36,7 @@ const getSortableCreationDate = (item, type) => {
   if (type === 'myTemplates' || type === 'publicTemplates') {
     return item.header?.creationDate ?? 0
   }
+  if (type === 'sessions') return toSortableTimestamp(item.createdAt)
 
   return item.creationDate ?? item.updateDate ?? 0
 }
