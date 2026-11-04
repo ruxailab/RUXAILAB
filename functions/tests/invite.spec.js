@@ -16,7 +16,16 @@ const collectionMock = jest.fn((name) => ({
   where: whereMock,
   doc: docMock(name),
 }))
-const firestoreMock = jest.fn(() => ({ collection: collectionMock }))
+const updateMock = jest.fn()
+const FieldValueMock = {
+  serverTimestamp: jest.fn(() => 'SERVER_TIMESTAMP'),
+  arrayUnion: jest.fn((...args) => args),
+  increment: jest.fn((n) => n),
+}
+const firestoreMock = Object.assign(
+  jest.fn(() => ({ collection: collectionMock })),
+  { FieldValue: FieldValueMock },
+)
 
 const generateInviteLinkMock = jest.fn()
 
@@ -43,7 +52,7 @@ jest.unstable_mockModule('../src/utils/inviteUtils.js', () => ({
   INVITE_STATUS: {},
 }))
 
-const { isAcceptedInviteRetry, validateInvite, generateInvitationLink } =
+const { isAcceptedInviteRetry, resolveInvite, validateInvite, generateInvitationLink } =
   await import('../src/https/invite.js')
 
 describe('accepted invitation retries', () => {
@@ -134,6 +143,148 @@ describe('accepted invitation retries', () => {
       )
     })
   })
+
+  describe('resolveInvite', () => {
+    beforeEach(() => {
+      jest.clearAllMocks()
+      getMock.mockResolvedValue({
+        empty: false,
+        docs: [
+          {
+            id: 'invite-1',
+            ref: { id: 'invite-1', update: updateMock },
+            data: () => ({
+              studyId: 'study-1',
+              studyTitle: 'Test Study',
+              email: 'victim@example.com',
+              isPublic: false,
+              requiredLogin: false,
+              membershipType: 'participant',
+              acceptedAt: null,
+              acceptedBy: null,
+            }),
+          },
+        ],
+      })
+    })
+
+    it('rejects missing token with invalid-argument', async () => {
+      await expect(
+        resolveInvite({
+          data: {},
+          auth: { uid: 'user-1' },
+        }),
+      ).rejects.toMatchObject({ code: 'invalid-argument' })
+    })
+
+    it('rejects non-existent invite with not-found', async () => {
+      getMock.mockResolvedValueOnce({ empty: true, docs: [] })
+      await expect(
+        resolveInvite({
+          data: { token: 'nonexistent-token' },
+          auth: { uid: 'user-1' },
+        }),
+      ).rejects.toMatchObject({ code: 'not-found' })
+    })
+
+    it('rejects an authenticated caller whose email does not match a private invite (preventing invite burn)', async () => {
+      await expect(
+        resolveInvite({
+          data: { token: 'valid-token', uid: 'attacker-uid' },
+          auth: { uid: 'attacker-uid', token: { email: 'attacker@example.com' } },
+        }),
+      ).rejects.toMatchObject({ code: 'permission-denied' })
+
+      expect(updateMock).not.toHaveBeenCalled()
+    })
+
+    it('uses authenticated uid over request body uid and writes auth.uid to acceptedBy', async () => {
+      await resolveInvite({
+        data: { token: 'valid-token', uid: 'spoofed-fake-uid' },
+        auth: { uid: 'legitimate-uid', token: { email: 'victim@example.com' } },
+      })
+
+      expect(updateMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          acceptedBy: 'legitimate-uid',
+        }),
+      )
+    })
+
+    it('allows the legitimate recipient to resolve private invite', async () => {
+      const result = await resolveInvite({
+        data: { token: 'valid-token' },
+        auth: { uid: 'victim-uid', token: { email: 'victim@example.com' } },
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.invite.studyId).toBe('study-1')
+      expect(updateMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          acceptedBy: 'victim-uid',
+        }),
+      )
+    })
+
+    it('allows retry for the same authenticated account that already accepted', async () => {
+      getMock.mockResolvedValueOnce({
+        empty: false,
+        docs: [
+          {
+            id: 'invite-1',
+            ref: { id: 'invite-1', update: updateMock },
+            data: () => ({
+              ...acceptedInvite,
+              studyId: 'study-1',
+              studyTitle: 'Test Study',
+              email: 'invitee@example.com',
+              isPublic: false,
+              requiredLogin: false,
+              membershipType: 'participant',
+            }),
+          },
+        ],
+      })
+
+      const result = await resolveInvite({
+        data: { token: 'valid-token' },
+        auth: { uid: 'invitee-uid', token: { email: 'invitee@example.com' } },
+      })
+
+      expect(result.success).toBe(true)
+      // Retry should not re-update acceptedBy
+      expect(updateMock).not.toHaveBeenCalled()
+    })
+
+    it('rejects reuse of an already accepted private invite by a different account', async () => {
+      getMock.mockResolvedValueOnce({
+        empty: false,
+        docs: [
+          {
+            id: 'invite-1',
+            ref: { id: 'invite-1', update: updateMock },
+            data: () => ({
+              ...acceptedInvite,
+              studyId: 'study-1',
+              studyTitle: 'Test Study',
+              email: 'invitee@example.com',
+              isPublic: false,
+              requiredLogin: false,
+              membershipType: 'participant',
+            }),
+          },
+        ],
+      })
+
+      await expect(
+        resolveInvite({
+          data: { token: 'valid-token' },
+          auth: { uid: 'other-uid', token: { email: 'invitee@example.com' } },
+        }),
+      ).rejects.toMatchObject({ code: 'failed-precondition' })
+    })
+  })
+
 
   describe('generateInvitationLink', () => {
     const studyDoc = {
