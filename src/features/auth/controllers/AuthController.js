@@ -11,7 +11,7 @@ import {
   browserSessionPersistence,
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
-import axios from 'axios'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import EmailController from '@/shared/controllers/EmailController'
 
 /**
@@ -148,9 +148,9 @@ export default class AuthController {
 
   async deleteUserData(userId) {
     try {
-      await axios.post(
-        process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/deleteAuth',
-        { data: { userId } },
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'deleteAuth',
+        { userId },
       )
     } catch (err) {
       throw err
