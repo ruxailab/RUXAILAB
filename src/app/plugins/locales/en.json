@@ -2306,6 +2306,40 @@
       "createUserTask": "Please create Tasks so you can select them here.",
       "pdf": "Generate PDF",
       "elements": "Elements",
+      "subtitle": "Prepare the final report for the heuristic evaluation",
+      "savingConclusion": "Saving Conclusion on Test....",
+      "steps": {
+        "reportConclusion": "Report Conclusion",
+        "intermediate": "Intermediate step",
+        "generateReport": "Generate Report"
+      },
+      "comments": {
+        "title": "Comments by heuristic",
+        "subtitle": "Write a comment for this heuristic"
+      },
+      "selection": {
+        "title": "Final Report Configuration",
+        "subtitle": "Select which information you want to include in the PDF",
+        "sections": {
+          "content": "Report Content",
+          "statistics": "Statistics and Data",
+          "answers": "Evaluator Answers",
+          "privacy": "Privacy"
+        },
+        "options": {
+          "description": "Study description",
+          "conclusion": "Conclusion and final observations",
+          "heuristicComments": "Comments by heuristic",
+          "generalStatistics": "General statistics and visual tables",
+          "statisticsByHeuristic": "Statistics grouped by heuristic",
+          "individualAnswers": "Individual evaluator answers (with comments and images)",
+          "groupedAnswers": "Answers grouped by heuristic and evaluator",
+          "anonymizeEvaluators": "Anonymize evaluator information"
+        },
+        "generatingPdf": "Generating Report PDF. This operation might take a few minutes. Don't close this tab."
+      },
+      "anonymizedEvaluator": "Evaluator {index}",
+      "anonymizedFilenameSuffix": "_anonymous",
       "options": {
         "options": "Study options",
         "comments": "Answers comments",

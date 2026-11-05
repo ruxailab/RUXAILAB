@@ -1,20 +1,20 @@
 <template>
   <div>
     <v-col class="d-flex flex-column" style="min-height: 500px">
-      <!-- Título no topo -->
-      <h2 class="mb-4">Configuración del Reporte Final</h2>
+      <h2 class="mb-4">{{ $t('pages.finalReport.selection.title') }}</h2>
       <p class="text-body-2 text-grey-darken-1 mb-6">
-        Selecciona qué información deseas incluir en el PDF
+        {{ $t('pages.finalReport.selection.subtitle') }}
       </p>
 
-      <!-- Sistema de checkboxes para configurar el payload -->
       <v-card variant="outlined" class="mb-4">
         <v-card-text>
-          <h3 class="text-h6 mb-4">Contenido del Reporte</h3>
+          <h3 class="text-h6 mb-4">
+            {{ $t('pages.finalReport.selection.sections.content') }}
+          </h3>
 
           <v-checkbox
             v-model="pdfConfig.includeDescription"
-            label="Descripción del test"
+            :label="$t('pages.finalReport.selection.options.description')"
             density="comfortable"
             hide-details
             class="mb-2"
@@ -22,7 +22,7 @@
 
           <v-checkbox
             v-model="pdfConfig.includeConclusion"
-            label="Conclusión y observaciones finales"
+            :label="$t('pages.finalReport.selection.options.conclusion')"
             density="comfortable"
             hide-details
             class="mb-2"
@@ -30,7 +30,7 @@
 
           <v-checkbox
             v-model="pdfConfig.includeHeuristicComments"
-            label="Comentarios por heurística"
+            :label="$t('pages.finalReport.selection.options.heuristicComments')"
             density="comfortable"
             hide-details
             class="mb-2"
@@ -38,11 +38,13 @@
 
           <v-divider class="my-4" />
 
-          <h3 class="text-h6 mb-4">Estadísticas y Datos</h3>
+          <h3 class="text-h6 mb-4">
+            {{ $t('pages.finalReport.selection.sections.statistics') }}
+          </h3>
 
           <v-checkbox
             v-model="pdfConfig.includeGeneralStatistics"
-            label="Estadísticas generales y tablas visuales"
+            :label="$t('pages.finalReport.selection.options.generalStatistics')"
             density="comfortable"
             hide-details
             class="mb-2"
@@ -50,7 +52,9 @@
 
           <v-checkbox
             v-model="pdfConfig.includeStatisticsByHeuristic"
-            label="Estadísticas agrupadas por heurística"
+            :label="
+              $t('pages.finalReport.selection.options.statisticsByHeuristic')
+            "
             density="comfortable"
             hide-details
             class="mb-2"
@@ -58,11 +62,13 @@
 
           <v-divider class="my-4" />
 
-          <h3 class="text-h6 mb-4">Respuestas de Evaluadores</h3>
+          <h3 class="text-h6 mb-4">
+            {{ $t('pages.finalReport.selection.sections.answers') }}
+          </h3>
 
           <v-checkbox
             v-model="pdfConfig.includeIndividualAnswers"
-            label="Respuestas individuales de evaluadores (con comentarios e imágenes)"
+            :label="$t('pages.finalReport.selection.options.individualAnswers')"
             density="comfortable"
             hide-details
             class="mb-2"
@@ -70,7 +76,7 @@
 
           <v-checkbox
             v-model="pdfConfig.includeGroupedAnswers"
-            label="Respuestas agrupadas por heurística y evaluador"
+            :label="$t('pages.finalReport.selection.options.groupedAnswers')"
             density="comfortable"
             hide-details
             class="mb-2"
@@ -78,11 +84,15 @@
 
           <v-divider class="my-4" />
 
-          <h3 class="text-h6 mb-4">Privacidad</h3>
+          <h3 class="text-h6 mb-4">
+            {{ $t('pages.finalReport.selection.sections.privacy') }}
+          </h3>
 
           <v-checkbox
             v-model="pdfConfig.anonymizeEvaluators"
-            label="Anonimizar información de evaluadores"
+            :label="
+              $t('pages.finalReport.selection.options.anonymizeEvaluators')
+            "
             density="comfortable"
             hide-details
             color="warning"
@@ -92,8 +102,7 @@
 
       <div v-if="isLoading" class="mt-4">
         <p>
-          Generating Report PDF. This operation might take a few minutes. Don't
-          close this tab.
+          {{ $t('pages.finalReport.selection.generatingPdf') }}
         </p>
         <v-progress-linear indeterminate />
       </div>
@@ -211,7 +220,9 @@ const submitPdf = async () => {
       }
       return answersArray.map((answer, index) => ({
         ...answer,
-        evaluatorName: `Evaluador ${index + 1}`,
+        evaluatorName: t('pages.finalReport.anonymizedEvaluator', {
+          index: index + 1,
+        }),
         evaluatorEmail: null,
       }))
     }
@@ -284,7 +295,9 @@ const submitPdf = async () => {
     const creationDate = slugify(
       test.value.creationDate || new Date().toISOString(),
     )
-    const anonymizedSuffix = pdfConfig.anonymizeEvaluators ? '_anonimo' : ''
+    const anonymizedSuffix = pdfConfig.anonymizeEvaluators
+      ? t('pages.finalReport.anonymizedFilenameSuffix')
+      : ''
     const filename = `final_report_${title}_${creationDate}${anonymizedSuffix}.pdf`
 
     // Trigger file download
