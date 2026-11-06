@@ -25,7 +25,10 @@ const mountTask = (modelValue = {}) =>
         ShowInfo: { template: '<div><slot name="content" /></div>' },
         'v-container': { template: '<div><slot /></div>' },
         'v-progress-linear': true,
-        'v-icon': true,
+        'v-icon': {
+          props: ['color'],
+          template: '<i :data-color="color"><slot /></i>',
+        },
         'v-chip': true,
         'v-btn': { template: '<button><slot /></button>' },
         'v-dialog': true,
@@ -49,10 +52,11 @@ describe('unsorted card presentation', () => {
     const categoryId = wrapper.vm.localCategories[0].id
 
     expect(pool.classes()).toContain('sorting-column--pool-pending')
+    expect(
+      pool.find('.sorting-column__heading-icon').attributes('data-color'),
+    ).toBe('secondary')
     expect(pool.findAll('.sorting-card--unsorted')).toHaveLength(1)
-    expect(pool.find('.sorting-card__status').text()).toBe(
-      'CardSorting.unsortedStatus',
-    )
+    expect(pool.find('.sorting-card__status').exists()).toBe(false)
     expect(category.find('.sorting-card--unsorted').exists()).toBe(false)
     expect(category.find('.sorting-card__status').exists()).toBe(false)
 
@@ -60,6 +64,9 @@ describe('unsorted card presentation', () => {
     wrapper.vm.onChange()
     await wrapper.vm.$nextTick()
     expect(pool.classes()).not.toContain('sorting-column--pool-pending')
+    expect(
+      pool.find('.sorting-column__heading-icon').attributes('data-color'),
+    ).toBe('primary')
     expect(pool.find('.sorting-card__status').exists()).toBe(false)
     expect(pool.find('.sorting-column__empty-text').text()).toBe(
       'CardSorting.allCardsSorted',
@@ -70,6 +77,9 @@ describe('unsorted card presentation', () => {
     wrapper.vm.onChange()
     await wrapper.vm.$nextTick()
     expect(pool.classes()).toContain('sorting-column--pool-pending')
+    expect(
+      pool.find('.sorting-column__heading-icon').attributes('data-color'),
+    ).toBe('secondary')
     expect(pool.find('.sorting-card--unsorted').text()).toContain('Two')
     expect(wrapper.emitted('update:modelValue').at(-1)).toEqual([
       { Group: ['One'], __unassigned: ['Two'] },
@@ -95,7 +105,7 @@ describe('unsorted card presentation', () => {
     ).toHaveLength(2)
     expect(
       wrapper.findAll('.sorting-column--pool .sorting-card__status'),
-    ).toHaveLength(2)
+    ).toHaveLength(0)
     expect(wrapper.emitted('update:pending').at(-1)).toEqual([2])
     expect(wrapper.emitted('update:modelValue').at(-1)).toEqual([
       { Group: [], __unassigned: ['Two', 'One'] },

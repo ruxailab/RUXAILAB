@@ -44,7 +44,7 @@
                   <div class="sorting-column__heading">
                     <v-icon
                       size="20"
-                      color="primary"
+                      :color="pool.length > 0 ? 'secondary' : 'primary'"
                       class="sorting-column__heading-icon"
                     >
                       mdi-cards-outline
@@ -641,21 +641,22 @@ onMounted(() => {
 }
 
 .sorting-column--pool {
-  background: #f8fafc;
+  background: #f9f9f9;
 }
 
 .sorting-column--pool-pending {
-  background: #eff8fc;
-  border-color: #6ca9c1;
+  background: rgb(var(--v-theme-secondary), 0.06);
+  border-color: rgb(var(--v-theme-secondary), 0.5);
 }
 
 .sorting-column--pool-pending .sorting-column__header--pool {
-  background: #dceff6;
-  border-bottom-color: #b1d4e2;
+  background: rgb(var(--v-theme-secondary), 0.1);
+  border-bottom-color: rgb(var(--v-theme-secondary), 0.3);
 }
 
 .sorting-column--pool-pending .sorting-column__badge {
-  background: #075985;
+  background: rgb(var(--v-theme-secondary));
+  color: #00213f;
 }
 
 .sorting-column__header {

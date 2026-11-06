@@ -13,9 +13,6 @@
     </div>
 
     <div class="sorting-card__body">
-      <span v-if="unsorted" class="sorting-card__status">
-        {{ $t('CardSorting.unsortedStatus') }}
-      </span>
       <div class="sorting-card__header">
         <p class="sorting-card__title">
           {{ element.title }}
@@ -117,21 +114,12 @@ const plainDescription = computed(() => {
 
 .sorting-card--unsorted {
   background: #fff;
-  border-color: #9dc9d9;
-  border-left: 4px solid #08729c;
+  border-color: rgb(var(--v-theme-secondary), 0.4);
+  border-left: 4px solid rgb(var(--v-theme-secondary));
 }
 
 .sorting-card--unsorted:hover {
-  border-color: #08729c;
-}
-
-.sorting-card__status {
-  display: inline-block;
-  margin-bottom: 4px;
-  color: #075985;
-  font-size: 0.7rem;
-  font-weight: 700;
-  line-height: 1.25;
+  border-color: rgb(var(--v-theme-secondary));
 }
 
 .sorting-card--compact {
