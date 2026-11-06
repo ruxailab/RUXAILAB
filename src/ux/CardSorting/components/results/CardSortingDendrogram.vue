@@ -281,6 +281,11 @@
                     }}
                   </span>
                 </div>
+                <div
+                  class="group-cards-title text-caption text-medium-emphasis mb-1"
+                >
+                  {{ $t('CardSorting.cardsInSelectedGroup') }}
+                </div>
                 <div class="d-flex flex-wrap ga-1 mb-1">
                   <v-chip
                     v-for="card in group.cards"
@@ -292,6 +297,7 @@
                     {{ card }}
                   </v-chip>
                 </div>
+                <v-divider class="my-2" />
                 <div class="text-caption text-medium-emphasis mb-1">
                   {{ $t('CardSorting.categoryNames') }}
                 </div>

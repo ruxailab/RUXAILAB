@@ -39,12 +39,42 @@ const mountDendrogram = (
         'v-list': { template: '<div><slot /></div>' },
         'v-list-item': true,
         'v-chip': { template: '<span><slot /></span>' },
+        'v-divider': { template: '<hr />' },
         'v-icon': true,
       },
     },
   })
 
 describe('CardSortingDendrogram colors', () => {
+  it('labels cards and separates them from participant category names', async () => {
+    const wrapper = mountDendrogram()
+    const assertGroupSections = () => {
+      const groups = wrapper.findAll('.group-summary')
+      expect(groups.length).toBeGreaterThan(0)
+      groups.forEach((group) => {
+        const title = group.find('.group-cards-title')
+        const divider = group.find('hr')
+        expect(title.text()).toBe('CardSorting.cardsInSelectedGroup')
+        expect(
+          title.element.nextElementSibling.querySelector('.compact-chip'),
+        ).not.toBeNull()
+        expect(divider.element.previousElementSibling).toBe(
+          title.element.nextElementSibling,
+        )
+        expect(divider.element.nextElementSibling.textContent).toContain(
+          'CardSorting.categoryNames',
+        )
+      })
+    }
+
+    assertGroupSections()
+    for (let i = 0; i < 26; i++) {
+      await wrapper.find('[role="slider"]').trigger('keydown.right')
+    }
+    expect(wrapper.findAll('.group-summary')).toHaveLength(1)
+    assertGroupSections()
+  })
+
   it('renders five distance grid lines behind the branches', () => {
     const wrapper = mountDendrogram()
     const grid = wrapper.find('.dendrogram-grid')

@@ -2835,6 +2835,7 @@
     "cutLineHint": "Los colores de las ramas y los puntos coinciden con los bordes de los grupos. Arrastra la línea vertical para cambiar la agrupación o enfócala y usa las flechas del teclado.",
     "groupNumber": "Grupo {number}",
     "cardsInGroup": "{count} tarjetas",
+    "cardsInSelectedGroup": "Tarjetas de este grupo",
     "categoryNames": "Nombres de categoría usados por los participantes",
     "categoryNameCount": "{count} participantes",
     "categoryNameSummary": "{name} ({count})",

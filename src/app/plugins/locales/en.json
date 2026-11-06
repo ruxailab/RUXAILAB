@@ -2911,6 +2911,7 @@
     "cutLineHint": "Branch and marker colors match the group borders. Drag the vertical line to change the grouping, or focus it and use the arrow keys.",
     "groupNumber": "Group {number}",
     "cardsInGroup": "{count} cards",
+    "cardsInSelectedGroup": "Cards in this group",
     "categoryNames": "Category names used by participants",
     "categoryNameCount": "{count} participants",
     "categoryNameSummary": "{name} ({count})",

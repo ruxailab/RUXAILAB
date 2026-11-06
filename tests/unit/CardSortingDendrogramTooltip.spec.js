@@ -36,6 +36,7 @@ const mountDendrogram = () => {
         'v-list': { template: '<div><slot /></div>' },
         'v-list-item': true,
         'v-chip': { template: '<span><slot /></span>' },
+        'v-divider': true,
         'v-icon': true,
       },
     },
