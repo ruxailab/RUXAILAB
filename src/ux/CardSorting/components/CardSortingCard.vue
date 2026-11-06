@@ -1,5 +1,11 @@
 <template>
-  <div class="sorting-card" :class="{ 'sorting-card--compact': compact }">
+  <div
+    class="sorting-card"
+    :class="{
+      'sorting-card--compact': compact,
+      'sorting-card--unsorted': unsorted,
+    }"
+  >
     <div class="sorting-card__handle">
       <v-icon size="18" class="sorting-card__handle-icon">
         mdi-drag-vertical
@@ -48,6 +54,10 @@ const props = defineProps({
     required: true,
   },
   compact: {
+    type: Boolean,
+    default: false,
+  },
+  unsorted: {
     type: Boolean,
     default: false,
   },
@@ -100,6 +110,16 @@ const plainDescription = computed(() => {
 
 .sorting-card:active {
   cursor: grabbing;
+}
+
+.sorting-card--unsorted {
+  background: #fff;
+  border-color: rgb(var(--v-theme-secondary), 0.4);
+  border-left: 4px solid rgb(var(--v-theme-secondary));
+}
+
+.sorting-card--unsorted:hover {
+  border-color: rgb(var(--v-theme-secondary));
 }
 
 .sorting-card--compact {

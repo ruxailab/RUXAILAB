@@ -140,9 +140,9 @@
         />
       </v-col>
     </v-row>
+    <CardSortingDendrogram :test="test" :answers="filteredAnswers" />
     <CardSortingMatrix :test="test" :answers="filteredAnswers" />
     <CardSortingSimilarityMatrix :test="test" :answers="filteredAnswers" />
-    <CardSortingDendrogram :test="test" :answers="filteredAnswers" />
     <AnswersTimeline
       v-if="filteredAnswers.length"
       :task-answers="filteredAnswers"
