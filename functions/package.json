@@ -13,7 +13,7 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "deploy:dev": "cross-env NODE_ENV=development ENV_FILE=.env.develop firebase deploy --only functions --project develop",
-    "deploy:prod": "cross-env NODE_ENV=production ENV_FILE=.env.production firebase deploy --only functions --project prod",
+    "deploy:prod": "cross-env NODE_ENV=production ENV_FILE=.env.production firebase deploy --only functions --project production",
     "logs": "firebase functions:log",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },

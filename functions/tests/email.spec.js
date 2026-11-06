@@ -13,6 +13,14 @@ jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   },
   functions: {
     onCall: jest.fn((opts) => opts?.handler || opts),
+    https: {
+      HttpsError: class HttpsError extends Error {
+        constructor(code, message) {
+          super(message)
+          this.code = code
+        }
+      },
+    },
   },
 }))
 
@@ -159,7 +167,7 @@ describe('email.js -> sendEmail', () => {
     expect(nodemailerMock.default.createTransport).toHaveBeenCalled()
   })
 
-  it('should return error if sendMail fails', async () => {
+  it('should throw HttpsError with code internal if sendMail fails', async () => {
     nodemailerMock.default.createTransport.mockReturnValueOnce({
       sendMail: jest.fn().mockRejectedValueOnce(new Error('SMTP Error')),
     })
@@ -173,8 +181,36 @@ describe('email.js -> sendEmail', () => {
       },
     }
 
-    const res = await sendEmail(data)
-    expect(res).toBeInstanceOf(Error)
-    expect(res.message).toBe('SMTP Error')
+    await expect(sendEmail(data)).rejects.toMatchObject({
+      code: 'internal',
+      message: 'SMTP Error',
+    })
+  })
+
+  it('should re-throw an existing HttpsError unchanged', async () => {
+    const { functions: mockFunctions } = await import(
+      '../src/core/firebase/f.firebase.js'
+    )
+    const httpsError = new mockFunctions.https.HttpsError(
+      'permission-denied',
+      'Permission denied',
+    )
+    nodemailerMock.default.createTransport.mockReturnValueOnce({
+      sendMail: jest.fn().mockRejectedValueOnce(httpsError),
+    })
+
+    const data = {
+      data: {
+        template: 'invite',
+        to: 'user@test.com',
+        subject: 'You are invited',
+        data: { message: 'Hello' },
+      },
+    }
+
+    await expect(sendEmail(data)).rejects.toMatchObject({
+      code: 'permission-denied',
+      message: 'Permission denied',
+    })
   })
 })
