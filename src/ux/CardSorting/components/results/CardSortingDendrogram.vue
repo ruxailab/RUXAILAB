@@ -63,163 +63,162 @@
         </div>
 
         <div v-else class="dendrogram-results">
-          <div ref="dendrogramScroll" class="dendrogram-scroll">
-            <div
-              v-if="showCutTooltip"
-              class="cut-line-tooltip"
-              role="tooltip"
-              :style="cutTooltipStyle"
-            >
+          <div class="dendrogram-chart">
+            <div v-if="showCutTooltip" class="cut-line-tooltip" role="tooltip">
               {{
                 $t('CardSorting.cutSimilarityValue', {
                   value: similarityValue,
                 })
               }}
             </div>
-            <svg
-              ref="dendrogramSvg"
-              :viewBox="`0 0 ${layout.width} ${layout.height}`"
-              :width="layout.width"
-              :height="layout.height"
-              class="dendrogram-svg"
-              role="group"
-              :aria-label="$t('CardSorting.dendrogram')"
-              preserveAspectRatio="xMinYMin meet"
-              @pointermove="moveCutLine"
-              @pointerup="stopCutDrag"
-              @pointercancel="stopCutDrag"
-            >
-              <g v-if="layout.maxHeight > 0" class="dendrogram-grid">
-                <text
-                  :x="layout.plotOriginX - 12"
-                  :y="gridLabelY"
-                  text-anchor="end"
-                  class="dendrogram-grid-label"
-                >
-                  {{ $t('CardSorting.distanceScale') }}
-                </text>
-                <g v-for="tick in gridTicks" :key="tick">
-                  <line
-                    :x1="layout.plotOriginX + tick * layout.heightScale"
-                    :x2="layout.plotOriginX + tick * layout.heightScale"
-                    :y1="gridTopY"
-                    :y2="axisY - 16"
-                    class="dendrogram-grid-line"
-                  />
+            <div class="dendrogram-scroll">
+              <svg
+                ref="dendrogramSvg"
+                :viewBox="`0 0 ${layout.width} ${layout.height}`"
+                :width="layout.width"
+                :height="layout.height"
+                class="dendrogram-svg"
+                role="group"
+                :aria-label="$t('CardSorting.dendrogram')"
+                preserveAspectRatio="xMinYMin meet"
+                @pointermove="moveCutLine"
+                @pointerup="stopCutDrag"
+                @pointercancel="stopCutDrag"
+              >
+                <g v-if="layout.maxHeight > 0" class="dendrogram-grid">
                   <text
-                    :x="layout.plotOriginX + tick * layout.heightScale"
+                    :x="layout.plotOriginX - 12"
                     :y="gridLabelY"
-                    text-anchor="middle"
-                    class="dendrogram-grid-tick"
+                    text-anchor="end"
+                    class="dendrogram-grid-label"
                   >
-                    {{ tick }}
+                    {{ $t('CardSorting.distanceScale') }}
+                  </text>
+                  <g v-for="tick in gridTicks" :key="tick">
+                    <line
+                      :x1="layout.plotOriginX + tick * layout.heightScale"
+                      :x2="layout.plotOriginX + tick * layout.heightScale"
+                      :y1="gridTopY"
+                      :y2="axisY - 16"
+                      class="dendrogram-grid-line"
+                    />
+                    <text
+                      :x="layout.plotOriginX + tick * layout.heightScale"
+                      :y="gridLabelY"
+                      text-anchor="middle"
+                      class="dendrogram-grid-tick"
+                    >
+                      {{ tick }}
+                    </text>
+                  </g>
+                </g>
+                <g
+                  v-for="(link, index) in coloredLayout.links"
+                  :key="`link-${index}`"
+                >
+                  <line
+                    :x1="link.x1"
+                    :y1="link.y1"
+                    :x2="link.x2"
+                    :y2="link.y2"
+                    class="dendrogram-link"
+                    :style="{ stroke: link.color }"
+                  />
+                </g>
+
+                <g
+                  v-for="(node, index) in coloredLayout.nodes"
+                  :key="`node-${index}`"
+                >
+                  <circle
+                    :cx="node.x"
+                    :cy="node.y"
+                    r="4"
+                    class="dendrogram-node"
+                    :style="{ fill: node.color }"
+                  />
+                  <title>{{ node.label }}</title>
+                  <text
+                    :x="node.x - 12"
+                    :y="node.y"
+                    text-anchor="end"
+                    dominant-baseline="middle"
+                    class="dendrogram-label"
+                  >
+                    {{ truncateLabel(node.label) }}
                   </text>
                 </g>
-              </g>
-              <g
-                v-for="(link, index) in coloredLayout.links"
-                :key="`link-${index}`"
-              >
+
                 <line
-                  :x1="link.x1"
-                  :y1="link.y1"
-                  :x2="link.x2"
-                  :y2="link.y2"
-                  class="dendrogram-link"
-                  :style="{ stroke: link.color }"
+                  v-if="layout.maxHeight > 0"
+                  :x1="cutLineX"
+                  :y1="layout.nodes[0]?.y - 18"
+                  :x2="cutLineX"
+                  :y2="axisY - 16"
+                  class="dendrogram-cut-line"
                 />
-              </g>
-
-              <g
-                v-for="(node, index) in coloredLayout.nodes"
-                :key="`node-${index}`"
-              >
-                <circle
-                  :cx="node.x"
-                  :cy="node.y"
-                  r="4"
-                  class="dendrogram-node"
-                  :style="{ fill: node.color }"
-                />
-                <title>{{ node.label }}</title>
-                <text
-                  :x="node.x - 12"
-                  :y="node.y"
-                  text-anchor="end"
-                  dominant-baseline="middle"
-                  class="dendrogram-label"
-                >
-                  {{ truncateLabel(node.label) }}
-                </text>
-              </g>
-
-              <line
-                v-if="layout.maxHeight > 0"
-                :x1="cutLineX"
-                :y1="layout.nodes[0]?.y - 18"
-                :x2="cutLineX"
-                :y2="axisY - 16"
-                class="dendrogram-cut-line"
-              />
-              <line
-                v-if="layout.maxHeight > 0"
-                :x1="cutLineX"
-                :y1="layout.nodes[0]?.y - 18"
-                :x2="cutLineX"
-                :y2="axisY - 16"
-                class="dendrogram-cut-line-hit-area"
-                :aria-label="$t('CardSorting.cutLineLabel')"
-                role="slider"
-                tabindex="0"
-                :aria-valuemin="0"
-                :aria-valuemax="100"
-                :aria-valuenow="similarityValue"
-                :aria-valuetext="
-                  $t('CardSorting.cutSimilarityValue', {
-                    value: similarityValue,
-                  })
-                "
-                @pointerdown.stop.prevent="startCutDrag"
-                @keydown.left.prevent="adjustCutLine(-0.02)"
-                @keydown.right.prevent="adjustCutLine(0.02)"
-                @keydown.down.prevent="adjustCutLine(-0.02)"
-                @keydown.up.prevent="adjustCutLine(0.02)"
-                @pointerenter="showCutLineTooltip"
-                @pointerleave="hideCutLineTooltip"
-              />
-
-              <g
-                v-if="layout.maxHeight > 0"
-                :transform="`translate(${layout.plotOriginX}, ${axisY})`"
-              >
                 <line
-                  x1="0"
-                  y1="0"
-                  :x2="layout.heightScale"
-                  y2="0"
-                  class="dendrogram-axis"
+                  v-if="layout.maxHeight > 0"
+                  :x1="cutLineX"
+                  :y1="layout.nodes[0]?.y - 18"
+                  :x2="cutLineX"
+                  :y2="axisY - 16"
+                  class="dendrogram-cut-line-hit-area"
+                  :aria-label="$t('CardSorting.cutLineLabel')"
+                  role="slider"
+                  tabindex="0"
+                  :aria-valuemin="0"
+                  :aria-valuemax="100"
+                  :aria-valuenow="similarityValue"
+                  :aria-valuetext="
+                    $t('CardSorting.cutSimilarityValue', {
+                      value: similarityValue,
+                    })
+                  "
+                  @pointerdown.stop.prevent="startCutDrag"
+                  @keydown.left.prevent="adjustCutLine(-0.02)"
+                  @keydown.right.prevent="adjustCutLine(0.02)"
+                  @keydown.down.prevent="adjustCutLine(-0.02)"
+                  @keydown.up.prevent="adjustCutLine(0.02)"
+                  @pointerenter="showCutLineTooltip"
+                  @pointerleave="hideCutLineTooltip"
+                  @focus="isCutLineFocused = true"
+                  @blur="isCutLineFocused = false"
                 />
-                <text x="0" y="16" class="dendrogram-axis-label">
-                  {{ $t('CardSorting.similarityMaximum') }}
-                </text>
-                <text
-                  :x="layout.heightScale"
-                  y="16"
-                  text-anchor="end"
-                  class="dendrogram-axis-label"
+
+                <g
+                  v-if="layout.maxHeight > 0"
+                  :transform="`translate(${layout.plotOriginX}, ${axisY})`"
                 >
-                  {{ $t('CardSorting.similarityMinimum') }}
-                </text>
-                <text
-                  :x="layout.heightScale / 2"
-                  y="16"
-                  text-anchor="middle"
-                  class="dendrogram-axis-label"
-                >
-                  {{ $t('CardSorting.similarityScale') }}
-                </text>
-              </g>
-            </svg>
+                  <line
+                    x1="0"
+                    y1="0"
+                    :x2="layout.heightScale"
+                    y2="0"
+                    class="dendrogram-axis"
+                  />
+                  <text x="0" y="16" class="dendrogram-axis-label">
+                    {{ $t('CardSorting.similarityMaximum') }}
+                  </text>
+                  <text
+                    :x="layout.heightScale"
+                    y="16"
+                    text-anchor="end"
+                    class="dendrogram-axis-label"
+                  >
+                    {{ $t('CardSorting.similarityMinimum') }}
+                  </text>
+                  <text
+                    :x="layout.heightScale / 2"
+                    y="16"
+                    text-anchor="middle"
+                    class="dendrogram-axis-label"
+                  >
+                    {{ $t('CardSorting.similarityScale') }}
+                  </text>
+                </g>
+              </svg>
+            </div>
           </div>
 
           <aside class="dendrogram-groups">
@@ -342,11 +341,10 @@ const gridLabelY = 22
 const gridTopY = 32
 
 const dendrogramSvg = ref(null)
-const dendrogramScroll = ref(null)
 const cutPosition = ref(0.5)
 const isDraggingCutLine = ref(false)
 const isCutLineHovered = ref(false)
-const cutTooltipPosition = ref({ left: 0, top: 0 })
+const isCutLineFocused = ref(false)
 
 const cardTitles = computed(() => getCardTitles(props.test))
 const submittedAnswers = computed(() => getSubmittedAnswers(props.answers))
@@ -387,12 +385,9 @@ const similarityValue = computed(() =>
   Math.round((1 - cutPosition.value) * 100),
 )
 const showCutTooltip = computed(
-  () => isCutLineHovered.value || isDraggingCutLine.value,
+  () =>
+    isCutLineHovered.value || isDraggingCutLine.value || isCutLineFocused.value,
 )
-const cutTooltipStyle = computed(() => ({
-  left: `${cutTooltipPosition.value.left}px`,
-  top: `${cutTooltipPosition.value.top}px`,
-}))
 
 const selectedGroups = computed(() =>
   cutDendrogramTree(tree.value, cutPosition.value * layout.value.maxHeight).map(
@@ -448,51 +443,28 @@ const setCutPositionFromPointer = (event) => {
   cutPosition.value = Math.max(0, Math.min(1, position))
 }
 
-const updateCutTooltipPosition = () => {
-  const svg = dendrogramSvg.value
-  const container = dendrogramScroll.value
-  const screenMatrix = svg?.getScreenCTM()
-  if (!svg || !container || !screenMatrix) return
-
-  const point = svg.createSVGPoint()
-  point.x = cutLineX.value
-  point.y = Math.max(8, (layout.value.nodes[0]?.y || 0) - 18)
-  const screenPoint = point.matrixTransform(screenMatrix)
-  const containerRect = container.getBoundingClientRect()
-  cutTooltipPosition.value = {
-    left: screenPoint.x - containerRect.left + container.scrollLeft + 10,
-    top: screenPoint.y - containerRect.top + container.scrollTop,
-  }
-}
-
 const showCutLineTooltip = () => {
   isCutLineHovered.value = true
-  updateCutTooltipPosition()
 }
 
 const hideCutLineTooltip = () => {
-  if (!isDraggingCutLine.value) isCutLineHovered.value = false
+  isCutLineHovered.value = false
 }
 
 const startCutDrag = (event) => {
   isDraggingCutLine.value = true
-  isCutLineHovered.value = true
-  updateCutTooltipPosition()
   dendrogramSvg.value?.setPointerCapture(event.pointerId)
 }
 
 const moveCutLine = (event) => {
   if (isDraggingCutLine.value) {
     setCutPositionFromPointer(event)
-    updateCutTooltipPosition()
   }
 }
 
 const stopCutDrag = (event) => {
   if (!isDraggingCutLine.value) return
   isDraggingCutLine.value = false
-  updateCutTooltipPosition()
-  isCutLineHovered.value = false
   if (dendrogramSvg.value?.hasPointerCapture(event.pointerId)) {
     dendrogramSvg.value.releasePointerCapture(event.pointerId)
   }
@@ -680,8 +652,12 @@ const exportAsLatex = () => {
   align-items: start;
 }
 
-.dendrogram-scroll {
+.dendrogram-chart {
   position: relative;
+  min-width: 0;
+}
+
+.dendrogram-scroll {
   overflow: auto;
   max-width: 100%;
   min-width: 0;
@@ -695,15 +671,17 @@ const exportAsLatex = () => {
 .cut-line-tooltip {
   position: absolute;
   z-index: 1;
+  top: 12px;
+  right: 12px;
+  max-width: calc(100% - 24px);
   padding: 4px 8px;
   border-radius: 6px;
   background: #263238;
   color: #fff;
   font-size: 0.75rem;
   line-height: 1.25rem;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   pointer-events: none;
-  transform: translate(10px, 6px);
 }
 
 .dendrogram-svg {
