@@ -515,10 +515,11 @@ import {
   formatTimeSpentFromMs,
 } from '@/ux/Heuristic/utils/statistics'
 import { sumTaskTimeMs } from '@/ux/UserTest/utils/testDuration'
+import { formatDateTime } from '@/shared/utils/dateUtils'
 import { showSuccess } from '../utils/toast'
 
 const store = useStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
@@ -722,7 +723,7 @@ const reports = computed(() => {
       tasksTotalTime:
         type === STUDY_TYPES.USER ? getReportTasksTotalTime(r) : null,
       status: checkIfIsSubmitted(r.submitted),
-      lastUpdate: formatDate(r.lastUpdate),
+      lastUpdate: formatDateTime(r.lastUpdate, locale.value),
       hidden: r.hidden ?? false,
     }
   })
