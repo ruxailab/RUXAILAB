@@ -3,7 +3,9 @@
     <ShowInfo :title="props.test.testTitle">
       <template #content>
         <v-container>
-          <div class="d-flex align-center justify-space-between flex-wrap ga-2 mb-4">
+          <div
+            class="d-flex align-center justify-space-between flex-wrap ga-2 mb-4"
+          >
             <p class="text-body-1 mb-0">
               {{ assignedCount }} {{ $t('CardSorting.of') }} {{ totalCards }}
               {{ $t('CardSorting.cards_low') }}
@@ -32,8 +34,13 @@
           <div class="sorting-board">
             <!-- Unassigned cards pool -->
             <div class="sorting-board__item">
-              <div class="sorting-column sorting-column--pool">
-                <div class="sorting-column__header">
+              <div
+                class="sorting-column sorting-column--pool"
+                :class="{ 'sorting-column--pool-pending': pool.length > 0 }"
+              >
+                <div
+                  class="sorting-column__header sorting-column__header--pool"
+                >
                   <div class="sorting-column__heading">
                     <v-icon
                       size="20"
@@ -68,7 +75,11 @@
                   @change="onChange"
                 >
                   <template #item="{ element }">
-                    <CardSortingCard :element="element" :options="options" />
+                    <CardSortingCard
+                      :element="element"
+                      :options="options"
+                      unsorted
+                    />
                   </template>
 
                   <template #footer>
@@ -398,7 +409,8 @@ const assignedCount = computed(() => totalCards.value - pool.value.length)
 
 const isCategoryUnnamed = (category) => !String(category?.title || '').trim()
 
-const categoryCardCount = (categoryId) => (categoryLists[categoryId] || []).length
+const categoryCardCount = (categoryId) =>
+  (categoryLists[categoryId] || []).length
 
 const unnamedCategoriesWithCardsCount = computed(
   () =>
@@ -495,10 +507,7 @@ const closeCategoryDialog = () => {
 
 const confirmCategoryDialog = () => {
   const excludeCategoryId = editingCategory.value?.id ?? null
-  const error = validateCategoryName(
-    categoryNameInput.value,
-    excludeCategoryId,
-  )
+  const error = validateCategoryName(categoryNameInput.value, excludeCategoryId)
   if (error) {
     categoryNameError.value = error
     return
@@ -633,6 +642,20 @@ onMounted(() => {
 
 .sorting-column--pool {
   background: #f8fafc;
+}
+
+.sorting-column--pool-pending {
+  background: #eff8fc;
+  border-color: #6ca9c1;
+}
+
+.sorting-column--pool-pending .sorting-column__header--pool {
+  background: #dceff6;
+  border-bottom-color: #b1d4e2;
+}
+
+.sorting-column--pool-pending .sorting-column__badge {
+  background: #075985;
 }
 
 .sorting-column__header {

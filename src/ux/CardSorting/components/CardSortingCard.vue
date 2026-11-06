@@ -1,5 +1,11 @@
 <template>
-  <div class="sorting-card" :class="{ 'sorting-card--compact': compact }">
+  <div
+    class="sorting-card"
+    :class="{
+      'sorting-card--compact': compact,
+      'sorting-card--unsorted': unsorted,
+    }"
+  >
     <div class="sorting-card__handle">
       <v-icon size="18" class="sorting-card__handle-icon">
         mdi-drag-vertical
@@ -7,6 +13,9 @@
     </div>
 
     <div class="sorting-card__body">
+      <span v-if="unsorted" class="sorting-card__status">
+        {{ $t('CardSorting.unsortedStatus') }}
+      </span>
       <div class="sorting-card__header">
         <p class="sorting-card__title">
           {{ element.title }}
@@ -48,6 +57,10 @@ const props = defineProps({
     required: true,
   },
   compact: {
+    type: Boolean,
+    default: false,
+  },
+  unsorted: {
     type: Boolean,
     default: false,
   },
@@ -100,6 +113,25 @@ const plainDescription = computed(() => {
 
 .sorting-card:active {
   cursor: grabbing;
+}
+
+.sorting-card--unsorted {
+  background: #fff;
+  border-color: #9dc9d9;
+  border-left: 4px solid #08729c;
+}
+
+.sorting-card--unsorted:hover {
+  border-color: #08729c;
+}
+
+.sorting-card__status {
+  display: inline-block;
+  margin-bottom: 4px;
+  color: #075985;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .sorting-card--compact {

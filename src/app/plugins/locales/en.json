@@ -2792,6 +2792,7 @@
     "cards": "Cards",
     "cards_low": "cards",
     "unsortedCards": "Unsorted Cards",
+    "unsortedStatus": "Not sorted yet",
     "dropCardsHere": "Drop cards here",
     "allCardsSorted": "All cards have been sorted",
     "card": "Card",
