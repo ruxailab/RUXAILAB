@@ -89,22 +89,30 @@
               @pointerup="stopCutDrag"
               @pointercancel="stopCutDrag"
             >
-              <g v-for="(link, index) in layout.links" :key="`link-${index}`">
+              <g
+                v-for="(link, index) in coloredLayout.links"
+                :key="`link-${index}`"
+              >
                 <line
                   :x1="link.x1"
                   :y1="link.y1"
                   :x2="link.x2"
                   :y2="link.y2"
                   class="dendrogram-link"
+                  :style="{ stroke: link.color }"
                 />
               </g>
 
-              <g v-for="(node, index) in layout.nodes" :key="`node-${index}`">
+              <g
+                v-for="(node, index) in coloredLayout.nodes"
+                :key="`node-${index}`"
+              >
                 <circle
                   :cx="node.x"
                   :cy="node.y"
                   r="4"
                   class="dendrogram-node"
+                  :style="{ fill: node.color }"
                 />
                 <title>{{ node.label }}</title>
                 <text
@@ -209,6 +217,7 @@
                 v-for="(group, index) in selectedGroups"
                 :key="`group-${index}`"
                 class="group-summary"
+                :style="{ borderLeftColor: group.color }"
               >
                 <div
                   class="d-flex align-center justify-space-between ga-2 mb-1"
@@ -279,6 +288,8 @@ import {
   buildDendrogramTree,
   cutDendrogramTree,
   layoutDendrogram,
+  colorDendrogramLayout,
+  getDendrogramGroupColor,
   UNASSIGNED_KEY,
 } from '../../utils/cardSortingAnalytics'
 import { showError } from '@/shared/utils/toast'
@@ -354,7 +365,7 @@ const cutTooltipStyle = computed(() => ({
 
 const selectedGroups = computed(() =>
   cutDendrogramTree(tree.value, cutPosition.value * layout.value.maxHeight).map(
-    (cards) => {
+    (cards, index) => {
       const cardSet = new Set(cards)
       const categoryCounts = new Map()
 
@@ -374,12 +385,21 @@ const selectedGroups = computed(() =>
 
       return {
         cards,
+        color: getDendrogramGroupColor(index),
         categoryNames: Array.from(categoryCounts, ([name, count]) => ({
           name,
           count,
         })).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
       }
     },
+  ),
+)
+
+const coloredLayout = computed(() =>
+  colorDendrogramLayout(
+    layout.value,
+    selectedGroups.value.map((group) => group.cards),
+    cutLineX.value,
   ),
 )
 
@@ -557,6 +577,12 @@ const exportAsLatex = () => {
   try {
     const scale = 0.01
     const y = (value) => -value * scale
+    const latexColor = (color) => {
+      const channels = color
+        .match(/[0-9a-f]{2}/gi)
+        .map((value) => parseInt(value, 16))
+      return `{rgb,255:red,${channels[0]};green,${channels[1]};blue,${channels[2]}}`
+    }
     const lines = [
       '\\documentclass[tikz,border=8pt]{standalone}',
       '\\begin{document}',
@@ -566,15 +592,15 @@ const exportAsLatex = () => {
         ');',
     ]
 
-    layout.value.links.forEach((link) => {
+    coloredLayout.value.links.forEach((link) => {
       lines.push(
-        `\\draw[draw={rgb,255:red,252;green,163;blue,38},line width=1.5pt] (${link.x1 * scale},${y(link.y1)}) -- (${link.x2 * scale},${y(link.y2)});`,
+        `\\draw[draw=${latexColor(link.color)},line width=1.5pt] (${link.x1 * scale},${y(link.y1)}) -- (${link.x2 * scale},${y(link.y2)});`,
       )
     })
 
-    layout.value.nodes.forEach((node) => {
+    coloredLayout.value.nodes.forEach((node) => {
       lines.push(
-        `\\fill[draw={rgb,255:red,245;green,124;blue,0},fill={rgb,255:red,245;green,124;blue,0}] (${node.x * scale},${y(node.y)}) circle[radius=2pt];`,
+        `\\fill[fill=${latexColor(node.color)}] (${node.x * scale},${y(node.y)}) circle[radius=2pt];`,
       )
       lines.push(
         `\\node[anchor=east,text={rgb,255:red,55;green,65;blue,81}] at (${(node.x - 12) * scale},${y(node.y)}) {${escapeLatex(truncateLabel(node.label))}};`,
@@ -641,13 +667,8 @@ const exportAsLatex = () => {
 }
 
 .dendrogram-link {
-  stroke: #fca326;
   stroke-width: 2;
   fill: none;
-}
-
-.dendrogram-node {
-  fill: #f57c00;
 }
 
 .dendrogram-label {
@@ -701,6 +722,7 @@ const exportAsLatex = () => {
 .group-summary {
   padding: 6px 8px;
   border: 1px solid #e5e7eb;
+  border-left: 4px solid;
   border-radius: 8px;
   background: #fff;
 }

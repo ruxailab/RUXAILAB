@@ -334,6 +334,80 @@ export function layoutDendrogram(tree, options = {}) {
   }
 }
 
+const DENDROGRAM_GROUP_COLORS = [
+  '#006b9c',
+  '#a33b00',
+  '#24733b',
+  '#973c80',
+  '#855a00',
+  '#5147a1',
+  '#00746f',
+  '#a23346',
+]
+
+export function getDendrogramGroupColor(index) {
+  if (index < DENDROGRAM_GROUP_COLORS.length) {
+    return DENDROGRAM_GROUP_COLORS[index]
+  }
+
+  const hue = (index * 137.508) % 360
+  const chroma = 0.6
+  const intermediate = chroma * (1 - Math.abs(((hue / 60) % 2) - 1))
+  const channels =
+    hue < 60
+      ? [chroma, intermediate, 0]
+      : hue < 120
+        ? [intermediate, chroma, 0]
+        : hue < 180
+          ? [0, chroma, intermediate]
+          : hue < 240
+            ? [0, intermediate, chroma]
+            : hue < 300
+              ? [intermediate, 0, chroma]
+              : [chroma, 0, intermediate]
+  return `#${channels
+    .map((channel) =>
+      Math.round(channel * 255)
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')}`
+}
+
+export function colorDendrogramLayout(layout, groups, cutLineX) {
+  const neutralColor = '#767676'
+  let leafIndex = 0
+  // The cut and layout both traverse leaves in depth-first order.
+  const ranges = groups.map((group, index) => {
+    const first = leafIndex
+    leafIndex += group.length
+    return {
+      firstY: layout.nodes[first].y,
+      lastY: layout.nodes[leafIndex - 1].y,
+      color: getDendrogramGroupColor(index),
+    }
+  })
+  const colorAt = (y) =>
+    ranges.find((range) => y >= range.firstY && y <= range.lastY)?.color
+
+  const nodes = layout.nodes.map((node) => ({
+    ...node,
+    color: colorAt(node.y),
+  }))
+  const links = layout.links.flatMap((link) => {
+    const color = colorAt(link.y1)
+    if (link.type === 'h' && link.x1 < cutLineX && link.x2 > cutLineX) {
+      return [
+        { ...link, x2: cutLineX, color },
+        { ...link, x1: cutLineX, color: neutralColor },
+      ]
+    }
+    return [{ ...link, color: link.x2 <= cutLineX ? color : neutralColor }]
+  })
+
+  return { nodes, links }
+}
+
 /**
  * Format duration in seconds to a human-readable string (e.g., "45s", "2m 30s", "1h 5m").
  */
