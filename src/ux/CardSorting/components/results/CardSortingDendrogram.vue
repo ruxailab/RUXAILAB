@@ -1,7 +1,10 @@
 <template>
   <v-row class="mb-4">
     <v-col cols="12">
-      <v-card class="pa-4 elevation-4 rounded-xl chart-card">
+      <v-card
+        ref="fullscreenCard"
+        class="pa-4 elevation-4 rounded-xl chart-card"
+      >
         <div class="mb-4">
           <div class="d-flex align-center justify-space-between ga-2 mb-1">
             <h3 class="text-h5 font-weight-bold text-on-surface">
@@ -10,6 +13,7 @@
             <div class="d-flex align-center">
               <v-tooltip
                 :text="$t('CardSorting.dendrogramInteractionHelp')"
+                :attach="isFullscreen ? fullscreenContainer : undefined"
                 location="top"
                 max-width="320"
               >
@@ -24,7 +28,23 @@
                   />
                 </template>
               </v-tooltip>
-              <v-menu>
+              <v-btn
+                v-if="hasData"
+                :icon="isFullscreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'"
+                variant="text"
+                density="comfortable"
+                size="small"
+                :aria-label="
+                  $t(
+                    isFullscreen
+                      ? 'CardSorting.exitFullscreen'
+                      : 'CardSorting.enterFullscreen',
+                  )
+                "
+                data-test="dendrogram-fullscreen"
+                @click="toggleFullscreen"
+              />
+              <v-menu :attach="isFullscreen ? fullscreenContainer : undefined">
                 <template #activator="{ props: menuProps }">
                   <v-btn
                     v-bind="menuProps"
@@ -59,11 +79,13 @@
           <v-icon size="48" color="grey-lighten-1">
             mdi-file-tree-outline
           </v-icon>
-          <div class="text-body-2 mt-2">{{ $t('CardSorting.noAnswers') }}</div>
+          <div class="text-body-2 mt-2">
+            {{ $t('CardSorting.noAnswers') }}
+          </div>
         </div>
 
         <div v-else class="dendrogram-results">
-          <div class="dendrogram-chart">
+          <div ref="dendrogramChart" class="dendrogram-chart">
             <div v-if="showCutTooltip" class="cut-line-tooltip" role="tooltip">
               {{
                 $t('CardSorting.cutSimilarityValue', {
@@ -306,7 +328,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   getCardTitles,
@@ -341,6 +363,11 @@ const gridLabelY = 22
 const gridTopY = 32
 
 const dendrogramSvg = ref(null)
+const dendrogramChart = ref(null)
+const fullscreenCard = ref(null)
+const fullscreenContainer = computed(() => fullscreenCard.value?.$el)
+const isFullscreen = ref(false)
+const fullscreenScale = ref(HEIGHT_SCALE)
 const cutPosition = ref(0.5)
 const isDraggingCutLine = ref(false)
 const isCutLineHovered = ref(false)
@@ -362,7 +389,7 @@ const tree = computed(() =>
 const layout = computed(() =>
   layoutDendrogram(tree.value, {
     labelWidth: LABEL_WIDTH,
-    heightScale: HEIGHT_SCALE,
+    heightScale: isFullscreen.value ? fullscreenScale.value : HEIGHT_SCALE,
     leafGap: 36,
     paddingTop: 64,
     paddingBottom: 56,
@@ -371,6 +398,42 @@ const layout = computed(() =>
     maxDistance: 1,
   }),
 )
+
+const updateFullscreenScale = () => {
+  if (!isFullscreen.value || !dendrogramChart.value) return
+  fullscreenScale.value = Math.max(
+    HEIGHT_SCALE,
+    dendrogramChart.value.clientWidth - LABEL_WIDTH - 72,
+  )
+}
+
+const onFullscreenChange = async () => {
+  isFullscreen.value = document.fullscreenElement === fullscreenContainer.value
+  await nextTick()
+  updateFullscreenScale()
+}
+
+const toggleFullscreen = async () => {
+  try {
+    if (isFullscreen.value) {
+      await document.exitFullscreen()
+    } else {
+      await fullscreenContainer.value.requestFullscreen()
+    }
+  } catch {
+    showError('CardSorting.fullscreenError')
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', onFullscreenChange)
+  window.addEventListener('resize', updateFullscreenScale)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', onFullscreenChange)
+  window.removeEventListener('resize', updateFullscreenScale)
+})
 
 const axisY = computed(() => {
   if (!layout.value.nodes.length) return 0
@@ -645,6 +708,21 @@ const exportAsLatex = () => {
 </script>
 
 <style scoped>
+.chart-card:fullscreen {
+  overflow: auto;
+  background: #fff;
+  min-height: 100%;
+}
+
+.chart-card:fullscreen .dendrogram-results {
+  grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr);
+}
+
+.chart-card:fullscreen .dendrogram-scroll,
+.chart-card:fullscreen .dendrogram-groups {
+  max-height: max(160px, calc(100vh - 180px));
+}
+
 .dendrogram-results {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -768,6 +846,10 @@ const exportAsLatex = () => {
 
 @media (max-width: 959px) {
   .dendrogram-results {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .chart-card:fullscreen .dendrogram-results {
     grid-template-columns: minmax(0, 1fr);
   }
 }
