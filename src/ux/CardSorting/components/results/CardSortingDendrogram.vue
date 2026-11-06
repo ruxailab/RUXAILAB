@@ -244,6 +244,44 @@
           </div>
 
           <aside class="dendrogram-groups">
+            <section class="dendrogram-tools mb-3">
+              <h4 class="text-subtitle-2 font-weight-bold mb-1">
+                {{ $t('CardSorting.dendrogramTools') }}
+              </h4>
+              <p class="text-caption text-medium-emphasis mb-2">
+                {{ $t('CardSorting.dendrogramToolsTemporary') }}
+              </p>
+              <label class="dendrogram-tools__checkbox">
+                <input v-model="mergeCategoryCase" type="checkbox" />
+                <span>{{ $t('CardSorting.mergeCategoryCase') }}</span>
+              </label>
+              <label class="dendrogram-tools__threshold">
+                <span>{{ $t('CardSorting.minimumCategoryParticipants') }}</span>
+                <input
+                  :value="minimumCategoryInput"
+                  type="number"
+                  min="1"
+                  step="1"
+                  :aria-invalid="!minimumCategoryValid"
+                  :aria-describedby="
+                    !minimumCategoryValid ? minimumErrorId : undefined
+                  "
+                  data-test="category-minimum"
+                  @input="updateMinimumCategory"
+                />
+              </label>
+              <p class="text-caption text-medium-emphasis mt-1 mb-0">
+                {{ $t('CardSorting.groupOrderingHint') }}
+              </p>
+              <p
+                v-if="!minimumCategoryValid"
+                :id="minimumErrorId"
+                class="dendrogram-tools__error"
+                role="alert"
+              >
+                {{ $t('CardSorting.minimumCategoryError') }}
+              </p>
+            </section>
             <div class="d-flex align-center justify-space-between mb-1">
               <h4 class="text-subtitle-2 font-weight-bold">
                 {{ $t('CardSorting.groupsForSelection') }}
@@ -262,17 +300,55 @@
 
             <div class="groups-grid">
               <div
-                v-for="(group, index) in selectedGroups"
-                :key="`group-${index}`"
+                v-for="group in displayedGroups"
+                :key="group.key"
                 class="group-summary"
                 :style="{ borderLeftColor: group.color }"
               >
                 <div
                   class="d-flex align-center justify-space-between ga-2 mb-1"
                 >
-                  <span class="text-body-2 font-weight-medium">
-                    {{ $t('CardSorting.groupNumber', { number: index + 1 }) }}
-                  </span>
+                  <input
+                    v-if="editingGroupKey === group.key"
+                    ref="groupNameInput"
+                    v-model="groupNameDraft"
+                    class="group-name-input text-body-2"
+                    :placeholder="$t('CardSorting.groupNamePlaceholder')"
+                    :aria-label="
+                      $t('CardSorting.groupNameForNumber', {
+                        number: group.number,
+                      })
+                    "
+                    data-test="group-name"
+                    type="text"
+                    @keydown.enter.prevent="finishGroupName"
+                    @keydown.esc.stop.prevent="cancelGroupName"
+                    @blur="finishGroupName"
+                  />
+                  <button
+                    v-else
+                    type="button"
+                    class="group-name-button text-body-2 font-weight-medium"
+                    :aria-label="
+                      $t('CardSorting.editGroupName', {
+                        name:
+                          groupNames[group.key] ||
+                          $t('CardSorting.groupNumber', {
+                            number: group.number,
+                          }),
+                      })
+                    "
+                    data-test="edit-group-name"
+                    @click="startGroupName(group.key)"
+                  >
+                    <span>{{
+                      groupNames[group.key] ||
+                      $t('CardSorting.groupNumber', { number: group.number })
+                    }}</span>
+                    <v-icon size="16" aria-hidden="true"
+                      >mdi-pencil-outline</v-icon
+                    >
+                  </button>
                   <span class="text-caption text-medium-emphasis">
                     {{
                       $t('CardSorting.cardsInGroup', {
@@ -321,6 +397,12 @@
                     }}
                   </v-chip>
                 </div>
+                <p
+                  v-else-if="group.hasCategoryNames"
+                  class="text-caption text-medium-emphasis mb-0"
+                >
+                  {{ $t('CardSorting.noCategoriesAtMinimum') }}
+                </p>
                 <p v-else class="text-caption text-medium-emphasis mb-0">
                   {{ $t('CardSorting.noCategoryNames') }}
                 </p>
@@ -334,7 +416,15 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import {
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  useId,
+  watch,
+} from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   getCardTitles,
@@ -378,6 +468,57 @@ const cutPosition = ref(0.5)
 const isDraggingCutLine = ref(false)
 const isCutLineHovered = ref(false)
 const isCutLineFocused = ref(false)
+const mergeCategoryCase = ref(false)
+const minimumCategoryInput = ref('1')
+const minimumCategory = ref(1)
+const groupNames = ref({})
+const editingGroupKey = ref(null)
+const groupNameDraft = ref('')
+const groupNameInput = ref([])
+const minimumErrorId = useId()
+
+const minimumCategoryValid = computed(
+  () =>
+    /^[1-9]\d*$/.test(minimumCategoryInput.value) &&
+    Number.isSafeInteger(Number(minimumCategoryInput.value)),
+)
+
+const updateMinimumCategory = (event) => {
+  minimumCategoryInput.value = event.target.value
+  if (minimumCategoryValid.value) {
+    minimumCategory.value = Number(minimumCategoryInput.value)
+  }
+}
+
+const startGroupName = async (key) => {
+  editingGroupKey.value = key
+  groupNameDraft.value = groupNames.value[key] || ''
+  await nextTick()
+  groupNameInput.value[0]?.focus()
+}
+
+const finishGroupName = () => {
+  if (editingGroupKey.value === null) return
+  const name = groupNameDraft.value.trim()
+  if (name) groupNames.value[editingGroupKey.value] = name
+  else delete groupNames.value[editingGroupKey.value]
+  editingGroupKey.value = null
+}
+
+const cancelGroupName = () => {
+  editingGroupKey.value = null
+}
+
+watch(
+  () => props.test,
+  () => {
+    groupNames.value = {}
+    editingGroupKey.value = null
+    mergeCategoryCase.value = false
+    minimumCategoryInput.value = '1'
+    minimumCategory.value = 1
+  },
+)
 
 const cardTitles = computed(() => getCardTitles(props.test))
 const submittedAnswers = computed(() => getSubmittedAnswers(props.answers))
@@ -465,30 +606,55 @@ const selectedGroups = computed(() =>
       const categoryCounts = new Map()
 
       submittedAnswers.value.forEach((answer) => {
+        const seen = new Set()
         Object.entries(answer?.sorting || {}).forEach(
           ([category, sortedCards]) => {
             if (category === UNASSIGNED_KEY || !Array.isArray(sortedCards))
               return
             if (!sortedCards.some((card) => cardSet.has(card))) return
-            categoryCounts.set(
-              category,
-              (categoryCounts.get(category) || 0) + 1,
-            )
+            const key = mergeCategoryCase.value
+              ? category.toLowerCase()
+              : category
+            if (seen.has(key)) return
+            seen.add(key)
+            const entry = categoryCounts.get(key)
+            if (entry) entry.count += 1
+            else categoryCounts.set(key, { name: category, count: 1 })
           },
         )
       })
 
       return {
         cards,
+        number: index + 1,
+        key: JSON.stringify([...cards].sort()),
         color: getDendrogramGroupColor(index),
-        categoryNames: Array.from(categoryCounts, ([name, count]) => ({
-          name,
-          count,
-        })).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+        hasCategoryNames: categoryCounts.size > 0,
+        categoryNames: Array.from(categoryCounts.values())
+          .filter((category) => category.count >= minimumCategory.value)
+          .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
       }
     },
   ),
 )
+
+const displayedGroups = computed(() => {
+  const matching = []
+  const other = []
+  selectedGroups.value.forEach((group) => {
+    ;(group.categoryNames.length ? matching : other).push(group)
+  })
+  return [...matching, ...other]
+})
+
+watch(selectedGroups, (groups) => {
+  if (
+    editingGroupKey.value !== null &&
+    !groups.some((group) => group.key === editingGroupKey.value)
+  ) {
+    finishGroupName()
+  }
+})
 
 const coloredLayout = computed(() =>
   colorDendrogramLayout(
@@ -829,6 +995,65 @@ const exportAsLatex = () => {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background: #fafafa;
+}
+
+.dendrogram-tools {
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.dendrogram-tools__checkbox,
+.dendrogram-tools__threshold {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.dendrogram-tools__threshold {
+  margin-top: 8px;
+  justify-content: space-between;
+}
+
+.dendrogram-tools__threshold input,
+.group-name-input {
+  min-width: 0;
+  padding: 4px 6px;
+  border: 1px solid #9ca3af;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.dendrogram-tools__threshold input {
+  width: 65px;
+}
+
+.dendrogram-tools__error {
+  margin: 4px 0 0;
+  color: #b3261e;
+  font-size: 0.75rem;
+}
+
+.group-name-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+  color: #00213f;
+  cursor: pointer;
+}
+
+.group-name-button:focus-visible {
+  outline: 2px solid #075985;
+  outline-offset: 2px;
+}
+
+.group-name-input {
+  width: 100%;
 }
 
 .groups-grid {
