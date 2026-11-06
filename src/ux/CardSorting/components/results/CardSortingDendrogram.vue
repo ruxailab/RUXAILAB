@@ -89,6 +89,33 @@
               @pointerup="stopCutDrag"
               @pointercancel="stopCutDrag"
             >
+              <g v-if="layout.maxHeight > 0" class="dendrogram-grid">
+                <text
+                  :x="layout.plotOriginX - 12"
+                  :y="gridLabelY"
+                  text-anchor="end"
+                  class="dendrogram-grid-label"
+                >
+                  {{ $t('CardSorting.distanceScale') }}
+                </text>
+                <g v-for="tick in gridTicks" :key="tick">
+                  <line
+                    :x1="layout.plotOriginX + tick * layout.heightScale"
+                    :x2="layout.plotOriginX + tick * layout.heightScale"
+                    :y1="gridTopY"
+                    :y2="axisY - 16"
+                    class="dendrogram-grid-line"
+                  />
+                  <text
+                    :x="layout.plotOriginX + tick * layout.heightScale"
+                    :y="gridLabelY"
+                    text-anchor="middle"
+                    class="dendrogram-grid-tick"
+                  >
+                    {{ tick }}
+                  </text>
+                </g>
+              </g>
               <g
                 v-for="(link, index) in coloredLayout.links"
                 :key="`link-${index}`"
@@ -310,6 +337,9 @@ const { t } = useI18n()
 const LABEL_WIDTH = 180
 const HEIGHT_SCALE = 360
 const MAX_LABEL_CHARS = 22
+const gridTicks = [0, 0.25, 0.5, 0.75, 1]
+const gridLabelY = 22
+const gridTopY = 32
 
 const dendrogramSvg = ref(null)
 const dendrogramScroll = ref(null)
@@ -336,10 +366,11 @@ const layout = computed(() =>
     labelWidth: LABEL_WIDTH,
     heightScale: HEIGHT_SCALE,
     leafGap: 36,
-    paddingTop: 20,
+    paddingTop: 64,
     paddingBottom: 56,
     paddingLeft: 16,
     paddingRight: 40,
+    maxDistance: 1,
   }),
 )
 
@@ -592,6 +623,20 @@ const exportAsLatex = () => {
         ');',
     ]
 
+    if (layout.value.maxHeight > 0) {
+      lines.push(
+        `\\node[anchor=east,text=gray] at (${(layout.value.plotOriginX - 12) * scale},${y(gridLabelY)}) {${escapeLatex(t('CardSorting.distanceScale'))}};`,
+      )
+      gridTicks.forEach((tick) => {
+        const x =
+          (layout.value.plotOriginX + tick * layout.value.heightScale) * scale
+        lines.push(
+          `\\draw[draw={rgb,255:red,210;green,215;blue,220},line width=0.5pt] (${x},${y(gridTopY)}) -- (${x},${y(axisY.value - 16)});`,
+          `\\node[anchor=base,text=gray] at (${x},${y(gridLabelY)}) {${tick}};`,
+        )
+      })
+    }
+
     coloredLayout.value.links.forEach((link) => {
       lines.push(
         `\\draw[draw=${latexColor(link.color)},line width=1.5pt] (${link.x1 * scale},${y(link.y1)}) -- (${link.x2 * scale},${y(link.y2)});`,
@@ -669,6 +714,18 @@ const exportAsLatex = () => {
 .dendrogram-link {
   stroke-width: 2;
   fill: none;
+}
+
+.dendrogram-grid-line {
+  stroke: #d2d7dc;
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+.dendrogram-grid-label,
+.dendrogram-grid-tick {
+  fill: #59636e;
+  font-size: 11px;
 }
 
 .dendrogram-label {

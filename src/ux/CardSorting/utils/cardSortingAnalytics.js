@@ -238,6 +238,7 @@ export function layoutDendrogram(tree, options = {}) {
     paddingBottom = 48,
     paddingLeft = 12,
     paddingRight = 32,
+    maxDistance,
   } = options
 
   if (!tree) {
@@ -268,7 +269,7 @@ export function layoutDendrogram(tree, options = {}) {
     leaf._y = paddingTop + i * leafGap
   })
 
-  const maxHeight = Math.max(tree.height || 0, 0.0001)
+  const maxHeight = Math.max(maxDistance ?? tree.height ?? 0, 0.0001)
   const plotOriginX = paddingLeft + labelWidth
 
   const assignCoords = (node) => {

@@ -7,7 +7,11 @@ jest.mock('vue-i18n', () => ({
 
 jest.mock('@/shared/utils/toast', () => ({ showError: jest.fn() }))
 
-const mountDendrogram = () =>
+const mountDendrogram = (
+  answers = [
+    { submitted: true, sorting: { first: ['A', 'B'], second: ['C'] } },
+  ],
+) =>
   mount(CardSortingDendrogram, {
     props: {
       test: {
@@ -17,9 +21,7 @@ const mountDendrogram = () =>
           },
         },
       },
-      answers: [
-        { submitted: true, sorting: { first: ['A', 'B'], second: ['C'] } },
-      ],
+      answers,
     },
     global: {
       mocks: { $t: (key) => key },
@@ -43,6 +45,82 @@ const mountDendrogram = () =>
   })
 
 describe('CardSortingDendrogram colors', () => {
+  it('renders five distance grid lines behind the branches', () => {
+    const wrapper = mountDendrogram()
+    const grid = wrapper.find('.dendrogram-grid')
+    const ticks = grid.findAll('.dendrogram-grid-tick')
+    const lines = grid.findAll('.dendrogram-grid-line')
+
+    expect(ticks.map((tick) => tick.text())).toEqual([
+      '0',
+      '0.25',
+      '0.5',
+      '0.75',
+      '1',
+    ])
+    expect(lines.map((line) => Number(line.attributes('x1')))).toEqual([
+      196, 286, 376, 466, 556,
+    ])
+    expect(
+      lines.every(
+        (line, index) =>
+          line.attributes('x1') === line.attributes('x2') &&
+          line.attributes('x1') === ticks[index].attributes('x'),
+      ),
+    ).toBe(true)
+    expect(
+      lines.every(
+        (line) => Number(line.attributes('y1')) < Number(line.attributes('y2')),
+      ),
+    ).toBe(true)
+    expect(grid.text()).toContain('CardSorting.distanceScale')
+    expect(
+      grid.element.compareDocumentPosition(
+        wrapper.find('.dendrogram-link').element,
+      ) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+  })
+
+  it('uses the absolute distance scale even when the largest merge is below one', async () => {
+    const wrapper = mountDendrogram([
+      { submitted: true, sorting: { together: ['A', 'B', 'C'] } },
+      { submitted: true, sorting: { first: ['A', 'B'], second: ['C'] } },
+    ])
+    const origin = Number(
+      wrapper.findAll('.dendrogram-grid-line')[0].attributes('x1'),
+    )
+    const midpoint = Number(
+      wrapper.findAll('.dendrogram-grid-line')[2].attributes('x1'),
+    )
+    const root = wrapper
+      .findAll('.dendrogram-link')
+      .find(
+        (line) =>
+          Number(line.attributes('x1')) === midpoint &&
+          Number(line.attributes('x2')) === midpoint,
+      )
+    expect(root.exists()).toBe(true)
+    expect(wrapper.findAll('.group-summary')).toHaveLength(1)
+    expect(Number(wrapper.find('[role="slider"]').attributes('x1'))).toBe(
+      midpoint,
+    )
+    await wrapper.find('[role="slider"]').trigger('keydown.left')
+    expect(wrapper.findAll('.group-summary')).toHaveLength(2)
+    expect(
+      Number(wrapper.find('[role="slider"]').attributes('aria-valuenow')),
+    ).toBe(52)
+    expect(origin).toBe(196)
+  })
+
+  it('shows the fixed grid for zero-distance merges and no grid without data', () => {
+    const wrapper = mountDendrogram([
+      { submitted: true, sorting: { together: ['A', 'B', 'C'] } },
+    ])
+    expect(wrapper.findAll('.dendrogram-grid-line')).toHaveLength(5)
+    expect(wrapper.findAll('.group-summary')).toHaveLength(1)
+    expect(mountDendrogram([]).find('.dendrogram-grid').exists()).toBe(false)
+  })
+
   it('matches leaves to group borders and updates when the cut changes', async () => {
     const wrapper = mountDendrogram()
     const colors = () =>
@@ -100,6 +178,11 @@ describe('CardSortingDendrogram colors', () => {
       expect(text).toContain('rgb,255:red,0;green,107;blue,156')
       expect(text).toContain('rgb,255:red,163;green,59;blue,0')
       expect(text).toContain('rgb,255:red,118;green,118;blue,118')
+      expect(text.match(/red,210;green,215;blue,220/g)).toHaveLength(5)
+      expect(text).toContain('CardSorting.distanceScale')
+      for (const tick of ['0', '0.25', '0.5', '0.75', '1']) {
+        expect(text).toContain(`{${tick}};`)
+      }
     } finally {
       click.mockRestore()
       URL.createObjectURL = originalCreate
