@@ -1,6 +1,7 @@
 import {
   firstOpenTaskIndex,
   taskDestination,
+  welcomeStartStage,
 } from '@/ux/UserTest/utils/unmoderatedNavigation'
 
 describe('unmoderated task navigation', () => {
@@ -87,5 +88,65 @@ describe('unmoderated task navigation', () => {
         postTestCompleted: false,
       }),
     ).toEqual({ kind: 'finish', globalIndex: 7 })
+  })
+})
+
+describe('welcome start for a returning participant', () => {
+  const study = { hasPreTest: false, hasEyeTracking: false }
+
+  it('asks a new participant for consent', () => {
+    expect(welcomeStartStage({ answer: {}, ...study })).toBe('consent')
+    expect(welcomeStartStage({ answer: undefined, ...study })).toBe('consent')
+  })
+
+  it('asks again when the consent was not accepted', () => {
+    expect(
+      welcomeStartStage({ answer: { consentCompleted: false }, ...study }),
+    ).toBe('consent')
+  })
+
+  it('continues with the tasks once the consent was accepted', () => {
+    expect(
+      welcomeStartStage({ answer: { consentCompleted: true }, ...study }),
+    ).toBe('tasks')
+  })
+
+  it('opens a pre-test that is not done yet', () => {
+    expect(
+      welcomeStartStage({
+        answer: { consentCompleted: true, preTestCompleted: false },
+        hasPreTest: true,
+        hasEyeTracking: true,
+      }),
+    ).toBe('preTest')
+  })
+
+  it('skips a finished pre-test', () => {
+    expect(
+      welcomeStartStage({
+        answer: { consentCompleted: true, preTestCompleted: true },
+        hasPreTest: true,
+        hasEyeTracking: false,
+      }),
+    ).toBe('tasks')
+  })
+
+  it('calibrates the eye tracking again before the tasks', () => {
+    expect(
+      welcomeStartStage({
+        answer: { consentCompleted: true, preTestCompleted: true },
+        hasPreTest: true,
+        hasEyeTracking: true,
+      }),
+    ).toBe('calibration')
+  })
+
+  it('leaves a submitted answer on the consent step as before', () => {
+    expect(
+      welcomeStartStage({
+        answer: { consentCompleted: true, submitted: true },
+        ...study,
+      }),
+    ).toBe('consent')
   })
 })
