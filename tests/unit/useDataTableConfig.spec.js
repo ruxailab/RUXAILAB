@@ -39,6 +39,24 @@ describe('useDataTableConfig', () => {
     )
   })
 
+  it('sorts session owner and created columns by the values shown', () => {
+    const { headers } = useDataTableConfig(ref('sessions'), (key) => key)
+    const ownerHeader = headers.value.find(({ key }) => key === 'owner')
+    const createdHeader = headers.value.find(
+      ({ key }) => key === 'creationDate',
+    )
+    const createdAt = new Date('2026-10-02T09:30:00.000Z')
+    const session = {
+      id: 'session-1',
+      title: 'Session',
+      createdAt: { toMillis: () => createdAt.getTime() },
+      study: { testAdmin: { email: 'owner@example.com' } },
+    }
+
+    expect(ownerHeader.value(session)).toBe('owner@example.com')
+    expect(createdHeader.value(session)).toBe(createdAt.getTime())
+  })
+
   it('keeps study rows keyed by their document id', () => {
     const { itemValue } = useDataTableConfig(ref('myTests'), (key) => key)
 
