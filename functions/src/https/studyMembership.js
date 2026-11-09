@@ -936,6 +936,9 @@ export const manageStudyMembership = functions.onCall({
         // joins the member's study list (`myTests`), the same place the
         // studies the member owns are listed. `myAnswers` keeps the
         // participation records and must not carry the membership.
+        if (!actorSnap.exists) {
+          throw error('failed-precondition', 'User profile not found')
+        }
         transaction.update(
           actorRef,
           buildStudyMembershipPatch(

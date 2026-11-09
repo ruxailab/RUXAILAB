@@ -12,6 +12,9 @@ export const isAcceptedInviteRetry = (invite, uid, authenticatedUid) =>
 export const resolveInvite = functions.onCall({
   handler: async (data) => {
     const { token, uid } = data.data || data
+    const authenticatedUid = data.auth?.uid
+    const actorId = authenticatedUid || uid
+    let callerEmail = data.auth?.token?.email?.toLowerCase().trim()
 
     if (!token) {
       throw new functions.https.HttpsError('invalid-argument', 'Missing token')
@@ -38,7 +41,11 @@ export const resolveInvite = functions.onCall({
 
     // The same account may retry if resolving the token succeeded but the
     // subsequent study-membership update failed. Other accounts cannot reuse it.
-    const acceptedRetry = isAcceptedInviteRetry(invite, uid, data.auth?.uid)
+    const acceptedRetry = isAcceptedInviteRetry(
+      invite,
+      actorId,
+      authenticatedUid,
+    )
     if (!invite.isPublic && invite.acceptedAt && !acceptedRetry) {
       throw new functions.https.HttpsError(
         'failed-precondition',
@@ -53,27 +60,56 @@ export const resolveInvite = functions.onCall({
       )
     }
 
-    if (!invite.isPublic && invite.requiredLogin) {
-      const userSnap = await admin
-        .firestore()
-        .collection('users')
-        .doc(uid)
-        .get()
-
-      if (!userSnap.exists) {
-        throw new functions.https.HttpsError('not-found', 'User not found')
-      }
-
-      const user = userSnap.data()
-
+    if (!invite.isPublic) {
       const inviteEmail = invite.email?.toLowerCase().trim()
-      const userEmail = user.email?.toLowerCase().trim()
+      const requiresLogin =
+        invite.requiredLogin || invite.membershipType === 'cooperator'
 
-      if (!userEmail || inviteEmail !== userEmail) {
-        throw new functions.https.HttpsError(
-          'permission-denied',
-          'This invitation is not assigned to this user',
-        )
+      if (requiresLogin) {
+        if (!actorId) {
+          throw new functions.https.HttpsError(
+            'unauthenticated',
+            'Authentication is required',
+          )
+        }
+
+        const userSnap = await admin
+          .firestore()
+          .collection('users')
+          .doc(actorId)
+          .get()
+
+        if (!userSnap.exists) {
+          throw new functions.https.HttpsError('not-found', 'User not found')
+        }
+
+        const user = userSnap.data()
+        callerEmail = user.email?.toLowerCase().trim() || callerEmail
+
+        if (!callerEmail || inviteEmail !== callerEmail) {
+          throw new functions.https.HttpsError(
+            'permission-denied',
+            'This invitation is not assigned to this user',
+          )
+        }
+      } else {
+        if (actorId && !callerEmail) {
+          const userSnap = await admin
+            .firestore()
+            .collection('users')
+            .doc(actorId)
+            .get()
+          if (userSnap.exists) {
+            callerEmail = userSnap.data()?.email?.toLowerCase().trim()
+          }
+        }
+
+        if (callerEmail && inviteEmail && callerEmail !== inviteEmail) {
+          throw new functions.https.HttpsError(
+            'permission-denied',
+            'This invitation is not assigned to this user',
+          )
+        }
       }
     }
 
@@ -81,14 +117,14 @@ export const resolveInvite = functions.onCall({
     if (!invite.isPublic && !acceptedRetry) {
       await ref.update({
         acceptedAt: admin.firestore.FieldValue.serverTimestamp(),
-        acceptedBy: uid,
+        acceptedBy: actorId || null,
       })
     }
 
     // if the invite is public, save all users that accepted it, and increment usage count
-    if (invite.isPublic && uid) {
+    if (invite.isPublic && actorId) {
       await ref.update({
-        acceptedUsers: admin.firestore.FieldValue.arrayUnion(uid),
+        acceptedUsers: admin.firestore.FieldValue.arrayUnion(actorId),
         usageCount: admin.firestore.FieldValue.increment(1),
         lastAcceptedAt: admin.firestore.FieldValue.serverTimestamp(),
       })
