@@ -40,7 +40,7 @@
           <v-text-field
             v-model="localTask.title"
             :label="nameLabel"
-            :rules="requiredRule"
+            :rules="nameRules"
             :placeholder="namePlaceholder"
             variant="outlined"
             density="comfortable"
@@ -170,6 +170,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  existingTitles: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const emit = defineEmits(['update:dialog', 'save'])
@@ -189,11 +193,29 @@ const localTask = ref({
   image: '',
 })
 
-const requiredRule = [
-  (v) => !!String(v || '').trim() || t('CardSorting.nameRequired'),
-]
-
 const isCategory = computed(() => props.type === 'category')
+
+const normalizeTitle = (value) =>
+  String(value || '')
+    .trim()
+    .toLowerCase()
+
+const nameRules = computed(() => {
+  const ownTitle = props.isEdit ? normalizeTitle(props.task?.title) : ''
+  const takenTitles = new Set(
+    props.existingTitles
+      .map(normalizeTitle)
+      .filter((title) => title && title !== ownTitle),
+  )
+  return [
+    (v) => !!String(v || '').trim() || t('CardSorting.nameRequired'),
+    (v) =>
+      !takenTitles.has(normalizeTitle(v)) ||
+      (isCategory.value
+        ? t('CardSorting.categoryNameDuplicate')
+        : t('CardSorting.cardNameDuplicate')),
+  ]
+})
 
 const showDescription = computed(() =>
   isCategory.value

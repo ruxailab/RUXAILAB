@@ -2813,6 +2813,7 @@
     "categoryName": "Nombre de la categoría",
     "categoryNameRequired": "El nombre de la categoría es obligatorio",
     "categoryNameDuplicate": "Ya existe una categoría con este nombre",
+    "cardNameDuplicate": "Ya existe una tarjeta con este nombre",
     "categoryNameInvalid": "Este nombre de categoría no está permitido",
     "createCategoryHint": "Crea al menos una categoría para empezar a ordenar las tarjetas.",
     "participantCategory": "Creada por ti",

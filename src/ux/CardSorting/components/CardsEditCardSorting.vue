@@ -133,6 +133,7 @@
       :task="card"
       :options="options"
       :is-edit="editedIndex > -1"
+      :existing-titles="existingTitles"
       @save="save"
       @update:dialog="onDialogChange"
     />
