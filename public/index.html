@@ -6,17 +6,28 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <link rel="icon" href="<%= BASE_URL %>R.svg" />
     <title><%= htmlWebpackPlugin.options.title %></title>
+
+    <!-- Pré-conexão com origens de fontes (reduz latência DNS/TLS) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+
+    <!-- Roboto: display=swap evita texto invisível enquanto a fonte carrega -->
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap"
     />
+
+    <!-- Poppins: usado só no WeightTable. Pesos reduzidos (400, 500, 600). -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+
+    <!-- MDI: versão fixa (não @latest) para cache previsível e estável -->
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css"
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css"
     />
   </head>
 
