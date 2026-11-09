@@ -1,21 +1,59 @@
-// Shared Settings View
-import SettingsView from '@/shared/views/SettingsView.vue'
-// Shared Cooperators View
-import CooperatorsView from '@/shared/views/CooperatorsView.vue'
+// Shared views (async, shared chunk across study areas)
+const SettingsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/SettingsView.vue')
+const CooperatorsView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/CooperatorsView.vue'
+  )
 
 // Manual-Accessibility-Pages(x7)
-import AccessibilityManagerView from '@/ux/accessibility/view/manual/AccessibilityManagerView.vue'
-import AccessibilityHome from '@/ux/accessibility/view/manual/AccessibilityHome.vue'
-import AccessibilityPreviewTest from '@/ux/accessibility/view/manual/AccessibilityPreviewTest.vue'
-import AccessibilityTestAnswers from '@/ux/accessibility/view/manual/AccessibilityAnswer.vue'
-import AccessibilityConfig from '@/ux/accessibility/view/manual/AccessibilityConfig.vue'
+const AccessibilityManagerView = () =>
+  import(
+    /* webpackChunkName: "accessibility-manual" */ '@/ux/accessibility/view/manual/AccessibilityManagerView.vue'
+  )
+const AccessibilityHome = () =>
+  import(
+    /* webpackChunkName: "accessibility-manual" */ '@/ux/accessibility/view/manual/AccessibilityHome.vue'
+  )
+const AccessibilityTestAnswers = () =>
+  import(
+    /* webpackChunkName: "accessibility-manual" */ '@/ux/accessibility/view/manual/AccessibilityAnswer.vue'
+  )
+const AccessibilityConfig = () =>
+  import(
+    /* webpackChunkName: "accessibility-manual" */ '@/ux/accessibility/view/manual/AccessibilityConfig.vue'
+  )
 
 // Automated-Accessibility-Pages (x7)
-import AutomatedAccessibilityManager from '@/ux/accessibility/view/automatic/AutomatedAccessibilityManager.vue'
-import AutomatedAccessibilityHome from '@/ux/accessibility/view/automatic/AutomatedAccessibilityHome.vue'
-import AccessibilityAnswers from '@/ux/accessibility/view/automatic/Answers.vue'
-import AccessibilityReport from '@/ux/accessibility/view/automatic/Report.vue'
-import AccessibilityAnalyse from '@/ux/accessibility/view/automatic/EditTest.vue'
+const AutomatedAccessibilityManager = () =>
+  import(
+    /* webpackChunkName: "accessibility-automatic" */ '@/ux/accessibility/view/automatic/AutomatedAccessibilityManager.vue'
+  )
+const AutomatedAccessibilityHome = () =>
+  import(
+    /* webpackChunkName: "accessibility-automatic" */ '@/ux/accessibility/view/automatic/AutomatedAccessibilityHome.vue'
+  )
+const AccessibilityAnswers = () =>
+  import(
+    /* webpackChunkName: "accessibility-automatic" */ '@/ux/accessibility/view/automatic/Answers.vue'
+  )
+const AccessibilityAnalyse = () =>
+  import(
+    /* webpackChunkName: "accessibility-automatic" */ '@/ux/accessibility/view/automatic/EditTest.vue'
+  )
+
+// Automated Accessibility Report Page
+const AccessibilityReport = () =>
+  import(
+    /* webpackChunkName: "accessibility-report" */ '@/ux/accessibility/view/automatic/Report.vue'
+  )
+
+// Accessibility Preview Test Page
+const AccessibilityPreviewTest = () =>
+  import(
+    /* webpackChunkName: "accessibility-preview" */ '@/ux/accessibility/view/manual/AccessibilityPreviewTest.vue'
+  )
+
 
 const accessibilityRoutes = [
   // Manual Accessibility Routes

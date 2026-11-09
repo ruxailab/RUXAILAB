@@ -1,16 +1,46 @@
-import ManagerView from '@/ux/FocusGroup/views/ManagerView.vue'
-import EditFocusGroupView from '@/ux/FocusGroup/views/EditFocusGroupView.vue'
-import FocusGroupSessionView from '@/ux/FocusGroup/views/FocusGroupSessionView.vue'
-import FocusGroupAnswerView from '@/ux/FocusGroup/views/FocusGroupAnswerView.vue'
-import FocusGroupAnalyticsView from '@/ux/FocusGroup/views/FocusGroupAnalyticsView.vue'
-import SettingsView from '@/shared/views/SettingsView.vue'
-import CooperatorsView from '@/shared/views/CooperatorsView.vue'
-import ParticipantsView from '@/shared/views/ParticipantsView.vue'
-import SessionsView from '@/shared/views/SessionsView.vue'
-import StorageView from '@/shared/views/StorageView.vue'
-import AuditTrailView from '@/shared/views/AuditTrailView.vue'
-import LogsView from '@/shared/views/LogsView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
+
+const ManagerView = () =>
+  import(
+    /* webpackChunkName: "focus-group" */ '@/ux/FocusGroup/views/ManagerView.vue'
+  )
+const EditFocusGroupView = () =>
+  import(
+    /* webpackChunkName: "focus-group" */ '@/ux/FocusGroup/views/EditFocusGroupView.vue'
+  )
+const FocusGroupSessionView = () =>
+  import(
+    /* webpackChunkName: "focus-group" */ '@/ux/FocusGroup/views/FocusGroupSessionView.vue'
+  )
+const FocusGroupAnswerView = () =>
+  import(
+    /* webpackChunkName: "focus-group" */ '@/ux/FocusGroup/views/FocusGroupAnswerView.vue'
+  )
+const FocusGroupAnalyticsView = () =>
+  import(
+    /* webpackChunkName: "focus-group" */ '@/ux/FocusGroup/views/FocusGroupAnalyticsView.vue'
+  )
+
+const SettingsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/SettingsView.vue')
+const CooperatorsView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/CooperatorsView.vue'
+  )
+const ParticipantsView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/ParticipantsView.vue'
+  )
+const SessionsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/SessionsView.vue')
+const StorageView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/StorageView.vue')
+const AuditTrailView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/AuditTrailView.vue'
+  )
+const LogsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/LogsView.vue')
 
 // `authorize` alone only checks the account-wide accessLevel, not this
 // person's role in THIS study — anyone signed in could otherwise open any
