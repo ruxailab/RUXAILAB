@@ -28,7 +28,7 @@
           variant="text"
           size="small"
           color="grey-darken-1"
-          :disabled="uploadingImage"
+          :disabled="saving"
           @click="close"
         >
           <v-icon>mdi-close</v-icon>
@@ -80,7 +80,7 @@
               show-size
               clearable
               hide-details="auto"
-              :disabled="uploadingImage"
+              :disabled="saving"
               :error-messages="imageError"
               @update:model-value="onImageSelected"
             />
@@ -99,7 +99,7 @@
                 variant="flat"
                 color="error"
                 class="image-preview__remove"
-                :disabled="uploadingImage"
+                :disabled="saving"
                 @click="clearImage"
               >
                 <v-icon size="18">mdi-trash-can-outline</v-icon>
@@ -115,7 +115,7 @@
           color="grey-darken-2"
           class="text-none rounded-lg px-6"
           height="44"
-          :disabled="uploadingImage"
+          :disabled="saving"
           @click="close"
         >
           {{ $t('buttons.cancel') }}
@@ -125,7 +125,7 @@
           variant="flat"
           class="text-none rounded-lg px-6"
           height="44"
-          :loading="uploadingImage"
+          :loading="saving"
           @click="submit"
         >
           <v-icon start size="18">
@@ -181,7 +181,7 @@ const store = useStore()
 const form = ref(null)
 const imageFile = ref(null)
 const pendingImage = ref(null)
-const uploadingImage = ref(false)
+const saving = ref(false)
 const imageError = ref('')
 const localTask = ref({
   title: '',
@@ -263,7 +263,7 @@ const syncLocalTask = () => {
 }
 
 const close = () => {
-  if (uploadingImage.value) return
+  if (saving.value) return
   emit('update:dialog', false)
   form.value?.resetValidation()
 }
@@ -281,19 +281,22 @@ const clearImage = () => {
   clearPendingImage()
   localTask.value.image = ''
   imageFile.value = null
+  imageError.value = ''
 }
 
 const onImageSelected = (files) => {
   const file = Array.isArray(files) ? files[0] : files
+  // Clearing the input only drops the picked file; the trash button removes
+  // an image that was already saved.
   if (!file) {
-    clearImage()
+    clearPendingImage()
+    imageError.value = ''
     return
   }
 
   clearPendingImage()
   imageError.value = ''
   if (file.size >= MAX_IMAGE_BYTES) {
-    imageFile.value = null
     imageError.value = t('CardSorting.imageTooLarge')
     return
   }
@@ -315,32 +318,35 @@ const uploadPendingImage = async () => {
 }
 
 const submit = async () => {
-  if (uploadingImage.value) return
-  const { valid } = await form.value.validate()
-  if (!valid) return
+  if (saving.value) return
+  saving.value = true
+  try {
+    const { valid } = await form.value.validate()
+    // A picked file that was rejected (e.g. too large) must be removed first.
+    if (!valid || (imageError.value && !pendingImage.value)) return
 
-  let image = localTask.value.image || ''
-  if (pendingImage.value) {
-    imageError.value = ''
-    uploadingImage.value = true
-    try {
-      image = await uploadPendingImage()
-    } catch (error) {
-      console.error('Card sorting image upload failed:', error)
-      imageError.value = t('CardSorting.imageUploadError')
-      return
-    } finally {
-      uploadingImage.value = false
+    let image = localTask.value.image || ''
+    if (pendingImage.value) {
+      imageError.value = ''
+      try {
+        image = await uploadPendingImage()
+      } catch (error) {
+        console.error('Card sorting image upload failed:', error)
+        imageError.value = t('CardSorting.imageUploadError')
+        return
+      }
+      clearPendingImage()
     }
-    clearPendingImage()
-  }
 
-  emit('save', {
-    title: String(localTask.value.title || '').trim(),
-    description: localTask.value.description || '',
-    image,
-  })
-  emit('update:dialog', false)
+    emit('save', {
+      title: String(localTask.value.title || '').trim(),
+      description: localTask.value.description || '',
+      image,
+    })
+    emit('update:dialog', false)
+  } finally {
+    saving.value = false
+  }
 }
 
 watch(
