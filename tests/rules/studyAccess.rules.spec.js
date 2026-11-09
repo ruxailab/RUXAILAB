@@ -634,6 +634,14 @@ describe('Storage study RBAC', () => {
     await assertSucceeds(uploadBytes(managerImage, new Uint8Array([1])))
     await assertSucceeds(getBytes(managerImage))
 
+    const ownerTooLarge = ref(
+      context('owner').storage(),
+      'tests/study-1/cardsorting_4/card.png',
+    )
+    await assertFails(
+      uploadBytes(ownerTooLarge, new Uint8Array(5 * 1024 * 1024)),
+    )
+
     const managerOtherFolder = ref(
       context('manager').storage(),
       'tests/study-1/other_1/card.png',

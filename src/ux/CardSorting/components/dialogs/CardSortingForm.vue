@@ -174,6 +174,9 @@ const props = defineProps({
 
 const emit = defineEmits(['update:dialog', 'save'])
 
+// Keep in sync with the cardsorting_ size limit in storage.rules.
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024
+
 const store = useStore()
 const form = ref(null)
 const imageFile = ref(null)
@@ -284,6 +287,11 @@ const onImageSelected = (files) => {
 
   clearPendingImage()
   imageError.value = ''
+  if (file.size >= MAX_IMAGE_BYTES) {
+    imageFile.value = null
+    imageError.value = t('CardSorting.imageTooLarge')
+    return
+  }
   pendingImage.value = file
   localTask.value.image = URL.createObjectURL(file)
 }

@@ -101,13 +101,17 @@ service firebase.storage {
         canAnswerStudy(studyId, userId) ||
         canAnswerModeratedStudy(studyId, userId);
 
-      allow create, update: if
+      allow create, update: if (
+        !userId.matches('cardsorting_.*') ||
+        request.resource.size < 5 * 1024 * 1024
+      ) && (
         canAccessStorage(studyId) ||
         canEditHeuristicAssets(studyId, userId) ||
         (userId.matches('cardsorting_.*') && canEditStudy(studyId)) ||
         (userId.matches('stimulus_.*') && canEditStudy(studyId)) ||
         canAnswerStudy(studyId, userId) ||
-        canAnswerModeratedStudy(studyId, userId);
+        canAnswerModeratedStudy(studyId, userId)
+      );
       allow delete: if false;
     }
 
