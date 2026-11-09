@@ -5,6 +5,16 @@ export const firstOpenTaskIndex = (tasks) => {
   )
 }
 
+// Where Start on the welcome step leads. A participant who already consented
+// skips the consent and continues at the first stage that is not done; the
+// tasks stage then resumes at the first open task.
+export const welcomeStartStage = ({ answer, hasPreTest, hasEyeTracking }) => {
+  if (answer?.submitted || answer?.consentCompleted !== true) return 'consent'
+  if (hasPreTest && answer.preTestCompleted !== true) return 'preTest'
+  if (hasEyeTracking) return 'calibration'
+  return 'tasks'
+}
+
 export const taskDestination = ({
   taskIndex,
   taskCount,
