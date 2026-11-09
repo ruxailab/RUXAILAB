@@ -48,8 +48,8 @@
                 showDescriptionError && !localTask.taskDescription?.trim(),
             }"
           >
-            <quill-editor
-              v-model:value="localTask.taskDescription"
+            <QuillEditor
+              v-model:content="localTask.taskDescription"
               :options="editorOptions"
               class="custom-editor"
               @change="onChangeEditor"
@@ -95,6 +95,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { QuillEditor } from '@vueup/vue-quill'
 
 const props = defineProps({
   modelValue: {
@@ -147,7 +148,8 @@ const isValid = computed(() => {
 })
 
 const onChangeEditor = (content) => {
-  localTask.value.taskDescription = content.html
+  const html = content?.html ?? content
+  localTask.value.taskDescription = html
   validateStep()
 }
 

@@ -18,12 +18,11 @@
         </v-row>
 
         <v-card-text>
-          <quill-editor
+          <QuillEditor
             ref="quillRef"
-            v-model:value="value"
+            v-model:content="value"
             :options="editorOptions"
             :class="['editor-container', { 'editor-readonly': props.readonly }]"
-            @ready="applyReadonlyAttributes"
           />
         </v-card-text>
       </v-card>
@@ -34,6 +33,7 @@
 <script setup>
 import { watch, computed, nextTick, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { QuillEditor } from '@vueup/vue-quill'
 
 const { t } = useI18n()
 

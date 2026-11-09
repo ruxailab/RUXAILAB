@@ -54,8 +54,8 @@
             >
               {{ $t('common.description') }}
             </label>
-            <quill-editor
-              v-model:value="localTask.description"
+            <QuillEditor
+              v-model:content="localTask.description"
               class="description-editor"
               :options="editorOptions"
             />
@@ -135,6 +135,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { QuillEditor } from '@vueup/vue-quill'
 
 const { t } = useI18n()
 

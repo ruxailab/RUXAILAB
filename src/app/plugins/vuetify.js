@@ -1,6 +1,5 @@
 import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
-import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 const myCustomLightTheme = {
@@ -24,9 +23,6 @@ const myCustomLightTheme = {
 }
 
 export default createVuetify({
-  components: {
-    ...components,
-  },
   directives,
   theme: {
     defaultTheme: 'myCustomLightTheme',

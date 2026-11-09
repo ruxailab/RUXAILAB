@@ -1,4 +1,6 @@
 const webpack = require('webpack')
+const Components = require('unplugin-vue-components/webpack')
+const { Vuetify3Resolver } = require('unplugin-vue-components/resolvers')
 
 module.exports = {
   productionSourceMap: false,
@@ -45,7 +47,26 @@ module.exports = {
         __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false)
       }),
+
+      Components({
+        resolvers: [Vuetify3Resolver()],
+        dts: false,
+      }),
     ],
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          vuetifyAsync: {
+            name: 'chunk-vuetify-async',
+            test: /[\\/]node_modules[\\/]vuetify[\\/]/,
+            chunks: 'async',
+            minChunks: 2,
+            priority: 20,
+            reuseExistingChunk: true,
+          },
+        },
+      },
+    },
     resolve: {
       fallback: {
         crypto: require.resolve('crypto-browserify'),

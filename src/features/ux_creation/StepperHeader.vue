@@ -60,6 +60,10 @@
 
 <script setup>
 import { useDisplay } from 'vuetify'
+import {
+  VStepperVertical,
+  VStepperVerticalItem,
+} from 'vuetify/labs/VStepperVertical'
 
 const emit = defineEmits(['step-click'])
 
