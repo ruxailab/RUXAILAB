@@ -96,6 +96,7 @@ service firebase.storage {
     match /tests/{studyId}/{userId}/{allPaths=**} {
       allow read: if canAccessStorage(studyId) ||
         canEditHeuristicAssets(studyId, userId) ||
+        (userId.matches('cardsorting_.*') && canEditStudy(studyId)) ||
         (userId.matches('stimulus_.*') && canViewFocusGroupStimulus(studyId)) ||
         canAnswerStudy(studyId, userId) ||
         canAnswerModeratedStudy(studyId, userId);
@@ -103,6 +104,7 @@ service firebase.storage {
       allow create, update: if
         canAccessStorage(studyId) ||
         canEditHeuristicAssets(studyId, userId) ||
+        (userId.matches('cardsorting_.*') && canEditStudy(studyId)) ||
         (userId.matches('stimulus_.*') && canEditStudy(studyId)) ||
         canAnswerStudy(studyId, userId) ||
         canAnswerModeratedStudy(studyId, userId);

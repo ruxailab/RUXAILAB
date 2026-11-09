@@ -2771,6 +2771,7 @@
     "cardNamePlaceholder": "ej. Checkout, Búsqueda, Perfil",
     "categoryNamePlaceholder": "ej. Navegación, Contenido, Ajustes",
     "imageHint": "Sube una imagen para mostrar con este elemento",
+    "imageUploadError": "No se pudo subir la imagen. Inténtalo de nuevo.",
     "nameCategory": "Nombrar categoría",
     "renameCategory": "Renombrar categoría",
     "unnamedCategory": "Sin nombre",

@@ -79,6 +79,9 @@
               show-size
               clearable
               hide-details="auto"
+              :loading="uploadingImage"
+              :disabled="uploadingImage"
+              :error-messages="imageError"
               @update:model-value="onImageSelected"
             />
             <div
@@ -120,6 +123,7 @@
           variant="flat"
           class="text-none rounded-lg px-6"
           height="44"
+          :disabled="uploadingImage"
           @click="submit"
         >
           <v-icon start size="18">
@@ -135,6 +139,13 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useStore } from 'vuex'
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage'
+import { storage } from '@/app/plugins/firebase'
 
 const { t } = useI18n()
 
@@ -161,8 +172,11 @@ const props = defineProps({
 
 const emit = defineEmits(['update:dialog', 'save'])
 
+const store = useStore()
 const form = ref(null)
 const imageFile = ref(null)
+const uploadingImage = ref(false)
+const imageError = ref('')
 const localTask = ref({
   title: '',
   description: '',
@@ -238,6 +252,7 @@ const syncLocalTask = () => {
     image: source.image || '',
   }
   imageFile.value = null
+  imageError.value = ''
 }
 
 const close = () => {
@@ -250,17 +265,31 @@ const clearImage = () => {
   imageFile.value = null
 }
 
-const onImageSelected = (files) => {
+// Images go to Storage and only their URL is kept on the study: a base64
+// data URL inside the study document quickly exceeds Firestore's 1 MiB limit.
+const onImageSelected = async (files) => {
   const file = Array.isArray(files) ? files[0] : files
   if (!file) {
     return
   }
 
-  const reader = new FileReader()
-  reader.onload = (event) => {
-    localTask.value.image = event.target?.result || ''
+  imageError.value = ''
+  uploadingImage.value = true
+  try {
+    const folder = `cardsorting_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+    const reference = storageRef(
+      storage,
+      `tests/${store.getters.test.id}/${folder}/${file.name}`,
+    )
+    await uploadBytes(reference, file)
+    localTask.value.image = await getDownloadURL(reference)
+  } catch (error) {
+    console.error('Card sorting image upload failed:', error)
+    imageFile.value = null
+    imageError.value = t('CardSorting.imageUploadError')
+  } finally {
+    uploadingImage.value = false
   }
-  reader.readAsDataURL(file)
 }
 
 const submit = async () => {
