@@ -2853,6 +2853,7 @@
     "categoryName": "Category name",
     "categoryNameRequired": "Category name is required",
     "categoryNameDuplicate": "A category with this name already exists",
+    "cardNameDuplicate": "A card with this name already exists",
     "categoryNameInvalid": "This category name is not allowed",
     "createCategoryHint": "Create at least one category to start sorting the cards.",
     "participantCategory": "Created by you",
