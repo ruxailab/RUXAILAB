@@ -129,6 +129,7 @@ const resolvedUserDocId = computed(
 
 let currentStream = null
 let currentRecorder = null
+let recordingTarget = null
 let stage = 'permission'
 let abandoned = false
 
@@ -161,9 +162,12 @@ const prepareAudio = async () => {
   if (recordingAudio.value) return true
   recordingAudio.value = true
   abandoned = false
-  const taskIndex = props.taskIndex
-  const userId = resolvedUserDocId.value
-  const testId = props.testId
+  recordingTarget = {
+    taskIndex: props.taskIndex,
+    userId: resolvedUserDocId.value,
+    testId: props.testId,
+  }
+  const { taskIndex, userId, testId } = recordingTarget
   const attempt = createRecordingAttempt(
     taskIndex,
     'audio',
@@ -246,6 +250,7 @@ const startNow = () => {
     props.remoteStream?.getAudioTracks().length
   ) {
     try {
+      const { taskIndex, userId, testId } = recordingTarget
       const remote = new MediaStream(props.remoteStream.getAudioTracks())
       const chunks = []
       const recorder = new MediaRecorder(remote, { mimeType: 'audio/webm' })
