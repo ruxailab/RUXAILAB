@@ -618,4 +618,38 @@ describe('Storage study RBAC', () => {
     )
     await assertFails(uploadBytes(participantUpload, new Uint8Array([1])))
   })
+
+  it('lets Card Sorting editors upload card images only under a cardsorting_ folder', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      updateDoc(doc(adminContext.firestore(), 'tests/study-1'), {
+        testType: 'CARD_SORTING',
+        studyRoleMap: { admin: 0, manager: 4, user: 1 },
+      }),
+    )
+
+    const managerImage = ref(
+      context('manager').storage(),
+      'tests/study-1/cardsorting_1/card.png',
+    )
+    await assertSucceeds(uploadBytes(managerImage, new Uint8Array([1])))
+    await assertSucceeds(getBytes(managerImage))
+
+    const managerOtherFolder = ref(
+      context('manager').storage(),
+      'tests/study-1/other_1/card.png',
+    )
+    await assertFails(uploadBytes(managerOtherFolder, new Uint8Array([1])))
+
+    const evaluatorImage = ref(
+      context('user').storage(),
+      'tests/study-1/cardsorting_2/card.png',
+    )
+    await assertFails(uploadBytes(evaluatorImage, new Uint8Array([1])))
+
+    const strangerImage = ref(
+      context('stranger').storage(),
+      'tests/study-1/cardsorting_3/card.png',
+    )
+    await assertFails(uploadBytes(strangerImage, new Uint8Array([1])))
+  })
 })
