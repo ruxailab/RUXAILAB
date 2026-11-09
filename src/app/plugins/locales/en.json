@@ -2881,6 +2881,8 @@
     "cardNamePlaceholder": "e.g. Checkout, Search, Profile",
     "categoryNamePlaceholder": "e.g. Navigation, Content, Settings",
     "imageHint": "Upload an image to show with this item",
+    "imageUploadError": "The image could not be uploaded. Please try again.",
+    "imageTooLarge": "The image must be smaller than 5 MB.",
     "nameCategory": "Name category",
     "renameCategory": "Rename category",
     "unnamedCategory": "Unnamed",

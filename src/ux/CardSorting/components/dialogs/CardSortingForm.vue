@@ -28,6 +28,7 @@
           variant="text"
           size="small"
           color="grey-darken-1"
+          :disabled="saving"
           @click="close"
         >
           <v-icon>mdi-close</v-icon>
@@ -79,6 +80,8 @@
               show-size
               clearable
               hide-details="auto"
+              :disabled="saving"
+              :error-messages="imageError"
               @update:model-value="onImageSelected"
             />
             <div
@@ -96,6 +99,7 @@
                 variant="flat"
                 color="error"
                 class="image-preview__remove"
+                :disabled="saving"
                 @click="clearImage"
               >
                 <v-icon size="18">mdi-trash-can-outline</v-icon>
@@ -111,6 +115,7 @@
           color="grey-darken-2"
           class="text-none rounded-lg px-6"
           height="44"
+          :disabled="saving"
           @click="close"
         >
           {{ $t('buttons.cancel') }}
@@ -120,6 +125,7 @@
           variant="flat"
           class="text-none rounded-lg px-6"
           height="44"
+          :loading="saving"
           @click="submit"
         >
           <v-icon start size="18">
@@ -135,6 +141,13 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useStore } from 'vuex'
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage'
+import { storage } from '@/app/plugins/firebase'
 
 const { t } = useI18n()
 
@@ -161,8 +174,15 @@ const props = defineProps({
 
 const emit = defineEmits(['update:dialog', 'save'])
 
+// Keep in sync with the cardsorting_ size limit in storage.rules.
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024
+
+const store = useStore()
 const form = ref(null)
 const imageFile = ref(null)
+const pendingImage = ref(null)
+const saving = ref(false)
+const imageError = ref('')
 const localTask = ref({
   title: '',
   description: '',
@@ -232,47 +252,101 @@ const editorOptions = {
 
 const syncLocalTask = () => {
   const source = props.task || {}
+  clearPendingImage()
   localTask.value = {
     title: source.title || '',
     description: source.description || '',
     image: source.image || '',
   }
   imageFile.value = null
+  imageError.value = ''
 }
 
 const close = () => {
+  if (saving.value) return
   emit('update:dialog', false)
   form.value?.resetValidation()
 }
 
+// The picked image is only previewed locally; it is uploaded on save so that
+// cancelling or replacing it never leaves an unused file in Storage.
+const clearPendingImage = () => {
+  if (!pendingImage.value) return
+  URL.revokeObjectURL(localTask.value.image)
+  localTask.value.image = ''
+  pendingImage.value = null
+}
+
 const clearImage = () => {
+  clearPendingImage()
   localTask.value.image = ''
   imageFile.value = null
+  imageError.value = ''
 }
 
 const onImageSelected = (files) => {
   const file = Array.isArray(files) ? files[0] : files
+  // Clearing the input only drops the picked file; the trash button removes
+  // an image that was already saved.
   if (!file) {
+    clearPendingImage()
+    imageError.value = ''
     return
   }
 
-  const reader = new FileReader()
-  reader.onload = (event) => {
-    localTask.value.image = event.target?.result || ''
+  clearPendingImage()
+  imageError.value = ''
+  if (file.size >= MAX_IMAGE_BYTES) {
+    imageError.value = t('CardSorting.imageTooLarge')
+    return
   }
-  reader.readAsDataURL(file)
+  pendingImage.value = file
+  localTask.value.image = URL.createObjectURL(file)
+}
+
+// Images go to Storage and only their URL is kept on the study: a base64
+// data URL inside the study document quickly exceeds Firestore's 1 MiB limit.
+const uploadPendingImage = async () => {
+  const file = pendingImage.value
+  const folder = `cardsorting_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+  const reference = storageRef(
+    storage,
+    `tests/${store.getters.test.id}/${folder}/${file.name}`,
+  )
+  await uploadBytes(reference, file)
+  return getDownloadURL(reference)
 }
 
 const submit = async () => {
-  const { valid } = await form.value.validate()
-  if (!valid) return
+  if (saving.value) return
+  saving.value = true
+  try {
+    const { valid } = await form.value.validate()
+    // A picked file that was rejected (e.g. too large) must be removed first.
+    if (!valid || (imageError.value && !pendingImage.value)) return
 
-  emit('save', {
-    title: String(localTask.value.title || '').trim(),
-    description: localTask.value.description || '',
-    image: localTask.value.image || '',
-  })
-  emit('update:dialog', false)
+    let image = localTask.value.image || ''
+    if (pendingImage.value) {
+      imageError.value = ''
+      try {
+        image = await uploadPendingImage()
+      } catch (error) {
+        console.error('Card sorting image upload failed:', error)
+        imageError.value = t('CardSorting.imageUploadError')
+        return
+      }
+      clearPendingImage()
+    }
+
+    emit('save', {
+      title: String(localTask.value.title || '').trim(),
+      description: localTask.value.description || '',
+      image,
+    })
+    emit('update:dialog', false)
+  } finally {
+    saving.value = false
+  }
 }
 
 watch(

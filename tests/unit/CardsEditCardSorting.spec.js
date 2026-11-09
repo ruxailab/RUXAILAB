@@ -9,6 +9,8 @@ jest.mock('vue-i18n', () => ({
   useI18n: () => ({ t: (key) => key }),
 }))
 
+jest.mock('@/app/plugins/firebase', () => ({ storage: {} }))
+
 const vuetifyStubs = {
   'v-container': { template: '<div><slot /></div>' },
   'v-row': { template: '<div><slot /></div>' },
