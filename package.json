@@ -70,7 +70,7 @@
     "wavesurfer.js": "^7.12.12"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
+    "@babel/core": "^7.29.13",
     "@babel/eslint-parser": "^7.29.9",
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@firebase/rules-unit-testing": "^5.0.2",
@@ -84,7 +84,7 @@
     "@vue/cli-plugin-unit-jest": "^5.0.8",
     "@vue/cli-plugin-vuex": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
-    "@vue/compiler-sfc": "^3.5.41",
+    "@vue/compiler-sfc": "^3.5.45",
     "@vue/test-utils": "^2.5.1",
     "@vue/vue3-jest": "^27.0.0",
     "babel-plugin-transform-require-context": "^0.2.0",
@@ -94,7 +94,7 @@
     "eslint-plugin-vue": "^10.12.0",
     "eslint-plugin-vuetify": "^2.7.3",
     "fake-indexeddb": "^6.2.7",
-    "globals": "^17.13.0",
+    "globals": "^17.14.0",
     "husky": "^9.1.7",
     "jsonc-eslint-parser": "^3.3.0",
     "lint-staged": "^17.6.0",
