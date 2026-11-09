@@ -8,7 +8,7 @@
     <!-- Subtitle Slot - only show when answers exist -->
     <template v-if="answers.length > 0" #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Prepare the final report for the heuristic evaluation
+        {{ $t('pages.finalReport.subtitle') }}
       </p>
     </template>
 
@@ -26,21 +26,23 @@
         >
           <v-stepper-header style="background-color: #f5f7ff" class="pt-2">
             <v-stepper-item :complete="step > 1" :value="1" color="orange">
-              Report Conclusion
+              {{ $t('pages.finalReport.steps.reportConclusion') }}
             </v-stepper-item>
             <v-divider />
             <v-stepper-item :complete="step > 2" :value="2" color="orange">
-              Paso intermedio
+              {{ $t('pages.finalReport.steps.intermediate') }}
             </v-stepper-item>
             <v-divider />
             <v-stepper-item :complete="step > 3" :value="3" color="orange">
-              Generate Report
+              {{ $t('pages.finalReport.steps.generateReport') }}
             </v-stepper-item>
           </v-stepper-header>
 
           <v-stepper-window style="background-color: #f5f7ff" class="mt-0">
             <v-stepper-window-item :value="1" class="align-mid pt-5 min-h-500">
-              <div v-if="loading">Saving Conclusion on Test....</div>
+              <div v-if="loading">
+                {{ $t('pages.finalReport.savingConclusion') }}
+              </div>
               <div v-else class="container">
                 <div class="row">
                   <TextControls />
@@ -65,10 +67,12 @@
               </div>
             </v-stepper-window-item>
 
-            <!-- Paso intermedio: comentarios por heurística -->
+            <!-- Intermediate step: comments by heuristic -->
             <v-stepper-window-item :value="2" class="align-mid pt-5 min-h-500">
               <div class="container">
-                <h3 class="mb-6">Comentarios por heurística</h3>
+                <h3 class="mb-6">
+                  {{ $t('pages.finalReport.comments.title') }}
+                </h3>
                 <div
                   v-for="heuristic in test?.testStructure || []"
                   :key="heuristic.id"
@@ -77,7 +81,7 @@
                   <TextareaForm
                     v-model="heuristicComments[heuristic.id]"
                     :title="heuristic.title || heuristic.name"
-                    :subtitle="'Escribe un comentario para esta heurística'"
+                    :subtitle="$t('pages.finalReport.comments.subtitle')"
                   />
                 </div>
                 <v-row class="ma-0" justify="space-between" align-content="end">
@@ -85,14 +89,16 @@
                     color="blue-grey-darken-3"
                     elevation="0"
                     @click="step = 1"
-                    >Anterior</v-btn
                   >
+                    {{ $t('buttons.previous') }}
+                  </v-btn>
                   <v-btn
                     color="orange"
                     :loading="loading"
                     @click="handleNextFromComments"
-                    >Siguiente</v-btn
                   >
+                    {{ $t('buttons.next') }}
+                  </v-btn>
                 </v-row>
               </div>
             </v-stepper-window-item>

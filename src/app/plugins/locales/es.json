@@ -2239,6 +2239,40 @@
       "createUserTask": "Por favor, crea tareas para poder seleccionarlas aquí.",
       "pdf": "Generar PDF",
       "elements": "Elementos",
+      "subtitle": "Prepara el informe final para la evaluación heurística",
+      "savingConclusion": "Guardando conclusión del estudio....",
+      "steps": {
+        "reportConclusion": "Conclusión del informe",
+        "intermediate": "Paso intermedio",
+        "generateReport": "Generar informe"
+      },
+      "comments": {
+        "title": "Comentarios por heurística",
+        "subtitle": "Escribe un comentario para esta heurística"
+      },
+      "selection": {
+        "title": "Configuración del Reporte Final",
+        "subtitle": "Selecciona qué información deseas incluir en el PDF",
+        "sections": {
+          "content": "Contenido del Reporte",
+          "statistics": "Estadísticas y Datos",
+          "answers": "Respuestas de Evaluadores",
+          "privacy": "Privacidad"
+        },
+        "options": {
+          "description": "Descripción del test",
+          "conclusion": "Conclusión y observaciones finales",
+          "heuristicComments": "Comentarios por heurística",
+          "generalStatistics": "Estadísticas generales y tablas visuales",
+          "statisticsByHeuristic": "Estadísticas agrupadas por heurística",
+          "individualAnswers": "Respuestas individuales de evaluadores (con comentarios e imágenes)",
+          "groupedAnswers": "Respuestas agrupadas por heurística y evaluador",
+          "anonymizeEvaluators": "Anonimizar información de evaluadores"
+        },
+        "generatingPdf": "Generando el PDF del informe. Esta operación puede tardar unos minutos. No cierres esta pestaña."
+      },
+      "anonymizedEvaluator": "Evaluador {index}",
+      "anonymizedFilenameSuffix": "_anonimo",
       "options": {
         "options": "Opciones del estudio",
         "comments": "Comentarios de las respuestas",
