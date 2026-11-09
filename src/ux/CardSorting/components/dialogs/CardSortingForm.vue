@@ -28,6 +28,7 @@
           variant="text"
           size="small"
           color="grey-darken-1"
+          :disabled="uploadingImage"
           @click="close"
         >
           <v-icon>mdi-close</v-icon>
@@ -79,7 +80,6 @@
               show-size
               clearable
               hide-details="auto"
-              :loading="uploadingImage"
               :disabled="uploadingImage"
               :error-messages="imageError"
               @update:model-value="onImageSelected"
@@ -99,6 +99,7 @@
                 variant="flat"
                 color="error"
                 class="image-preview__remove"
+                :disabled="uploadingImage"
                 @click="clearImage"
               >
                 <v-icon size="18">mdi-trash-can-outline</v-icon>
@@ -114,6 +115,7 @@
           color="grey-darken-2"
           class="text-none rounded-lg px-6"
           height="44"
+          :disabled="uploadingImage"
           @click="close"
         >
           {{ $t('buttons.cancel') }}
@@ -123,7 +125,7 @@
           variant="flat"
           class="text-none rounded-lg px-6"
           height="44"
-          :disabled="uploadingImage"
+          :loading="uploadingImage"
           @click="submit"
         >
           <v-icon start size="18">
@@ -175,6 +177,7 @@ const emit = defineEmits(['update:dialog', 'save'])
 const store = useStore()
 const form = ref(null)
 const imageFile = ref(null)
+const pendingImage = ref(null)
 const uploadingImage = ref(false)
 const imageError = ref('')
 const localTask = ref({
@@ -246,6 +249,7 @@ const editorOptions = {
 
 const syncLocalTask = () => {
   const source = props.task || {}
+  clearPendingImage()
   localTask.value = {
     title: source.title || '',
     description: source.description || '',
@@ -256,50 +260,72 @@ const syncLocalTask = () => {
 }
 
 const close = () => {
+  if (uploadingImage.value) return
   emit('update:dialog', false)
   form.value?.resetValidation()
 }
 
+// The picked image is only previewed locally; it is uploaded on save so that
+// cancelling or replacing it never leaves an unused file in Storage.
+const clearPendingImage = () => {
+  if (pendingImage.value) URL.revokeObjectURL(localTask.value.image)
+  pendingImage.value = null
+}
+
 const clearImage = () => {
+  clearPendingImage()
   localTask.value.image = ''
   imageFile.value = null
 }
 
+const onImageSelected = (files) => {
+  const file = Array.isArray(files) ? files[0] : files
+  if (!file) return
+
+  clearPendingImage()
+  imageError.value = ''
+  pendingImage.value = file
+  localTask.value.image = URL.createObjectURL(file)
+}
+
 // Images go to Storage and only their URL is kept on the study: a base64
 // data URL inside the study document quickly exceeds Firestore's 1 MiB limit.
-const onImageSelected = async (files) => {
-  const file = Array.isArray(files) ? files[0] : files
-  if (!file) {
-    return
-  }
-
-  imageError.value = ''
-  uploadingImage.value = true
-  try {
-    const folder = `cardsorting_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
-    const reference = storageRef(
-      storage,
-      `tests/${store.getters.test.id}/${folder}/${file.name}`,
-    )
-    await uploadBytes(reference, file)
-    localTask.value.image = await getDownloadURL(reference)
-  } catch (error) {
-    console.error('Card sorting image upload failed:', error)
-    imageFile.value = null
-    imageError.value = t('CardSorting.imageUploadError')
-  } finally {
-    uploadingImage.value = false
-  }
+const uploadPendingImage = async () => {
+  const file = pendingImage.value
+  const folder = `cardsorting_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+  const reference = storageRef(
+    storage,
+    `tests/${store.getters.test.id}/${folder}/${file.name}`,
+  )
+  await uploadBytes(reference, file)
+  return getDownloadURL(reference)
 }
 
 const submit = async () => {
+  if (uploadingImage.value) return
   const { valid } = await form.value.validate()
   if (!valid) return
+
+  let image = localTask.value.image || ''
+  if (pendingImage.value) {
+    imageError.value = ''
+    uploadingImage.value = true
+    try {
+      image = await uploadPendingImage()
+    } catch (error) {
+      console.error('Card sorting image upload failed:', error)
+      imageError.value = t('CardSorting.imageUploadError')
+      return
+    } finally {
+      uploadingImage.value = false
+    }
+    clearPendingImage()
+  }
 
   emit('save', {
     title: String(localTask.value.title || '').trim(),
     description: localTask.value.description || '',
-    image: localTask.value.image || '',
+    image,
   })
   emit('update:dialog', false)
 }
