@@ -271,7 +271,9 @@ const close = () => {
 // The picked image is only previewed locally; it is uploaded on save so that
 // cancelling or replacing it never leaves an unused file in Storage.
 const clearPendingImage = () => {
-  if (pendingImage.value) URL.revokeObjectURL(localTask.value.image)
+  if (!pendingImage.value) return
+  URL.revokeObjectURL(localTask.value.image)
+  localTask.value.image = ''
   pendingImage.value = null
 }
 
@@ -283,7 +285,10 @@ const clearImage = () => {
 
 const onImageSelected = (files) => {
   const file = Array.isArray(files) ? files[0] : files
-  if (!file) return
+  if (!file) {
+    clearImage()
+    return
+  }
 
   clearPendingImage()
   imageError.value = ''
