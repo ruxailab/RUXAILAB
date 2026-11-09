@@ -1,4 +1,4 @@
-FROM node:20.18-alpine AS build-stage
+FROM node:24-alpine AS build-stage
 
 WORKDIR /app
 
@@ -13,10 +13,10 @@ COPY public ./public
 COPY src ./src
 
 # Run build as per the script defined in package.json
-RUN npm run build-dev
+RUN npm run build:dev
 
 # Production stage using a minimal Node.js image
-FROM node:20.18-alpine AS production-stage
+FROM node:24-alpine AS production-stage
 
 # Install 'serve' to serve the application
 RUN npm install -g serve
