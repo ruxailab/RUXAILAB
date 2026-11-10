@@ -33,6 +33,8 @@ jest.mock('vue-i18n', () => ({
   useI18n: () => ({ t: (key) => key }),
 }))
 
+jest.mock('@/app/plugins/firebase', () => ({ storage: {} }))
+
 jest.mock('@/shared/constants/methodDefinitions', () => ({
   instantiateStudyByType: jest.fn(),
 }))

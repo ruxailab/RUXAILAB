@@ -261,6 +261,8 @@ export default {
           message: errorMsg,
           type: 'error',
         })
+        // Rethrow so the view does not switch to its "email sent" state.
+        throw err
       } finally {
         commit('setLoading', false)
       }
