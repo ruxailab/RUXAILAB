@@ -143,7 +143,36 @@ describe('HeuristicTestView', () => {
         props: { id: study.id, preview },
         global: {
           mocks: { $t: (key) => key },
-          stubs: { HeuristicAnswerStep: false },
+          stubs: {
+            HeuristicAnswerStep: false,
+            HeuristicInstructionsStep: true,
+            'v-icon': true,
+            'v-avatar': { template: '<div><slot /></div>' },
+            'v-row': { template: '<div><slot /></div>' },
+            'v-col': { template: '<div><slot /></div>' },
+            'v-container': { template: '<div><slot /></div>' },
+            'v-btn': buttonStub,
+            'v-dialog': { template: '<div><slot /></div>' },
+            'v-card': { template: '<div><slot /></div>' },
+            'v-card-actions': { template: '<div><slot /></div>' },
+            'v-layout': { template: '<div><slot /></div>' },
+            'v-main': { template: '<main><slot /></main>' },
+            'v-stepper': { template: '<div><slot /></div>' },
+            'v-stepper-header': { template: '<div><slot /></div>' },
+            'v-stepper-item': stepperItemStub,
+            'v-divider': true,
+            'v-alert': { template: '<div><slot /><slot name="prepend" /></div>' },
+            'v-speed-dial': { template: '<div><slot /><slot name="activator" :props="{}" /></div>' },
+            'v-tooltip': {
+              template:
+                '<div><slot name="activator" :props="{}" /><slot /></div>',
+            },
+            'v-spacer': true,
+            'v-progress-circular': true,
+            'v-progress-linear': true,
+            'v-img': true,
+            'v-select': true,
+          },
         },
       })
       await flushPromises()
@@ -274,7 +303,34 @@ describe('HeuristicTestView', () => {
     const listener = jest.spyOn(window, 'addEventListener')
     const wrapper = shallowMount(HeuristicTestView, {
       props: { id: study.id, preview: true },
-      global: { mocks: { $t: (key) => key } },
+      global: {
+        mocks: { $t: (key) => key },
+        stubs: {
+          'v-icon': true,
+          'v-avatar': { template: '<div><slot /></div>' },
+          'v-row': { template: '<div><slot /></div>' },
+          'v-col': { template: '<div><slot /></div>' },
+          'v-container': { template: '<div><slot /></div>' },
+          'v-btn': buttonStub,
+          'v-dialog': { template: '<div><slot /></div>' },
+          'v-card': { template: '<div><slot /></div>' },
+          'v-card-actions': { template: '<div><slot /></div>' },
+          'v-layout': { template: '<div><slot /></div>' },
+          'v-main': { template: '<main><slot /></main>' },
+          'v-stepper': { template: '<div><slot /></div>' },
+          'v-stepper-header': { template: '<div><slot /></div>' },
+          'v-stepper-item': stepperItemStub,
+          'v-divider': true,
+          'v-alert': { template: '<div><slot /><slot name="prepend" /></div>' },
+          'v-speed-dial': {
+            template: '<div><slot /><slot name="activator" :props="{}" /></div>',
+          },
+          'v-tooltip': {
+            template:
+              '<div><slot name="activator" :props="{}" /><slot /></div>',
+          },
+        },
+      },
     })
     await flushPromises()
     expect(wrapper.vm.currentUserTestAnswer.submitted).toBe(false)
