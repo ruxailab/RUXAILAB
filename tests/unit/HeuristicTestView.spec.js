@@ -727,4 +727,100 @@ describe('HeuristicTestView', () => {
       wrapper.unmount()
     },
   )
+
+  describe('auto-save on page unload', () => {
+    const buildStudy = (id) => ({
+      id,
+      answersDocId: `answers-${id}`,
+      testType: 'HEURISTIC',
+      testTitle: id,
+      testAdmin: { userDocId: 'owner' },
+      testOptions: [{ text: 'Yes', value: 1 }],
+      studyMode: 'detailed',
+      testStructure: [
+        {
+          id: 0,
+          title: 'Heuristic',
+          questions: [{ id: 0, title: 'Question' }],
+        },
+      ],
+    })
+
+    const mountView = (store) => {
+      useStore.mockReturnValue(store)
+      return shallowMount(HeuristicTestView, {
+        props: { id: store.getters.test.id },
+        global: { mocks: { $t: (key) => key } },
+      })
+    }
+
+    const saveCalls = (store) =>
+      store.dispatch.mock.calls.filter(
+        ([action]) => action === 'saveTestAnswer',
+      )
+
+    it('does not save into another study after the view is unmounted', async () => {
+      const studyA = buildStudy('study-a')
+      const studyB = buildStudy('study-b')
+      const getters = reactive({
+        test: studyA,
+        user: { id: 'owner' },
+        currentUserTestAnswer: new HeuristicAnswer({ userDocId: 'owner' }),
+      })
+      const store = {
+        getters,
+        dispatch: jest.fn().mockResolvedValue(),
+        commit: jest.fn(),
+      }
+
+      const wrapper = mountView(store)
+      await flushPromises()
+
+      // An in-progress, not submitted answer for study A.
+      wrapper.vm.calculatedProgress = 50
+      window.dispatchEvent(new Event('beforeunload'))
+      await flushPromises()
+      expect(
+        saveCalls(store).map(([, payload]) => payload.answersDocId),
+      ).toEqual(['answers-study-a'])
+
+      // Leave the view and open another study in the same tab.
+      wrapper.unmount()
+      await flushPromises()
+      store.dispatch.mockClear()
+      getters.test = studyB
+
+      // Closing or reloading the tab must not save study A's answer anywhere.
+      window.dispatchEvent(new Event('beforeunload'))
+      await flushPromises()
+      expect(saveCalls(store)).toEqual([])
+    })
+
+    it('does not add the listener when unmounted before the study has loaded', async () => {
+      const study = buildStudy('study-a')
+      const studyRequest = deferred()
+      const store = {
+        getters: {
+          test: study,
+          user: { id: 'owner' },
+          currentUserTestAnswer: new HeuristicAnswer({ userDocId: 'owner' }),
+        },
+        dispatch: jest.fn((action) =>
+          action === 'getStudy' ? studyRequest.promise : Promise.resolve(),
+        ),
+        commit: jest.fn(),
+      }
+      const addListener = jest.spyOn(window, 'addEventListener')
+
+      const wrapper = mountView(store)
+      wrapper.unmount()
+      studyRequest.resolve(study)
+      await flushPromises()
+
+      expect(
+        addListener.mock.calls.some(([event]) => event === 'beforeunload'),
+      ).toBe(false)
+      addListener.mockRestore()
+    })
+  })
 })

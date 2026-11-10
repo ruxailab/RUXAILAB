@@ -2060,19 +2060,25 @@ const handleHeurisClick = (i) => {
   setReviewTrue()
 }
 
-// Setup auto-save on page unload
+// Auto-save on page unload. The handler is named so it can be removed when
+// the view unmounts; otherwise it outlives the view and, on a later tab close,
+// saves this answer into whichever study is loaded in the store by then.
+let isUnmounted = false
+
+const saveBeforeUnload = () => {
+  if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
+    // Update status before unload
+    updateSaveStatus('Saving before exit...', 'saving')
+    // Save synchronously before page unload
+    autoSaveAnswer().catch(() => {})
+  }
+}
+
 const setupAutoSaveOnUnload = () => {
-  window.addEventListener('beforeunload', (_event) => {
-    if (
-      calculatedProgress.value > 0 &&
-      !currentUserTestAnswer.value?.submitted
-    ) {
-      // Update status before unload
-      updateSaveStatus('Saving before exit...', 'saving')
-      // Save synchronously before page unload
-      autoSaveAnswer().catch(() => {})
-    }
-  })
+  // onBeforeMount is async, so the view may already be gone by the time the
+  // study has loaded.
+  if (isUnmounted) return
+  window.addEventListener('beforeunload', saveBeforeUnload)
 }
 
 watch(heurisIndex, (newIndex, oldIndex) => {
@@ -2138,6 +2144,8 @@ onBeforeMount(async () => {
 })
 
 onUnmounted(() => {
+  isUnmounted = true
+  window.removeEventListener('beforeunload', saveBeforeUnload)
   debouncedAutoSave.cancel()
   studyLogging?.destroy()
   // Save progress when component is destroyed
