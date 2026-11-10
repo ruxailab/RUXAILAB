@@ -67,9 +67,8 @@ describe('ScreenShareInstructions', () => {
   it('renders the matching browser video in full mode', () => {
     getScreenSharePickerFamily.mockReturnValue('firefox')
     getScreenShareInstructionMedia.mockImplementation(() => ({
-      video: 'firefox-av1.webm',
+      video: 'firefox-vp9.webm',
       sources: [
-        { src: 'firefox-av1.webm', type: 'video/webm; codecs="av01.0.05M.08"' },
         { src: 'firefox-vp9.webm', type: 'video/webm; codecs="vp9"' },
       ],
     }))
@@ -78,7 +77,7 @@ describe('ScreenShareInstructions', () => {
 
     expect(getScreenShareInstructionMedia).toHaveBeenCalledWith('firefox')
     expect(video.exists()).toBe(true)
-    expect(video.attributes('src')).toBe('firefox-av1.webm')
+    expect(video.attributes('src')).toBe('firefox-vp9.webm')
     expect(video.attributes('poster')).toBeUndefined()
     expect(video.attributes('autoplay')).toBeDefined()
     expect(wrapper.find('.picker-video-hint').text()).toBe(
@@ -133,66 +132,67 @@ describe('ScreenShareInstructions', () => {
     wrapper.unmount()
   })
 
-  it('renders the Safari video without a poster', () => {
+  it('renders the Safari VP9 video without a poster', () => {
     getScreenSharePickerFamily.mockReturnValue('safari')
     getScreenShareInstructionMedia.mockImplementation(() => ({
-      video: 'safari-av1.webm',
+      video: 'safari-vp9.webm',
       sources: [
-        { src: 'safari-av1.webm', type: 'video/webm; codecs="av01.0.05M.08"' },
         { src: 'safari-vp9.webm', type: 'video/webm; codecs="vp9"' },
       ],
     }))
     const wrapper = createWrapper()
-    expect(wrapper.find('video').attributes('src')).toBe('safari-av1.webm')
+    expect(wrapper.find('video').attributes('src')).toBe('safari-vp9.webm')
     expect(wrapper.find('video').attributes('poster')).toBeUndefined()
     wrapper.unmount()
   })
 
-  it('falls back from Chrome AV1 to VP9 when the video errors', async () => {
+  it('falls back to the poster when the Chrome VP9 video errors', async () => {
     getScreenSharePickerFamily.mockReturnValue('chrome')
     getScreenShareInstructionMedia.mockImplementation(() => ({
-      video: 'chrome-av1.webm',
+      video: 'chrome-vp9.webm',
+      poster: 'chrome.jpg',
       sources: [
-        { src: 'chrome-av1.webm', type: 'video/webm; codecs="av01.0.05M.08"' },
         { src: 'chrome-vp9.webm', type: 'video/webm; codecs="vp9"' },
       ],
     }))
     const wrapper = createWrapper()
     await wrapper.find('video').trigger('error')
-    expect(wrapper.find('video').attributes('src')).toBe('chrome-vp9.webm')
-    expect(wrapper.find('img.picker-video').exists()).toBe(false)
+    expect(wrapper.find('video').exists()).toBe(false)
+    expect(wrapper.find('img.picker-video').attributes('src')).toBe('chrome.jpg')
     wrapper.unmount()
   })
 
-  it('falls back from Firefox AV1 to VP9 when the video errors', async () => {
+  it('falls back to the poster when the Firefox VP9 video errors', async () => {
     getScreenSharePickerFamily.mockReturnValue('firefox')
     getScreenShareInstructionMedia.mockImplementation(() => ({
-      video: 'firefox-av1.webm',
+      video: 'firefox-vp9.webm',
+      poster: 'firefox.jpg',
       sources: [
-        { src: 'firefox-av1.webm', type: 'video/webm; codecs="av01.0.05M.08"' },
         { src: 'firefox-vp9.webm', type: 'video/webm; codecs="vp9"' },
       ],
     }))
     const wrapper = createWrapper()
     await wrapper.find('video').trigger('error')
-    expect(wrapper.find('video').attributes('src')).toBe('firefox-vp9.webm')
-    expect(wrapper.find('img.picker-video').exists()).toBe(false)
+    expect(wrapper.find('video').exists()).toBe(false)
+    expect(wrapper.find('img.picker-video').attributes('src')).toBe(
+      'firefox.jpg',
+    )
     wrapper.unmount()
   })
 
-  it('falls back from Safari AV1 to VP9 when the video errors', async () => {
+  it('falls back to the poster when the Safari VP9 video errors', async () => {
     getScreenSharePickerFamily.mockReturnValue('safari')
     getScreenShareInstructionMedia.mockImplementation(() => ({
-      video: 'safari-av1.webm',
+      video: 'safari-vp9.webm',
+      poster: 'safari.jpg',
       sources: [
-        { src: 'safari-av1.webm', type: 'video/webm; codecs="av01.0.05M.08"' },
         { src: 'safari-vp9.webm', type: 'video/webm; codecs="vp9"' },
       ],
     }))
     const wrapper = createWrapper()
     await wrapper.find('video').trigger('error')
-    expect(wrapper.find('video').attributes('src')).toBe('safari-vp9.webm')
-    expect(wrapper.find('img.picker-video').exists()).toBe(false)
+    expect(wrapper.find('video').exists()).toBe(false)
+    expect(wrapper.find('img.picker-video').attributes('src')).toBe('safari.jpg')
     wrapper.unmount()
   })
 
