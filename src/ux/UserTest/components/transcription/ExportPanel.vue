@@ -263,7 +263,8 @@ import autoTable from 'jspdf-autotable'
 import { QuillEditor } from '@vueup/vue-quill'
 
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
-import logoFull from '@/assets/logo_full.svg'
+
+const logoFull = '/logo_full.svg'
 
 /* ---------------------- Props ---------------------- */
 const props = defineProps({
