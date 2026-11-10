@@ -28,8 +28,16 @@ jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
       deleteUser: mockDeleteUser,
     }),
   },
+  getRegion: jest.fn(() => 'europe-west6'),
   functions: {
-    onCall: jest.fn((opts) => opts?.handler || opts),
+    onCall: jest.fn(({ handler, middlewares = [] }) => {
+      const composed = middlewares.reduceRight(
+        (next, middleware) => (request) =>
+          middleware(request, () => next(request)),
+        handler,
+      )
+      return composed
+    }),
     https: {
       HttpsError: class HttpsError extends Error {
         constructor(code, message) {

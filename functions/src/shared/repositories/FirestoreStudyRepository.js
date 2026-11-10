@@ -26,4 +26,18 @@ export class FirestoreStudyRepository extends FirestoreCollectionRepository {
     const doc = querySnap.docs[0]
     return { id: doc.id, ...doc.data() }
   }
+
+  /**
+   * List all studies where the given user is the testAdmin.
+   *
+   * @param {string} adminUid
+   * @returns {Promise<Array<{ id: string, answersDocId?: string } & object>>}
+   */
+  async listByAdmin(adminUid) {
+    const querySnap = await this.collectionRef
+      .where('testAdmin.userDocId', '==', adminUid)
+      .get()
+
+    return querySnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  }
 }
