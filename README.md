@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Tests](https://github.com/ruxailab/RUXAILAB/actions/workflows/test.yml/badge.svg?branch=develop)
-![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A522.22.1-339933?logo=nodedotjs&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-24-339933?logo=nodedotjs&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/ruxailab/RUXAILAB)](https://github.com/ruxailab/RUXAILAB/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/ruxailab/RUXAILAB)](https://github.com/ruxailab/RUXAILAB/forks)
@@ -52,7 +52,7 @@ Additional services may use their own technology stacks. Refer to their respecti
 
 Before setting up RUXAILAB, ensure that you have installed:
 
-- [Node.js](https://nodejs.org/) — version `22.22.1` as specified for this project.
+- [Node.js](https://nodejs.org/) — version `24` as specified for this project.
 - npm, included with Node.js.
 - [Git](https://git-scm.com/).
 - A Firebase project, or the Firebase Emulator Suite for local development.

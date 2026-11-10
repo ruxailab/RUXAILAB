@@ -33,7 +33,7 @@ RUXAILAB is a Vue.js-based platform for usability testing and heuristic evaluati
 
 ### Prerequisites
 
-- **Node.js** ≥ 22.22.1 (Active LTS 22 or current 24). Required by `lint-staged` on pre-commit; Node 20 is not supported.
+- **Node.js** 24. Required by the project; `lint-staged` also needs Node.js ≥ 22.22.1 for pre-commit hooks.
 - **Python** 3.11.8
 - **npm** (comes with Node.js)
 - **Git** ≥ 2.32.0
@@ -414,7 +414,7 @@ To ensure your issue gets the correct labels:
 
 This project uses **Husky** and **lint-staged** to automatically format and lint code before each commit. This ensures code quality standards are maintained.
 
-`lint-staged` v17 requires **Node.js ≥ 22.22.1**. If you see an `engines` error when committing, upgrade Node (do not use 20.x or 22.22.0 and below). Check with `node -v`.
+The project requires **Node.js 24**. `lint-staged` v17 requires at least **Node.js ≥ 22.22.1**. Check your version with `node -v`.
 
 The hook does **not** affect `npm run serve`, production builds, or `npm test` in CI. It only runs locally on `git commit`.
 
