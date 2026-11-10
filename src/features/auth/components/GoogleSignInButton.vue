@@ -53,8 +53,8 @@ export default {
 <style scoped>
 .google-btn {
   margin-top: 4px;
-  border: 1px solid #dadce0;
-  color: #3c4043;
+  border: 1px solid #9aa0a6;
+  color: #202124;
   font-weight: 500;
 }
 </style>

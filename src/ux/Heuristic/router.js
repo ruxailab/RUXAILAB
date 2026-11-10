@@ -1,18 +1,52 @@
-import ManagerView from '@/ux/Heuristic/views/ManagerView.vue'
-import ReportView from '@/shared/views/ReportView.vue'
-import EditTest from '@/ux/Heuristic/views/EditTest.vue'
-import SettingsView from '@/shared/views/SettingsView.vue'
-import FinalReportView from '@/ux/Heuristic/views/FinalReportView.vue'
-import CooperatorsView from '@/shared/views/CooperatorsView.vue'
-import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue'
-import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
-import EvaluatorInfoView from './views/EvaluatorInfoView.vue'
-import StorageView from '@/shared/views/StorageView.vue'
-import HeuristicAgentsView from './ai-agents/views/HeuristicAgentsView.vue'
-import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
-import AuditTrailView from '@/shared/views/AuditTrailView.vue'
-import LogsView from '@/shared/views/LogsView.vue'
+
+const ManagerView = () =>
+  import(
+    /* webpackChunkName: "heuristic" */ '@/ux/Heuristic/views/ManagerView.vue'
+  )
+const EditTest = () =>
+  import(/* webpackChunkName: "heuristic" */ '@/ux/Heuristic/views/EditTest.vue')
+const FinalReportView = () =>
+  import(
+    /* webpackChunkName: "heuristic" */ '@/ux/Heuristic/views/FinalReportView.vue'
+  )
+const HeuristicAnalyticsView = () =>
+  import(
+    /* webpackChunkName: "heuristic" */ '@/ux/Heuristic/views/HeuristicAnalyticsView.vue'
+  )
+const HeuristicAnswerView = () =>
+  import(
+    /* webpackChunkName: "heuristic" */ '@/ux/Heuristic/views/HeuristicAnswerView.vue'
+  )
+const EvaluatorInfoView = () =>
+  import(
+    /* webpackChunkName: "heuristic" */ '@/ux/Heuristic/views/EvaluatorInfoView.vue'
+  )
+const HeuristicAgentsView = () =>
+  import(
+    /* webpackChunkName: "heuristic" */ '@/ux/Heuristic/ai-agents/views/HeuristicAgentsView.vue'
+  )
+
+const ReportView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/ReportView.vue')
+const SettingsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/SettingsView.vue')
+const CooperatorsView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/CooperatorsView.vue'
+  )
+const ParticipantsView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/ParticipantsView.vue'
+  )
+const StorageView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/StorageView.vue')
+const AuditTrailView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/AuditTrailView.vue'
+  )
+const LogsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/LogsView.vue')
 
 const studyMeta = (studyCapability) => ({
   authorize: [0, 1],

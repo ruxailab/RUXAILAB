@@ -32,7 +32,7 @@ onMounted(() => {
     height: '140%',
     marginRight: '-450px',
     marginTop: '100px',
-    backgroundImage: `url(${new URL('../../../../assets/logo_small_red.png', import.meta.url).href})`,
+    backgroundImage: `url(${new URL('../../../../assets/logo_small_red.svg', import.meta.url).href})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'contain',
     backgroundPosition: 'right top',

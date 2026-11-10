@@ -16,8 +16,10 @@
     "build:prod": "vue-cli-service build --mode production",
     "deploy:functions:dev": "npm run deploy:dev --prefix functions",
     "deploy:functions:prod": "npm run deploy:prod --prefix functions",
-    "deploy:dev": "npm run build:dev && firebase use develop && firebase deploy --only hosting:ruxailab,firestore:rules,database,storage && npm run deploy:dev --prefix functions",
-    "deploy:prod": "npm run build:prod && firebase use production && firebase deploy --only hosting:ruxailab,firestore:rules,database,storage && npm run deploy:prod --prefix functions"
+    "deploy:dev": "npm run build:dev && firebase use develop && firebase deploy --only hosting:ruxailab",
+    "deploy:prod": "npm run build:prod && firebase use production && firebase deploy --only hosting:ruxailab",
+    "deploy:dev:full": "npm run build:dev && firebase use develop && firebase deploy --only hosting:ruxailab,firestore:rules,database,storage && npm run deploy:dev --prefix functions",
+    "deploy:prod:full": "npm run build:prod && firebase use production && firebase deploy --only hosting:ruxailab,firestore:rules,database,storage && npm run deploy:prod --prefix functions"
   },
   "dependencies": {
     "@mediapipe/face_mesh": "^0.4.1633559619",
@@ -101,6 +103,7 @@
     "prettier": "^3.9.10",
     "sass": "~1.32.6",
     "sass-loader": "~8.0.0",
+    "unplugin-vue-components": "^32.1.0",
     "vue-eslint-parser": "^10.4.2",
     "yaml-eslint-parser": "^2.1.0"
   },

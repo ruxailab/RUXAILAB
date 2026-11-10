@@ -239,30 +239,30 @@ const generateFaqItems = () => {
       return {
         title: t(`help.${keyPrefix}`) || `FAQ ${keyPrefix}`,
         content: t(`help.${keyPrefix}answer`) || 'Content not available',
-        gif: `${gif}.mp4`,
+        gif: `${gif}.webm`,
         category,
       }
     } catch {
       return {
         title: `FAQ ${keyPrefix}`,
         content: 'Content not available',
-        gif: `${gif}.mp4`,
+        gif: `${gif}.webm`,
         category,
       }
     }
   }
 
   return [
-    createFaqItem('createtest', 'test-creation', 'create_test'),
-    createFaqItem('heuristictest', 'test-creation', 'hsetup'),
-    createFaqItem('deletetest', 'test-creation', 'del_test'),
-    createFaqItem('createtemplate', 'templates', 'create-temp'),
-    createFaqItem('usetemplate', 'templates', 'use-temp'),
-    createFaqItem('previewtest', 'test-creation', 'preview_test'),
-    createFaqItem('importcsv', 'test-creation', 'csv'),
-    createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
-    createFaqItem('analyseresults', 'analytics', 'analytics'),
-    createFaqItem('sendmessage', 'cooperators', 'send_message'),
+    createFaqItem('createtest', 'test-creation', 'create_test-vp9'),
+    createFaqItem('heuristictest', 'test-creation', 'hsetup-vp9'),
+    createFaqItem('deletetest', 'test-creation', 'del_test-vp9'),
+    createFaqItem('createtemplate', 'templates', 'create-temp-vp9'),
+    createFaqItem('usetemplate', 'templates', 'use-temp-vp9'),
+    createFaqItem('previewtest', 'test-creation', 'preview_test-vp9'),
+    createFaqItem('importcsv', 'test-creation', 'csv-vp9'),
+    createFaqItem('invitecooperators', 'cooperators', 'sendinvite-vp9'),
+    createFaqItem('analyseresults', 'analytics', 'analytics-vp9'),
+    createFaqItem('sendmessage', 'cooperators', 'send_message-vp9'),
   ]
 }
 

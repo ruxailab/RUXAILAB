@@ -1,8 +1,14 @@
 const webpack = require('webpack')
+const Components = require('unplugin-vue-components/webpack')
+const { Vuetify3Resolver } = require('unplugin-vue-components/resolvers')
 
 module.exports = {
   productionSourceMap: false,
   css: { sourceMap: false },
+
+  chainWebpack: (config) => {
+    config.plugins.delete('prefetch')
+  },
 
   transpileDependencies: [
     'vuetify',
@@ -25,8 +31,6 @@ module.exports = {
       overlay: {
         errors: true,
         warnings: true,
-        // Benign browser warning (not a real error) fired by ResizeObserver
-        // when menus/overlays resize rapidly (e.g. Vuetify v-menu).
         runtimeErrors: (error) =>
           !/ResizeObserver loop/.test(error?.message ?? ''),
       },
@@ -45,7 +49,17 @@ module.exports = {
         __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false)
       }),
+
+      Components({
+        resolvers: [Vuetify3Resolver()],
+        dts: false,
+      }),
     ],
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+      },
+    },
     resolve: {
       fallback: {
         crypto: require.resolve('crypto-browserify'),

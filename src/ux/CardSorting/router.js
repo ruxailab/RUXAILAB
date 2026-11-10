@@ -1,15 +1,40 @@
-import ManagerView from '@/ux/CardSorting/views/ManagerView.vue'
-import EditTestView from '@/ux/CardSorting/views/EditTestView.vue'
-import SettingsView from '@/shared/views/SettingsView.vue'
-import CooperatorsView from '@/shared/views/CooperatorsView.vue'
-import ParticipantsView from '@/shared/views/ParticipantsView.vue'
-import ReportView from '@/shared/views/ReportView.vue'
-import StorageView from '@/shared/views/StorageView.vue'
-import AuditTrailView from '@/shared/views/AuditTrailView.vue'
-import TestView from '@/views/public/TestView.vue'
-import CardSortingAnswerView from '@/ux/CardSorting/views/CardSortingAnswerView.vue'
-import LogsView from '@/shared/views/LogsView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
+
+const ManagerView = () =>
+  import(
+    /* webpackChunkName: "card-sorting" */ '@/ux/CardSorting/views/ManagerView.vue'
+  )
+const EditTestView = () =>
+  import(
+    /* webpackChunkName: "card-sorting" */ '@/ux/CardSorting/views/EditTestView.vue'
+  )
+const CardSortingAnswerView = () =>
+  import(
+    /* webpackChunkName: "card-sorting" */ '@/ux/CardSorting/views/CardSortingAnswerView.vue'
+  )
+const TestView = () =>
+  import(/* webpackChunkName: "test-view" */ '@/views/public/TestView.vue')
+
+const SettingsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/SettingsView.vue')
+const CooperatorsView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/CooperatorsView.vue'
+  )
+const ParticipantsView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/ParticipantsView.vue'
+  )
+const ReportView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/ReportView.vue')
+const StorageView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/StorageView.vue')
+const AuditTrailView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/AuditTrailView.vue'
+  )
+const LogsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/LogsView.vue')
 
 export default [
   {

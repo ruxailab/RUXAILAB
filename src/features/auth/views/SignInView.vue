@@ -1,113 +1,97 @@
 <template>
-  <div class="signin-wrapper">
-    <div class="logo-side d-none d-md-flex align-center justify-center">
-      <img src="@/assets/logo_full.png" alt="RUXAILAB" class="logo-img" />
-    </div>
+  <AuthLayout show-mobile-logo>
+    <h1 class="text-h6">
+      {{ $t('auth.SIGNIN.sign-in-title') }}
+    </h1>
+    <p class="subtitle">
+      {{ $t('auth.SIGNIN.sign-in-subtitle') }}
+    </p>
 
-    <div class="form-side d-flex align-center justify-center">
-      <div class="signin-box">
-        <div class="d-md-none text-center mb-6">
-          <img
-            src="@/assets/logo_full.png"
-            alt="RUXAILAB"
-            class="mobile-logo-img"
-          />
-        </div>
+    <v-form ref="form" @submit.prevent="onSignIn">
+      <v-text-field
+        v-model="email"
+        :rules="emailRules"
+        :label="$t('auth.SIGNIN.email')"
+        type="email"
+        placeholder="you@example.com"
+        prepend-inner-icon="mdi-email-outline"
+        variant="outlined"
+        class="mb-4"
+      />
 
-        <h1 class="text-h6">
-          {{ $t('auth.SIGNIN.sign-in-title') }}
-        </h1>
-        <p class="subtitle">
-          {{ $t('auth.SIGNIN.sign-in-subtitle') }}
-        </p>
+      <v-text-field
+        v-model.trim="password"
+        :rules="[rules.required]"
+        :label="$t('auth.SIGNIN.password')"
+        :type="showPassword ? 'text' : 'password'"
+        prepend-inner-icon="mdi-lock-outline"
+        :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+        variant="outlined"
+        class="mb-2"
+        @click:append-inner="toggleShowPassword"
+      />
 
-        <v-form ref="form" @submit.prevent="onSignIn">
-          <v-text-field
-            v-model="email"
-            :rules="emailRules"
-            :label="$t('auth.SIGNIN.email')"
-            type="email"
-            placeholder="you@example.com"
-            prepend-inner-icon="mdi-email-outline"
-            variant="outlined"
-            class="mb-4"
-          />
-
-          <v-text-field
-            v-model.trim="password"
-            :rules="[rules.required]"
-            :label="$t('auth.SIGNIN.password')"
-            :type="showPassword ? 'text' : 'password'"
-            prepend-inner-icon="mdi-lock-outline"
-            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            variant="outlined"
-            class="mb-2"
-            @click:append-inner="toggleShowPassword"
-          />
-
-          <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
-            <v-checkbox
-              v-model="rememberMe"
-              :label="$t('auth.SIGNIN.rememberMe')"
-              hide-details
-              density="compact"
-            />
-
-            <v-btn
-              variant="text"
-              color="primary"
-              class="text-body-2 mt-2 mt-md-0"
-              @click="redirectToForgotPassword"
-            >
-              {{ $t('auth.SIGNIN.forgot-password') }}
-            </v-btn>
-          </div>
-
-          <v-btn
-            type="submit"
-            color="primary"
-            block
-            :loading="loading && loadingType === 'signin'"
-            :disabled="loadingType === 'google'"
-            min-height="44"
-            data-testid="sign-in-button"
-          >
-            {{ $t('auth.SIGNIN.sign-in') }}
-          </v-btn>
-        </v-form>
-
-        <v-divider class="my-6">
-          <span class="text-body-2 text-medium-emphasis">
-            {{ $t('auth.SIGNIN.or') }}
-          </span>
-        </v-divider>
-
-        <GoogleSignInButton
-          :remember-me="rememberMe"
-          :button-text="$t('auth.SIGNIN.continueWithGoogle')"
-          :loading="loading && loadingType === 'google'"
-          :disabled="loadingType === 'signin'"
-          @google-sign-in-start="onGoogleSignInStart"
-          @google-sign-in-success="onGoogleSignInSuccess"
-          @google-sign-in-error="onGoogleSignInError"
+      <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
+        <v-checkbox
+          v-model="rememberMe"
+          :label="$t('auth.SIGNIN.rememberMe')"
+          hide-details
+          density="compact"
         />
 
-        <div class="text-center mt-6">
-          <span class="text-body-2 text-medium-emphasis">
-            {{ $t('auth.SIGNIN.dont-have-account') }}
-          </span>
-          <v-btn
-            variant="text"
-            color="primary"
-            class="text-body-2 pl-1"
-            @click="redirectToSignup"
-          >
-            {{ $t('auth.SIGNIN.sign-up') }}
-          </v-btn>
-        </div>
+        <v-btn
+          variant="text"
+          color="primary"
+          class="text-body-2 mt-2 mt-md-0"
+          @click="redirectToForgotPassword"
+        >
+          {{ $t('auth.SIGNIN.forgot-password') }}
+        </v-btn>
       </div>
+
+      <v-btn
+        type="submit"
+        color="primary"
+        block
+        :loading="loading && loadingType === 'signin'"
+        :disabled="loadingType === 'google'"
+        min-height="44"
+        data-testid="sign-in-button"
+      >
+        {{ $t('auth.SIGNIN.sign-in') }}
+      </v-btn>
+    </v-form>
+
+    <v-divider class="my-6">
+      <span class="text-body-2 text-medium-emphasis">
+        {{ $t('auth.SIGNIN.or') }}
+      </span>
+    </v-divider>
+
+    <GoogleSignInButton
+      :remember-me="rememberMe"
+      :button-text="$t('auth.SIGNIN.continueWithGoogle')"
+      :loading="loading && loadingType === 'google'"
+      :disabled="loadingType === 'signin'"
+      @google-sign-in-start="onGoogleSignInStart"
+      @google-sign-in-success="onGoogleSignInSuccess"
+      @google-sign-in-error="onGoogleSignInError"
+    />
+
+    <div class="text-center mt-6">
+      <span class="text-body-2 text-medium-emphasis">
+        {{ $t('auth.SIGNIN.dont-have-account') }}
+      </span>
+      <v-btn
+        variant="text"
+        color="primary"
+        class="text-body-2 pl-1"
+        @click="redirectToSignup"
+      >
+        {{ $t('auth.SIGNIN.sign-up') }}
+      </v-btn>
     </div>
-  </div>
+  </AuthLayout>
 </template>
 
 <script setup>
@@ -116,6 +100,7 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
+import AuthLayout from '@/features/auth/components/AuthLayout.vue'
 import { createEmailRules } from '@/shared/utils/validators'
 import { resolvePostSignInPath } from '@/shared/utils/authRedirect'
 
@@ -207,88 +192,4 @@ const onGoogleSignInError = (error) => {
 }
 </script>
 
-<style scoped>
-.signin-wrapper {
-  display: flex;
-  flex-direction: row;
-  min-height: 100vh;
-  background-color: #ffffff;
-  flex-wrap: wrap;
-}
-
-/* LEFT SIDE LOGO */
-.logo-side {
-  width: 50%;
-  min-height: 100%;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo-img {
-  max-width: 600px;
-  width: 100%;
-}
-
-.mobile-logo-img {
-  max-width: 220px;
-  width: 100%;
-}
-
-/* RIGHT SIDE FORM */
-.form-side {
-  width: 50%;
-  padding: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* BOX STYLING */
-.signin-box {
-  width: 100%;
-  max-width: 450px;
-  padding: 32px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-/* TITLE & SUBTITLE */
-.subtitle {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 1.5rem;
-}
-
-/* RESPONSIVE ADJUSTMENTS */
-@media (max-width: 960px) {
-  .logo-side {
-    display: none;
-  }
-
-  .form-side {
-    width: 100%;
-    padding: 24px;
-    align-items: center;
-  }
-
-  .signin-box {
-    padding: 24px;
-    box-shadow: none; /* Clean for mobile view */
-  }
-}
-
-@media (max-width: 600px) {
-  .signin-box {
-    padding: 16px;
-    border-radius: 12px;
-  }
-
-  .subtitle {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-}
-</style>
+<style scoped></style>

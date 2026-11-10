@@ -1,4 +1,7 @@
-import SuperAdmin from '@/features/super/SuperAdminView.vue'
+const SuperAdmin = () =>
+  import(
+    /* webpackChunkName: "super-admin" */ '@/features/super/SuperAdminView.vue'
+  )
 
 export default [
   {

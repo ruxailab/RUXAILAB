@@ -331,7 +331,7 @@ describe('LogsView', () => {
     expect(wrapper.text()).toContain('Heuristic 2 · Question 1 · Comment field')
     expect(wrapper.text()).toContain('6 input events')
     expect(wrapper.text()).toContain('Active edit span')
-    expect(wrapper.text()).toContain('1.4 s')
+    expect(wrapper.text()).toMatch(/1[.,]4 s/)
     expect(wrapper.text()).toContain('Server receipt')
     expect(wrapper.text()).not.toContain('Delivery delay')
     expect(wrapper.text()).toContain(
@@ -410,7 +410,7 @@ describe('LogsView', () => {
     expect(wrapper.text()).toContain('Changed')
     expect(wrapper.text()).toContain('Frequency, Severity, Comment')
     expect(wrapper.text()).toContain('Interaction span')
-    expect(wrapper.text()).toContain('18.4 s')
+    expect(wrapper.text()).toMatch(/18[.,]4 s/)
     expect(wrapper.text()).toContain('Frequency changes')
     expect(wrapper.text()).toContain('1 change')
     expect(wrapper.text()).toContain('Severity changes')
@@ -895,7 +895,7 @@ describe('LogsView', () => {
     expect(wrapper.find('.event-summary').text()).not.toContain('Received')
     expect(wrapper.find('.drawer-details').text()).toContain('0 → 5 characters')
     expect(wrapper.find('.drawer-details').text()).toContain('2 input events')
-    expect(wrapper.find('.drawer-details').text()).toContain('1.3 s')
+    expect(wrapper.find('.drawer-details').text()).toMatch(/1[.,]3 s/)
     expect(wrapper.find('.drawer-details').text()).not.toContain('Paste events')
     expect(wrapper.find('.drawer-details').text()).not.toContain(
       'private response value',

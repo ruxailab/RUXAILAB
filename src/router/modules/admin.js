@@ -1,11 +1,35 @@
-import TestList from '@/features/navigation/views/AdminView.vue'
-import Choose from '@/features/ux_creation/Choose.vue'
-import ChooseStudyMethods from '@/features/ux_creation/ChooseStudyMethods.vue'
-import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
-import StudyDetailsForm from '@/features/ux_creation/StudyDetailsForm.vue'
-import CreateWithAIView from '@/features/ux_creation/CreateWithAIView.vue'
-import DashboardView from '@/features/dashboard/views/DashboardView.vue'
-import TemplateManagerView from '@/features/templates/views/TemplateManagerView.vue'
+const DashboardView = () =>
+  import(
+    /* webpackChunkName: "dashboard" */ '@/features/dashboard/views/DashboardView.vue'
+  )
+const TestList = () =>
+  import(
+    /* webpackChunkName: "admin" */ '@/features/navigation/views/AdminView.vue'
+  )
+const Choose = () =>
+  import(
+    /* webpackChunkName: "study-create" */ '@/features/ux_creation/Choose.vue'
+  )
+const ChooseStudyMethods = () =>
+  import(
+    /* webpackChunkName: "study-create" */ '@/features/ux_creation/ChooseStudyMethods.vue'
+  )
+const ChooseStudyType = () =>
+  import(
+    /* webpackChunkName: "study-create" */ '@/features/ux_creation/ChooseStudyType.vue'
+  )
+const StudyDetailsForm = () =>
+  import(
+    /* webpackChunkName: "study-create" */ '@/features/ux_creation/StudyDetailsForm.vue'
+  )
+const CreateWithAIView = () =>
+  import(
+    /* webpackChunkName: "study-create" */ '@/features/ux_creation/CreateWithAIView.vue'
+  )
+const TemplateManagerView = () =>
+  import(
+    /* webpackChunkName: "templates" */ '@/features/templates/views/TemplateManagerView.vue'
+  )
 
 export default [
   {

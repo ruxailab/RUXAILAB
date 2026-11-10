@@ -1,7 +1,6 @@
 import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+import { ClickOutside, Ripple } from 'vuetify/directives'
 
 const myCustomLightTheme = {
   dark: false,
@@ -24,10 +23,7 @@ const myCustomLightTheme = {
 }
 
 export default createVuetify({
-  components: {
-    ...components,
-  },
-  directives,
+  directives: { ClickOutside, Ripple },
   theme: {
     defaultTheme: 'myCustomLightTheme',
     themes: {

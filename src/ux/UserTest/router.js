@@ -1,16 +1,44 @@
-import ManagerMonderatedView from '@/ux/UserTest/views/Moderators/ManagerView.vue'
-import ManagerUnmoderatedView from '@/ux/UserTest/views/Unmoderated/ManagerView.vue'
-import ReportView from '@/shared/views/ReportView.vue'
-import EditTest from '@/ux/UserTest/views/EditTestView.vue'
-import SettingsView from '@/shared/views/SettingsView.vue'
-import CooperatorsView from '@/shared/views/CooperatorsView.vue'
-import UserAnswerView from './views/UserAnswerView.vue'
-import StorageView from '@/shared/views/StorageView.vue'
-import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
-import AuditTrailView from '@/shared/views/AuditTrailView.vue'
-import SessionsView from '../../shared/views/SessionsView.vue'
-import LogsView from '@/shared/views/LogsView.vue'
+
+const ManagerMonderatedView = () =>
+  import(
+    /* webpackChunkName: "user-test" */ '@/ux/UserTest/views/Moderators/ManagerView.vue'
+  )
+const ManagerUnmoderatedView = () =>
+  import(
+    /* webpackChunkName: "user-test" */ '@/ux/UserTest/views/Unmoderated/ManagerView.vue'
+  )
+const EditTest = () =>
+  import(
+    /* webpackChunkName: "user-test" */ '@/ux/UserTest/views/EditTestView.vue'
+  )
+const UserAnswerView = () =>
+  import(
+    /* webpackChunkName: "user-test" */ '@/ux/UserTest/views/UserAnswerView.vue'
+  )
+
+const ReportView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/ReportView.vue')
+const SettingsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/SettingsView.vue')
+const CooperatorsView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/CooperatorsView.vue'
+  )
+const StorageView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/StorageView.vue')
+const ParticipantsView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/ParticipantsView.vue'
+  )
+const AuditTrailView = () =>
+  import(
+    /* webpackChunkName: "study-shared" */ '@/shared/views/AuditTrailView.vue'
+  )
+const SessionsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/SessionsView.vue')
+const LogsView = () =>
+  import(/* webpackChunkName: "study-shared" */ '@/shared/views/LogsView.vue')
 
 const studyMeta = (studyCapability, studyRouteBase) => ({
   authorize: [0, 1],

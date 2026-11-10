@@ -186,11 +186,6 @@ function onMotionPreferenceChange(event) {
 }
 
 function onVideoError() {
-  const fallback = media.value.sources?.[1]?.src
-  if (fallback && videoSrc.value !== fallback) {
-    videoOverride.value = fallback
-    return
-  }
   videoFailed.value = true
 }
 

@@ -27,7 +27,7 @@ defineProps({
   height: 140%;
   margin-right: -450px;
   margin-top: 100px;
-  background-image: url(../../assets/logo_small_red.png);
+  background-image: url(../../assets/logo_small_red.svg);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;

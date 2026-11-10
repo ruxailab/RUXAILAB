@@ -96,7 +96,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import officeHoursImage from '@/assets/office_banner_gray.png'
+import officeHoursImage from '@/assets/office_banner_gray.svg'
 import { useDateLocale } from '@/shared/composables/useDateLocale'
 
 const { t } = useI18n()
