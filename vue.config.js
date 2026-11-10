@@ -6,6 +6,10 @@ module.exports = {
   productionSourceMap: false,
   css: { sourceMap: false },
 
+  chainWebpack: (config) => {
+    config.plugins.delete('prefetch')
+  },
+
   transpileDependencies: [
     'vuetify',
     'resize-detector',
@@ -27,8 +31,6 @@ module.exports = {
       overlay: {
         errors: true,
         warnings: true,
-        // Benign browser warning (not a real error) fired by ResizeObserver
-        // when menus/overlays resize rapidly (e.g. Vuetify v-menu).
         runtimeErrors: (error) =>
           !/ResizeObserver loop/.test(error?.message ?? ''),
       },
@@ -55,16 +57,7 @@ module.exports = {
     ],
     optimization: {
       splitChunks: {
-        cacheGroups: {
-          vuetifyAsync: {
-            name: 'chunk-vuetify-async',
-            test: /[\\/]node_modules[\\/]vuetify[\\/]/,
-            chunks: 'async',
-            minChunks: 2,
-            priority: 20,
-            reuseExistingChunk: true,
-          },
-        },
+        chunks: 'all',
       },
     },
     resolve: {
