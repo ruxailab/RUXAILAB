@@ -214,6 +214,75 @@ describe('AuthController', () => {
     })
   })
 
+  describe('resetPassword', () => {
+    const EmailController = require('@/shared/controllers/EmailController')
+
+    const mockSendResult = (result) => {
+      const send = jest.fn().mockResolvedValue(result)
+      EmailController.mockImplementationOnce(() => ({ send }))
+      return send
+    }
+
+    it('sends the password reset email', async () => {
+      const send = mockSendResult({ success: true })
+
+      await authController.resetPassword('test@example.com')
+
+      expect(send).toHaveBeenCalledWith({
+        to: 'test@example.com',
+        subject: 'Password Reset',
+        template: 'passwordReset',
+      })
+    })
+
+    it('throws when the email could not be sent', async () => {
+      mockSendResult({ success: false, message: 'Network error' })
+
+      await expect(
+        authController.resetPassword('test@example.com'),
+      ).rejects.toThrow('Network error')
+    })
+  })
+
+  describe('sendVerificationEmail', () => {
+    const EmailController = require('@/shared/controllers/EmailController')
+
+    const mockSendResult = (result) => {
+      const send = jest.fn().mockResolvedValue(result)
+      EmailController.mockImplementationOnce(() => ({ send }))
+      return send
+    }
+
+    it('sends the verification email', async () => {
+      const send = mockSendResult({ success: true })
+
+      await authController.sendVerificationEmail('test@example.com', 'Test')
+
+      expect(send).toHaveBeenCalledWith({
+        to: 'test@example.com',
+        subject: 'Verify Your Email Address',
+        template: 'emailVerification',
+        data: { userName: 'Test' },
+      })
+    })
+
+    it('throws when the email could not be sent', async () => {
+      mockSendResult({ success: false, message: 'Internal Server Error' })
+
+      await expect(
+        authController.sendVerificationEmail('test@example.com', 'Test'),
+      ).rejects.toThrow('Internal Server Error')
+    })
+
+    it('throws a default message when the failure has no message', async () => {
+      mockSendResult({ success: false })
+
+      await expect(
+        authController.sendVerificationEmail('test@example.com'),
+      ).rejects.toThrow('Email could not be sent')
+    })
+  })
+
   describe('deleteAuth', () => {
     it('should delete Google user account', async () => {
       const mockUser = {

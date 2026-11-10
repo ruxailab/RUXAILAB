@@ -110,11 +110,26 @@ export default class AuthController {
       )
     })
   }
+  /**
+   * Sends an email and throws when it was not sent.
+   * EmailController.send() reports failures through `success: false`
+   * instead of throwing, so the result has to be checked here; otherwise the
+   * caller would treat a failed send as a success.
+   * @param {Object} payload - EmailController.send() payload
+   * @returns {Promise<void>}
+   */
+  async sendEmailOrThrow(payload) {
+    const emailController = new EmailController()
+    const result = await emailController.send(payload)
+
+    if (!result?.success) {
+      throw new Error(result?.message || 'Email could not be sent')
+    }
+  }
+
   // Reset Password
   async resetPassword(email) {
-    // return sendPasswordResetEmail(auth, email)
-    const emailController = new EmailController()
-    await emailController.send({
+    await this.sendEmailOrThrow({
       to: email,
       subject: 'Password Reset',
       template: 'passwordReset',
@@ -158,18 +173,13 @@ export default class AuthController {
   }
 
   async sendVerificationEmail(email, userName) {
-    try {
-      const emailController = new EmailController()
-      await emailController.send({
-        to: email,
-        subject: 'Verify Your Email Address',
-        template: 'emailVerification',
-        data: {
-          userName: userName || email,
-        },
-      })
-    } catch (err) {
-      throw err
-    }
+    await this.sendEmailOrThrow({
+      to: email,
+      subject: 'Verify Your Email Address',
+      template: 'emailVerification',
+      data: {
+        userName: userName || email,
+      },
+    })
   }
 }
