@@ -479,9 +479,9 @@
                 {{ $t('analytics.sus.finalScore') }}
               </div>
               <div class="d-flex align-center">
-                <!-- <span class="text-h4 font-weight-bold text-primary mr-2">
+                <span class="text-h4 font-weight-bold text-primary mr-2">
                   {{ formatSUSScore(selectedResponse.susScore, locale) }}
-                </span> -->
+                </span>
                 <span class="text-h6 text-grey">
                   {{ $t('analytics.sus.scoreDenominator') }}
                 </span>
@@ -492,7 +492,7 @@
                   size="small"
                   class="ml-3"
                 >
-                  {{ getSUSRating(selectedResponse.susScore) }}
+                  {{ translateRating(getSUSRating(selectedResponse.susScore)) }}
                 </v-chip>
               </div>
             </div>
