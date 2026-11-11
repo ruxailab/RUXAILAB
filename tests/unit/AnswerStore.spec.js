@@ -133,3 +133,45 @@ describe('Answer store', () => {
     },
   )
 })
+
+describe('currentCardSortingAnswer getter', () => {
+  const { auth } = require('@/app/plugins/firebase')
+  const getter = AnswerStore.getters.currentCardSortingAnswer
+  const test = { id: 'study-1', testType: 'CARD_SORTING' }
+  const state = {
+    testAnswerDocument: {
+      cardSortingAnswers: {
+        'anon-1': { userDocId: 'anon-1', submitted: true },
+        participant: { userDocId: 'participant', progress: 40 },
+      },
+    },
+  }
+
+  afterEach(() => {
+    auth.currentUser = null
+  })
+
+  it('returns the anonymous participant answer so a reload resumes it', () => {
+    auth.currentUser = { uid: 'anon-1', isAnonymous: true }
+
+    const answer = getter(state, { test, user: null })
+
+    expect(answer.userDocId).toBe('anon-1')
+    expect(answer.submitted).toBe(true)
+  })
+
+  it('prefers the signed-in user over the auth account', () => {
+    auth.currentUser = { uid: 'anon-1', isAnonymous: true }
+
+    const answer = getter(state, { test, user: { id: 'participant' } })
+
+    expect(answer.userDocId).toBe('participant')
+    expect(answer.progress).toBe(40)
+  })
+
+  it('returns an empty answer for a non-anonymous account without a profile', () => {
+    auth.currentUser = { uid: 'unverified', isAnonymous: false }
+
+    expect(getter(state, { test, user: null })).toEqual({})
+  })
+})
