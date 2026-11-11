@@ -355,6 +355,7 @@ import CardSortingTask from './CardSortingTask.vue'
 import CardSortingEvaluatorAnswer from '../models/CardSortingEvaluatorAnswer'
 import { showError, showSuccess, showInfo } from '@/shared/utils/toast'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { getAuth } from 'firebase/auth'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 import {
   createStructuredActivityHandlers,
@@ -381,6 +382,14 @@ const {
 } = useStepAnnouncement({ scroll: true })
 
 const user = computed(() => store.getters.user)
+// Participants from a link without login use an anonymous account that has
+// no profile in the store. Their answer is saved under that account's id.
+// Read on each call: auth.currentUser is not reactive.
+const getParticipantId = () => {
+  if (user.value?.id) return user.value.id
+  const authUser = getAuth()?.currentUser
+  return authUser?.isAnonymous ? authUser.uid : null
+}
 const currentCardSortingAnswer = computed(() =>
   props.preview ? null : store.getters.currentCardSortingAnswer,
 )
@@ -401,7 +410,7 @@ const sortingStartedAt = ref(null)
 const localAnswer = reactive(
   new CardSortingEvaluatorAnswer({
     ...currentCardSortingAnswer.value,
-    userDocId: user.value?.id ?? null,
+    userDocId: getParticipantId(),
     preTestAnswer: buildPreTestAnswer(),
     postTestAnswer: buildPostTestAnswer(),
   }),
@@ -417,9 +426,11 @@ if (localAnswer.submitted) start.value = false
 let studyLogging = null
 const initializeStudyLogging = () => {
   if (props.preview) return null
-  if (studyLogging || !user.value?.id || !props.test?.id) return studyLogging
+  // Logged under the same id the answer is saved under, like User Test.
+  const participantId = getParticipantId()
+  if (studyLogging || !participantId || !props.test?.id) return studyLogging
   studyLogging = createStudyLoggingRuntime({
-    ownerUid: user.value.id,
+    ownerUid: participantId,
     studyId: props.test.id,
     studyType: 'CARD_SORTING',
     consentRequired: true,
@@ -674,10 +685,13 @@ function buildPostTestAnswer() {
 
 const savePartial = async () => {
   if (props.preview) return
-  if (!user.value) return
-  localAnswer.userDocId = user.value.id
+  const participantId = getParticipantId()
+  // Fail loudly: callers show a save error instead of a false success.
+  if (!participantId) throw new Error('No participant to save the answer for')
+  localAnswer.userDocId = participantId
   localAnswer.fullName = fullName.value
-  localAnswer.invited = true
+  // Anonymous participants were not invited by email.
+  localAnswer.invited = Boolean(user.value)
   localAnswer.lastUpdate = Date.now()
   localAnswer.progress = Math.round(progress.value)
   if (localAnswer.testStartedAt && !localAnswer.submitted) {
@@ -717,9 +731,7 @@ const completeStep = async (type) => {
         sortingStartedAt.value = Date.now()
       }
       await savePartial()
-      if (user.value) {
-        void initializeStudyLogging()?.consentAccepted(consentAcceptedAt)
-      }
+      void initializeStudyLogging()?.consentAccepted(consentAcceptedAt)
       return
     }
 

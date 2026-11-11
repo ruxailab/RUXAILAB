@@ -210,15 +210,21 @@ export default {
     },
     currentCardSortingAnswer(state, rootGetters) {
       if (!state.testAnswerDocument) return {}
-      if (!rootGetters.test || !rootGetters.user) return {}
+      if (!rootGetters.test) return {}
+      // Anonymous participants have no profile in the store, but their
+      // answer is saved under their anonymous account's id.
+      const userId =
+        rootGetters.user?.id ??
+        (auth.currentUser?.isAnonymous ? auth.currentUser.uid : null)
+      if (!userId) return {}
 
       const cardSortingAnswers =
         state.testAnswerDocument.cardSortingAnswers || {}
-      const existing = cardSortingAnswers[rootGetters.user.id]
+      const existing = cardSortingAnswers[userId]
 
       return existing
         ? CardSortingEvaluatorAnswer.toModel(existing)
-        : new CardSortingEvaluatorAnswer({ userDocId: rootGetters.user.id })
+        : new CardSortingEvaluatorAnswer({ userDocId: userId })
     },
     cardSortingAnswersList(state) {
       const doc = state.testAnswerDocument
