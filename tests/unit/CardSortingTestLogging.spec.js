@@ -1,7 +1,9 @@
 import { flushPromises, shallowMount } from '@vue/test-utils'
 import { useStore } from 'vuex'
+import { getAuth } from 'firebase/auth'
 import CardSortingTest from '@/ux/CardSorting/components/CardSortingTest.vue'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { showError, showSuccess } from '@/shared/utils/toast'
 
 jest.mock('vue-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
@@ -79,11 +81,17 @@ const createRuntime = () => ({
 
 const mountView = (
   answer = {},
-  { dispatch, preview = false, study = test, inspectSteps = false } = {},
+  {
+    dispatch,
+    preview = false,
+    study = test,
+    inspectSteps = false,
+    user = { id: 'participant' },
+  } = {},
 ) => {
   useStore.mockReturnValue({
     getters: {
-      user: { id: 'participant' },
+      user,
       currentCardSortingAnswer: answer,
       mediaUrls: {},
     },
@@ -353,5 +361,55 @@ describe('CardSortingTest activity logging', () => {
 
     expect(runtime.submitted).not.toHaveBeenCalled()
     wrapper.unmount()
+  })
+})
+
+describe('CardSortingTest answer owner', () => {
+  const savedAnswers = (dispatch) =>
+    dispatch.mock.calls
+      .filter(([action]) => action === 'saveTestAnswer')
+      .map(([, payload]) => payload)
+
+  const submitAs = async ({ user, authUser }) => {
+    window.scrollTo = jest.fn()
+    getAuth.mockReturnValue({ currentUser: authUser })
+    const dispatch = jest.fn(() => Promise.resolve())
+    const wrapper = mountView({}, { dispatch, user })
+    await wrapper.vm.submit()
+    await flushPromises()
+    return { wrapper, saved: savedAnswers(dispatch) }
+  }
+
+  it('saves an anonymous participant under the anonymous account id', async () => {
+    const { saved } = await submitAs({
+      user: null,
+      authUser: { uid: 'anon-1', isAnonymous: true },
+    })
+
+    expect(saved).toHaveLength(1)
+    expect(saved[0].answersDocId).toBe('answer-1')
+    expect(saved[0].data.userDocId).toBe('anon-1')
+    expect(saved[0].data.invited).toBe(false)
+    expect(saved[0].data.submitted).toBe(true)
+    expect(showSuccess).toHaveBeenCalledWith('CardSorting.answerSubmitted')
+  })
+
+  it('keeps saving a signed-in participant under their user id', async () => {
+    const { saved } = await submitAs({
+      user: { id: 'participant' },
+      authUser: { uid: 'participant', isAnonymous: false },
+    })
+
+    expect(saved[0].data.userDocId).toBe('participant')
+    expect(saved[0].data.invited).toBe(true)
+  })
+
+  it('reports a save error instead of a false success when nobody is signed in', async () => {
+    const { wrapper, saved } = await submitAs({ user: null, authUser: null })
+
+    expect(saved).toHaveLength(0)
+    expect(showSuccess).not.toHaveBeenCalled()
+    expect(showError).toHaveBeenCalledWith('CardSorting.saveError')
+    expect(wrapper.vm.localAnswer.submitted).toBe(false)
   })
 })
