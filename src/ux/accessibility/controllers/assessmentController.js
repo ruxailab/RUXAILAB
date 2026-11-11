@@ -111,7 +111,7 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment) => {
     })
 
     return { success: true }
-  } catch {
+  } catch (error) {
     throw new Error('Failed to update rule assessment: ' + error.message)
   }
 }

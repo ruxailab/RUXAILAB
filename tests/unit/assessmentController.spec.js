@@ -14,7 +14,7 @@ jest.mock('@/app/plugins/firebase', () => ({
   db: {},
 }))
 
-const { getUserAssessments } = require('@/ux/accessibility/controllers/assessmentController')
+const { getUserAssessments, updateRuleAssessment } = require('@/ux/accessibility/controllers/assessmentController')
 
 describe('assessmentController', () => {
   describe('getUserAssessments', () => {
@@ -38,6 +38,19 @@ describe('assessmentController', () => {
         { id: 'doc-1', userId: 'user-1', testId: 'test-1' },
         { id: 'doc-2', userId: 'user-1', testId: 'test-2' },
       ])
+    })
+  })
+
+  describe('updateRuleAssessment', () => {
+    it('keeps the original error message when the save fails', async () => {
+      const { getDoc, updateDoc } = require('firebase/firestore')
+
+      getDoc.mockResolvedValue({ exists: () => true, data: () => ({ assessmentData: [] }) })
+      updateDoc.mockRejectedValue(new Error('permission-denied'))
+
+      await expect(
+        updateRuleAssessment('user-1', 'test-1', { ruleId: '1.1.1' }),
+      ).rejects.toThrow('Failed to update rule assessment: permission-denied')
     })
   })
 })
