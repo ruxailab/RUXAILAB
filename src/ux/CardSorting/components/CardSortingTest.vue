@@ -426,9 +426,11 @@ if (localAnswer.submitted) start.value = false
 let studyLogging = null
 const initializeStudyLogging = () => {
   if (props.preview) return null
-  if (studyLogging || !user.value?.id || !props.test?.id) return studyLogging
+  // Logged under the same id the answer is saved under, like User Test.
+  const participantId = getParticipantId()
+  if (studyLogging || !participantId || !props.test?.id) return studyLogging
   studyLogging = createStudyLoggingRuntime({
-    ownerUid: user.value.id,
+    ownerUid: participantId,
     studyId: props.test.id,
     studyType: 'CARD_SORTING',
     consentRequired: true,
@@ -729,9 +731,7 @@ const completeStep = async (type) => {
         sortingStartedAt.value = Date.now()
       }
       await savePartial()
-      if (user.value) {
-        void initializeStudyLogging()?.consentAccepted(consentAcceptedAt)
-      }
+      void initializeStudyLogging()?.consentAccepted(consentAcceptedAt)
       return
     }
 

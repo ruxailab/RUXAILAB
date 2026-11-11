@@ -394,6 +394,29 @@ describe('CardSortingTest answer owner', () => {
     expect(showSuccess).toHaveBeenCalledWith('CardSorting.answerSubmitted')
   })
 
+  it('logs an anonymous participant under the anonymous account id', async () => {
+    window.scrollTo = jest.fn()
+    const runtime = createRuntime()
+    createStudyLoggingRuntime.mockReturnValue(runtime)
+    getAuth.mockReturnValue({
+      currentUser: { uid: 'anon-1', isAnonymous: true },
+    })
+    const wrapper = mountView({}, { user: null })
+    await reachConsentStep(wrapper)
+
+    wrapper.findComponent({ name: 'ConsentStep' }).vm.$emit('continue')
+    await flushPromises()
+
+    expect(createStudyLoggingRuntime).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ownerUid: 'anon-1',
+        studyType: 'CARD_SORTING',
+      }),
+    )
+    expect(runtime.consentAccepted).toHaveBeenCalledTimes(1)
+    wrapper.unmount()
+  })
+
   it('keeps saving a signed-in participant under their user id', async () => {
     const { saved } = await submitAs({
       user: { id: 'participant' },
