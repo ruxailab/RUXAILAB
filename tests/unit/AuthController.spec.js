@@ -31,21 +31,27 @@ jest.mock('@/app/plugins/firebase', () => ({
   auth: { currentUser: { uid: 'test-uid', email: 'test@example.com' } },
 }))
 
+jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
+  FirebaseFunctionsController: {
+    callHttpsCallableFunction: jest.fn().mockResolvedValue({
+      data: 'User deleted successfully.',
+    }),
+  },
+}))
+
 jest.mock('@/shared/controllers/EmailController', () => {
   return jest.fn().mockImplementation(() => ({
     send: jest.fn().mockResolvedValue({ success: true }),
   }))
 })
 
-jest.mock('axios', () => ({
-  post: jest.fn(),
-}))
-
 describe('AuthController', () => {
   let authController
 
   beforeEach(() => {
     jest.clearAllMocks()
+    const firebase = require('@/app/plugins/firebase')
+    firebase.auth.currentUser = { uid: 'test-uid', email: 'test@example.com' }
     authController = new AuthController()
   })
 
@@ -292,18 +298,18 @@ describe('AuthController', () => {
         delete: jest.fn().mockResolvedValue(),
       }
 
-      const axios = require('axios')
-
-      axios.post.mockResolvedValue({
-        data: { success: true },
-      })
+      const {
+        FirebaseFunctionsController,
+      } = require('@/app/plugins/firebase/FirebaseFunctionsService')
 
       await authController.deleteAuth({
         user: mockUser,
       })
 
       expect(mockUser.delete).toHaveBeenCalled()
-      expect(axios.post).toHaveBeenCalled()
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).toHaveBeenCalledWith('deleteAuth', { userId: 'google-user-id' })
     })
 
     it('should delete email/password user account', async () => {
@@ -314,11 +320,9 @@ describe('AuthController', () => {
         delete: jest.fn().mockResolvedValue(),
       }
 
-      const axios = require('axios')
-
-      axios.post.mockResolvedValue({
-        data: { success: true },
-      })
+      const {
+        FirebaseFunctionsController,
+      } = require('@/app/plugins/firebase/FirebaseFunctionsService')
 
       await authController.deleteAuth({
         user: mockUser,
@@ -326,7 +330,9 @@ describe('AuthController', () => {
       })
 
       expect(mockUser.delete).toHaveBeenCalled()
-      expect(axios.post).toHaveBeenCalled()
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).toHaveBeenCalledWith('deleteAuth', { userId: 'email-user-id' })
     })
 
     it('should throw and not call backend if user.delete fails', async () => {
@@ -337,11 +343,9 @@ describe('AuthController', () => {
         delete: jest.fn().mockRejectedValue(new Error('Delete failed')),
       }
 
-      const axios = require('axios')
-
-      axios.post.mockResolvedValue({
-        data: { success: true },
-      })
+      const {
+        FirebaseFunctionsController,
+      } = require('@/app/plugins/firebase/FirebaseFunctionsService')
 
       await expect(
         authController.deleteAuth({
@@ -350,7 +354,37 @@ describe('AuthController', () => {
         }),
       ).rejects.toThrow('Delete failed')
 
-      expect(axios.post).not.toHaveBeenCalled()
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('deleteUserData', () => {
+    it('should invoke deleteAuth callable function with userId', async () => {
+      const {
+        FirebaseFunctionsController,
+      } = require('@/app/plugins/firebase/FirebaseFunctionsService')
+
+      await authController.deleteUserData('user-123')
+
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).toHaveBeenCalledWith('deleteAuth', { userId: 'user-123' })
+    })
+
+    it('should rethrow if deleteAuth callable function fails', async () => {
+      const {
+        FirebaseFunctionsController,
+      } = require('@/app/plugins/firebase/FirebaseFunctionsService')
+
+      FirebaseFunctionsController.callHttpsCallableFunction.mockRejectedValueOnce(
+        new Error('Callable failure'),
+      )
+
+      await expect(
+        authController.deleteUserData('user-123'),
+      ).rejects.toThrow('Callable failure')
     })
   })
 })
