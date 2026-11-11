@@ -727,7 +727,7 @@ const onFilterChange = (idx, val) => {
 }
 
 const hasActiveFilters = computed(() => {
-  const someFilters = Object.entries(selectedFilters.value).some(([, v]) => {
+  const someFilters = Object.entries(selectedFilters.value).some(([_k, v]) => {
     if (Array.isArray(v)) return v.length && !v.includes(ALL_VALUE)
     return !!v // texto
   })
