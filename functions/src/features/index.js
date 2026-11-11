@@ -29,7 +29,4 @@ export {
   removeStudyReport,
   setStudyReportHidden,
 } from '../features/studyReports/index.js'
-export {
-  deleteAuth,
-  DeleteUserService,
-} from '../features/users/index.js'
+export { deleteAuth } from '../features/users/index.js'
