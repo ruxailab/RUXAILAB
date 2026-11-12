@@ -585,6 +585,12 @@ watch(search, () => {
   activeIndex.value = -1
 })
 
+watch(currentPages, (pages) => {
+  if (currentPage.value > pages) {
+    currentPage.value = Math.max(pages, 1)
+  }
+})
+
 // Lifecycle
 onMounted(() => {
   setTimeout(() => {
