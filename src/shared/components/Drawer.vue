@@ -17,8 +17,14 @@
     <!-- Navigation options -->
     <v-list v-if="items" density="compact">
       <template v-for="group in groupedItems" :key="group.id">
-        <v-list-subheader v-if="group.title" class="navigation-group">
-          {{ $t(`navigation.groups.${group.title}`) }}
+        <v-list-subheader
+          v-if="group.title"
+          class="navigation-group"
+          :class="{ 'navigation-group--rail': miniMode && mdAndUp }"
+        >
+          <template v-if="!(miniMode && mdAndUp)">
+            {{ $t(`navigation.groups.${group.title}`) }}
+          </template>
         </v-list-subheader>
         <v-list-item
           v-for="item in group.items"
@@ -154,6 +160,10 @@ onUnmounted(() => {
 .navigation-group {
   color: #bababa !important;
   position: relative;
+}
+
+.navigation-group--rail {
+  min-height: 12px !important;
 }
 
 .navigation-group::after {

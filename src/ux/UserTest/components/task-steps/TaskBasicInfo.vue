@@ -45,21 +45,22 @@
             class="description-editor"
             :class="{
               'editor-error':
-                showDescriptionError && !localTask.taskDescription?.trim(),
+                showDescriptionError && !hasText(localTask.taskDescription),
             }"
           >
             <QuillEditor
               v-model:content="localTask.taskDescription"
+              content-type="html"
               :options="editorOptions"
               class="custom-editor"
-              @change="onChangeEditor"
+              @text-change="validateStep"
               @blur="checkDescriptionValidation"
             />
           </div>
 
           <v-expand-transition>
             <div
-              v-if="showDescriptionError && !localTask.taskDescription?.trim()"
+              v-if="showDescriptionError && !hasText(localTask.taskDescription)"
               class="error-text ml-4 mt-1"
             >
               <v-icon size="14" color="red" class="mr-1"
@@ -115,6 +116,10 @@ const localTask = ref({ ...props.modelValue })
 const basicInfoForm = ref(null)
 const showDescriptionError = ref(false)
 
+const hasText = (value) =>
+  typeof value === 'string' &&
+  value.replace(/<[^>]*>|&nbsp;/g, '').trim().length > 0
+
 const editorOptions = computed(() => ({
   theme: 'snow',
   placeholder: t('CreateTask.basicInfo.taskDescriptionPlaceholder'),
@@ -132,9 +137,9 @@ const completionPercentage = computed(() => {
   let completed = 0
   const total = 3
 
-  if (localTask.value.taskName?.trim()) completed++
-  if (localTask.value.taskDescription?.trim()) completed++
-  if (localTask.value.taskTip?.trim()) completed++
+  if (hasText(localTask.value.taskName)) completed++
+  if (hasText(localTask.value.taskDescription)) completed++
+  if (hasText(localTask.value.taskTip)) completed++
 
   return Math.round((completed / total) * 100)
 })
@@ -142,25 +147,19 @@ const completionPercentage = computed(() => {
 const isValid = computed(() => {
   basicInfoForm.value?.validate?.()
 
-  const nameOk = !!localTask.value.taskName?.trim()
-  const descOk = !!localTask.value.taskDescription?.trim()
+  const nameOk = !!hasText(localTask.value.taskName)
+  const descOk = !!hasText(localTask.value.taskDescription)
   return nameOk && descOk
 })
 
-const onChangeEditor = (content) => {
-  const html = content?.html ?? content
-  localTask.value.taskDescription = html
-  validateStep()
-}
-
 const checkTaskNameValidation = () => {
-  const nameOk = !!localTask.value.taskName?.trim()
+  const nameOk = !!hasText(localTask.value.taskName)
   basicInfoForm.value?.validate()
   return nameOk
 }
 
 const checkDescriptionValidation = () => {
-  const descOk = !!localTask.value.taskDescription?.trim()
+  const descOk = !!hasText(localTask.value.taskDescription)
   showDescriptionError.value = !descOk
   return descOk
 }
