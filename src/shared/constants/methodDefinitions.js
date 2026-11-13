@@ -344,6 +344,11 @@ export const getMethodDefinition = (testType, subType = '') => {
   }
 }
 
+export const studyMatchesMethod = (study, methodId) =>
+  !study.testType ||
+  methodId === 'all' ||
+  getMethodDefinition(study.testType, study.subType)?.id === methodId
+
 export const getMethodManagerView = (type, subType) => {
   const normalizedType = normalizeStudyType(type)
 

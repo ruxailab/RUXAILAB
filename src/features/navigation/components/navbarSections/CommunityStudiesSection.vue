@@ -167,6 +167,7 @@ import List from '@/shared/components/tables/ListComponent.vue'
 import {
   METHOD_DEFINITIONS,
   STUDY_TYPES,
+  studyMatchesMethod,
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 import { matchesSearch } from '@/shared/utils/searchUtils'
@@ -277,29 +278,7 @@ const filteredTests = computed(() => {
     const matchesSearchQuery = matchesSearch(title, query)
 
     // Filter by method
-    let matchesMethod = true
-    if (test.testType) {
-      const method = selectedMethodFilter.value
-      const testType = test.testType
-      const subType = test.subType
-
-      matchesMethod =
-        method === 'all' ||
-        (method === METHOD_DEFINITIONS.HEURISTICS.id &&
-          testType === STUDY_TYPES.HEURISTIC) ||
-        (method === METHOD_DEFINITIONS.USER_UNMODERATED.id &&
-          testType === STUDY_TYPES.USER &&
-          subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
-        (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
-          testType === STUDY_TYPES.USER &&
-          subType === USER_STUDY_SUBTYPES.MODERATED) ||
-        (method === METHOD_DEFINITIONS.CARD_SORTING.id &&
-          testType === STUDY_TYPES.CARD_SORTING) ||
-        (method === METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL.id &&
-          testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) ||
-        (method === METHOD_DEFINITIONS.ACCESSIBILITY_AUTOMATIC.id &&
-          testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC)
-    }
+    const matchesMethod = studyMatchesMethod(test, selectedMethodFilter.value)
 
     // Filter by status
     const matchesStatus =
