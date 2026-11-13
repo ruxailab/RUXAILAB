@@ -321,8 +321,10 @@ const filteredTests = computed(() => {
           subType === USER_STUDY_SUBTYPES.MODERATED) ||
         (method === METHOD_DEFINITIONS.CARD_SORTING.id &&
           testType === STUDY_TYPES.CARD_SORTING) ||
-        (method === 'MANUAL' && testType === 'MANUAL') ||
-        (method === 'AUTOMATIC' && testType === 'AUTOMATIC')
+        (method === METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL.id &&
+          testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) ||
+        (method === METHOD_DEFINITIONS.ACCESSIBILITY_AUTOMATIC.id &&
+          testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC)
     }
 
     // 🟩 Status
