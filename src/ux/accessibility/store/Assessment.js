@@ -607,7 +607,7 @@ const actions = {
             // Include rule metadata for easier querying
             ruleTitle: findRuleTitle(ruleId, state.wcagData),
             principle: findPrincipleForRule(ruleId, state.wcagData),
-            guideline: findGuidelineForRule(ruleId, state.wcogData),
+            guideline: findGuidelineForRule(ruleId, state.wcagData),
           }),
         }),
       )
@@ -673,7 +673,7 @@ const actions = {
         ...(state.wcagData && {
           ruleTitle: findRuleTitle(ruleId, state.wcagData),
           principle: findPrincipleForRule(ruleId, state.wcagData),
-          guideline: findGuidelineForRule(ruleId, state.wcogData),
+          guideline: findGuidelineForRule(ruleId, state.wcagData),
         }),
       })
 
