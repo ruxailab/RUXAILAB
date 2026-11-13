@@ -21,8 +21,10 @@
         :label="$t('auth.SIGNIN.email')"
         type="email"
         placeholder="you@example.com"
+        persistent-placeholder
         prepend-inner-icon="mdi-email-outline"
         variant="outlined"
+        class="mb-3"
       />
 
       <v-text-field
@@ -31,10 +33,11 @@
         :label="$t('auth.SIGNIN.password')"
         :type="showPassword ? 'text' : 'password'"
         placeholder="••••••••"
+        persistent-placeholder
         prepend-inner-icon="mdi-lock-outline"
         :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
         variant="outlined"
-        class="mb-2"
+        class="mb-3"
         @click:append-inner="showPassword = !showPassword"
       />
 
@@ -46,9 +49,11 @@
         :label="$t('auth.SIGNIN.confirmPassword')"
         :type="showConfirmPassword ? 'text' : 'password'"
         placeholder="••••••••"
+        persistent-placeholder
         prepend-inner-icon="mdi-lock-outline"
         :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
         variant="outlined"
+        class="mb-3"
         @click:append-inner="showConfirmPassword = !showConfirmPassword"
       />
 
