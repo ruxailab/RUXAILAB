@@ -207,6 +207,7 @@ import {
   normalizeCooperatorInviteEntry,
 } from '@/shared/composables/useCooperatorUtils'
 import { showError, showWarning } from '@/shared/utils/toast'
+import { getMinScheduleTime } from '@/shared/utils/sessionSchedule'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -350,21 +351,7 @@ const hour = ref(
   }),
 )
 
-const minTime = computed(() => {
-  const currentDate = new Date()
-  currentDate.setDate(currentDate.getDate() - 1)
-  const selectedDate = new Date(date.value)
-
-  if (
-    selectedDate.toLocaleDateString() === currentDate.toLocaleDateString() &&
-    selectedDate.getMonth() === currentDate.getMonth() &&
-    selectedDate.getFullYear() === currentDate.getFullYear()
-  ) {
-    return `${currentDate.getHours()}:${currentDate.getMinutes()}`
-  } else {
-    return '00:00'
-  }
-})
+const minTime = computed(() => getMinScheduleTime(date.value))
 
 // Methods
 const removeSelectedCoop = (index) => {

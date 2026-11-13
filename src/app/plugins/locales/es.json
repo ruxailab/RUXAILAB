@@ -4477,7 +4477,8 @@
       "sendMessageFailed": "No se pudo enviar el mensaje.",
       "errorDelete": "No se pudo eliminar la sesión.",
       "facilitatorRequired": "Se requiere al menos un facilitador.",
-      "participantRequired": "Se requiere al menos un participante."
+      "participantRequired": "Se requiere al menos un participante.",
+      "pastDateTime": "Elige una fecha y hora que aún no hayan pasado."
     },
     "send": {
       "title": "Enviar mensaje de sesión",

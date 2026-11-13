@@ -4526,7 +4526,8 @@
       "sendMessageFailed": "Failed to send the message.",
       "errorDelete": "Failed to delete the session.",
       "facilitatorRequired": "At least one facilitator is required.",
-      "participantRequired": "At least one participant is required."
+      "participantRequired": "At least one participant is required.",
+      "pastDateTime": "Choose a date and time that hasn't passed yet."
     },
     "send": {
       "title": "Send session message",

@@ -527,6 +527,10 @@ import { useI18n } from 'vue-i18n'
 import { showError, showSuccess } from '@/shared/utils/toast'
 import { getPredefinedParticipantUserRole } from '../../composables/useCooperatorUtils'
 import { useDateLocale } from '@/shared/composables/useDateLocale'
+import {
+  getMinScheduleTime,
+  isPastSchedule,
+} from '@/shared/utils/sessionSchedule'
 
 const { t } = useI18n()
 const { intlLocale } = useDateLocale()
@@ -574,6 +578,12 @@ const loading = ref(false)
 const sessionDateTime = ref(new Date())
 const sessionMessage = ref('')
 const sessionTitle = ref('')
+
+// When the dialog was last opened. Times from this moment on are accepted, so
+// the default "now" stays valid while the form is being filled in.
+const formOpenedAt = ref(new Date())
+// Scheduled time of the session being edited, to tell whether it was changed.
+const originalScheduledAt = ref(null)
 
 // Staff
 const sessionStaff = ref([])
@@ -660,7 +670,7 @@ const hour = computed({
 const formattedDate = computed(() => {
   if (!date.value) return ''
 
-  return new Intl.DateTimeFormat('pt-BR', {
+  return new Intl.DateTimeFormat(intlLocale.value, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -724,18 +734,20 @@ const staffRoleOptions = computed(() => [
   },
 ])
 
-const minTime = computed(() => {
-  const currentDate = new Date()
+const minTime = computed(() =>
+  getMinScheduleTime(date.value, formOpenedAt.value),
+)
 
-  currentDate.setDate(currentDate.getDate() - 1)
+// A new session, or an edit that moved the session, must not be scheduled in
+// the past. Editing other details of a session that already happened is fine.
+const scheduleIsInPast = computed(() => {
+  const scheduleChanged =
+    !isEditMode.value ||
+    sessionDateTime.value.getTime() !== originalScheduledAt.value
 
-  const selectedDate = new Date(date.value)
-
-  if (selectedDate.toLocaleDateString() === currentDate.toLocaleDateString()) {
-    return `${currentDate.getHours()}:${currentDate.getMinutes()}`
-  }
-
-  return '00:00'
+  return (
+    scheduleChanged && isPastSchedule(sessionDateTime.value, formOpenedAt.value)
+  )
 })
 
 const formattedDateTime = computed(() => {
@@ -938,6 +950,11 @@ async function saveSession() {
       return
     }
 
+    if (scheduleIsInPast.value) {
+      showError(t('Sessions.error.pastDateTime'))
+      return
+    }
+
     const validation = await sessionForm.value.validate()
 
     if (!validation.valid) {
@@ -995,6 +1012,7 @@ async function saveSession() {
 
 function resetForm() {
   sessionDateTime.value = new Date()
+  originalScheduledAt.value = null
 
   sessionMessage.value = ''
 
@@ -1035,6 +1053,7 @@ watch(
       : new Date(session.scheduledAt)
 
     sessionDateTime.value = new Date(scheduledDate)
+    originalScheduledAt.value = sessionDateTime.value.getTime()
 
     sessionMessage.value = session.message || ''
 
@@ -1045,6 +1064,24 @@ watch(
   },
   {
     immediate: true,
+  },
+)
+
+// The dialog stays mounted, so the default date and time were set when the
+// page loaded. Move a new session's default up to now when the dialog opens.
+watch(
+  () => props.dialog,
+  (open) => {
+    if (!open) return
+
+    formOpenedAt.value = new Date()
+
+    if (
+      !isEditMode.value &&
+      isPastSchedule(sessionDateTime.value, formOpenedAt.value)
+    ) {
+      sessionDateTime.value = new Date(formOpenedAt.value)
+    }
   },
 )
 </script>
