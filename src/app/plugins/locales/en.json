@@ -960,7 +960,11 @@
       "finished": "Finished",
       "unknown": "Unknown",
       "pending": "Pending",
-      "upcoming": "Upcoming"
+      "upcoming": "Upcoming",
+      "draft": "Draft",
+      "in-progress": "In Progress",
+      "completed": "Completed",
+      "archived": "Archived"
     },
     "officeHours": {
       "title": "Monthly Office Hours",
