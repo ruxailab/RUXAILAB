@@ -960,7 +960,11 @@
       "recruiting": "Reclutando",
       "paused": "Pausado",
       "finished": "Finalizado",
-      "unknown": "Desconocido"
+      "unknown": "Desconocido",
+      "draft": "Borrador",
+      "in-progress": "En progreso",
+      "completed": "Completado",
+      "archived": "Archivado"
     },
     "officeHours": {
       "title": "Horario de Oficina Mensual",
