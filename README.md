@@ -190,6 +190,30 @@ These values define the host and ports used by the application to connect to loc
 
 For installation and configuration instructions, refer to the [Firebase Emulator Suite documentation](https://firebase.google.com/docs/emulator-suite).
 
+### Demo Data for the Emulators
+
+The emulators start empty. With the Auth and Firestore emulators running, fill them with demo accounts and studies:
+
+```bash
+npm run seed
+```
+
+| Account                     | Use it to                |
+| --------------------------- | ------------------------ |
+| `researcher@ruxailab.test`  | Manage the demo studies. |
+| `participant@ruxailab.test` | Answer the demo studies. |
+
+No password is stored in the repository: each run creates one for both accounts and prints it. To keep the same password across runs, set `SEED_PASSWORD` first, for example `SEED_PASSWORD=<your-password> npm run seed`.
+
+The seed creates:
+
+- **Demo: Checkout usability**: an unmoderated user study with a written task, a System Usability Scale (SUS) task, and three submitted answers, so the analytics pages have data.
+- **Demo: Heuristic evaluation**: a heuristic study with two heuristics, ready to be answered.
+
+Running the command again overwrites the same documents instead of adding duplicates. Emulator data is lost when the emulators stop, unless you export it, so run the seed after each restart.
+
+The script only writes to the emulators: it refuses any project id that does not start with `demo-`. If your emulators use other ports, set `FIRESTORE_EMULATOR_HOST` and `FIREBASE_AUTH_EMULATOR_HOST` before running it. The data lives in `scripts/seed/seedData.js`, and `tests/unit/seedData.spec.js` checks it against the application's models.
+
 ## Optional Integrations
 
 RUXAILAB can connect to external services for eye tracking, sentiment analysis, PDF generation, and video-call functionality. These integrations may require separate repositories and services to be configured and running.
@@ -360,6 +384,7 @@ The following commands are commonly used during development. Refer to the projec
 | `npm run build-dev`  | Builds the application using development mode.    |
 | `npm run build-prod` | Builds the application using production mode.     |
 | `npm run lint`       | Runs the configured linting checks, if available. |
+| `npm run seed`       | Fills the running emulators with demo data.       |
 
 ## Contributing
 
