@@ -151,7 +151,10 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
-import { warnUnsentEmails } from '@/shared/utils/emailDelivery'
+import {
+  reportEmailResult,
+  reportInvitationResults,
+} from '@/shared/utils/emailDelivery'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import Intro from '@/shared/components/introduction_cards/IntroParticipants.vue'
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
@@ -347,11 +350,11 @@ const handleSendMessage = async ({ user, title, content }) => {
       author: userAuth.value?.email,
     })
 
-    if (emailSent === false) {
-      warnUnsentEmails([user.email])
-    } else {
-      showSuccess('HeuristicsCooperators.messages.message_sent_success')
-    }
+    reportEmailResult({
+      emailSent,
+      email: user.email,
+      successMessage: 'HeuristicsCooperators.messages.message_sent_success',
+    })
   } catch {
     showError('HeuristicsCooperators.messages.message_sent_error')
   }
@@ -361,24 +364,6 @@ const canCancelParticipantInvitation = (cooperator) => {
   return canManageCooperator(test.value, userAuth.value, cooperator, {
     action: 'cancelInvitation',
   })
-}
-
-// Invitations are saved even when their email fails, so only the ones whose
-// email went out are reported as sent.
-const showInvitationResults = (invites) => {
-  const sent = invites.filter((guest) => guest.emailSent)
-
-  if (sent.length > 0) {
-    showSuccess(
-      t('cooperators.inviteSent', {
-        users: sent.map((guest) => guest.email).join(', '),
-      }),
-    )
-  }
-
-  warnUnsentEmails(
-    invites.filter((guest) => !guest.emailSent).map((guest) => guest.email),
-  )
 }
 
 const handleSendInvitations = async ({
@@ -402,7 +387,7 @@ const handleSendInvitations = async ({
       studyParticipants: participants.value,
     })
 
-    showInvitationResults(newInvites)
+    reportInvitationResults(newInvites)
   } catch {
     showError('errors.sendError')
   }
@@ -432,11 +417,11 @@ const reinviteParticipant = async (participant) => {
       resolveUserByEmail,
     })
 
-    if (invitation?.emailSent) {
-      showSuccess('pages.cooperators.invitationSent')
-    } else {
-      warnUnsentEmails([invitation?.email || participant.email])
-    }
+    reportEmailResult({
+      emailSent: invitation?.emailSent === true,
+      email: invitation?.email || participant.email,
+      successMessage: 'pages.cooperators.invitationSent',
+    })
   } catch {
     showError('errors.sendError')
   }
