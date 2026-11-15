@@ -1,5 +1,5 @@
 import i18n from '@/app/plugins/i18n'
-import { showWarning } from '@/shared/utils/toast'
+import { showSuccess, showWarning } from '@/shared/utils/toast'
 
 /**
  * EmailController.send() reports a failed delivery as `{ success: false }`
@@ -23,4 +23,39 @@ export function warnUnsentEmails(emails = []) {
     i18n.global.t('errors.emailNotSent', { emails: unsent.join(', ') }),
   )
   return true
+}
+
+/**
+ * Reports one email-backed action, such as a re-invitation or a member
+ * message: the success message when the email went out, a warning when it
+ * failed. `emailSent: null` means there was no email to send.
+ * @param {{ emailSent: boolean|null, email: string, successMessage: string }} result
+ */
+export function reportEmailResult({ emailSent, email, successMessage }) {
+  if (emailSent === false) {
+    warnUnsentEmails([email])
+  } else {
+    showSuccess(successMessage)
+  }
+}
+
+/**
+ * Reports a batch of invitations. They are saved even when their email
+ * fails, so only those whose email went out are listed as sent.
+ * @param {{ email: string, emailSent: boolean }[]} invites
+ */
+export function reportInvitationResults(invites = []) {
+  const sent = invites.filter((invite) => invite.emailSent)
+
+  if (sent.length > 0) {
+    showSuccess(
+      i18n.global.t('cooperators.inviteSent', {
+        users: sent.map((invite) => invite.email).join(', '),
+      }),
+    )
+  }
+
+  warnUnsentEmails(
+    invites.filter((invite) => !invite.emailSent).map((invite) => invite.email),
+  )
 }
