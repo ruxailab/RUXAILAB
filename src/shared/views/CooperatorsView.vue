@@ -217,6 +217,7 @@ import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+import { warnUnsentEmails } from '@/shared/utils/emailDelivery'
 import {
   canManageCooperator,
   getAssignableRoleOptions,
@@ -444,7 +445,7 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 
   try {
-    await store.dispatch('sendMemberMessage', {
+    const { emailSent } = await store.dispatch('sendMemberMessage', {
       user,
       study: test.value,
       title,
@@ -452,7 +453,11 @@ const handleSendMessage = async ({ user, title, content }) => {
       author: userAuth.value?.email,
     })
 
-    showSuccess('HeuristicsCooperators.messages.message_sent_success')
+    if (emailSent === false) {
+      warnUnsentEmails([user.email])
+    } else {
+      showSuccess('HeuristicsCooperators.messages.message_sent_success')
+    }
   } catch {
     showError('HeuristicsCooperators.messages.message_sent_error')
   }
@@ -470,6 +475,24 @@ const resolveUserByEmail = async (email) => {
   } catch {
     return null
   }
+}
+
+// Invitations are saved even when their email fails, so only the ones whose
+// email went out are reported as sent.
+const showInvitationResults = (invites) => {
+  const sent = invites.filter((guest) => guest.emailSent)
+
+  if (sent.length > 0) {
+    showSuccess(
+      t('cooperators.inviteSent', {
+        users: sent.map((guest) => guest.email).join(', '),
+      }),
+    )
+  }
+
+  warnUnsentEmails(
+    invites.filter((guest) => !guest.emailSent).map((guest) => guest.email),
+  )
 }
 
 const handleSendInvitations = async ({
@@ -495,13 +518,7 @@ const handleSendInvitations = async ({
       id: test.value.id,
     })
 
-    if (newInvites.length > 0) {
-      showSuccess(
-        t('cooperators.inviteSent', {
-          users: newInvites.map((guest) => guest.email).join(', '),
-        }),
-      )
-    }
+    showInvitationResults(newInvites)
   } catch {
     showError('errors.sendError')
   }
@@ -559,7 +576,7 @@ const executeRoleChange = async (item, newValue) => {
 
 const reinvite = async (guest) => {
   try {
-    await store.dispatch('reinviteCooperator', {
+    const invitation = await store.dispatch('reinviteCooperator', {
       study: test.value,
       user: userAuth.value,
       guest,
@@ -567,7 +584,11 @@ const reinvite = async (guest) => {
       resolveUserByEmail,
     })
 
-    showSuccess('pages.cooperators.invitationSent')
+    if (invitation?.emailSent) {
+      showSuccess('pages.cooperators.invitationSent')
+    } else {
+      warnUnsentEmails([invitation?.email || guest.email])
+    }
   } catch {
     showError('errors.sendError')
   }

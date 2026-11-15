@@ -6,6 +6,7 @@ import CreateSessionDialog from '@/shared/components/dialogs/CreateSessionDialog
 jest.mock('@/shared/utils/toast', () => ({
   showError: jest.fn(),
   showSuccess: jest.fn(),
+  showWarning: jest.fn(),
 }))
 const toast = require('@/shared/utils/toast')
 
@@ -112,6 +113,21 @@ describe('CreateSessionDialog scheduling', () => {
     expect(savedSession(actions, 'createSession').scheduledAt).toBe(
       at(16, 30).toISOString(),
     )
+  })
+
+  it('warns which invitation emails were not sent', async () => {
+    const { wrapper, actions } = await mountDialog()
+    actions.createSession.mockResolvedValue({
+      session: { id: 'session-1' },
+      failedEmails: ['ben@example.test'],
+    })
+
+    wrapper.vm.hour = '16:30'
+    await wrapper.vm.saveSession()
+
+    // The session was saved, so both the success and the email warning show.
+    expect(toast.showSuccess).toHaveBeenCalled()
+    expect(toast.showWarning).toHaveBeenCalledWith('errors.emailNotSent')
   })
 
   it('keeps the default time valid while the form is being filled in', async () => {

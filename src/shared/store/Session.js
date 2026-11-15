@@ -7,6 +7,7 @@ import SessionController from '@/shared/controllers/SessionController'
 import EmailController from '@/shared/controllers/EmailController'
 import Notification from '@/shared/models/Notification'
 import { formatDateTime } from '../utils/dateUtils'
+import { isEmailSent } from '../utils/emailDelivery'
 import i18n from '@/app/plugins/i18n'
 import { NOTIFICATION_TYPES } from '../../features/notifications/utils/notificationUtils'
 import {
@@ -90,7 +91,7 @@ export default {
         const session = result.session
         commit('UPSERT_SESSION', session)
 
-        await dispatch('notifySessionMembers', {
+        const { failedEmails } = await dispatch('notifySessionMembers', {
           session,
           studyId: payload.studyId,
           studyTitle: payload.study.testTitle,
@@ -112,7 +113,7 @@ export default {
           event: 'invite',
         })
 
-        return session
+        return { session, failedEmails }
       } catch (error) {
         commit('setError', {
           errorCode: 'sessionCreationError',
@@ -240,8 +241,10 @@ export default {
             ),
         )
 
+        let notified = { failedEmails: [] }
+
         if (sessionDetailsChanged) {
-          await dispatch('notifySessionMembers', {
+          notified = await dispatch('notifySessionMembers', {
             session: {
               id: payload.sessionId,
               title: payload.session.title,
@@ -258,7 +261,7 @@ export default {
             event: 'update',
           })
         } else if (addedMembers.length) {
-          await dispatch('notifySessionMembers', {
+          notified = await dispatch('notifySessionMembers', {
             session: {
               id: payload.sessionId,
               title: payload.session.title,
@@ -276,7 +279,7 @@ export default {
           })
         }
 
-        return result
+        return { ...result, failedEmails: notified.failedEmails }
       } catch (error) {
         commit('setError', {
           errorCode: 'sessionUpdateError',
@@ -371,6 +374,7 @@ export default {
 
         const title = `${t('Sessions.notify.messageTitle')} · ${session.title}`
         const description = t('Sessions.notify.messageDescription')
+        const failedEmails = []
 
         await Promise.all(
           members.map(async (member) => {
@@ -395,18 +399,22 @@ export default {
 
             if (member.email) {
               promises.push(
-                emailController.send({
-                  to: member.email,
-                  subject: title,
-                  attachments: [],
-                  template: 'message',
-                  data: {
-                    title,
-                    message: payload.message,
-                    description,
-                    author,
-                  },
-                }),
+                emailController
+                  .send({
+                    to: member.email,
+                    subject: title,
+                    attachments: [],
+                    template: 'message',
+                    data: {
+                      title,
+                      message: payload.message,
+                      description,
+                      author,
+                    },
+                  })
+                  .then((result) => {
+                    if (!isEmailSent(result)) failedEmails.push(member.email)
+                  }),
               )
             }
 
@@ -414,7 +422,7 @@ export default {
           }),
         )
 
-        return true
+        return { failedEmails }
       } catch (error) {
         commit('setError', {
           errorCode: 'sessionMessageError',
@@ -461,6 +469,7 @@ export default {
         (member, index, array) =>
           array.findIndex((item) => item.email === member.email) === index,
       )
+      const failedEmails = []
 
       await Promise.all(
         uniqueMembers.map(async (member) => {
@@ -491,31 +500,39 @@ export default {
 
           if (member.email) {
             promises.push(
-              emailController.send({
-                to: member.email,
-                subject: title,
-                attachments: [],
-                template: 'session-invite',
-                data: {
-                  title,
-                  description,
-                  message: session.message,
-                  participantName: member.name || member.email,
-                  studyTitle,
-                  studyDescription,
-                  sessionTitle: session.title,
-                  sessionMessage: session.message,
-                  scheduledAt,
-                  sessionLink,
-                  invitedBy: author,
-                },
-              }),
+              emailController
+                .send({
+                  to: member.email,
+                  subject: title,
+                  attachments: [],
+                  template: 'session-invite',
+                  data: {
+                    title,
+                    description,
+                    message: session.message,
+                    participantName: member.name || member.email,
+                    studyTitle,
+                    studyDescription,
+                    sessionTitle: session.title,
+                    sessionMessage: session.message,
+                    scheduledAt,
+                    sessionLink,
+                    invitedBy: author,
+                  },
+                })
+                .then((result) => {
+                  if (!isEmailSent(result)) failedEmails.push(member.email)
+                }),
             )
           }
 
           await Promise.all(promises)
         }),
       )
+
+      // The session is saved and in-app notifications are sent either way;
+      // the caller warns about these addresses.
+      return { failedEmails }
     },
 
     /**

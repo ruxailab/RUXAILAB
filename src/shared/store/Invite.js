@@ -15,6 +15,7 @@ import { getMethodManagerView } from '@/shared/constants/methodDefinitions'
 import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 import { getTestViewPath } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
+import { isEmailSent } from '@/shared/utils/emailDelivery'
 import i18n from '@/app/plugins/i18n'
 import { NOTIFICATION_TYPES } from '../../features/notifications/utils/notificationUtils'
 
@@ -214,7 +215,7 @@ const sendParticipantInvitation = async ({
     })
   }
 
-  await sendInvitationEmail({
+  const emailResult = await sendInvitationEmail({
     study,
     user,
     guest: participantMembership,
@@ -227,6 +228,8 @@ const sendParticipantInvitation = async ({
     inviteToken: inviteResult.inviteToken,
     inviteLink: inviteResult.inviteLink,
     expirationDate: inviteResult.expirationDate,
+    // The invitation exists either way; this only reports the email.
+    emailSent: isEmailSent(emailResult),
   }
 }
 
@@ -264,7 +267,7 @@ const sendCooperatorInvitation = async ({
     })
   }
 
-  await sendInvitationEmail({
+  const emailResult = await sendInvitationEmail({
     study,
     user,
     guest: resolvedGuest,
@@ -277,6 +280,8 @@ const sendCooperatorInvitation = async ({
     inviteToken: inviteResult.inviteToken,
     inviteLink: inviteResult.inviteLink,
     expirationDate: inviteResult.expirationDate,
+    // The invitation exists either way; this only reports the email.
+    emailSent: isEmailSent(emailResult),
   }
 }
 
@@ -725,7 +730,7 @@ export default {
       commit('setLoading', true)
 
       try {
-        await sendParticipantInvitation({
+        const invitation = await sendParticipantInvitation({
           dispatch,
           study,
           user,
@@ -738,6 +743,8 @@ export default {
         await dispatch('getStudyParticipants', {
           studyId: study.id,
         })
+
+        return invitation
       } catch (err) {
         commit('setError', {
           errorCode: 'participantInviteError',
@@ -835,10 +842,13 @@ export default {
           notification,
         })
 
+        // null when the member has no email address to send to.
+        let emailSent = null
+
         if (user.email) {
           const emailController = new EmailController()
 
-          await emailController.send({
+          const emailResult = await emailController.send({
             to: user.email,
             subject: `New message about "${study?.testTitle || 'your study'}"`,
             attachments: [],
@@ -851,9 +861,11 @@ export default {
               actionLink: process.env.SITE_URL,
             },
           })
+
+          emailSent = isEmailSent(emailResult)
         }
 
-        return true
+        return { emailSent }
       } catch (error) {
         commit('setError', {
           errorCode: 'cooperatorMessageError',

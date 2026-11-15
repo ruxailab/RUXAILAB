@@ -525,6 +525,7 @@ import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { showError, showSuccess } from '@/shared/utils/toast'
+import { warnUnsentEmails } from '@/shared/utils/emailDelivery'
 import { getPredefinedParticipantUserRole } from '../../composables/useCooperatorUtils'
 import { useDateLocale } from '@/shared/composables/useDateLocale'
 import {
@@ -979,8 +980,9 @@ async function saveSession() {
       })),
     }
 
+    // The session is saved even when some invitation emails fail.
     if (isEditMode.value) {
-      await store.dispatch('updateSession', {
+      const result = await store.dispatch('updateSession', {
         studyId: test.value.id,
         sessionId: props.session.id,
         session: sessionPayload,
@@ -988,14 +990,16 @@ async function saveSession() {
       })
 
       showSuccess(t('Sessions.success.updated'))
+      warnUnsentEmails(result?.failedEmails)
     } else {
-      await store.dispatch('createSession', {
+      const result = await store.dispatch('createSession', {
         studyId: test.value.id,
         session: sessionPayload,
         study: test.value,
       })
 
       showSuccess(t('Sessions.success.created'))
+      warnUnsentEmails(result?.failedEmails)
     }
 
     resetForm()
