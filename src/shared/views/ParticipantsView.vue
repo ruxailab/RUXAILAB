@@ -151,6 +151,10 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+import {
+  reportEmailResult,
+  reportInvitationResults,
+} from '@/shared/utils/emailDelivery'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import Intro from '@/shared/components/introduction_cards/IntroParticipants.vue'
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
@@ -338,7 +342,7 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 
   try {
-    await store.dispatch('sendMemberMessage', {
+    const { emailSent } = await store.dispatch('sendMemberMessage', {
       user,
       study: test.value,
       title,
@@ -346,7 +350,11 @@ const handleSendMessage = async ({ user, title, content }) => {
       author: userAuth.value?.email,
     })
 
-    showSuccess('HeuristicsCooperators.messages.message_sent_success')
+    reportEmailResult({
+      emailSent,
+      email: user.email,
+      successMessage: 'HeuristicsCooperators.messages.message_sent_success',
+    })
   } catch {
     showError('HeuristicsCooperators.messages.message_sent_error')
   }
@@ -379,13 +387,7 @@ const handleSendInvitations = async ({
       studyParticipants: participants.value,
     })
 
-    if (newInvites.length > 0) {
-      showSuccess(
-        t('cooperators.inviteSent', {
-          users: newInvites.map((guest) => guest.email).join(', '),
-        }),
-      )
-    }
+    reportInvitationResults(newInvites)
   } catch {
     showError('errors.sendError')
   }
@@ -407,7 +409,7 @@ const resolveUserByEmail = async (email) => {
 
 const reinviteParticipant = async (participant) => {
   try {
-    await store.dispatch('reinviteParticipant', {
+    const invitation = await store.dispatch('reinviteParticipant', {
       study: test.value,
       user: userAuth.value,
       participant,
@@ -415,7 +417,11 @@ const reinviteParticipant = async (participant) => {
       resolveUserByEmail,
     })
 
-    showSuccess('pages.cooperators.invitationSent')
+    reportEmailResult({
+      emailSent: invitation?.emailSent === true,
+      email: invitation?.email || participant.email,
+      successMessage: 'pages.cooperators.invitationSent',
+    })
   } catch {
     showError('errors.sendError')
   }

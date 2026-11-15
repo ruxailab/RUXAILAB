@@ -267,6 +267,7 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import { showError, showSuccess } from '@/shared/utils/toast'
+import { warnUnsentEmails } from '@/shared/utils/emailDelivery'
 
 const props = defineProps({
   dialog: Boolean,
@@ -372,7 +373,7 @@ const sendMessage = async () => {
   try {
     loading.value = true
 
-    await store.dispatch('sendMessageSessionMembers', {
+    const result = await store.dispatch('sendMessageSessionMembers', {
       studyId: props.study.id,
       sessionId: props.session.id,
       recipientType: recipientType.value,
@@ -380,7 +381,10 @@ const sendMessage = async () => {
       message: message.value,
     })
 
+    // In-app notifications still reach registered members, so a failed email
+    // gets a warning on top of the success message.
     showSuccess(t('Sessions.success.messageSent'))
+    warnUnsentEmails(result?.failedEmails)
 
     resetForm()
 
