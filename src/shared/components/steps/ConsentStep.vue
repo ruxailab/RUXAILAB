@@ -1,20 +1,20 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + 'Consent'">
+  <ShowInfo :title="testTitle + ' - ' + $t('UserTestView.stepper.consent')">
     <template #content>
       <div class="test-content pa-md-4 rounded-xl">
         <div v-safe-html="consentText" class="rich-text mb-6 pa-md-4" />
         <v-row justify="center">
           <v-col cols="12" md="6">
             <v-text-field
-:model-value="localFullName" label="Full Name" variant="outlined" density="comfortable"
-              :rules="[v => !!v || 'Name is required']" @update:model-value="onFullNameInput" />
+:model-value="localFullName" :label="$t('UserTestView.ConsentStep.fullName')" variant="outlined" density="comfortable"
+              :rules="[v => !!v || $t('UserTestView.ConsentStep.nameRequired')]" @update:model-value="onFullNameInput" />
           </v-col>
         </v-row>
         <v-row justify="center">
           <v-col cols="12" md="6">
             <v-radio-group :model-value="localConsentCompleted" inline @update:model-value="onConsentInput">
-              <v-radio label="I accept the consent terms" :value="true" :disabled="!localFullName" />
-              <v-radio label="I do not accept the consent terms" :value="false" :disabled="!localFullName" />
+              <v-radio :label="$t('UserTestView.ConsentStep.acceptTerms')" :value="true" :disabled="!localFullName" />
+              <v-radio :label="$t('UserTestView.ConsentStep.declineTerms')" :value="false" :disabled="!localFullName" />
             </v-radio-group>
           </v-col>
         </v-row>
@@ -23,7 +23,7 @@
             <v-btn
 color="primary" variant="flat" block :disabled="localConsentCompleted === null || !localFullName"
               @click="handleContinue">
-              Continue
+              {{ $t('UserTestView.ConsentStep.continue') }}
             </v-btn>
           </v-col>
         </v-row>
@@ -36,27 +36,26 @@ color="primary" variant="flat" block :disabled="localConsentCompleted === null |
     <v-card class="rounded-xl">
       <v-card-title class="text-h6 font-weight-bold text-error d-flex align-center">
         <v-icon class="mr-2" color="error">mdi-alert-circle</v-icon>
-        Consent Declined
+        {{ $t('UserTestView.ConsentStep.declinedTitle') }}
       </v-card-title>
       <v-card-text class="pt-4">
         <p class="text-body-1 mb-3">
-          You have chosen not to accept the consent terms for this study.
+          {{ $t('UserTestView.ConsentStep.declinedMessage1') }}
         </p>
         <p class="text-body-2 text-grey-darken-1 mb-3">
-          If you confirm this action, the test will be terminated immediately as your participation
-          requires explicit consent to proceed. Your data will not be collected or stored.
+          {{ $t('UserTestView.ConsentStep.declinedMessage2') }}
         </p>
         <p class="text-body-2 font-weight-medium">
-          Are you sure you want to end the test without participating?
+          {{ $t('UserTestView.ConsentStep.declinedConfirm') }}
         </p>
       </v-card-text>
       <v-card-actions class="pa-4">
         <v-btn variant="outlined" @click="showDeclineModal = false">
-          Go Back
+          {{ $t('UserTestView.ConsentStep.goBack') }}
         </v-btn>
         <v-spacer />
         <v-btn color="error" variant="flat" @click="confirmDecline">
-          Yes, End Test
+          {{ $t('UserTestView.ConsentStep.endTest') }}
         </v-btn>
       </v-card-actions>
     </v-card>
