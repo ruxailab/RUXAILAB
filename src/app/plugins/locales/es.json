@@ -831,6 +831,7 @@
       "uploadError": "No se pudo guardar la grabación de {media}. Revisa tu conexión e inténtalo de nuevo."
     },
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
+    "emailNotSent": "Todo lo demás se guardó, pero no se pudo enviar el correo a: {emails}. Inténtalo de nuevo más tarde.",
     "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
     "failedToLoadAnswers": "Error al cargar respuestas",
     "failedToUpdateAnswer": "Error al actualizar respuesta",
