@@ -78,36 +78,34 @@ export function useDataTableConfig(type, t, options = {}) {
     ]
 
     if (currentType === 'sessions') {
-      if (currentType === 'sessions') {
-        baseHeaders.push({
-          title: t('Sessions.headers.staff'),
-          key: 'staff',
-          sortable: false,
-          align: 'start',
-        })
+      baseHeaders.push({
+        title: t('Sessions.headers.staff'),
+        key: 'staff',
+        sortable: false,
+        align: 'start',
+      })
 
-        baseHeaders.push({
-          title: t('common.table.participants'),
-          key: 'participants',
-          sortable: false,
-          align: 'start',
-        })
+      baseHeaders.push({
+        title: t('common.table.participants'),
+        key: 'participants',
+        sortable: false,
+        align: 'start',
+      })
 
-        baseHeaders.push({
-          title: t('common.table.status'),
-          key: 'status',
-          sortable: true,
-          value: (item) =>
-            getSessionStatus(item.scheduledAt, item.lifecycleStatus).status,
-        })
+      baseHeaders.push({
+        title: t('common.table.status'),
+        key: 'status',
+        sortable: true,
+        value: (item) =>
+          getSessionStatus(item.scheduledAt, item.lifecycleStatus).status,
+      })
 
-        baseHeaders.push({
-          title: t('common.table.sessionDate'),
-          key: 'scheduledAt',
-          sortable: true,
-          value: (item) => toSortableTimestamp(item.scheduledAt),
-        })
-      }
+      baseHeaders.push({
+        title: t('common.table.sessionDate'),
+        key: 'scheduledAt',
+        sortable: true,
+        value: (item) => toSortableTimestamp(item.scheduledAt),
+      })
     }
 
     if (
