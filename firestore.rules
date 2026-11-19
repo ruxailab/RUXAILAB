@@ -120,6 +120,54 @@ service cloud.firestore {
       }
 
       // Invitations and memberships are managed only by trusted functions.
+      // Final heuristic review records are written only by trusted callable
+      // functions. Selected meeting participants can read the review record,
+      // its source snapshots and decisions; study Admins/Managers can also read.
+      function canManageFinalReview(study) {
+        return signedIn() && (isAdmin(study) || roleFor(study) == 4);
+      }
+
+      function isFinalReviewMember(meeting) {
+        return signedIn() && (
+          request.auth.uid == meeting.get('facilitatorId', '') ||
+          request.auth.uid in meeting.get('participantIds', [])
+        );
+      }
+
+      match /finalReviewMeetings/{meetingId} {
+        allow read: if canManageFinalReview(
+          get(/databases/$(database)/documents/tests/$(studyId)).data
+        ) || isFinalReviewMember(resource.data);
+        allow create, update, delete: if false;
+
+        match /sourceEvaluations/{evaluatorId} {
+          allow read: if canManageFinalReview(
+            get(/databases/$(database)/documents/tests/$(studyId)).data
+          ) || isFinalReviewMember(
+            get(/databases/$(database)/documents/tests/$(studyId)/finalReviewMeetings/$(meetingId)).data
+          );
+          allow create, update, delete: if false;
+        }
+
+        match /decisions/{decisionId} {
+          allow read: if canManageFinalReview(
+            get(/databases/$(database)/documents/tests/$(studyId)).data
+          ) || isFinalReviewMember(
+            get(/databases/$(database)/documents/tests/$(studyId)/finalReviewMeetings/$(meetingId)).data
+          );
+          allow create, update, delete: if false;
+        }
+
+        match /decisionHistory/{historyId} {
+          allow read: if canManageFinalReview(
+            get(/databases/$(database)/documents/tests/$(studyId)).data
+          ) || isFinalReviewMember(
+            get(/databases/$(database)/documents/tests/$(studyId)/finalReviewMeetings/$(meetingId)).data
+          );
+          allow create, update, delete: if false;
+        }
+      }
+
       match /participants/{participantId} {
         allow read: if signedIn();
         allow write: if false;

@@ -30,3 +30,11 @@ export {
   setStudyReportHidden,
 } from '../features/studyReports/index.js'
 export { deleteAuth } from '../features/users/index.js'
+
+export {
+  cancelFinalReviewMeeting,
+  createFinalReviewMeeting,
+  finalizeFinalReviewMeeting,
+  saveFinalReviewDecision,
+  startFinalReviewMeeting,
+} from '../features/finalReviewMeetings/index.js'
