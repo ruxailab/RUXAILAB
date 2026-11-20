@@ -268,6 +268,9 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
  * 🧩 Lifecycle hooks
  */
 onMounted(async () => {
+  window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer)
+  window.addEventListener('change-section', handleChangeSection)
+
   // unsubscribeTests = await store.dispatch('bindMyTests');
   await Promise.all([getMyPersonalTests(), loadSessions()])
 
@@ -278,20 +281,13 @@ onMounted(async () => {
       activeSubSection.value = route.query.subsection
     }
   }
-
-  // Drawer toggle event listener (triggered from toolbar)
-  window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer)
-
-  // Change section event listener
-  globalThis.addEventListener('change-section', (event) => {
-    activeSection.value = event.detail
-  })
 })
 
 onUnmounted(() => {
   if (unsubscribeTests) unsubscribeTests()
   if (unsubscribeUserSessions) unsubscribeUserSessions()
   window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer)
+  window.removeEventListener('change-section', handleChangeSection)
 })
 
 /**
@@ -299,6 +295,13 @@ onUnmounted(() => {
  */
 const handleToggleDrawer = () => {
   drawerOpen.value = !drawerOpen.value
+}
+
+/**
+ * 🔀 Event handler to change the active section
+ */
+const handleChangeSection = (event) => {
+  activeSection.value = event.detail
 }
 
 // Reacts to route query changes for section/subsection
