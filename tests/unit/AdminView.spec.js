@@ -2,16 +2,9 @@ import { flushPromises, shallowMount } from '@vue/test-utils'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import AdminView from '@/features/navigation/views/AdminView.vue'
 
-jest.mock('vue-router', () => ({
-  useRouter: jest.fn(),
-  useRoute: jest.fn(),
-}))
-
-jest.mock('vuex', () => ({
-  useStore: jest.fn(),
-}))
+jest.mock('vue-router', () => ({ useRouter: jest.fn(), useRoute: jest.fn() }))
+jest.mock('vuex', () => ({ useStore: jest.fn() }))
 
 jest.mock('vue-i18n', () => ({
   ...jest.requireActual('vue-i18n'),
@@ -20,79 +13,25 @@ jest.mock('vue-i18n', () => ({
 
 // AdminView only hosts these as placeholders; stubbing them keeps the real
 // views, Firebase and Vuetify out of the import graph.
-jest.mock('@/features/navigation/utils', () => ({
-  DashboardSidebar: { name: 'DashboardSidebar', template: '<div />' },
-}))
+const navbarSections = [
+  'SessionsSection',
+  'TemplatesSection',
+  'StudiesSection',
+  'CommunityStudiesSection',
+  'CommunityTemplatesSection',
+  'StorageSection',
+  'AgentsSection',
+  'CommunityAgentsSection',
+]
 
-jest.mock('@/features/auth/views/ProfileView.vue', () => ({
-  name: 'ProfileView',
-  template: '<div />',
-}))
-jest.mock('@/features/notifications/views/NotificationPage.vue', () => ({
-  name: 'NotificationPage',
-  template: '<div />',
-}))
-jest.mock('@/features/dashboard/views/DashboardView.vue', () => ({
-  name: 'DashboardView',
-  template: '<div />',
-}))
-
-jest.mock(
-  '@/features/navigation/components/navbarSections/SessionsSection.vue',
-  () => ({
-    name: 'SessionsSection',
-    template: '<div />',
-  }),
-)
-jest.mock(
-  '@/features/navigation/components/navbarSections/TemplatesSection.vue',
-  () => ({
-    name: 'TemplatesSection',
-    template: '<div />',
-  }),
-)
-jest.mock(
-  '@/features/navigation/components/navbarSections/StudiesSection.vue',
-  () => ({
-    name: 'StudiesSection',
-    template: '<div />',
-  }),
-)
-jest.mock(
-  '@/features/navigation/components/navbarSections/CommunityStudiesSection.vue',
-  () => ({
-    name: 'CommunityStudiesSection',
-    template: '<div />',
-  }),
-)
-jest.mock(
-  '@/features/navigation/components/navbarSections/CommunityTemplatesSection.vue',
-  () => ({
-    name: 'CommunityTemplatesSection',
-    template: '<div />',
-  }),
-)
-jest.mock(
-  '@/features/navigation/components/navbarSections/StorageSection.vue',
-  () => ({
-    name: 'StorageSection',
-    template: '<div />',
-  }),
-)
-jest.mock(
-  '@/features/navigation/components/navbarSections/AgentsSection.vue',
-  () => ({
-    name: 'AgentsSection',
-    template: '<div />',
-  }),
-)
-jest.mock(
-  '@/features/navigation/components/navbarSections/CommunityAgentsSection.vue',
-  () => ({
-    name: 'CommunityAgentsSection',
-    template: '<div />',
-  }),
-)
+const stubbedViews = [
+  '@/features/auth/views/ProfileView.vue',
+  '@/features/notifications/views/NotificationPage.vue',
+  '@/features/dashboard/views/DashboardView.vue',
+  ...navbarSections.map(
+    (name) => `@/features/navigation/components/navbarSections/${name}.vue`,
+  ),
+]
 
 const deferred = () => {
   let resolve
@@ -105,10 +44,26 @@ const deferred = () => {
 }
 
 describe('AdminView window listeners', () => {
+  let AdminView
   let store
   let addListener
   let removeListener
   let errorHandler
+
+  beforeAll(async () => {
+    stubbedViews.forEach((path) =>
+      jest.doMock(path, () => ({
+        name: path.split('/').pop().replace('.vue', ''),
+        template: '<div />',
+      })),
+    )
+    jest.doMock('@/features/navigation/utils', () => ({
+      DashboardSidebar: { name: 'DashboardSidebar', template: '<div />' },
+    }))
+
+    AdminView = (await import('@/features/navigation/views/AdminView.vue'))
+      .default
+  })
 
   beforeEach(() => {
     store = {
@@ -141,16 +96,29 @@ describe('AdminView window listeners', () => {
   const dispatchChangeSection = (section) =>
     window.dispatchEvent(new CustomEvent('change-section', { detail: section }))
 
+  // "View all" switches the section and the toolbar button opens the drawer.
+  const expectButtonsToWork = (wrapper) => {
+    expect(wrapper.vm.drawerOpen).toBe(false)
+    dispatchChangeSection('studies')
+    expect(wrapper.vm.activeSection).toBe('studies')
+    window.dispatchEvent(new Event('toggle-dashboard-drawer'))
+    expect(wrapper.vm.drawerOpen).toBe(true)
+  }
+
+  // Every listener added on window was removed again, using the same handler.
+  const expectListenersRemoved = () => {
+    for (const event of ['change-section', 'toggle-dashboard-drawer']) {
+      const added = handlersFor(addListener, event)
+      expect(added).toHaveLength(1)
+      expect(handlersFor(removeListener, event)).toEqual(added)
+    }
+  }
+
   it('switches section on change-section and toggles the drawer on toggle-dashboard-drawer', async () => {
     const wrapper = mountView()
     await flushPromises()
 
-    dispatchChangeSection('studies')
-    expect(wrapper.vm.activeSection).toBe('studies')
-
-    expect(wrapper.vm.drawerOpen).toBe(false)
-    window.dispatchEvent(new Event('toggle-dashboard-drawer'))
-    expect(wrapper.vm.drawerOpen).toBe(true)
+    expectButtonsToWork(wrapper)
 
     wrapper.unmount()
   })
@@ -160,11 +128,7 @@ describe('AdminView window listeners', () => {
     await flushPromises()
     wrapper.unmount()
 
-    for (const event of ['change-section', 'toggle-dashboard-drawer']) {
-      const added = handlersFor(addListener, event)
-      expect(added).toHaveLength(1)
-      expect(handlersFor(removeListener, event)).toEqual(added)
-    }
+    expectListenersRemoved()
   })
 
   it('does not accumulate listeners across repeated visits', async () => {
@@ -187,10 +151,7 @@ describe('AdminView window listeners', () => {
     const wrapper = mountView()
 
     // Nothing has resolved yet, but "View all" and the drawer already work.
-    dispatchChangeSection('studies')
-    expect(wrapper.vm.activeSection).toBe('studies')
-    window.dispatchEvent(new Event('toggle-dashboard-drawer'))
-    expect(wrapper.vm.drawerOpen).toBe(true)
+    expectButtonsToWork(wrapper)
 
     pendingFetch.resolve()
     await flushPromises()
@@ -216,10 +177,7 @@ describe('AdminView window listeners', () => {
     )
 
     // ...but it no longer leaves the window listeners unregistered.
-    dispatchChangeSection('studies')
-    expect(wrapper.vm.activeSection).toBe('studies')
-    window.dispatchEvent(new Event('toggle-dashboard-drawer'))
-    expect(wrapper.vm.drawerOpen).toBe(true)
+    expectButtonsToWork(wrapper)
 
     wrapper.unmount()
   })
@@ -233,10 +191,6 @@ describe('AdminView window listeners', () => {
     pendingFetch.resolve()
     await flushPromises()
 
-    for (const event of ['change-section', 'toggle-dashboard-drawer']) {
-      const added = handlersFor(addListener, event)
-      expect(added).toHaveLength(1)
-      expect(handlersFor(removeListener, event)).toEqual(added)
-    }
+    expectListenersRemoved()
   })
 })
