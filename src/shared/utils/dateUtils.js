@@ -13,8 +13,30 @@ const parseDateInput = (input) => {
     return isNaN(d.getTime()) ? null : d
   }
 
+  if (typeof input?.toMillis === 'function') {
+    const d = new Date(input.toMillis())
+    return isNaN(d.getTime()) ? null : d
+  }
+
+  if (typeof input?.seconds === 'number') {
+    const ms = input.seconds * 1000 + Math.floor((input.nanoseconds || 0) / 1e6)
+    const d = new Date(ms)
+    return isNaN(d.getTime()) ? null : d
+  }
+
+  if (typeof input?._seconds === 'number') {
+    const ms = input._seconds * 1000 + Math.floor((input._nanoseconds || 0) / 1e6)
+    const d = new Date(ms)
+    return isNaN(d.getTime()) ? null : d
+  }
+
   if (input instanceof Date) {
     return isNaN(input.getTime()) ? null : input
+  }
+
+  if (typeof input === 'number') {
+    const d = new Date(input)
+    return isNaN(d.getTime()) ? null : d
   }
 
   if (typeof input === 'string' && DATE_ONLY_REGEX.test(input)) {
@@ -58,11 +80,14 @@ export const formatDateLong = (date, locale = 'en') => {
  * @returns {string} - Formatted date-time or '-'
  */
 export const formatDateTime = (date, locale = 'en') => {
+  const normalizedLocale =
+    typeof locale === 'string' && locale ? locale.replace('_', '-') : 'en'
+
   try {
     const d = parseDateInput(date)
     if (!d) return INVALID_DATE_FALLBACK
 
-    return d.toLocaleString(locale, {
+    return d.toLocaleString(normalizedLocale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -70,6 +95,7 @@ export const formatDateTime = (date, locale = 'en') => {
       minute: '2-digit',
     })
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error('Error formatting date-time:', e)
     return INVALID_DATE_FALLBACK
   }
