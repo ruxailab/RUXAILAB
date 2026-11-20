@@ -33,8 +33,8 @@ export function useItemFormatting(type) {
 
     if (type.value === 'sessions') {
       return (
-        item.study.testAdmin?.email ??
-        item.study.testAuthorEmail ??
+        item.study?.testAdmin?.email ??
+        item.study?.testAuthorEmail ??
         t('pages.listTests.me')
       )
     }
@@ -46,6 +46,8 @@ export function useItemFormatting(type) {
   const getOwnerImage = (item) => {
     if (type.value === 'myTemplates' || type.value === 'publicTemplates')
       return item.header?.templateAuthor?.imageUrl || null
+    if (type.value === 'sessions')
+      return item.study?.testAdmin?.imageUrl || null
     return item.testAdmin?.imageUrl || null
   }
 

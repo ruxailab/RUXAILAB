@@ -19,3 +19,22 @@ it.each([
 
   expect(getOwnerName({ header: { templateAuthor: {} } })).toBe(name)
 })
+
+it('safely handles sessions without a study object when resolving owner name', () => {
+  mockI18n = createI18n({ legacy: false, locale: 'en', messages: { en, es } })
+  const { getOwnerName } = useItemFormatting({ value: 'sessions' })
+
+  expect(
+    getOwnerName({
+      study: { testAdmin: { email: 'admin@example.com' } },
+    }),
+  ).toBe('admin@example.com')
+
+  expect(
+    getOwnerName({
+      study: { testAuthorEmail: 'author@example.com' },
+    }),
+  ).toBe('author@example.com')
+
+  expect(getOwnerName({ id: 'session-123' })).toBe('Me')
+})
