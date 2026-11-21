@@ -1,6 +1,29 @@
 const INVALID_DATE_FALLBACK = '-'
 const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
+const isValidDate = (d) => d instanceof Date && !Number.isNaN(d.getTime())
+
+/**
+ * Parses Firestore timestamps (objects with toDate/toMillis or seconds/_seconds).
+ */
+const parseFirestoreTimestamp = (input) => {
+  if (typeof input?.toDate === 'function') {
+    return input.toDate()
+  }
+  if (typeof input?.toMillis === 'function') {
+    return new Date(input.toMillis())
+  }
+  if (typeof input?.seconds === 'number') {
+    const ms = input.seconds * 1000 + Math.floor((input.nanoseconds || 0) / 1e6)
+    return new Date(ms)
+  }
+  if (typeof input?._seconds === 'number') {
+    const ms = input._seconds * 1000 + Math.floor((input._nanoseconds || 0) / 1e6)
+    return new Date(ms)
+  }
+  return null
+}
+
 /**
  * Parse Date input consistently.
  * Handles Firestore timestamps and keeps date-only strings in local time.
@@ -8,23 +31,28 @@ const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/
 const parseDateInput = (input) => {
   if (!input) return null
 
-  if (typeof input?.toDate === 'function') {
-    const d = input.toDate()
-    return isNaN(d.getTime()) ? null : d
+  const fsDate = parseFirestoreTimestamp(input)
+  if (fsDate) {
+    return isValidDate(fsDate) ? fsDate : null
   }
 
   if (input instanceof Date) {
-    return isNaN(input.getTime()) ? null : input
+    return isValidDate(input) ? input : null
+  }
+
+  if (typeof input === 'number') {
+    const d = new Date(input)
+    return isValidDate(d) ? d : null
   }
 
   if (typeof input === 'string' && DATE_ONLY_REGEX.test(input)) {
     const [year, month, day] = input.split('-').map(Number)
     const d = new Date(year, month - 1, day)
-    return isNaN(d.getTime()) ? null : d
+    return isValidDate(d) ? d : null
   }
 
   const d = new Date(input)
-  return isNaN(d.getTime()) ? null : d
+  return isValidDate(d) ? d : null
 }
 
 /**
@@ -58,11 +86,14 @@ export const formatDateLong = (date, locale = 'en') => {
  * @returns {string} - Formatted date-time or '-'
  */
 export const formatDateTime = (date, locale = 'en') => {
+  const normalizedLocale =
+    typeof locale === 'string' && locale ? locale.replace('_', '-') : 'en'
+
   try {
     const d = parseDateInput(date)
     if (!d) return INVALID_DATE_FALLBACK
 
-    return d.toLocaleString(locale, {
+    return d.toLocaleString(normalizedLocale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -70,6 +101,7 @@ export const formatDateTime = (date, locale = 'en') => {
       minute: '2-digit',
     })
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error('Error formatting date-time:', e)
     return INVALID_DATE_FALLBACK
   }
