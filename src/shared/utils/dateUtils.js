@@ -1,6 +1,29 @@
 const INVALID_DATE_FALLBACK = '-'
 const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
+const isValidDate = (d) => d instanceof Date && !Number.isNaN(d.getTime())
+
+/**
+ * Parses Firestore timestamps (objects with toDate/toMillis or seconds/_seconds).
+ */
+const parseFirestoreTimestamp = (input) => {
+  if (typeof input?.toDate === 'function') {
+    return input.toDate()
+  }
+  if (typeof input?.toMillis === 'function') {
+    return new Date(input.toMillis())
+  }
+  if (typeof input?.seconds === 'number') {
+    const ms = input.seconds * 1000 + Math.floor((input.nanoseconds || 0) / 1e6)
+    return new Date(ms)
+  }
+  if (typeof input?._seconds === 'number') {
+    const ms = input._seconds * 1000 + Math.floor((input._nanoseconds || 0) / 1e6)
+    return new Date(ms)
+  }
+  return null
+}
+
 /**
  * Parse Date input consistently.
  * Handles Firestore timestamps and keeps date-only strings in local time.
@@ -8,45 +31,28 @@ const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/
 const parseDateInput = (input) => {
   if (!input) return null
 
-  if (typeof input?.toDate === 'function') {
-    const d = input.toDate()
-    return isNaN(d.getTime()) ? null : d
-  }
-
-  if (typeof input?.toMillis === 'function') {
-    const d = new Date(input.toMillis())
-    return isNaN(d.getTime()) ? null : d
-  }
-
-  if (typeof input?.seconds === 'number') {
-    const ms = input.seconds * 1000 + Math.floor((input.nanoseconds || 0) / 1e6)
-    const d = new Date(ms)
-    return isNaN(d.getTime()) ? null : d
-  }
-
-  if (typeof input?._seconds === 'number') {
-    const ms = input._seconds * 1000 + Math.floor((input._nanoseconds || 0) / 1e6)
-    const d = new Date(ms)
-    return isNaN(d.getTime()) ? null : d
+  const fsDate = parseFirestoreTimestamp(input)
+  if (fsDate) {
+    return isValidDate(fsDate) ? fsDate : null
   }
 
   if (input instanceof Date) {
-    return isNaN(input.getTime()) ? null : input
+    return isValidDate(input) ? input : null
   }
 
   if (typeof input === 'number') {
     const d = new Date(input)
-    return isNaN(d.getTime()) ? null : d
+    return isValidDate(d) ? d : null
   }
 
   if (typeof input === 'string' && DATE_ONLY_REGEX.test(input)) {
     const [year, month, day] = input.split('-').map(Number)
     const d = new Date(year, month - 1, day)
-    return isNaN(d.getTime()) ? null : d
+    return isValidDate(d) ? d : null
   }
 
   const d = new Date(input)
-  return isNaN(d.getTime()) ? null : d
+  return isValidDate(d) ? d : null
 }
 
 /**
