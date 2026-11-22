@@ -2,7 +2,30 @@ import jsPDF from 'jspdf'
 
 const logoFull = '/logo_full.svg'
 
-export const downloadAnonymousParticipantIdentifier = ({
+const loadLogoAsPng = () =>
+  new Promise((resolve) => {
+    const image = new Image()
+    image.onload = () => {
+      try {
+        const canvas = document.createElement('canvas')
+        // Avoid embedding a full-resolution bitmap for the small PDF logo.
+        canvas.width = Math.min(image.naturalWidth, 512)
+        canvas.height = Math.round(
+          (image.naturalHeight * canvas.width) / image.naturalWidth,
+        )
+        const context = canvas.getContext('2d')
+        if (!context) return resolve(null)
+        context.drawImage(image, 0, 0, canvas.width, canvas.height)
+        resolve(canvas.toDataURL('image/png'))
+      } catch {
+        resolve(null)
+      }
+    }
+    image.onerror = () => resolve(null)
+    image.src = logoFull
+  })
+
+export const downloadAnonymousParticipantIdentifier = async ({
   identifier,
   title,
   description,
@@ -41,7 +64,10 @@ export const downloadAnonymousParticipantIdentifier = ({
    * --------------------------------------------------------------------------
    */
 
-  pdf.addImage(logoFull, 'PNG', logoMarginLeft, 18, 42, 12)
+  const logo = await loadLogoAsPng()
+  if (logo) {
+    pdf.addImage(logo, 'PNG', logoMarginLeft, 18, 42, 12, undefined, 'FAST')
+  }
 
   /*
    * --------------------------------------------------------------------------
