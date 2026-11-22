@@ -181,13 +181,13 @@ function nearestCentroid(vector, centroids) {
 
 /** Term-wise mean of a set of sparse vectors — the new cluster centroid. */
 function averageVector(vectors) {
-  const sums = {}
+  const sums = Object.create(null)
   vectors.forEach((vector) => {
     Object.entries(vector).forEach(([term, weight]) => {
       sums[term] = (sums[term] ?? 0) + weight
     })
   })
-  const centroid = {}
+  const centroid = Object.create(null)
   Object.entries(sums).forEach(([term, sum]) => {
     centroid[term] = sum / vectors.length
   })
@@ -196,7 +196,7 @@ function averageVector(vectors) {
 
 /** Highest-weight terms across a cluster's member vectors, for a theme label/keywords. */
 function topTerms(vectors, count) {
-  const totals = {}
+  const totals = Object.create(null)
   vectors.forEach((vector) => {
     Object.entries(vector).forEach(([term, weight]) => {
       totals[term] = (totals[term] ?? 0) + weight
