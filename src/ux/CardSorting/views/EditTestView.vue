@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="Edit Study" :side-gap="true">
+  <PageWrapper :title="$t('pages.editTest.title')"  :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ $t('CardSorting.customizeSettings') }}
