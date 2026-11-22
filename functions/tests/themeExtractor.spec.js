@@ -46,6 +46,33 @@ describe('extractThemes', () => {
     expect(extractThemes(messages)).toEqual([])
   })
 
+  it('keeps unrelated themes separate when a response includes constructor', () => {
+    const messages = [
+      ['p1', 'constructor Checkout navigation menus'],
+      ['p2', 'Checkout navigation menus'],
+      ['p3', 'Checkout navigation menus'],
+      ['p1', 'Font typography sizing'],
+      ['p2', 'Font typography sizing'],
+      ['p3', 'Font typography sizing'],
+    ].map(([participantId, text], i) =>
+      message({ messageId: `m${i}`, participantId, text }),
+    )
+
+    const themes = extractThemes(messages, { k: 2 })
+    expect(themes).toHaveLength(2)
+    const groups = themes.map((theme) =>
+      theme.responseRefs.map((ref) => ref.messageId).sort(),
+    )
+    expect(groups.sort()).toEqual([
+      ['m0', 'm1', 'm2'],
+      ['m3', 'm4', 'm5'],
+    ])
+    const constructorTheme = themes.find((theme) =>
+      theme.responseRefs.some((ref) => ref.messageId === 'm0'),
+    )
+    expect(constructorTheme.keywords).toContain('constructor')
+  })
+
   it('does not suggest themes supported by only one participant', () => {
     const messages = Array.from({ length: 6 }, (_, i) =>
       message({ messageId: `m${i}`, participantId: 'p1', text: `Navigation is confusing ${i}.` }),

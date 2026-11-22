@@ -1,6 +1,15 @@
 import { computeConsensus } from '../src/features/focusGroupAnalysis/consensusAnalyzer.js'
 
 describe('computeConsensus', () => {
+  it('keeps similarity and alignment finite for constructor responses', () => {
+    const result = computeConsensus([
+      { participantId: 'p1', text: 'The constructor is easy.' },
+      { participantId: 'p2', text: 'The constructor is easy.' },
+    ])
+    expect(result.score).toBe(1)
+    expect(result.alignment).toEqual({ p1: 1, p2: 1 })
+  })
+
   it('reports quote-backed shared stance cues separately from wording similarity', () => {
     const responses = [
       { participantId: 'p1', text: 'The navigation menu is confusing and hard to find.' },

@@ -45,7 +45,7 @@ export function splitSentences(text) {
 
 /** Term frequency map for one document's tokens. */
 export function termFrequency(tokens) {
-  const counts = {}
+  const counts = Object.create(null)
   tokens.forEach((token) => {
     counts[token] = (counts[token] ?? 0) + 1
   })
@@ -59,7 +59,7 @@ export function termFrequency(tokens) {
  * @returns {Object[]} one { [term]: weight } map per document, same order
  */
 export function computeTfIdf(documents) {
-  const docFrequency = {}
+  const docFrequency = Object.create(null)
   const termFreqs = documents.map((tokens) => {
     const tf = termFrequency(tokens)
     Object.keys(tf).forEach((term) => {
@@ -70,7 +70,7 @@ export function computeTfIdf(documents) {
 
   const n = documents.length
   return termFreqs.map((tf) => {
-    const vector = {}
+    const vector = Object.create(null)
     const totalTerms = Object.values(tf).reduce((sum, c) => sum + c, 0) || 1
     Object.entries(tf).forEach(([term, count]) => {
       const idf = Math.log((n + 1) / (docFrequency[term] + 1)) + 1
@@ -85,7 +85,7 @@ export function cosineSimilarity(vectorA, vectorB) {
   const termsA = Object.keys(vectorA)
   let dot = 0
   termsA.forEach((term) => {
-    if (term in vectorB) dot += vectorA[term] * vectorB[term]
+    if (Object.hasOwn(vectorB, term)) dot += vectorA[term] * vectorB[term]
   })
 
   const magnitude = (vector) =>
