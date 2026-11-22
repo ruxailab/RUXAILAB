@@ -1349,7 +1349,7 @@ function toggleTracking(value) {
 const handleDownloadAnonymousIdentifier = () => {
   if (!anonymousUserDocId.value) return
 
-  downloadAnonymousParticipantIdentifier({
+  return downloadAnonymousParticipantIdentifier({
     identifier: anonymousUserDocId.value,
     title: `${t('UserTestView.anonymousParticipant.protocol')} - ${test.value.testTitle}`,
     description: t('UserTestView.anonymousParticipant.saveIdentifier'),
