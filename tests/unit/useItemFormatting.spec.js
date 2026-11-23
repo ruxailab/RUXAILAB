@@ -38,3 +38,17 @@ it('safely handles sessions without a study object when resolving owner name', (
 
   expect(getOwnerName({ id: 'session-123' })).toBe('Me')
 })
+
+it('safely handles sessions with and without a study object when resolving owner image', () => {
+  mockI18n = createI18n({ legacy: false, locale: 'en', messages: { en, es } })
+  const { getOwnerImage } = useItemFormatting({ value: 'sessions' })
+
+  expect(
+    getOwnerImage({
+      study: { testAdmin: { imageUrl: 'https://example.com/admin.png' } },
+    }),
+  ).toBe('https://example.com/admin.png')
+
+  expect(getOwnerImage({ id: 'session-123' })).toBeNull()
+  expect(getOwnerImage({ study: {} })).toBeNull()
+})
