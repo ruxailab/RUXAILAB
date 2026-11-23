@@ -9,7 +9,9 @@ import {
 } from '@/ux/UserTest/utils/susCalculator'
 import { sumTaskTimeMs } from '@/ux/UserTest/utils/testDuration'
 import {
+  HEURISTIC_ANSWER_MODE,
   heuristicResponseItems,
+  resolveHeuristicAnswerMode,
   resolveHeuristicStudyMode,
 } from '@/ux/Heuristic/utils/heuristicAnswerMode'
 
@@ -102,6 +104,24 @@ describe('emulator seed data', () => {
     expect(resolveHeuristicStudyMode(study)).toBe('detailed')
     study.testStructure.forEach((heuristic) => {
       expect(heuristicResponseItems(study, heuristic)).toBe(heuristic.questions)
+    })
+  })
+
+  it('gives the heuristic study answer options, so it can be started', () => {
+    const study = studies['seed-heuristic-study']
+
+    // HeuristicTestView blocks a detailed study without options.
+    expect(study.testOptions.length).toBeGreaterThan(0)
+    expect(resolveHeuristicAnswerMode(study)).toBe(
+      HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS,
+    )
+    study.testOptions.forEach((option) => {
+      expect(option).toEqual({
+        text: expect.any(String),
+        description: expect.any(String),
+        value: option.value === null ? null : expect.any(Number),
+        timestamp: expect.any(Number),
+      })
     })
   })
 })

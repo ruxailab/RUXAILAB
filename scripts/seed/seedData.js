@@ -44,6 +44,7 @@ const baseStudy = ({
   testType,
   subType,
   testStructure,
+  testOptions = [],
   answersDocId,
   createdAt,
 }) => ({
@@ -55,7 +56,7 @@ const baseStudy = ({
   },
   testType,
   testStructure,
-  testOptions: [],
+  testOptions,
   answersDocId,
   cooperators: [],
   creationDate: createdAt,
@@ -119,6 +120,20 @@ const userStudy = (createdAt) => ({
   allowMobileTaskInstructions: true,
 })
 
+// Answer options in the shape the options editor saves. Detailed studies
+// cannot be started without them. A null value marks "not applicable".
+const heuristicOptions = (createdAt) =>
+  [
+    { text: 'Yes', description: 'Fully meets the heuristic.', value: 2 },
+    { text: 'Partially', description: 'Some problems were found.', value: 1 },
+    { text: 'No', description: 'Does not meet the heuristic.', value: 0 },
+    {
+      text: 'Not applicable',
+      description: 'Does not apply here.',
+      value: null,
+    },
+  ].map((option, index) => ({ ...option, timestamp: createdAt + index }))
+
 const heuristicStudy = (createdAt) => ({
   ...baseStudy({
     title: 'Demo: Heuristic evaluation',
@@ -128,6 +143,7 @@ const heuristicStudy = (createdAt) => ({
     subType: 'QUANTITATIVE',
     answersDocId: 'seed-heuristic-study-answers',
     createdAt,
+    testOptions: heuristicOptions(createdAt),
     testStructure: [
       {
         id: 0,

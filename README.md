@@ -201,7 +201,7 @@ The emulators start empty. The seed fills them with demo accounts and studies un
    VUE_APP_FIREBASE_PROJECT_ID="demo-ruxailab"
    ```
 
-   With the emulators, the other `VUE_APP_FIREBASE_*` values can be placeholders (for example `demo-ruxailab.appspot.com` for the storage bucket). For Cloud Functions, use `VUE_APP_CLOUD_FUNCTIONS_URL="http://127.0.0.1:5002/demo-ruxailab/us-central1"`.
+   With the emulators, the other `VUE_APP_FIREBASE_*` values can be placeholders (for example `demo-ruxailab.appspot.com` for the storage bucket). For Cloud Functions, use `VUE_APP_CLOUD_FUNCTIONS_URL="http://127.0.0.1:5002/demo-ruxailab/europe-west6"`. The functions run in `europe-west6` by default; if you set `RUXAILAB_FUNCTIONS_REGION` in `functions/.env`, use that region in the URL instead.
 
 2. Start the emulators with that project:
 
