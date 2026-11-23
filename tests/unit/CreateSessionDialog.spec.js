@@ -125,9 +125,23 @@ describe('CreateSessionDialog scheduling', () => {
     wrapper.vm.hour = '16:30'
     await wrapper.vm.saveSession()
 
-    // The session was saved, so both the success and the email warning show.
-    expect(toast.showSuccess).toHaveBeenCalled()
+    // Only the warning shows; it already says the session was saved.
     expect(toast.showWarning).toHaveBeenCalledWith('errors.emailNotSent')
+    expect(toast.showSuccess).not.toHaveBeenCalled()
+  })
+
+  it('shows the success message when every invitation email is sent', async () => {
+    const { wrapper, actions } = await mountDialog()
+    actions.createSession.mockResolvedValue({
+      session: { id: 'session-1' },
+      failedEmails: [],
+    })
+
+    wrapper.vm.hour = '16:30'
+    await wrapper.vm.saveSession()
+
+    expect(toast.showSuccess).toHaveBeenCalledWith('Sessions.success.created')
+    expect(toast.showWarning).not.toHaveBeenCalled()
   })
 
   it('keeps the default time valid while the form is being filled in', async () => {

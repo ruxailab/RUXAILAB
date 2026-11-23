@@ -381,10 +381,11 @@ const sendMessage = async () => {
       message: message.value,
     })
 
-    // In-app notifications still reach registered members, so a failed email
-    // gets a warning on top of the success message.
-    showSuccess(t('Sessions.success.messageSent'))
-    warnUnsentEmails(result?.failedEmails)
+    // In-app notifications still reach registered members. When an email
+    // fails, only the warning is shown, not a success next to it.
+    if (!warnUnsentEmails(result?.failedEmails)) {
+      showSuccess(t('Sessions.success.messageSent'))
+    }
 
     resetForm()
 
