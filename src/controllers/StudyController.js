@@ -1,8 +1,14 @@
 // imports
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
-import { collection, doc, onSnapshot, query, where } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  where,
+  writeBatch,
+} from 'firebase/firestore'
 import { db } from '@/app/plugins/firebase'
-import AnswerController from '../shared/controllers/AnswerController'
 import UserController from '../features/auth/controllers/UserController'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import StudyAnswer from '@/shared/models/StudyAnswer'
@@ -16,7 +22,6 @@ import {
 } from '@/shared/utils/studyUpdatePatch'
 
 const COLLECTION = 'tests'
-const answerController = new AnswerController()
 const userController = new UserController()
 const studySnapshots = new Map()
 
@@ -39,52 +44,23 @@ export default class StudyController extends Controller {
 
   async createStudy(payload) {
     const createdBy = getAuth().currentUser?.uid ?? null
-    // Create answers doc for test
-    const answerDoc = await answerController.createAnswer(
-      new StudyAnswer({ type: payload.testType, createdBy }),
-    )
+    const studyDoc = doc(collection(db, COLLECTION))
+    const answerDoc = doc(collection(db, 'answers'))
     payload.answersDocId = answerDoc.id
-
-    const studyDoc = await super.create(COLLECTION, payload.toFirestore())
-    try {
-      await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
-    } catch (error) {
-      await Promise.allSettled([
-        super.delete(COLLECTION, studyDoc.id),
-        answerController.delete('answers', answerDoc.id),
-      ])
-      throw error
-    }
+    const study = payload.toFirestore()
+    const answer = new StudyAnswer({
+      type: payload.testType,
+      createdBy,
+      studyId: studyDoc.id,
+    })
+    const batch = writeBatch(db)
+    batch.set(studyDoc, study)
+    batch.set(answerDoc, answer.toFirestore())
+    await batch.commit()
     return studyDoc
   }
   async duplicateStudy(payload) {
-    try {
-      const createdBy = getAuth().currentUser?.uid ?? null
-      const answerDoc = await answerController.createAnswer(
-        new StudyAnswer({ type: payload.test.testType, createdBy }),
-      )
-
-      // Use the correct study type from the payload (already instantiated correctly in SettingsView)
-      const duplicatedStudy = payload.test
-      duplicatedStudy.answersDocId = answerDoc.id
-
-      const studyDoc = await super.create(
-        COLLECTION,
-        duplicatedStudy.toFirestore(),
-      )
-      try {
-        await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
-      } catch (error) {
-        await Promise.allSettled([
-          super.delete(COLLECTION, studyDoc.id),
-          answerController.delete('answers', answerDoc.id),
-        ])
-        throw error
-      }
-      return studyDoc
-    } catch (error) {
-      throw error
-    }
+    return this.createStudy(payload.test)
   }
 
   async deleteStudy(payload) {
