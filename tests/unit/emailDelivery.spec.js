@@ -1,5 +1,7 @@
 import {
+  formatEmailList,
   isEmailSent,
+  MAX_LISTED_EMAILS,
   reportEmailResult,
   reportInvitationResults,
   warnUnsentEmails,
@@ -12,10 +14,17 @@ jest.mock('@/shared/utils/toast', () => ({
 }))
 jest.mock('@/app/plugins/i18n', () => ({
   global: {
-    t: (key, params) =>
-      params ? `${key}: ${params.emails ?? params.users}` : key,
+    t: (key, params) => {
+      if (key === 'common.listAndMore') {
+        return `${params.list} and ${params.count} more`
+      }
+      return params ? `${key}: ${params.emails ?? params.users}` : key
+    },
   },
 }))
+
+const addresses = (count) =>
+  Array.from({ length: count }, (_, i) => `user${i + 1}@example.test`)
 
 describe('emailDelivery', () => {
   it('only treats an explicit success as sent', () => {
@@ -45,6 +54,29 @@ describe('emailDelivery', () => {
     expect(warnUnsentEmails([])).toBe(false)
     expect(warnUnsentEmails(undefined)).toBe(false)
     expect(showWarning).not.toHaveBeenCalled()
+  })
+
+  describe('formatEmailList', () => {
+    it('lists every address up to the limit', () => {
+      expect(MAX_LISTED_EMAILS).toBe(3)
+      expect(formatEmailList(addresses(3))).toBe(
+        'user1@example.test, user2@example.test, user3@example.test',
+      )
+    })
+
+    it('names the first addresses and counts the rest', () => {
+      expect(formatEmailList(addresses(20))).toBe(
+        'user1@example.test, user2@example.test, user3@example.test and 17 more',
+      )
+    })
+  })
+
+  it('keeps the warning short when a large batch fails', () => {
+    warnUnsentEmails(addresses(20))
+
+    expect(showWarning).toHaveBeenCalledWith(
+      'errors.emailNotSent: user1@example.test, user2@example.test, user3@example.test and 17 more',
+    )
   })
 
   describe('reportEmailResult', () => {
@@ -93,6 +125,16 @@ describe('emailDelivery', () => {
       )
       expect(showWarning).toHaveBeenCalledWith(
         'errors.emailNotSent: ben@example.test',
+      )
+    })
+
+    it('keeps the success message short for a large batch', () => {
+      reportInvitationResults(
+        addresses(5).map((email) => ({ email, emailSent: true })),
+      )
+
+      expect(showSuccess).toHaveBeenCalledWith(
+        'cooperators.inviteSent: user1@example.test, user2@example.test, user3@example.test and 2 more',
       )
     })
 

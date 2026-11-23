@@ -240,6 +240,7 @@
     "errorUpdatingEmail": "Error al actualizar el correo electrónico"
   },
   "common": {
+    "listAndMore": "{list} y {count} más",
     "enterTextHere": "Ingrese texto aquí...",
     "percentValue": "{value}%",
     "units": {
