@@ -192,11 +192,32 @@ For installation and configuration instructions, refer to the [Firebase Emulator
 
 ### Demo Data for the Emulators
 
-The emulators start empty. With the Auth and Firestore emulators running, fill them with demo accounts and studies:
+The emulators start empty. The seed fills them with demo accounts and studies under the project id `demo-ruxailab`, so the emulators and the app have to use that same project id. `.firebaserc` defaults to `ruxailab-develop`, and `firebase.json` runs the emulators in single-project mode, so the project has to be set explicitly:
 
-```bash
-npm run seed
-```
+1. In `.env`, point the app at the emulators and the demo project:
+
+   ```env
+   VUE_APP_USE_EMULATORS="true"
+   VUE_APP_FIREBASE_PROJECT_ID="demo-ruxailab"
+   ```
+
+   With the emulators, the other `VUE_APP_FIREBASE_*` values can be placeholders (for example `demo-ruxailab.appspot.com` for the storage bucket). For Cloud Functions, use `VUE_APP_CLOUD_FUNCTIONS_URL="http://127.0.0.1:5002/demo-ruxailab/us-central1"`.
+
+2. Start the emulators with that project:
+
+   ```bash
+   npx firebase-tools emulators:start --project demo-ruxailab
+   ```
+
+   The seed itself only needs Auth and Firestore (`--only auth,firestore`), but `VUE_APP_USE_EMULATORS="true"` sends every Firebase service to the emulators, and actions such as saving study edits go through Cloud Functions. Start all of them to use the app normally.
+
+3. In another terminal, run the seed:
+
+   ```bash
+   npm run seed
+   ```
+
+4. Start the app with `npm run serve` and sign in with one of the accounts below.
 
 | Account                     | Use it to                |
 | --------------------------- | ------------------------ |
@@ -208,11 +229,11 @@ No password is stored in the repository: each run creates one for both accounts 
 The seed creates:
 
 - **Demo: Checkout usability**: an unmoderated user study with a written task, a System Usability Scale (SUS) task, and three submitted answers, so the analytics pages have data.
-- **Demo: Heuristic evaluation**: a heuristic study with two heuristics, ready to be answered.
+- **Demo: Heuristic evaluation**: a heuristic study in detailed mode with two heuristics and four questions, ready to be answered.
 
 Running the command again overwrites the same documents instead of adding duplicates. Emulator data is lost when the emulators stop, unless you export it, so run the seed after each restart.
 
-The script only writes to the emulators: it refuses any project id that does not start with `demo-`. If your emulators use other ports, set `FIRESTORE_EMULATOR_HOST` and `FIREBASE_AUTH_EMULATOR_HOST` before running it. The data lives in `scripts/seed/seedData.js`, and `tests/unit/seedData.spec.js` checks it against the application's models.
+The script only writes to the emulators: it refuses any project id that does not start with `demo-`. To seed another demo project, set `SEED_PROJECT_ID` (for example `demo-my-project`) and use that id for the emulators and `.env` as well. If your emulators use other ports, set `FIRESTORE_EMULATOR_HOST` and `FIREBASE_AUTH_EMULATOR_HOST` before running it. The data lives in `scripts/seed/seedData.js`, and `tests/unit/seedData.spec.js` checks it against the application's models.
 
 ## Optional Integrations
 

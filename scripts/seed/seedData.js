@@ -169,7 +169,9 @@ const heuristicStudy = (createdAt) => ({
   }),
   testWeights: {},
   trackTime: true,
-  studyMode: null,
+  // Only "detailed" mode shows each heuristic's questions; "traditional"
+  // (what null resolves to here) shows one item per heuristic instead.
+  studyMode: 'detailed',
   useWeights: false,
   useFrequency: true,
   useSeverity: true,
@@ -179,7 +181,10 @@ const heuristicStudy = (createdAt) => ({
   heuristicAgentIds: [],
 })
 
+const SUS_TASK_MS = 60 * 1000
+
 // A submitted answer to the user study. `susAnswers` holds the ten SUS items.
+// Task times are in milliseconds, like the task timer saves them.
 const userStudyAnswer = ({
   userDocId,
   fullName,
@@ -199,7 +204,7 @@ const userStudyAnswer = ({
     0: {
       taskId: 0,
       taskAnswer: answer,
-      taskTime: taskSeconds,
+      taskTime: taskSeconds * 1000,
       completed: true,
       attempted: true,
       susAnswers: [],
@@ -207,7 +212,7 @@ const userStudyAnswer = ({
     1: {
       taskId: 1,
       taskAnswer: '',
-      taskTime: 60,
+      taskTime: SUS_TASK_MS,
       completed: true,
       attempted: true,
       susAnswers,
@@ -215,7 +220,7 @@ const userStudyAnswer = ({
   },
   progress: 100,
   total: 2,
-  totalTestTimeMs: (taskSeconds + 60) * 1000,
+  totalTestTimeMs: taskSeconds * 1000 + SUS_TASK_MS,
   submitted: true,
   userDocId,
   lastUpdate: submittedAt,

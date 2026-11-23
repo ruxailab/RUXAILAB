@@ -7,6 +7,11 @@ import {
   calculateSUSScore,
   getSUSRating,
 } from '@/ux/UserTest/utils/susCalculator'
+import { sumTaskTimeMs } from '@/ux/UserTest/utils/testDuration'
+import {
+  heuristicResponseItems,
+  resolveHeuristicStudyMode,
+} from '@/ux/Heuristic/utils/heuristicAnswerMode'
 
 const NOW = new Date(2026, 10, 14, 12, 0).getTime()
 
@@ -78,5 +83,25 @@ describe('emulator seed data', () => {
 
     expect(scores).toEqual([92.5, 70, 37.5])
     expect(scores.map(getSUSRating)).toEqual(['Excellent', 'Good', 'Poor'])
+  })
+
+  it('stores task times in milliseconds, like the task timer', () => {
+    const { taskAnswers } = answers['seed-user-study-answers']
+
+    Object.values(taskAnswers).forEach((answer) => {
+      // The written task takes between 1 and 4 minutes in the demo data.
+      expect(answer.tasks[0].taskTime).toBeGreaterThanOrEqual(60 * 1000)
+      expect(answer.tasks[0].taskTime).toBeLessThan(4 * 60 * 1000)
+      expect(sumTaskTimeMs(answer)).toBe(answer.totalTestTimeMs)
+    })
+  })
+
+  it('shows the seeded questions of every heuristic to evaluators', () => {
+    const study = studies['seed-heuristic-study']
+
+    expect(resolveHeuristicStudyMode(study)).toBe('detailed')
+    study.testStructure.forEach((heuristic) => {
+      expect(heuristicResponseItems(study, heuristic)).toBe(heuristic.questions)
+    })
   })
 })
