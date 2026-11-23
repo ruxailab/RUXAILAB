@@ -980,7 +980,9 @@ async function saveSession() {
       })),
     }
 
-    // The session is saved even when some invitation emails fail.
+    // The session is saved even when some invitation emails fail. In that
+    // case only the warning is shown (it says the rest was saved), so the
+    // user doesn't get a success and a warning at the same time.
     if (isEditMode.value) {
       const result = await store.dispatch('updateSession', {
         studyId: test.value.id,
@@ -989,8 +991,9 @@ async function saveSession() {
         study: test.value,
       })
 
-      showSuccess(t('Sessions.success.updated'))
-      warnUnsentEmails(result?.failedEmails)
+      if (!warnUnsentEmails(result?.failedEmails)) {
+        showSuccess(t('Sessions.success.updated'))
+      }
     } else {
       const result = await store.dispatch('createSession', {
         studyId: test.value.id,
@@ -998,8 +1001,9 @@ async function saveSession() {
         study: test.value,
       })
 
-      showSuccess(t('Sessions.success.created'))
-      warnUnsentEmails(result?.failedEmails)
+      if (!warnUnsentEmails(result?.failedEmails)) {
+        showSuccess(t('Sessions.success.created'))
+      }
     }
 
     resetForm()
