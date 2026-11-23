@@ -9,6 +9,24 @@ import { showSuccess, showWarning } from '@/shared/utils/toast'
  */
 export const isEmailSent = (result) => result?.success === true
 
+/** Addresses named in a message; any beyond this are counted instead. */
+export const MAX_LISTED_EMAILS = 3
+
+/**
+ * Joins addresses for a toast, naming at most MAX_LISTED_EMAILS so a large
+ * batch stays one short line: "a, b, c and 17 more".
+ * @param {string[]} emails
+ * @returns {string}
+ */
+export function formatEmailList(emails) {
+  const list = emails.slice(0, MAX_LISTED_EMAILS).join(', ')
+  const hidden = emails.length - MAX_LISTED_EMAILS
+
+  return hidden > 0
+    ? i18n.global.t('common.listAndMore', { list, count: hidden })
+    : list
+}
+
 /**
  * Warns which recipients did not receive their email. The invitation,
  * message or session itself was saved, so this is a warning, not an error.
@@ -20,7 +38,7 @@ export function warnUnsentEmails(emails = []) {
   if (!unsent.length) return false
 
   showWarning(
-    i18n.global.t('errors.emailNotSent', { emails: unsent.join(', ') }),
+    i18n.global.t('errors.emailNotSent', { emails: formatEmailList(unsent) }),
   )
   return true
 }
@@ -50,7 +68,7 @@ export function reportInvitationResults(invites = []) {
   if (sent.length > 0) {
     showSuccess(
       i18n.global.t('cooperators.inviteSent', {
-        users: sent.map((invite) => invite.email).join(', '),
+        users: formatEmailList(sent.map((invite) => invite.email)),
       }),
     )
   }

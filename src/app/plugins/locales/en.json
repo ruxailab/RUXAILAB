@@ -240,6 +240,7 @@
     }
   },
   "common": {
+    "listAndMore": "{list} and {count} more",
     "enterTextHere": "Enter text here...",
     "percentValue": "{value}%",
     "units": {
