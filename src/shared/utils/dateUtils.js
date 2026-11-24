@@ -143,3 +143,11 @@ export const formatTime = (timestamp) => {
     return INVALID_DATE_FALLBACK
   }
 }
+
+export const toSortableTimestamp = (value) => {
+  if (!value) return 0
+  if (typeof value?.toMillis === 'function') return value.toMillis()
+
+  const timestamp = new Date(value).getTime()
+  return Number.isNaN(timestamp) ? 0 : timestamp
+}
