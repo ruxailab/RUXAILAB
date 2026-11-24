@@ -17,9 +17,31 @@ const timePeriodStart = (when, now) => {
   return days === null ? null : now - days * 24 * 60 * 60 * 1000
 }
 
-const timestampMilliseconds = (timestamp) => {
+export const timestampMilliseconds = (timestamp) => {
+  if (!timestamp) return null
+  if (typeof timestamp?.toMillis === 'function') {
+    const ms = timestamp.toMillis()
+    return typeof ms === 'number' && !Number.isNaN(ms) ? ms : null
+  }
   if (typeof timestamp?.toDate === 'function') {
-    return timestamp.toDate().getTime()
+    const date = timestamp.toDate()
+    return date instanceof Date && !Number.isNaN(date.getTime())
+      ? date.getTime()
+      : null
+  }
+  if (typeof timestamp?.seconds === 'number') {
+    const ms =
+      timestamp.seconds * 1000 + Math.floor((timestamp.nanoseconds || 0) / 1e6)
+    return Number.isNaN(ms) ? null : ms
+  }
+  if (typeof timestamp?._seconds === 'number') {
+    const ms =
+      timestamp._seconds * 1000 +
+      Math.floor((timestamp._nanoseconds || 0) / 1e6)
+    return Number.isNaN(ms) ? null : ms
+  }
+  if (typeof timestamp === 'number') {
+    return Number.isNaN(timestamp) ? null : timestamp
   }
 
   const date = timestamp instanceof Date ? timestamp : new Date(timestamp)
