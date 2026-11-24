@@ -1,13 +1,6 @@
 import { computed, toRef, unref } from 'vue'
 import { getSessionStatus } from '@/shared/utils/sessionsUtils'
-
-const toSortableTimestamp = (value) => {
-  if (!value) return 0
-  if (typeof value?.toMillis === 'function') return value.toMillis()
-
-  const timestamp = new Date(value).getTime()
-  return Number.isNaN(timestamp) ? 0 : timestamp
-}
+import { toSortableTimestamp } from '@/shared/utils/dateUtils'
 
 const getSessionItemValue = (item) =>
   [item.id, item.userDocId ?? item.email, item.email, item.testDate]

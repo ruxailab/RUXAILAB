@@ -162,6 +162,7 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { STUDY_ROLE } from '../../../shared/utils/studyAccessPolicy'
 import { showInfo } from '@/shared/utils/toast'
+import { toSortableTimestamp } from '@/shared/utils/dateUtils'
 
 const { t } = useI18n()
 
@@ -189,7 +190,11 @@ const hasNoStudies = computed(() => {
 const lastFourStudies = computed(() => {
   if (!props.studies?.length) return []
   return [...props.studies]
-    .sort((a, b) => (b.creationDate || 0) - (a.creationDate || 0))
+    .sort(
+      (a, b) =>
+        toSortableTimestamp(b.creationDate) -
+        toSortableTimestamp(a.creationDate),
+    )
     .slice(0, 4)
 })
 
@@ -328,7 +333,7 @@ const finalFour = (studyArr) => {
     .map((study) => ({
       id: study.testDocId || study.id,
       title: study.testTitle,
-      description: study.testDescription,
+      description: study.testDescription || study.description,
       status: study.status,
       progress: calculateProgress(study.answers),
       participants: study.answers?.length || 0,

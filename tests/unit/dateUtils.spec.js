@@ -3,6 +3,7 @@ import {
   formatDateTime,
   formatDate,
   formatTime,
+  toSortableTimestamp,
 } from '@/shared/utils/dateUtils'
 
 describe('dateUtils', () => {
@@ -100,6 +101,20 @@ describe('dateUtils', () => {
     it('returns fallback for invalid inputs', () => {
       expect(formatDate(null)).toBe('-')
       expect(formatTime(null)).toBe('-')
+    })
+  })
+
+  describe('toSortableTimestamp', () => {
+    it('turns numbers, ISO strings and Firestore timestamps into milliseconds', () => {
+      const ms = testDate.getTime()
+      expect(toSortableTimestamp(ms)).toBe(ms)
+      expect(toSortableTimestamp(testDate.toISOString())).toBe(ms)
+      expect(toSortableTimestamp({ toMillis: () => ms })).toBe(ms)
+    })
+
+    it('returns 0 for missing or invalid dates', () => {
+      expect(toSortableTimestamp(undefined)).toBe(0)
+      expect(toSortableTimestamp('invalid')).toBe(0)
     })
   })
 })
