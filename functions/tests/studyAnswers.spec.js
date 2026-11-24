@@ -140,6 +140,28 @@ describe('getMyStudyAnswer', () => {
     expect(result.taskAnswers.other).toBeUndefined()
   })
 
+  it('allows a collaborator whose accepted membership is in study.cooperators to read their answer', async () => {
+    mockStudies.set(
+      'study-1',
+      userStudy({
+        cooperators: [
+          { userDocId: 'caller', accessLevel: 5, accepted: true },
+        ],
+        studyRoleMap: {},
+      }),
+    )
+    mockAnswers.set('answer-1', userAnswer())
+
+    const result = await getMyStudyAnswer(
+      request('caller', { studyId: 'study-1' }),
+    )
+
+    expect(result.taskAnswers).toEqual({
+      caller: { userDocId: 'caller', progress: 40 },
+    })
+    expect(result.taskAnswers.other).toBeUndefined()
+  })
+
   it('allows an Observator to read only their own answer for a moderated user study', async () => {
     mockStudies.set(
       'study-1',

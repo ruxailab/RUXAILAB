@@ -1,5 +1,5 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
-import { ROLE } from '../shared/auth/studyAccess.js'
+import { ROLE, resolveStudyRole } from '../shared/auth/studyAccess.js'
 
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)
@@ -11,11 +11,9 @@ const normalizeStudyType = (type) => {
   return normalized === 'HEURISTICS' ? 'HEURISTIC' : normalized
 }
 
-const roleFor = (study, uid) => study?.studyRoleMap?.[uid] ?? null
-
 const canAnswerStudy = ({ study, uid, isSuperAdmin = false }) => {
   const studyType = normalizeStudyType(study?.testType)
-  const role = roleFor(study, uid)
+  const role = resolveStudyRole(study, uid, isSuperAdmin)
 
   return (
     study?.isPublic === true ||
