@@ -17,35 +17,33 @@ const timePeriodStart = (when, now) => {
   return days === null ? null : now - days * 24 * 60 * 60 * 1000
 }
 
-export const timestampMilliseconds = (timestamp) => {
-  if (!timestamp) return null
+const firestoreTimestampMs = (timestamp) => {
   if (typeof timestamp?.toMillis === 'function') {
-    const ms = timestamp.toMillis()
-    return typeof ms === 'number' && !Number.isNaN(ms) ? ms : null
+    return timestamp.toMillis()
   }
   if (typeof timestamp?.toDate === 'function') {
-    const date = timestamp.toDate()
-    return date instanceof Date && !Number.isNaN(date.getTime())
-      ? date.getTime()
-      : null
+    const d = timestamp.toDate()
+    return d instanceof Date ? d.getTime() : null
   }
-  if (typeof timestamp?.seconds === 'number') {
-    const ms =
-      timestamp.seconds * 1000 + Math.floor((timestamp.nanoseconds || 0) / 1e6)
-    return Number.isNaN(ms) ? null : ms
+  const seconds = timestamp?.seconds ?? timestamp?._seconds
+  if (typeof seconds === 'number') {
+    const nanos = timestamp?.nanoseconds ?? timestamp?._nanoseconds ?? 0
+    return seconds * 1000 + Math.floor(nanos / 1e6)
   }
-  if (typeof timestamp?._seconds === 'number') {
-    const ms =
-      timestamp._seconds * 1000 +
-      Math.floor((timestamp._nanoseconds || 0) / 1e6)
-    return Number.isNaN(ms) ? null : ms
-  }
-  if (typeof timestamp === 'number') {
-    return Number.isNaN(timestamp) ? null : timestamp
+  return null
+}
+
+export const timestampMilliseconds = (timestamp) => {
+  if (!timestamp) return null
+
+  const fsMs = firestoreTimestampMs(timestamp)
+  if (fsMs !== null) {
+    return Number.isNaN(fsMs) ? null : fsMs
   }
 
   const date = timestamp instanceof Date ? timestamp : new Date(timestamp)
-  return Number.isNaN(date.getTime()) ? null : date.getTime()
+  const time = date.getTime()
+  return Number.isNaN(time) ? null : time
 }
 
 const matchesPerson = (event, person) => {
