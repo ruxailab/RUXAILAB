@@ -2067,7 +2067,14 @@
       "done": "Done"
     },
     "PostTestStep": {
-      "title": "Post-Test"
+      "title": "Post-Test",
+      "question": "Question {number}",
+      "total": "{count} total",
+      "noQuestions": "No post-test questions configured for this study.",
+      "answerPlaceholder": "Type your answer here...",
+      "previous": "Previous",
+      "next": "Next",
+      "done": "Done"
     },
     "CalibrationInProgressModal": {
       "completed": "Calibration completed!",

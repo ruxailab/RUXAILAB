@@ -2009,7 +2009,14 @@
       "done": "Hecho"
     },
     "PostTestStep": {
-      "title": "Prueba posterior"
+      "title": "Prueba posterior",
+      "question": "Pregunta {number}",
+      "total": "{count} en total",
+      "noQuestions": "Este estudio no tiene preguntas posteriores configuradas.",
+      "answerPlaceholder": "Escribe tu respuesta aquí...",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "done": "Hecho"
     },
     "buttons": {
       "done": "Hecho"

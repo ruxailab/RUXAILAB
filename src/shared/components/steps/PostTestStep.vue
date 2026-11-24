@@ -1,5 +1,5 @@
 <template>
-  <ShowInfo :title="testTitle + ' - ' + 'PostTest'">
+  <ShowInfo :title="`${testTitle} - ${$t('UserTestView.PostTestStep.title')}`">
     <template #content>
       <div class="test-content pa-2 pa-sm-4">
         <v-sheet rounded="xl" border class="pa-4 pa-sm-6">
@@ -10,11 +10,17 @@
               size="small"
               class="font-weight-bold"
             >
-              Question {{ step + 1 }}
+              {{
+                $t('UserTestView.PostTestStep.question', {
+                  number: step + 1,
+                })
+              }}
             </v-chip>
-            <span class="text-caption text-medium-emphasis"
-              >{{ postTest.length }} total</span
-            >
+            <span class="text-caption text-medium-emphasis">{{
+              $t('UserTestView.PostTestStep.total', {
+                count: postTest.length,
+              })
+            }}</span>
           </div>
 
           <v-progress-linear
@@ -30,7 +36,7 @@
             class="question-shell mx-auto mb-8 text-center"
           >
             <p class="text-body-1 text-medium-emphasis">
-              No post-test questions configured for this study.
+              {{ $t('UserTestView.PostTestStep.noQuestions') }}
             </p>
           </div>
 
@@ -55,7 +61,7 @@
               <v-text-field
                 v-model="localAnswers[step].answer"
                 :data-study-field-ref="`postTest:${step}:answer`"
-                :placeholder="'Type your answer here…'"
+                :placeholder="$t('UserTestView.PostTestStep.answerPlaceholder')"
                 variant="outlined"
                 density="comfortable"
                 rounded="lg"
@@ -95,7 +101,7 @@
                 :disabled="step === 0"
                 @click="prev"
               >
-                Previous
+                {{ $t('UserTestView.PostTestStep.previous') }}
               </v-btn>
             </v-col>
             <v-col cols="auto">
@@ -106,7 +112,7 @@
                 variant="flat"
                 @click="next"
               >
-                Next
+                {{ $t('UserTestView.PostTestStep.next') }}
               </v-btn>
               <v-btn
                 v-else
@@ -115,7 +121,7 @@
                 variant="flat"
                 @click="$emit('done')"
               >
-                Done
+                {{ $t('UserTestView.PostTestStep.done') }}
               </v-btn>
             </v-col>
           </v-row>
