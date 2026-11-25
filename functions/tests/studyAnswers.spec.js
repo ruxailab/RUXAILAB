@@ -284,6 +284,45 @@ describe('getMyStudyAnswer', () => {
     })
   })
 
+  it('allows an accepted cooperator from study.cooperators to access study answers when studyRoleMap is missing', async () => {
+    mockStudies.set(
+      'study-1',
+      userStudy({
+        testType: 'USER',
+        cooperators: [
+          { userDocId: 'caller', accessLevel: 5, accepted: true },
+        ],
+        studyRoleMap: {},
+      }),
+    )
+    mockAnswers.set('answer-1', userAnswer())
+
+    const result = await getMyStudyAnswer(
+      request('caller', { studyId: 'study-1' }),
+    )
+
+    expect(result.taskAnswers).toEqual({
+      caller: { userDocId: 'caller', progress: 40 },
+    })
+  })
+
+  it('denies an unaccepted cooperator in study.cooperators on a private study', async () => {
+    mockStudies.set(
+      'study-1',
+      userStudy({
+        testType: 'USER',
+        cooperators: [
+          { userDocId: 'caller', accessLevel: 5, accepted: false },
+        ],
+        studyRoleMap: {},
+      }),
+    )
+
+    await expect(
+      getMyStudyAnswer(request('caller', { studyId: 'study-1' })),
+    ).rejects.toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
   it('denies a card sorting caller with GUEST or no role on a private study', async () => {
     mockStudies.set(
       'study-1',
