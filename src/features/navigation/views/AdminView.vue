@@ -301,7 +301,7 @@ const handleToggleDrawer = () => {
  * 🔀 Event handler to change the active section
  */
 const handleChangeSection = (event) => {
-  activeSection.value = event.detail
+  selectNavigation({ sectionId: event.detail })
 }
 
 // Reacts to route query changes for section/subsection
