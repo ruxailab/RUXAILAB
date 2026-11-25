@@ -30,7 +30,7 @@
             size="large"
             @click="localStep = 1"
           >
-            How does this test work?
+            {{ $t('UserTestView.WelcomeStep.howItWorks') }}
           </v-btn>
         </template>
 
@@ -66,7 +66,7 @@
               <v-stepper-item
                 v-if="hasEyeTracking"
                 :value="hasPreTest ? 3 : 2"
-                title="Calibration"
+                :title="$t('UserTestView.stepper.calibration')"
               />
               <v-divider v-if="hasEyeTracking" />
               <v-stepper-item
@@ -117,7 +117,9 @@
             v-else
             :items="[
               $t('UserTestView.WelcomeStep.steps.consent'),
-              ...(hasEyeTracking ? ['Calibration'] : []),
+              ...(hasEyeTracking
+                ? [$t('UserTestView.stepper.calibration')]
+                : []),
               $t('UserTestView.WelcomeStep.steps.preQuestions'),
               $t('UserTestView.WelcomeStep.steps.tasks'),
               $t('UserTestView.WelcomeStep.steps.postQuestions'),
