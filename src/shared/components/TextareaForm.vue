@@ -20,9 +20,12 @@
         <v-card-text>
           <QuillEditor
             ref="quillRef"
-            v-model:content="value"
+            v-model:content="editorContent"
+            content-type="html"
+            :enable="!editorReadonly"
             :options="editorOptions"
-            :class="['editor-container', { 'editor-readonly': props.readonly }]"
+            :class="['editor-container', { 'editor-readonly': editorReadonly }]"
+            @ready="onEditorReady"
           />
         </v-card-text>
       </v-card>
@@ -37,12 +40,53 @@ import { QuillEditor } from '@vueup/vue-quill'
 
 const { t } = useI18n()
 
-const value = defineModel({ type: String, default: '' })
+const value = defineModel({ type: [String, Object], default: '' })
 const emit = defineEmits(['update:value'])
 const quillRef = ref(null)
+let quill = null
+
+const editorContent = computed({
+  get: () => (typeof value.value === 'string' ? value.value : ''),
+  set: (html) => {
+    value.value = html
+  },
+})
+
+const convertLegacyDelta = () => {
+  if (typeof value.value === 'string') return
+  if (
+    !value.value ||
+    !Array.isArray(value.value.ops) ||
+    value.value.ops.some(
+      (op) =>
+        !op ||
+        typeof op !== 'object' ||
+        !Object.hasOwn(op, 'insert') ||
+        (typeof op.insert !== 'string' &&
+          (typeof op.insert !== 'object' || op.insert === null)) ||
+        Object.hasOwn(op, 'retain') ||
+        Object.hasOwn(op, 'delete'),
+    )
+  ) {
+    throw new TypeError('Invalid rich-text content: expected HTML or a Delta')
+  }
+  if (!quill) return
+
+  quill.setContents(value.value.ops, 'silent')
+  value.value = quill.root.innerHTML
+}
+
+const onEditorReady = (editor) => {
+  quill = editor
+  convertLegacyDelta()
+}
 
 watch(value, (newValue) => {
-  emit('update:value', newValue)
+  if (typeof newValue === 'string') {
+    emit('update:value', newValue)
+  } else {
+    convertLegacyDelta()
+  }
 })
 
 const props = defineProps({
@@ -60,9 +104,13 @@ const props = defineProps({
   },
 })
 
+const editorReadonly = computed(
+  () => props.readonly || typeof value.value !== 'string',
+)
+
 const editorOptions = computed(() => ({
   theme: 'snow',
-  readOnly: props.readonly,
+  readOnly: editorReadonly.value,
   placeholder: t('common.enterTextHere'),
   modules: {
     toolbar: props.readonly
@@ -82,7 +130,7 @@ const applyReadonlyAttributes = async () => {
   const editor = root?.querySelector?.('.ql-editor')
   if (!editor) return
 
-  if (props.readonly) {
+  if (editorReadonly.value) {
     editor.setAttribute('contenteditable', 'false')
     editor.setAttribute('tabindex', '-1')
   } else {
@@ -91,12 +139,9 @@ const applyReadonlyAttributes = async () => {
   }
 }
 
-watch(
-  () => props.readonly,
-  () => {
-    applyReadonlyAttributes()
-  },
-)
+watch(editorReadonly, () => {
+  applyReadonlyAttributes()
+})
 
 onMounted(() => {
   applyReadonlyAttributes()

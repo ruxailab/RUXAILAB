@@ -71,11 +71,11 @@ import VideoCallConfigForm from '@/shared/components/videoCall/VideoCallConfigFo
 
 const props = defineProps({
   welcome: {
-    type: String,
+    type: [String, Object],
     default: '',
   },
   finalMessage: {
-    type: String,
+    type: [String, Object],
     default: '',
   },
   testId: {
