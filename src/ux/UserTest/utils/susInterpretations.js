@@ -123,7 +123,9 @@ export function getActiveInterpretationSegment(visualization, score) {
 export function getInterpretationRange(segment, locale) {
   const min = formatSUSScore(segment.min, locale)
   const formattedUpperBound =
-    segment.max === 100 ? '100' : `<${formatSUSScore(segment.max, locale)}`
+    segment.max === 100
+      ? formatSUSScore(segment.max, locale)
+      : `<${formatSUSScore(segment.max, locale)}`
   return `${min}–${formattedUpperBound}`
 }
 
@@ -144,6 +146,7 @@ export function getInterpretationTooltip(segment, locale, translate) {
 
 export function formatSUSScore(score, locale) {
   return new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 15,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(score)
 }

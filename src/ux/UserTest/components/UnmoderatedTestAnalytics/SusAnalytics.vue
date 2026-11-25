@@ -48,7 +48,7 @@
                 {{ $t('analytics.sus.minimumScore') }}
               </div>
               <div class="text-h2 font-weight-bold text-blue mb-1">
-                {{ analytics.minScore }}
+                {{ formatSUSScore(analytics.minScore, locale) }}
               </div>
             </div>
             <div class="pa-3" style="background: #e3f2fd; border-radius: 8px">
@@ -69,7 +69,7 @@
                 {{ $t('analytics.sus.maximumScore') }}
               </div>
               <div class="text-h2 font-weight-bold text-purple mb-1">
-                {{ analytics.maxScore }}
+                {{ formatSUSScore(analytics.maxScore, locale) }}
               </div>
             </div>
             <div class="pa-3" style="background: #f3e5f5; border-radius: 8px">

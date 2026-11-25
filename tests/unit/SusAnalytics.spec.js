@@ -50,7 +50,7 @@ describe('SusAnalytics response details dialog', () => {
     const dialog = wrapper.findAll('v-dialog')[0]
     const finalScore = dialog.find('.text-h4')
     expect(finalScore.exists()).toBe(true)
-    expect(finalScore.text()).toBe('92.5')
+    expect(finalScore.text()).toBe('92.50')
     expect(dialog.find('v-chip').text()).toBe('analytics.sus.ratings.excellent')
   })
 })
