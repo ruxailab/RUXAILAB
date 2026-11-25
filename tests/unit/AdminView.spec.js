@@ -1,3 +1,4 @@
+import { reactive } from 'vue'
 import { flushPromises, shallowMount } from '@vue/test-utils'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
@@ -46,6 +47,8 @@ const deferred = () => {
 describe('AdminView window listeners', () => {
   let AdminView
   let store
+  let route
+  let router
   let addListener
   let removeListener
   let errorHandler
@@ -71,8 +74,14 @@ describe('AdminView window listeners', () => {
       dispatch: jest.fn().mockResolvedValue(),
     }
     useStore.mockReturnValue(store)
-    useRouter.mockReturnValue({ push: jest.fn() })
-    useRoute.mockReturnValue({ query: {} })
+    route = reactive({ query: {} })
+    router = {
+      push: jest.fn(({ query }) => {
+        route.query = query
+      }),
+    }
+    useRouter.mockReturnValue(router)
+    useRoute.mockReturnValue(route)
     useI18n.mockReturnValue({ t: (key) => key })
 
     errorHandler = jest.fn()
@@ -100,7 +109,9 @@ describe('AdminView window listeners', () => {
   const expectButtonsToWork = (wrapper) => {
     expect(wrapper.vm.drawerOpen).toBe(false)
     dispatchChangeSection('studies')
-    expect(wrapper.vm.activeSection).toBe('studies')
+    expect(router.push).toHaveBeenCalledWith({
+      query: expect.objectContaining({ section: 'studies' }),
+    })
     window.dispatchEvent(new Event('toggle-dashboard-drawer'))
     expect(wrapper.vm.drawerOpen).toBe(true)
   }
@@ -119,6 +130,25 @@ describe('AdminView window listeners', () => {
     await flushPromises()
 
     expectButtonsToWork(wrapper)
+
+    wrapper.unmount()
+  })
+
+  it('returns to the dashboard from the sidebar after "View all"', async () => {
+    route.query = { section: 'dashboard' }
+    const wrapper = mountView()
+    await flushPromises()
+    const sidebar = wrapper.findComponent({ name: 'DashboardSidebar' })
+
+    dispatchChangeSection('studies')
+    await flushPromises()
+    expect(route.query.section).toBe('studies')
+    expect(wrapper.vm.activeSection).toBe('studies')
+
+    sidebar.vm.$emit('navigate', { sectionId: 'dashboard' })
+    await flushPromises()
+    expect(route.query.section).toBe('dashboard')
+    expect(wrapper.vm.activeSection).toBe('dashboard')
 
     wrapper.unmount()
   })
