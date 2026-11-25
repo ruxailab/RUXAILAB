@@ -108,5 +108,25 @@ describe('searchUtils', () => {
       expect(matchesSearch('Hello World', 'xyz')).toBe(false)
       expect(matchesSearch('Métrica', 'test')).toBe(false)
     })
+
+    it('should handle numeric inputs without crashing', () => {
+      expect(normalizeForSearch(2024)).toBe('2024')
+      expect(normalizeForSearch(0)).toBe('0')
+      expect(matchesSearch(2024, '2024')).toBe(true)
+      expect(matchesSearch('Study 2024', 2024)).toBe(true)
+      expect(matchesSearch('Study 2025', 2024)).toBe(false)
+    })
+
+    it('should support non-ASCII Unicode characters and prevent false positive matches', () => {
+      expect(normalizeForSearch('Тест')).toBe('тест')
+      expect(normalizeForSearch('用户体验')).toBe('用户体验')
+      expect(normalizeForSearch('coração')).toBe('coracao')
+
+      expect(matchesSearch('Тест на юзабилити', 'Тест')).toBe(true)
+      expect(matchesSearch('English Study', 'Тест')).toBe(false)
+
+      expect(matchesSearch('用户体验研究', '用户体验')).toBe(true)
+      expect(matchesSearch('English Study', '用户体验')).toBe(false)
+    })
   })
 })
