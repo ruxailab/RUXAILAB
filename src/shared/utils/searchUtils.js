@@ -13,12 +13,12 @@
  * normalizeForSearch('Café con leche') // returns 'cafeconleche'
  */
 export const normalizeForSearch = (str) => {
-  if (!str) return ''
-  return str
+  if (str === null || str === undefined) return ''
+  return String(str)
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]/g, '')
+    .replace(/[^\p{L}\p{N}]/gu, '')
 }
 
 /**
@@ -33,7 +33,14 @@ export const normalizeForSearch = (str) => {
  * matchesSearch('Café con leche', 'cafe') // returns true
  */
 export const matchesSearch = (text, query) => {
-  if (!query) return true
-  if (!text) return false
-  return normalizeForSearch(text).includes(normalizeForSearch(query))
+  if (query === null || query === undefined || query === '') return true
+  if (text === null || text === undefined || text === '') return false
+
+  const normQuery = normalizeForSearch(query)
+  if (!normQuery) {
+    const rawTrimmed = String(query).trim()
+    return rawTrimmed === ''
+  }
+
+  return normalizeForSearch(text).includes(normQuery)
 }
