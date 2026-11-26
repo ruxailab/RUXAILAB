@@ -52,7 +52,7 @@ describe('SUS interpretation ranges', () => {
     )
     expect(getActiveInterpretationSegment(grades, 78.85).category).toBe('gradeA')
     const gradeA = grades.segments.find(({ category }) => category === 'gradeA')
-    expect(getInterpretationRange(gradeA, 'en')).toBe('78.85–100')
+    expect(getInterpretationRange(gradeA, 'en')).toBe('78.85–100.00')
   })
 
   it('shows plus and minus grades only in the grade segment tooltip', () => {
@@ -68,7 +68,7 @@ describe('SUS interpretation ranges', () => {
 
     expect(gradeA.category).toBe('gradeA')
     expect(tooltip).toBe(
-      'gradeAMinus 78.85–<80.75 · gradeA 80.75–<84.05 · gradeAPlus 84.05–100',
+      'gradeAMinus 78.85–<80.75 · gradeA 80.75–<84.05 · gradeAPlus 84.05–100.00',
     )
   })
 
