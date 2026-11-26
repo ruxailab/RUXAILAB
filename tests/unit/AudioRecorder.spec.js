@@ -102,6 +102,26 @@ const mountRecorder = () =>
     },
   })
 
+it('does not upload an empty moderator recording', async () => {
+  global.Blob = class {
+    constructor(parts, { type }) {
+      this.size = 0
+      this.type = type
+    }
+  }
+  const wrapper = mountRecorder()
+
+  await wrapper.vm.startAudioRecording()
+  wrapper.vm.stopAudioRecording()
+  await flushPromises()
+
+  expect(uploadWithProgress).not.toHaveBeenCalled()
+  expect(mockDispatch).not.toHaveBeenCalledWith(
+    'updateTaskMediaUrl',
+    expect.objectContaining({ mediaType: 'moderatorAudioURL' }),
+  )
+})
+
 it('uploads the moderator audio when the recording stops', async () => {
   const wrapper = mountRecorder()
 

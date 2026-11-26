@@ -81,6 +81,14 @@ describe('UploadProgressDialog', () => {
     expect(wrapper.find('.alert-stub').text()).toBe('uploadProgress.offline')
   })
 
+  it('does not promise to continue when Storage refused every upload', () => {
+    const wrapper = mountDialog(
+      [{ ...recording, status: 'failed', errorCode: 'storage/unauthorized' }],
+      { online: false },
+    )
+    expect(wrapper.find('.alert-stub').exists()).toBe(false)
+  })
+
   it('offers a retry for a failed upload', async () => {
     const wrapper = mountDialog([{ ...recording, status: 'failed' }])
 

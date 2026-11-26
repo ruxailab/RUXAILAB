@@ -25,7 +25,7 @@ if (typeof window !== 'undefined') {
   window.addEventListener('online', () => {
     online.value = true
     // The dialog promises that uploads continue once the connection is back.
-    for (const upload of uploads) {
+    for (const upload of [...uploads]) {
       if (upload.status === 'failed' && !upload.errorCode) {
         controls.get(upload.id)?.retry()
       }

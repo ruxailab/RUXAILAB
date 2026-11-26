@@ -262,6 +262,8 @@ const startNow = () => {
       recorder.onstop = async () => {
         try {
           const blob = new Blob(chunks, { type: 'audio/webm' })
+          // An empty file would replace the task's moderator audio URL.
+          if (!blob.size) return
           const reference = storageRef(
             storage,
             `tests/${testId}/${userId}/task_${taskIndex}_moderator/${Date.now()}.webm`,

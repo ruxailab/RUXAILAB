@@ -9,7 +9,7 @@
       </p>
 
       <v-alert
-        v-if="!online"
+        v-if="!online && uploads.some((upload) => !upload.errorCode)"
         type="warning"
         variant="tonal"
         density="compact"
