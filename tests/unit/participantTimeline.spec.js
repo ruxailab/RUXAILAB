@@ -1,6 +1,7 @@
 import {
   buildParticipantTimeline,
   stepKeyFor,
+  toMillis,
 } from '@/shared/utils/participantTimeline'
 
 const at = (minute) => new Date(Date.UTC(2026, 8, 30, 12, minute))
@@ -169,5 +170,47 @@ describe('participant timeline', () => {
       status: 'open',
       summary: { ended: false },
     })
+  })
+
+  it('parses timestamps in various formats with toMillis', () => {
+    const epoch = new Date('2026-07-14T12:00:00Z').getTime()
+    const sec = Math.floor(epoch / 1000)
+
+    expect(toMillis(null)).toBeNull()
+    expect(toMillis(undefined)).toBeNull()
+    expect(toMillis('invalid')).toBeNull()
+    expect(toMillis(epoch)).toBe(epoch)
+    expect(toMillis(new Date(epoch))).toBe(epoch)
+    expect(toMillis({ toMillis: () => epoch })).toBe(epoch)
+    expect(toMillis({ toDate: () => new Date(epoch) })).toBe(epoch)
+    expect(toMillis({ seconds: sec, nanoseconds: 0 })).toBe(epoch)
+    expect(toMillis({ _seconds: sec, _nanoseconds: 0 })).toBe(epoch)
+    expect(toMillis('2026-07-14T12:00:00Z')).toBe(epoch)
+  })
+
+  it('orders steps correctly with numeric and serialized Firestore timestamps', () => {
+    const startMs = 1720958400000
+    const endMs = startMs + 60000
+
+    const timeline = buildParticipantTimeline([
+      {
+        participantLabel: 'P-002',
+        occurredAt: { seconds: Math.floor(endMs / 1000), nanoseconds: 0 },
+        eventType: 'SESSION_ENDED',
+        details: {},
+        level: 'info',
+      },
+      {
+        participantLabel: 'P-002',
+        occurredAt: startMs,
+        eventType: 'SESSION_STARTED',
+        details: {},
+        level: 'info',
+      },
+    ])
+
+    expect(timeline.steps).toHaveLength(1)
+    expect(timeline.steps[0].startedAt).toBe(startMs)
+    expect(timeline.steps[0].endedAt).toBe(endMs)
   })
 })
