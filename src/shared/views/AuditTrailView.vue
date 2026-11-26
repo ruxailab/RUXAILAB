@@ -90,6 +90,7 @@ import { normalizeAuditEvent } from '@/shared/utils/auditTrailDisplay'
 import {
   auditPeopleOptions,
   filterAuditEvents,
+  timestampMilliseconds,
 } from '@/shared/utils/auditTrailFilters'
 
 const route = useRoute()
@@ -144,8 +145,10 @@ const noDataText = computed(() =>
 )
 
 const formatTimestamp = (timestamp) => {
-  const date = timestamp?.toDate?.() || (timestamp ? new Date(timestamp) : null)
-  return date && !Number.isNaN(date.getTime()) ? date.toLocaleString() : '-'
+  const ms = timestampMilliseconds(timestamp)
+  if (ms === null) return '-'
+  const date = new Date(ms)
+  return !Number.isNaN(date.getTime()) ? date.toLocaleString() : '-'
 }
 
 const formatAction = (action) => {

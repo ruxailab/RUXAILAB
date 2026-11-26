@@ -1,6 +1,7 @@
 import {
   auditPeopleOptions,
   filterAuditEvents,
+  timestampMilliseconds,
 } from '@/shared/utils/auditTrailFilters'
 
 describe('audit trail filters', () => {
@@ -51,6 +52,72 @@ describe('audit trail filters', () => {
     expect(filterAuditEvents(events, { when: 'last7Days' }, { now })).toEqual([
       { id: 'recent', timestamp: new Date('2026-07-10T12:00:00Z') },
     ])
+  })
+
+  it('filters events with plain Firestore timestamps, toMillis objects, and numbers', () => {
+    const now = new Date('2026-07-15T12:00:00Z').getTime()
+    const recentSec = Math.floor(
+      new Date('2026-07-12T12:00:00Z').getTime() / 1000,
+    )
+    const oldSec = Math.floor(new Date('2026-06-01T12:00:00Z').getTime() / 1000)
+
+    const events = [
+      {
+        id: 'firestore-plain',
+        timestamp: { seconds: recentSec, nanoseconds: 0 },
+      },
+      {
+        id: 'firestore-underscore',
+        timestamp: { _seconds: recentSec, _nanoseconds: 0 },
+      },
+      {
+        id: 'firestore-tomillis',
+        timestamp: {
+          toMillis: () => new Date('2026-07-13T12:00:00Z').getTime(),
+        },
+      },
+      {
+        id: 'numeric',
+        timestamp: new Date('2026-07-14T12:00:00Z').getTime(),
+      },
+      {
+        id: 'firestore-old',
+        timestamp: { seconds: oldSec, nanoseconds: 0 },
+      },
+      {
+        id: 'invalid-timestamp',
+        timestamp: 'invalid-date',
+      },
+    ]
+
+    const filtered = filterAuditEvents(events, { when: 'last7Days' }, { now })
+    expect(filtered.map((event) => event.id)).toEqual([
+      'firestore-plain',
+      'firestore-underscore',
+      'firestore-tomillis',
+      'numeric',
+    ])
+  })
+
+  it('parses timestamps in various formats with timestampMilliseconds', () => {
+    const millis = 1720958400000
+    const sec = 1720958400
+
+    expect(timestampMilliseconds(null)).toBeNull()
+    expect(timestampMilliseconds(undefined)).toBeNull()
+    expect(timestampMilliseconds('invalid')).toBeNull()
+    expect(timestampMilliseconds(millis)).toBe(millis)
+    expect(timestampMilliseconds(new Date(millis))).toBe(millis)
+    expect(timestampMilliseconds({ toMillis: () => millis })).toBe(millis)
+    expect(
+      timestampMilliseconds({ toDate: () => new Date(millis) }),
+    ).toBe(millis)
+    expect(
+      timestampMilliseconds({ seconds: sec, nanoseconds: 0 }),
+    ).toBe(millis)
+    expect(
+      timestampMilliseconds({ _seconds: sec, _nanoseconds: 0 }),
+    ).toBe(millis)
   })
 
   it('offers the study owner and cooperators without duplicates', () => {

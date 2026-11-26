@@ -17,13 +17,33 @@ const timePeriodStart = (when, now) => {
   return days === null ? null : now - days * 24 * 60 * 60 * 1000
 }
 
-const timestampMilliseconds = (timestamp) => {
+const firestoreTimestampMs = (timestamp) => {
+  if (typeof timestamp?.toMillis === 'function') {
+    return timestamp.toMillis()
+  }
   if (typeof timestamp?.toDate === 'function') {
-    return timestamp.toDate().getTime()
+    const d = timestamp.toDate()
+    return d instanceof Date ? d.getTime() : null
+  }
+  const seconds = timestamp?.seconds ?? timestamp?._seconds
+  if (typeof seconds === 'number') {
+    const nanos = timestamp?.nanoseconds ?? timestamp?._nanoseconds ?? 0
+    return seconds * 1000 + Math.floor(nanos / 1e6)
+  }
+  return null
+}
+
+export const timestampMilliseconds = (timestamp) => {
+  if (!timestamp) return null
+
+  const fsMs = firestoreTimestampMs(timestamp)
+  if (fsMs !== null) {
+    return Number.isNaN(fsMs) ? null : fsMs
   }
 
   const date = timestamp instanceof Date ? timestamp : new Date(timestamp)
-  return Number.isNaN(date.getTime()) ? null : date.getTime()
+  const time = date.getTime()
+  return Number.isNaN(time) ? null : time
 }
 
 const matchesPerson = (event, person) => {
