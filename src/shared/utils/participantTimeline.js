@@ -2,9 +2,24 @@
 // Pure and metadata-only: it reads event types, controlled references and
 // counts, never answers.
 
-const toMillis = (value) => {
-  if (value?.toMillis) return value.toMillis()
-  if (value instanceof Date) return value.getTime()
+const extractFirestoreMillis = (val) => {
+  const sec = val?.seconds ?? val?._seconds
+  const nano = val?.nanoseconds ?? val?._nanoseconds ?? 0
+  return typeof sec === 'number' ? sec * 1000 + Math.floor(nano / 1e6) : null
+}
+
+export const toMillis = (value) => {
+  if (!value) return null
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null
+  if (typeof value?.toMillis === 'function') return value.toMillis()
+  if (typeof value?.toDate === 'function') return value.toDate().getTime()
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value.getTime()
+  }
+
+  const fsMillis = extractFirestoreMillis(value)
+  if (fsMillis !== null) return fsMillis
+
   const parsed = Date.parse(value)
   return Number.isFinite(parsed) ? parsed : null
 }

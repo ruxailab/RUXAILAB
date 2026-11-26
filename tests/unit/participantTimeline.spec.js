@@ -1,6 +1,7 @@
 import {
   buildParticipantTimeline,
   stepKeyFor,
+  toMillis,
 } from '@/shared/utils/participantTimeline'
 
 const at = (minute) => new Date(Date.UTC(2026, 8, 30, 12, minute))
@@ -169,5 +170,42 @@ describe('participant timeline', () => {
       status: 'open',
       summary: { ended: false },
     })
+  })
+    it('parses timestamps in various formats with toMillis', () => {
+    const millis = 1720958400000
+    const sec = 1720958400
+    expect(toMillis(null)).toBeNull()
+    expect(toMillis(undefined)).toBeNull()
+    expect(toMillis('invalid-date')).toBeNull()
+    expect(toMillis(millis)).toBe(millis)
+    expect(toMillis(new Date(millis))).toBe(millis)
+    expect(toMillis({ toMillis: () => millis })).toBe(millis)
+    expect(toMillis({ toDate: () => new Date(millis) })).toBe(millis)
+    expect(toMillis({ seconds: sec, nanoseconds: 0 })).toBe(millis)
+    expect(toMillis({ _seconds: sec, _nanoseconds: 0 })).toBe(millis)
+  })
+
+  it('builds timeline correctly when events use plain Firestore timestamps and numbers', () => {
+    const t0 = 1720000000000
+    const t1 = 1720000060000
+    const eventsWithMixedTimestamps = [
+      {
+        participantLabel: 'P-002',
+        eventType: 'CONSENT_ACCEPTED',
+        occurredAt: { seconds: Math.floor(t1 / 1000), nanoseconds: 0 },
+      },
+      {
+        participantLabel: 'P-002',
+        eventType: 'STUDY_VIEW_OPENED',
+        occurredAt: t0,
+      },
+    ]
+
+    const timeline = buildParticipantTimeline(eventsWithMixedTimestamps)
+    expect(timeline.firstActivityAt).toBe(t0)
+    expect(timeline.lastActivityAt).toBe(t1)
+    expect(timeline.steps).toHaveLength(2)
+    expect(timeline.steps[0].startedAt).toBe(t0)
+    expect(timeline.steps[1].startedAt).toBe(t1)
   })
 })
