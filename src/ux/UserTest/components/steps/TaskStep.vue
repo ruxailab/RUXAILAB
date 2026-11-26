@@ -1010,24 +1010,14 @@ const pendingFinalTime = ref(null)
 const isPreparingTaskTools = ref(false)
 const showScreenSharePrompt = ref(false)
 const isRequestingScreenShare = ref(false)
-const showUploadDialog = computed(
-  () => isWaitingForUploadToFinish.value || uploadingCount.value > 0,
+// Upload progress for recordings is shown by the global UploadProgressDialog.
+const showTaskProgressDialog = computed(() => isPreparingTaskTools.value)
+const taskProgressDialogTitle = computed(() =>
+  t('UserTestView.TaskStep.setupDialogTitle'),
 )
-const showTaskProgressDialog = computed(
-  () => isPreparingTaskTools.value || showUploadDialog.value,
+const taskProgressDialogMessage = computed(() =>
+  t('UserTestView.TaskStep.setupDialogMessage'),
 )
-const taskProgressDialogTitle = computed(() => {
-  if (isPreparingTaskTools.value) {
-    return t('UserTestView.TaskStep.setupDialogTitle')
-  }
-  return t('UserTestView.TaskStep.uploadDialogTitle')
-})
-const taskProgressDialogMessage = computed(() => {
-  if (isPreparingTaskTools.value) {
-    return t('UserTestView.TaskStep.setupDialogMessage')
-  }
-  return t('UserTestView.TaskStep.uploadDialogMessage')
-})
 
 let taskStartTime = null
 let timerInterval = null

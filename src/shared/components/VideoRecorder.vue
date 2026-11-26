@@ -176,6 +176,7 @@ const prepareCam = async () => {
           taskIndex,
           mediaType: MEDIA_FIELD_MAP.webcam,
           userId,
+          label: t('uploadProgress.webcamRecordingLabel'),
         }),
     })
     mediaRecorder.value = currentRecorder

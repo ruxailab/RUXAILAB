@@ -6,17 +6,10 @@
       name="my-image"
       accept="image/gif, image/jpeg, image/png"
       :placeholder="$t('common.selectImage')"
-      :disabled="disable"
+      :disabled="disable || uploading"
       :clearable="false"
       prepend-icon="mdi-camera-plus"
       @change="uploadFile"
-    />
-
-    <v-progress-linear
-      v-if="uploading"
-      indeterminate
-      color="primary"
-      class="mb-2"
     />
 
     <v-alert
@@ -46,12 +39,11 @@
 import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage'
 import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from 'firebase/storage'
+  isUploadCancelled,
+  uploadWithProgress,
+} from '@/shared/services/uploadManager'
 
 const props = defineProps({
   heuristicId: {
@@ -115,7 +107,7 @@ const uploadFile = async (_event) => {
       `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${uniqueFilename}`,
     )
 
-    await uploadBytes(storageReference, file)
+    await uploadWithProgress(storageReference, file, { label: file.name })
     const url = await getDownloadURL(storageReference)
 
     store.dispatch('setCurrentImageUrl', url)
@@ -135,6 +127,7 @@ const uploadFile = async (_event) => {
       }
     }, 3000)
   } catch (error) {
+    if (isUploadCancelled(error)) return
     console.error('Image upload failed:', error)
     uploadStatus.value = {
       type: 'error',

@@ -143,11 +143,11 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { QuillEditor } from '@vueup/vue-quill'
 import { useStore } from 'vuex'
+import { ref as storageRef, getDownloadURL } from 'firebase/storage'
 import {
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from 'firebase/storage'
+  isUploadCancelled,
+  uploadWithProgress,
+} from '@/shared/services/uploadManager'
 import { storage } from '@/app/plugins/firebase'
 
 const { t } = useI18n()
@@ -336,7 +336,7 @@ const uploadPendingImage = async () => {
     storage,
     `tests/${store.getters.test.id}/${folder}/${file.name}`,
   )
-  await uploadBytes(reference, file)
+  await uploadWithProgress(reference, file, { label: file.name })
   return getDownloadURL(reference)
 }
 
@@ -354,6 +354,8 @@ const submit = async () => {
       try {
         image = await uploadPendingImage()
       } catch (error) {
+        // Cancelling keeps the picked image so the user can save again.
+        if (isUploadCancelled(error)) return
         console.error('Card sorting image upload failed:', error)
         imageError.value = t('CardSorting.imageUploadError')
         return
