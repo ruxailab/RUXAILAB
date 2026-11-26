@@ -190,6 +190,51 @@ These values define the host and ports used by the application to connect to loc
 
 For installation and configuration instructions, refer to the [Firebase Emulator Suite documentation](https://firebase.google.com/docs/emulator-suite).
 
+### Demo Data for the Emulators
+
+The emulators start empty. The seed fills them with demo accounts and studies under the project id `demo-ruxailab`, so the emulators and the app have to use that same project id. `.firebaserc` defaults to `ruxailab-develop`, and `firebase.json` runs the emulators in single-project mode, so the project has to be set explicitly:
+
+1. In `.env`, point the app at the emulators and the demo project:
+
+   ```env
+   VUE_APP_USE_EMULATORS="true"
+   VUE_APP_FIREBASE_PROJECT_ID="demo-ruxailab"
+   ```
+
+   With the emulators, the other `VUE_APP_FIREBASE_*` values can be placeholders (for example `demo-ruxailab.appspot.com` for the storage bucket). For Cloud Functions, use `VUE_APP_CLOUD_FUNCTIONS_URL="http://127.0.0.1:5002/demo-ruxailab/europe-west6"`. The functions run in `europe-west6` by default; if you set `RUXAILAB_FUNCTIONS_REGION` in `functions/.env`, use that region in the URL instead.
+
+2. Start the emulators with that project:
+
+   ```bash
+   npx firebase-tools emulators:start --project demo-ruxailab
+   ```
+
+   The seed itself only needs Auth and Firestore (`--only auth,firestore`), but `VUE_APP_USE_EMULATORS="true"` sends every Firebase service to the emulators, and actions such as saving study edits go through Cloud Functions. Start all of them to use the app normally.
+
+3. In another terminal, run the seed:
+
+   ```bash
+   npm run seed
+   ```
+
+4. Start the app with `npm run serve` and sign in with one of the accounts below.
+
+| Account                     | Use it to                |
+| --------------------------- | ------------------------ |
+| `researcher@ruxailab.test`  | Manage the demo studies. |
+| `participant@ruxailab.test` | Answer the demo studies. |
+
+No password is stored in the repository: each run creates one for both accounts and prints it. To keep the same password across runs, set `SEED_PASSWORD` first, for example `SEED_PASSWORD=<your-password> npm run seed`.
+
+The seed creates:
+
+- **Demo: Checkout usability**: an unmoderated user study with a written task, a System Usability Scale (SUS) task, and three submitted answers, so the analytics pages have data.
+- **Demo: Heuristic evaluation**: a heuristic study in detailed mode with two heuristics and four questions, ready to be answered.
+
+Running the command again overwrites the same documents instead of adding duplicates. Emulator data is lost when the emulators stop, unless you export it, so run the seed after each restart.
+
+The script only writes to the emulators: it refuses any project id that does not start with `demo-`. To seed another demo project, set `SEED_PROJECT_ID` (for example `demo-my-project`) and use that id for the emulators and `.env` as well. If your emulators use other ports, set `FIRESTORE_EMULATOR_HOST` and `FIREBASE_AUTH_EMULATOR_HOST` before running it. The data lives in `scripts/seed/seedData.js`, and `tests/unit/seedData.spec.js` checks it against the application's models.
+
 ## Optional Integrations
 
 RUXAILAB can connect to external services for eye tracking, sentiment analysis, PDF generation, and video-call functionality. These integrations may require separate repositories and services to be configured and running.
@@ -360,6 +405,7 @@ The following commands are commonly used during development. Refer to the projec
 | `npm run build-dev`  | Builds the application using development mode.    |
 | `npm run build-prod` | Builds the application using production mode.     |
 | `npm run lint`       | Runs the configured linting checks, if available. |
+| `npm run seed`       | Fills the running emulators with demo data.       |
 
 ## Contributing
 
