@@ -8,9 +8,20 @@ export const SESSION_STATUSES = {
 
 function toDate(value) {
   if (!value) return null
-  const date =
-    typeof value.toDate === 'function' ? value.toDate() : new Date(value)
-  return Number.isNaN(date.getTime()) ? null : date
+  if (typeof value?.toDate === 'function') {
+    const d = value.toDate()
+    return d instanceof Date && !Number.isNaN(d.getTime()) ? d : null
+  }
+  if (typeof value?.seconds === 'number') {
+    const ms = value.seconds * 1000 + Math.floor((value.nanoseconds || 0) / 1e6)
+    const d = new Date(ms)
+    return !Number.isNaN(d.getTime()) ? d : null
+  }
+  if (value instanceof Date) {
+    return !Number.isNaN(value.getTime()) ? value : null
+  }
+  const date = new Date(value)
+  return !Number.isNaN(date.getTime()) ? date : null
 }
 
 /**
@@ -31,11 +42,11 @@ export function getNextSession(sessions, now = new Date()) {
 
 export function getSessionStatus(testDate, lifecycleStatus) {
   if (lifecycleStatus === 'ended') return SESSION_STATUSES.ENDED
-  if (!testDate) return SESSION_STATUSES.UNKNOWN
+
+  const testDateObj = toDate(testDate)
+  if (!testDateObj) return SESSION_STATUSES.UNKNOWN
 
   const now = new Date()
-  const testDateObj = new Date(testDate)
-
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const sessionDay = new Date(
     testDateObj.getFullYear(),
