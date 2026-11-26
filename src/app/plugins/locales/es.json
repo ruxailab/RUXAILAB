@@ -245,6 +245,7 @@
     "bytes": "{transferred} de {total}",
     "offline": "Estás sin conexión. La subida continuará automáticamente cuando vuelva la conexión.",
     "failed": "La subida falló. Revisa tu conexión e inténtalo de nuevo.",
+    "rejected": "Storage rechazó esta subida ({code}). Reintentar puede no ayudar.",
     "retry": "Reintentar",
     "cancel": "Cancelar",
     "confirmCancelTitle": "¿Cancelar esta subida?",

@@ -1,5 +1,8 @@
 import { ref as storageRef, getDownloadURL } from 'firebase/storage'
-import { uploadWithProgress } from '@/shared/services/uploadManager'
+import {
+  isUploadCancelled,
+  uploadWithProgress,
+} from '@/shared/services/uploadManager'
 import { isDeviceBusyError } from '@/ux/UserTest/utils/recordingOutcome'
 
 const VIRTUAL_CAMERA = /virtual|obs|ndi|snap|xsplit|manycam|droidcam|camo/i
@@ -87,8 +90,13 @@ export const createMediaRecorder = ({
       }
       await save(blob)
       attempt.finish('completed', 'upload')
-    } catch {
-      attempt.finish('failed', 'upload', 'uploadError')
+    } catch (error) {
+      // A cancelled upload is still a recording that was not saved, and the
+      // logging schema only knows it as an uploadError. The participant
+      // confirmed the cancel, so no "check your connection" message.
+      attempt.finish('failed', 'upload', 'uploadError', {
+        notify: !isUploadCancelled(error),
+      })
     } finally {
       cleanup()
       emit('stopShowLoading')

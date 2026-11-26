@@ -49,12 +49,14 @@
             "
           >
             {{
-              upload.status === 'failed'
-                ? $t('uploadProgress.failed')
-                : $t('uploadProgress.bytes', {
+              upload.status !== 'failed'
+                ? $t('uploadProgress.bytes', {
                     transferred: formatBytes(upload.bytesTransferred, 1),
                     total: formatBytes(upload.totalBytes, 1),
                   })
+                : upload.errorCode
+                  ? $t('uploadProgress.rejected', { code: upload.errorCode })
+                  : $t('uploadProgress.failed')
             }}
           </span>
           <div class="d-flex ga-1">
@@ -127,7 +129,12 @@ const confirmCancel = () => {
 }
 
 const percent = ({ bytesTransferred, totalBytes }) =>
-  totalBytes ? Math.floor((bytesTransferred / totalBytes) * 100) : 0
+  totalBytes
+    ? Math.min(
+        100,
+        Math.max(0, Math.floor((bytesTransferred / totalBytes) * 100)),
+      )
+    : 0
 </script>
 
 <style scoped>

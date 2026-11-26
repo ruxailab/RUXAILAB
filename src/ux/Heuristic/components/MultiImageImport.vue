@@ -81,8 +81,9 @@ const uploading = ref(false)
 const uploadStatus = ref(null)
 
 const uploadFile = async (_event) => {
+  let fileInput = null
   try {
-    const fileInput = document.getElementById(
+    fileInput = document.getElementById(
       `multi-${props.heuristicId}-${props.questionId}`,
     )
 
@@ -119,8 +120,6 @@ const uploadFile = async (_event) => {
 
     emit('imageUploaded', url)
 
-    fileInput.value = ''
-
     setTimeout(() => {
       if (uploadStatus.value?.type === 'success') {
         uploadStatus.value = null
@@ -136,6 +135,9 @@ const uploadFile = async (_event) => {
     emit('imageUploaded', null, error)
   } finally {
     uploading.value = false
+    // Clear the picked file so choosing the same one again (after a cancel
+    // or a failure) still fires a change event.
+    if (fileInput) fileInput.value = ''
   }
 }
 </script>

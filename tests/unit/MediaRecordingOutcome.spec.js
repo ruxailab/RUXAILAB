@@ -228,6 +228,29 @@ describe.each(cases)(
       })
     })
 
+    it('records a cancelled upload as not saved without a connection message', async () => {
+      const { UploadCancelledError } = jest.requireActual(
+        '@/shared/services/uploadManager',
+      )
+      uploadWithProgress.mockRejectedValueOnce(new UploadCancelledError())
+      await wrapper.vm[start]()
+      data()
+      wrapper.vm[stop]()
+      await flushPromises()
+
+      expect(showError).not.toHaveBeenCalled()
+      expect(results()).toEqual([
+        {
+          taskRef: 'task:0',
+          mediaType,
+          outcome: 'failed',
+          stage: 'upload',
+          reason: 'uploadError',
+        },
+      ])
+      expect(wrapper.emitted('stopShowLoading')).toHaveLength(1)
+    })
+
     it('does not upload or complete after a recorder error, even if stop fires repeatedly', async () => {
       await wrapper.vm[start]()
       data()

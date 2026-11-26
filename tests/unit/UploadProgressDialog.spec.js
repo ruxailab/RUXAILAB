@@ -92,6 +92,24 @@ describe('UploadProgressDialog', () => {
     expect(mockUploads.retryUpload).toHaveBeenCalledWith(1)
   })
 
+  it('names the code when Storage refused the upload', () => {
+    const wrapper = mountDialog([
+      { ...recording, status: 'failed', errorCode: 'storage/unauthorized' },
+    ])
+    expect(wrapper.text()).toContain(
+      'uploadProgress.rejected:{"code":"storage/unauthorized"}',
+    )
+    expect(wrapper.text()).not.toContain('uploadProgress.failed')
+  })
+
+  it('never shows more than 100 percent', () => {
+    const wrapper = mountDialog([
+      { ...recording, bytesTransferred: 5 * MB, totalBytes: 4 * MB },
+    ])
+    expect(wrapper.text()).toContain('100%')
+    expect(wrapper.find('.progress-stub').attributes('data-value')).toBe('100')
+  })
+
   it('asks before cancelling and warns that a recording is lost', async () => {
     const wrapper = mountDialog([{ ...recording }])
 

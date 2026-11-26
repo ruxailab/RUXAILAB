@@ -245,6 +245,7 @@
     "bytes": "{transferred} of {total}",
     "offline": "You are offline. The upload will continue automatically when your connection is back.",
     "failed": "Upload failed. Check your connection and try again.",
+    "rejected": "Storage refused this upload ({code}). Retrying may not help.",
     "retry": "Retry",
     "cancel": "Cancel",
     "confirmCancelTitle": "Cancel this upload?",
