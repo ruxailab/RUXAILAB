@@ -79,7 +79,6 @@
           <span class="text-body-2">
             {{ $t('focusGroup.stimulus.dropHint') }}
           </span>
-          <v-progress-linear v-if="uploading" indeterminate class="mt-2" />
           <input
             type="file"
             accept="image/*,video/*"
@@ -131,11 +130,11 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+import { ref as storageRef, getDownloadURL } from 'firebase/storage'
 import {
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from 'firebase/storage'
+  isUploadCancelled,
+  uploadWithProgress,
+} from '@/shared/services/uploadManager'
 import { storage } from '@/app/plugins/firebase'
 import Stimulus from '@/ux/FocusGroup/models/Stimulus'
 
@@ -184,10 +183,12 @@ const uploadFile = async (file) => {
     })
     const path = `tests/${props.studyId}/stimulus_${stimulus.id}/${file.name}`
     const reference = storageRef(storage, path)
-    await uploadBytes(reference, file)
+    await uploadWithProgress(reference, file, { label: file.name })
     stimulus.url = await getDownloadURL(reference)
     stimulus.storagePath = path
     await persist([...stimuli.value, stimulus])
+  } catch (error) {
+    if (!isUploadCancelled(error)) throw error
   } finally {
     uploading.value = false
   }

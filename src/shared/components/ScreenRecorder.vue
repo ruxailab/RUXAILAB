@@ -131,6 +131,7 @@ const prepareScreen = async ({ requireEntireScreen = false } = {}) => {
           taskIndex,
           mediaType: MEDIA_FIELD_MAP.screen,
           userId,
+          label: t('uploadProgress.screenRecordingLabel'),
         }),
     })
     mediaRecorder.value = currentRecorder

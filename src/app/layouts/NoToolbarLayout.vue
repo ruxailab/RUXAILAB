@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <GlobalToastHandler />
+    <UploadProgressDialog />
     <v-main>
       <v-container
         fluid
@@ -14,10 +15,12 @@
 
 <script>
 import GlobalToastHandler from '@/app/layouts/components/GlobalToastHandler.vue'
+import UploadProgressDialog from '@/shared/components/UploadProgressDialog.vue'
 
 export default {
     components: {
         GlobalToastHandler,
+        UploadProgressDialog,
     },
 }
 </script>

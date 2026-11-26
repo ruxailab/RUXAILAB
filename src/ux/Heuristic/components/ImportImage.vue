@@ -45,12 +45,11 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { showError } from '@/shared/utils/toast'
+import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage'
 import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from 'firebase/storage'
+  isUploadCancelled,
+  uploadWithProgress,
+} from '@/shared/services/uploadManager'
 
 const props = defineProps({
   preview: { type: Boolean, default: false },
@@ -163,7 +162,7 @@ const uploadSelectedFile = async (file, index = 0) => {
     const storage = getStorage()
     const storagePath = `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${uniqueStorageName(file, index)}`
     const storageReference = storageRef(storage, storagePath)
-    await uploadBytes(storageReference, file)
+    await uploadWithProgress(storageReference, file, { label: file.name })
     const downloadUrl = await getDownloadURL(storageReference)
     store.dispatch('setCurrentImageUrl', downloadUrl)
     emit(
@@ -179,6 +178,7 @@ const uploadSelectedFile = async (file, index = 0) => {
       sourceQuestionIndex,
     )
   } catch (error) {
+    if (isUploadCancelled(error)) return
     showError('HeuristicsTable.ImportImage.uploadError')
     emit('imageUploaded', null, error)
   }

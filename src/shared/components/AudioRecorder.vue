@@ -46,11 +46,11 @@
 import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { ref as storageRef, getDownloadURL } from 'firebase/storage'
 import {
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from 'firebase/storage'
+  isUploadCancelled,
+  uploadWithProgress,
+} from '@/shared/services/uploadManager'
 import { storage } from '@/app/plugins/firebase'
 import { showError, showWarning } from '@/shared/utils/toast'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
@@ -210,6 +210,7 @@ const prepareAudio = async () => {
           taskIndex,
           mediaType: MEDIA_FIELD_MAP.audio,
           userId,
+          label: t('uploadProgress.audioRecordingLabel'),
         }),
     })
     mediaRecorder.value = currentRecorder
@@ -261,11 +262,16 @@ const startNow = () => {
       recorder.onstop = async () => {
         try {
           const blob = new Blob(chunks, { type: 'audio/webm' })
+          // An empty file would replace the task's moderator audio URL.
+          if (!blob.size) return
           const reference = storageRef(
             storage,
             `tests/${testId}/${userId}/task_${taskIndex}_moderator/${Date.now()}.webm`,
           )
-          await uploadBytes(reference, blob)
+          await uploadWithProgress(reference, blob, {
+            label: t('uploadProgress.moderatorAudioLabel'),
+            replaceable: false,
+          })
           const url = await getDownloadURL(reference)
           await store.dispatch('updateTaskMediaUrl', {
             taskIndex,
@@ -274,8 +280,10 @@ const startNow = () => {
             size: blob.size,
             userId,
           })
-        } catch {
-          console.error('Could not save moderator audio')
+        } catch (error) {
+          if (!isUploadCancelled(error)) {
+            console.error('Could not save moderator audio')
+          }
         }
       }
       recorder.start()

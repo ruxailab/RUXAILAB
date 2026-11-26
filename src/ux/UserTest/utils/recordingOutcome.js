@@ -52,7 +52,9 @@ export const createRecordingAttempt = (
     discard() {
       finished = true
     },
-    finish(outcome, stage, reason) {
+    // `notify: false` still reports the outcome but shows no message, e.g.
+    // when the participant chose to cancel the upload themselves.
+    finish(outcome, stage, reason, { notify = true } = {}) {
       if (finished) return false
       finished = true
       try {
@@ -65,9 +67,10 @@ export const createRecordingAttempt = (
         }
         emit('recording-result', details)
         if (
-          outcome === 'failed' ||
-          outcome === 'cancelled' ||
-          outcome === 'permission_denied'
+          notify &&
+          (outcome === 'failed' ||
+            outcome === 'cancelled' ||
+            outcome === 'permission_denied')
         ) {
           onFailure?.(getRecordingFailureMessage(details))
         }

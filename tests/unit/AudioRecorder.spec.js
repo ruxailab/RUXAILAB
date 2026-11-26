@@ -1,9 +1,6 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import {
-  uploadBytes,
-  getDownloadURL,
-  ref as storageRef,
-} from 'firebase/storage'
+import { getDownloadURL, ref as storageRef } from 'firebase/storage'
+import { uploadWithProgress } from '@/shared/services/uploadManager'
 import { createMediaRecorder } from '@/ux/UserTest/utils/mediaRecording'
 
 const mockDispatch = jest.fn()
@@ -14,8 +11,11 @@ jest.mock('vuex', () => ({
 jest.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 jest.mock('firebase/storage', () => ({
   ref: jest.fn(),
-  uploadBytes: jest.fn(),
   getDownloadURL: jest.fn(),
+}))
+jest.mock('@/shared/services/uploadManager', () => ({
+  ...jest.requireActual('@/shared/services/uploadManager'),
+  uploadWithProgress: jest.fn(),
 }))
 jest.mock('@/app/plugins/firebase', () => ({ storage: {} }))
 jest.mock('@/shared/utils/toast', () => ({
@@ -64,7 +64,7 @@ const AudioRecorder = require('@/shared/components/AudioRecorder.vue').default
 beforeEach(() => {
   jest.clearAllMocks()
   storageRef.mockImplementation((storage, path) => ({ path }))
-  uploadBytes.mockResolvedValue()
+  uploadWithProgress.mockResolvedValue()
   getDownloadURL.mockResolvedValue('https://example.com/a.webm')
   createMediaRecorder.mockImplementation(() => ({
     state: 'inactive',
@@ -102,6 +102,26 @@ const mountRecorder = () =>
     },
   })
 
+it('does not upload an empty moderator recording', async () => {
+  global.Blob = class {
+    constructor(parts, { type }) {
+      this.size = 0
+      this.type = type
+    }
+  }
+  const wrapper = mountRecorder()
+
+  await wrapper.vm.startAudioRecording()
+  wrapper.vm.stopAudioRecording()
+  await flushPromises()
+
+  expect(uploadWithProgress).not.toHaveBeenCalled()
+  expect(mockDispatch).not.toHaveBeenCalledWith(
+    'updateTaskMediaUrl',
+    expect.objectContaining({ mediaType: 'moderatorAudioURL' }),
+  )
+})
+
 it('uploads the moderator audio when the recording stops', async () => {
   const wrapper = mountRecorder()
 
@@ -115,7 +135,12 @@ it('uploads the moderator audio when the recording stops', async () => {
       /^tests\/test-1\/user-1\/task_2_moderator\/\d+\.webm$/,
     ),
   )
-  expect(uploadBytes).toHaveBeenCalledTimes(1)
+  expect(uploadWithProgress).toHaveBeenCalledTimes(1)
+  expect(uploadWithProgress).toHaveBeenCalledWith(
+    expect.anything(),
+    expect.anything(),
+    expect.objectContaining({ replaceable: false }),
+  )
   expect(getDownloadURL).toHaveBeenCalledTimes(1)
   expect(mockDispatch).toHaveBeenCalledWith('updateTaskMediaUrl', {
     taskIndex: 2,
