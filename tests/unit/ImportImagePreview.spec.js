@@ -1,5 +1,6 @@
 import { shallowMount } from '@vue/test-utils'
-import { getStorage, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { getStorage, getDownloadURL } from 'firebase/storage'
+import { uploadWithProgress } from '@/shared/services/uploadManager'
 import ImportImage from '@/ux/Heuristic/components/ImportImage.vue'
 import { showError } from '@/shared/utils/toast'
 
@@ -10,8 +11,11 @@ jest.mock('vuex', () => ({
 jest.mock('firebase/storage', () => ({
   getStorage: jest.fn(),
   ref: jest.fn(),
-  uploadBytes: jest.fn(),
   getDownloadURL: jest.fn(),
+}))
+jest.mock('@/shared/services/uploadManager', () => ({
+  ...jest.requireActual('@/shared/services/uploadManager'),
+  uploadWithProgress: jest.fn(),
 }))
 jest.mock('@/shared/utils/toast', () => ({ showError: jest.fn() }))
 
@@ -39,7 +43,7 @@ it('keeps preview attachments in memory without uploading or updating shared sta
     ],
   ])
   expect(getStorage).not.toHaveBeenCalled()
-  expect(uploadBytes).not.toHaveBeenCalled()
+  expect(uploadWithProgress).not.toHaveBeenCalled()
   expect(getDownloadURL).not.toHaveBeenCalled()
   expect(mockDispatch).not.toHaveBeenCalled()
   wrapper.unmount()
@@ -57,7 +61,7 @@ it('reports local attachment errors without attempting a remote upload', async (
     expect(showError).toHaveBeenCalledWith(
       'HeuristicsTable.ImportImage.uploadError',
     )
-    expect(uploadBytes).not.toHaveBeenCalled()
+    expect(uploadWithProgress).not.toHaveBeenCalled()
   } finally {
     read.mockRestore()
     wrapper.unmount()

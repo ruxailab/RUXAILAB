@@ -1,9 +1,6 @@
 import { shallowMount, flushPromises } from '@vue/test-utils'
-import {
-  uploadBytes,
-  getDownloadURL,
-  ref as storageRef,
-} from 'firebase/storage'
+import { getDownloadURL, ref as storageRef } from 'firebase/storage'
+import { uploadWithProgress } from '@/shared/services/uploadManager'
 import { startScreenShareStream } from '@/shared/utils/screenShareCapture'
 
 const mockStore = { getters: {}, dispatch: jest.fn() }
@@ -12,8 +9,11 @@ jest.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 jest.mock('@/app/plugins/firebase', () => ({ storage: {} }))
 jest.mock('firebase/storage', () => ({
   ref: jest.fn(),
-  uploadBytes: jest.fn(),
   getDownloadURL: jest.fn(),
+}))
+jest.mock('@/shared/services/uploadManager', () => ({
+  ...jest.requireActual('@/shared/services/uploadManager'),
+  uploadWithProgress: jest.fn(),
 }))
 jest.mock('@/shared/utils/toast', () => ({
   showError: jest.fn(),
@@ -25,12 +25,9 @@ jest.mock('@/shared/utils/screenShareCapture', () => ({
 }))
 
 global.MediaStream = class MediaStream {}
-const AudioRecorder =
-  require('@/shared/components/AudioRecorder.vue').default
-const VideoRecorder =
-  require('@/shared/components/VideoRecorder.vue').default
-const ScreenRecorder =
-  require('@/shared/components/ScreenRecorder.vue').default
+const AudioRecorder = require('@/shared/components/AudioRecorder.vue').default
+const VideoRecorder = require('@/shared/components/VideoRecorder.vue').default
+const ScreenRecorder = require('@/shared/components/ScreenRecorder.vue').default
 const { showError, showWarning } = require('@/shared/utils/toast')
 
 const cases = [
@@ -86,7 +83,7 @@ describe.each(cases)(
       mockStore.getters = { currentUserTestAnswer: { tasks: [{}] } }
       mockStore.dispatch.mockResolvedValue()
       storageRef.mockImplementation((_storage, path) => ({ path }))
-      uploadBytes.mockResolvedValue()
+      uploadWithProgress.mockResolvedValue()
       getDownloadURL.mockResolvedValue('https://private-media.example/token')
       wrapper = shallowMount(Component, {
         props: { taskIndex: 0, testId: 'study-1', userDocId: 'private-user' },
@@ -101,7 +98,7 @@ describe.each(cases)(
     it('emits one upload result only after upload and the reference update, with the original task context', async () => {
       const upload = deferred()
       const referenceSave = deferred()
-      uploadBytes.mockReturnValue(upload.promise)
+      uploadWithProgress.mockReturnValue(upload.promise)
       mockStore.dispatch.mockReturnValue(referenceSave.promise)
       await wrapper.vm[start]()
       data()
@@ -123,6 +120,12 @@ describe.each(cases)(
         expect.objectContaining({ taskIndex: 0, userId: 'private-user' }),
       )
       expect(storageRef.mock.calls[0][1]).toContain('/private-user/task_0')
+      // A recording cannot be made again, so cancelling it must warn.
+      expect(uploadWithProgress).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.objectContaining({ replaceable: false }),
+      )
       expect(JSON.stringify(results())).not.toMatch(/private|https|token|url/i)
       expect(track.stop).toHaveBeenCalled()
       expect(wrapper.emitted('showLoading')).toHaveLength(1)
@@ -186,7 +189,7 @@ describe.each(cases)(
           'errors.recordingFailure.deviceUnavailable',
         )
       }
-      expect(uploadBytes).not.toHaveBeenCalled()
+      expect(uploadWithProgress).not.toHaveBeenCalled()
     })
 
     it('contains capture construction errors and releases the acquired stream', async () => {
@@ -203,11 +206,13 @@ describe.each(cases)(
         'errors.recordingFailure.captureError',
       )
       expect(track.stop).toHaveBeenCalled()
-      expect(uploadBytes).not.toHaveBeenCalled()
+      expect(uploadWithProgress).not.toHaveBeenCalled()
     })
 
     it('shows a media-specific message when uploading the recording fails', async () => {
-      uploadBytes.mockRejectedValueOnce(new Error('private upload details'))
+      uploadWithProgress.mockRejectedValueOnce(
+        new Error('private upload details'),
+      )
       await wrapper.vm[start]()
       data()
       wrapper.vm[stop]()
@@ -234,7 +239,7 @@ describe.each(cases)(
         outcome: 'failed',
         reason: 'captureError',
       })
-      expect(uploadBytes).not.toHaveBeenCalled()
+      expect(uploadWithProgress).not.toHaveBeenCalled()
       expect(track.stop).toHaveBeenCalled()
     })
 
@@ -256,7 +261,7 @@ describe.each(cases)(
         },
       ])
       expect(track.stop).toHaveBeenCalled()
-      expect(uploadBytes).not.toHaveBeenCalled()
+      expect(uploadWithProgress).not.toHaveBeenCalled()
     })
 
     it('normalizes capture cancellation without retaining browser error details', async () => {
@@ -320,7 +325,7 @@ describe.each(cases)(
         wrapper.vm.abortCapture()
         await flushPromises()
         expect(results()).toEqual([])
-        expect(uploadBytes).not.toHaveBeenCalled()
+        expect(uploadWithProgress).not.toHaveBeenCalled()
         expect(track.stop).toHaveBeenCalled()
       })
     }
@@ -369,14 +374,14 @@ describe.each(cases)(
         stage: 'capture',
         reason: 'emptyRecording',
       })
-      expect(uploadBytes).not.toHaveBeenCalled()
+      expect(uploadWithProgress).not.toHaveBeenCalled()
     })
 
     it.each(['upload', 'reference'])(
       'reports %s failure instead of successful completion and balances loading',
       async (failure) => {
         if (failure === 'upload')
-          uploadBytes.mockRejectedValue(new Error('private URL'))
+          uploadWithProgress.mockRejectedValue(new Error('private URL'))
         else mockStore.dispatch.mockRejectedValue(new Error('private URL'))
         await wrapper.vm[start]()
         data()
