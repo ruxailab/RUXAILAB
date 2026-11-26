@@ -1,8 +1,8 @@
 <template>
   <PageWrapper
-    title="Accessibility Test Preview"
+    :title="$t('Accessibility.previewTitle')"
     :loading="isLoading"
-    loading-text="Loading WCAG Data..."
+    :loading-text="$t('Accessibility.previewLoadingWcagData')"
     :side-gap="false"
   >
     <v-alert
@@ -311,7 +311,7 @@
                     v-model="note.text"
                     variant="outlined"
                     rows="3"
-                    placeholder="Enter your notes here..."
+                    :placeholder="$t('Accessibility.previewNotesPlaceholder')"
                     hide-details
                     class="mb-2"
                     density="compact"
@@ -320,7 +320,7 @@
                     <v-file-input
                       v-model="note.image"
                       accept="image/*"
-                      label="Attach image"
+                      :label="$t('Accessibility.previewAttachImage')"
                       prepend-icon="mdi-image"
                       show-size
                       hide-details
@@ -335,7 +335,7 @@
                     >
                       <img
                         :src="note.imagePreview"
-                        alt="Notes attachment"
+                        :alt="$t('Accessibility.previewNotesAttachment')"
                         style="
                           max-width: 80px;
                           max-height: 60px;
@@ -367,19 +367,19 @@
                   class="mt-0"
                 >
                   <v-radio
-                    label="High"
+                    :label="$t('Accessibility.previewSeverityHigh')"
                     value="high"
                     color="error"
                     density="compact"
                   />
                   <v-radio
-                    label="Medium"
+                    :label="$t('Accessibility.previewSeverityMedium')"
                     value="medium"
                     color="warning"
                     density="compact"
                   />
                   <v-radio
-                    label="Low"
+                    :label="$t('Accessibility.previewSeverityLow')"
                     value="low"
                     color="success"
                     density="compact"
@@ -392,19 +392,19 @@
                 </h2>
                 <v-radio-group v-model="status" density="compact" class="mt-0">
                   <v-radio
-                    label="Pass"
+                    :label="$t('Accessibility.previewStatusPass')"
                     value="pass"
                     color="success"
                     density="compact"
                   />
                   <v-radio
-                    label="Fail"
+                    :label="$t('Accessibility.previewStatusFail')"
                     value="fail"
                     color="error"
                     density="compact"
                   />
                   <v-radio
-                    label="N/A"
+                    :label="$t('Accessibility.previewStatusNa')"
                     value="na"
                     color="grey"
                     density="compact"
