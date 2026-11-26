@@ -1884,6 +1884,7 @@
       "protocol": "Identificación del participante",
       "issuedAt": "Emitido el"
     },
+    "loading": "Cargando...",
     "titles": {
       "preTestConsent": "Consentimiento previo a la prueba",
       "preTestForm": "Formulario previo a la prueba",
