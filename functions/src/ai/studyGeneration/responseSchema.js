@@ -1,3 +1,5 @@
+import { SECTION_KEYS } from './refinement/draftSections.js'
+
 /**
  * OpenAI / OpenRouter JSON Schema for study draft generation.
  * Pragmatic object shape with optional method blocks; server validates by testType.
@@ -158,6 +160,19 @@ export const studyDraftJsonSchema = {
     clarificationQuestions: {
       type: 'array',
       items: { type: 'string' },
+    },
+    changedSections: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          section: { type: 'string', enum: SECTION_KEYS },
+          removed: { type: 'array', items: { type: 'string' } },
+          reordered: { type: 'boolean' },
+        },
+        required: ['section'],
+      },
     },
   },
   required: [

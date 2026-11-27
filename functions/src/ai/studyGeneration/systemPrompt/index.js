@@ -8,6 +8,7 @@ import { METHOD_KEY as CARD_SORTING, buildCardSortingPrompt } from './cardSortin
 import { METHOD_KEY as USER, buildUserPrompt } from './user.js'
 import { METHOD_KEY as HEURISTIC, buildHeuristicPrompt } from './heuristic.js'
 import { METHOD_KEY as FOCUS_GROUP, buildFocusGroupPrompt } from './focusGroup.js'
+import { buildRefinementSection } from './refinement.js'
 
 /** @type {Record<string, () => string>} */
 const METHOD_PROMPTS = {
@@ -36,19 +37,25 @@ ${builders.map((build) => build()).join('\n\n')}`
  * @param {{
  *   locale?: string,
  *   preferredMethod?: string|null,
+ *   currentDraft?: object|null,
  * }} [params]
  * @returns {string}
  */
 export function buildSystemPrompt({
   locale = 'en-US',
   preferredMethod = null,
+  currentDraft = null,
 } = {}) {
+  const refinement = currentDraft
+    ? `\n${buildRefinementSection(currentDraft)}\n`
+    : ''
+
   return `${buildCommonPreamble({ locale, preferredMethod })}
 
 ${buildSupportedMethodsSection(preferredMethod)}
 
 ${buildDefaults()}
-`
+${refinement}`
 }
 
 export {

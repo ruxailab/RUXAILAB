@@ -6,6 +6,11 @@ import {
   finalizeStudyDraft,
   mergeUsage,
 } from '../ai/studyGeneration/finalizeStudyDraft.js'
+import {
+  InvalidCurrentDraftError,
+  applyRefinement,
+  sanitizeCurrentDraft,
+} from '../ai/studyGeneration/refinement/refineDraft.js'
 
 const error = (code, message) => new functions.https.HttpsError(code, message)
 
@@ -77,6 +82,42 @@ function sanitizeMessages(messages) {
   }
 
   return cleaned
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {object|null}
+ */
+function readCurrentDraft(raw) {
+  try {
+    return sanitizeCurrentDraft(raw)
+  } catch (err) {
+    if (err instanceof InvalidCurrentDraftError) {
+      throw error('invalid-argument', err.message)
+    }
+    throw err
+  }
+}
+
+/**
+ * @param {{
+ *   currentDraft: object|null,
+ *   finalizedDraft: object,
+ *   changedSections: unknown,
+ *   locale: string,
+ * }} params
+ * @returns {{ draft: object, changes?: Array<object> }}
+ */
+function buildDraftResult({
+  currentDraft,
+  finalizedDraft,
+  changedSections,
+  locale,
+}) {
+  const draft = { ...finalizedDraft }
+  delete draft.changedSections
+  if (!currentDraft) return { draft }
+  return applyRefinement({ currentDraft, draft, changedSections, locale })
 }
 
 /**
@@ -179,6 +220,7 @@ async function callOpenRouterChatCompletion({
  * Callable: generateStudyDraft
  * Generic for CARD_SORTING | USER | HEURISTIC | FOCUS_GROUP
  * Pipeline: generate → normalize → validate → repair → revalidate → clarification
+ * With currentDraft (refinement): … → merge declared sections into currentDraft → diff
  */
 export const generateStudyDraft = functions.onCall({
   options: {
@@ -207,9 +249,14 @@ export const generateStudyDraft = functions.onCall({
     }
 
     const messages = sanitizeMessages(request?.data?.messages)
+    const currentDraft = readCurrentDraft(request?.data?.currentDraft)
 
     const modelName = DEFAULT_MODEL
-    const systemPrompt = buildSystemPrompt({ locale, preferredMethod })
+    const systemPrompt = buildSystemPrompt({
+      locale,
+      preferredMethod,
+      currentDraft,
+    })
     const latestUserText =
       [...messages].reverse().find((message) => message.role === 'user')
         ?.text || ''
@@ -250,7 +297,12 @@ export const generateStudyDraft = functions.onCall({
       ])
 
       return {
-        draft: finalized.draft,
+        ...buildDraftResult({
+          currentDraft,
+          finalizedDraft: finalized.draft,
+          changedSections: parsed?.changedSections,
+          locale,
+        }),
         model: modelName,
         usage,
       }
