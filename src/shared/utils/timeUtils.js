@@ -4,44 +4,69 @@
  */
 
 /**
- * Format time in seconds to MM:SS format
- * @param {number} timeInSeconds - Time in seconds
- * @returns {string} Formatted time string (e.g., "2:30")
+ * Format time in seconds to M:SS or H:MM:SS format
+ * @param {number|string} timeInSeconds - Time in seconds
+ * @returns {string} Formatted time string (e.g., "2:30", "1:01:05")
  */
 export const formatTime = (timeInSeconds) => {
-  if (!timeInSeconds || timeInSeconds < 0) return '0:00'
+  const num = Number(timeInSeconds)
+  if (!Number.isFinite(num) || num <= 0) return '0:00'
 
-  const minutes = Math.floor(timeInSeconds / 60)
-  const seconds = Math.floor(timeInSeconds % 60)
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  const totalSeconds = Math.floor(num)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  const paddedSeconds = seconds.toString().padStart(2, '0')
+
+  if (hours > 0) {
+    const paddedMinutes = minutes.toString().padStart(2, '0')
+    return `${hours}:${paddedMinutes}:${paddedSeconds}`
+  }
+
+  return `${minutes}:${paddedSeconds}`
 }
 
 /**
  * Format time with detailed breakdown
- * @param {number} timeInSeconds - Time in seconds
+ * @param {number|string} timeInSeconds - Time in seconds
  * @returns {object} Object with formatted time and components
  */
-const formatTimeDetailed = (timeInSeconds) => {
-  if (!timeInSeconds || timeInSeconds < 0) {
-    return { formatedTime: '0:00', hours: 0, minutes: 0, seconds: 0 }
+export const formatTimeDetailed = (timeInSeconds) => {
+  const num = Number(timeInSeconds)
+  if (!Number.isFinite(num) || num <= 0) {
+    return {
+      formatedTime: '0:00',
+      formattedTime: '0:00',
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    }
   }
+
+  const formatted = formatTime(num)
+  const totalSeconds = Math.floor(num)
+
   return {
-    formatedTime: formatTime(timeInSeconds),
-    hours: Math.floor(timeInSeconds / 3600),
-    minutes: Math.floor((timeInSeconds % 3600) / 60),
-    seconds: Math.floor(timeInSeconds % 60),
+    formatedTime: formatted,
+    formattedTime: formatted,
+    hours: Math.floor(totalSeconds / 3600),
+    minutes: Math.floor((totalSeconds % 3600) / 60),
+    seconds: totalSeconds % 60,
   }
 }
 
 /**
  * Format time from milliseconds with detailed breakdown
- * @param {number} timeInMs - Time in milliseconds
+ * @param {number|string} timeInMs - Time in milliseconds
  * @returns {object} Object with formatted time and components
  */
 export const formatTimeDetailedFromMs = (timeInMs) => {
-  if (!timeInMs || timeInMs < 0) {
+  const num = Number(timeInMs)
+  if (!Number.isFinite(num) || num <= 0) {
     return formatTimeDetailed(0)
   }
-  const seconds = Math.floor(timeInMs / 1000)
+
+  const seconds = Math.floor(num / 1000)
   return formatTimeDetailed(seconds)
 }
