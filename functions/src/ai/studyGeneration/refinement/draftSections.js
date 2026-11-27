@@ -130,9 +130,13 @@ export function writeSection(draft, section, value) {
  * @returns {string}
  */
 export function normalizeItemTitle(title) {
-  return String(title ?? '')
-    .trim()
-    .toLowerCase()
+  return titleText(title).trim().toLowerCase()
+}
+
+function titleText(title) {
+  return typeof title === 'string' || typeof title === 'number'
+    ? String(title)
+    : ''
 }
 
 /**
@@ -150,7 +154,7 @@ export function keyItems(items, itemKey) {
     seen.set(title, occurrence + 1)
     return {
       key: `${title}#${occurrence}`,
-      title: String(item?.[itemKey] ?? ''),
+      title: titleText(item?.[itemKey]),
       item,
     }
   })
@@ -165,7 +169,7 @@ export function stableStringify(value) {
   if (value && typeof value === 'object') {
     return `{${Object.keys(value)
       .filter((key) => value[key] !== undefined)
-      .sort()
+      .sort((a, b) => a.localeCompare(b))
       .map((key) => `${JSON.stringify(key)}:${stableStringify(value[key])}`)
       .join(',')}}`
   }

@@ -128,8 +128,9 @@ function withUniqueIds(items, newItems) {
   return items.map((item) => {
     if (!newItems.has(item) || item?.id === undefined) return item
     let id = item.id
-    for (let suffix = 2; used.has(id); suffix += 1) {
-      id = Number.isInteger(item.id) ? nextNumber++ : `${item.id}-${suffix}`
+    let suffix = 2
+    while (used.has(id)) {
+      id = Number.isInteger(item.id) ? nextNumber++ : `${item.id}-${suffix++}`
     }
     used.add(id)
     return id === item.id ? item : { ...item, id }
@@ -189,8 +190,10 @@ export function mergeListItems({ before, after, itemKey, removed, reordered }) {
   const merged = [...(followers.get(null) || [])]
   beforeItems.forEach((entry) => {
     if (isDropped(entry)) return
-    merged.push(afterByKey.get(entry.key)?.item ?? entry.item)
-    merged.push(...(followers.get(entry.key) || []))
+    merged.push(
+      afterByKey.get(entry.key)?.item ?? entry.item,
+      ...(followers.get(entry.key) || []),
+    )
   })
   return withUniqueIds(merged, newItems)
 }

@@ -70,9 +70,9 @@ export function summarizeDraftChanges(changes, i18n, modelMessage = '') {
     ].join('\n\n')
   }
 
-  const lines = changes.map(
-    (change) =>
-      `- ${t(`studyCreation.ai.refinement.sections.${change.section}`)}: ${describeChange(change, i18n)}`,
-  )
+  const lines = changes.map((change) => {
+    const sectionKey = `studyCreation.ai.refinement.sections.${change.section}`
+    return `- ${t(sectionKey)}: ${describeChange(change, i18n)}`
+  })
   return [t('studyCreation.ai.refinement.summaryTitle'), ...lines].join('\n')
 }
