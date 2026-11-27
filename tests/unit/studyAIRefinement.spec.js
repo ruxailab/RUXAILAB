@@ -100,11 +100,17 @@ describe('summarizeDraftChanges', () => {
     )
   })
 
-  it('says nothing changed when the change list is empty', () => {
-    expect(summarizeDraftChanges([], i18nFor('en'))).toBe(
-      en.studyCreation.ai.refinement.noChanges,
-    )
-  })
+  it.each([
+    ['the model message', 'There are three modes.', 'There are three modes.'],
+    ['a hint without one', '', 'Could you describe the change in more detail?'],
+  ])(
+    'says nothing changed and shows %s',
+    (_label, modelMessage, expectedTail) => {
+      expect(summarizeDraftChanges([], i18nFor('en'), modelMessage)).toBe(
+        `The study wasn't changed.\n\n${expectedTail}`,
+      )
+    },
+  )
 })
 
 describe('CreateWithAIView refinement flow', () => {

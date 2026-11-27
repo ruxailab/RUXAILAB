@@ -51,6 +51,9 @@ const callGenerate = (data) => {
 
 const sentSystemPrompt = () => mockCreate.mock.calls[0][0].messages[0].content
 
+const categoryTitles = (draft) =>
+  draft.testStructure.cardSorting.categories.map((category) => category.title)
+
 describe('generateStudyDraft refinement', () => {
   beforeEach(() => {
     mockCreate.mockReset()
@@ -77,7 +80,9 @@ describe('generateStudyDraft refinement', () => {
     const result = await callGenerate({ currentDraft })
 
     expect(sentSystemPrompt()).toContain('REFINEMENT MODE')
-    expect(sentSystemPrompt()).toContain('"testTitle": "Edited by hand"')
+    expect(sentSystemPrompt()).toContain('"testTitle":"Edited by hand"')
+    expect(sentSystemPrompt()).toContain('is a question')
+    expect(sentSystemPrompt()).toContain('never mention JSON field names')
     expect(result.draft.testTitle).toBe('Edited by hand')
     expect(cardTitles(result.draft)).toEqual(['TV', 'Sink', 'Stove', 'Sofa'])
     expect(result.changes).toEqual([
@@ -92,16 +97,83 @@ describe('generateStudyDraft refinement', () => {
     ])
   })
 
-  it('returns a clarification unchanged during refinement', async () => {
-    respondWith(clarificationDraft())
+  it('answers a question without changing the draft or repairing it', async () => {
+    respondWith(
+      clarificationDraft({
+        clarificationQuestions: ['Closed, open and hybrid.'],
+      }),
+    )
 
     const result = await callGenerate({ currentDraft: cardSortingDraft() })
 
-    expect(result.draft.clarificationNeeded).toBe(true)
-    expect(result.draft.clarificationQuestions).toEqual([
-      'Which card do you mean?',
-    ])
+    expect(mockCreate).toHaveBeenCalledTimes(1)
+    expect(result.draft).toEqual({
+      ...cardSortingDraft(),
+      clarificationNeeded: true,
+      clarificationQuestions: ['Closed, open and hybrid.'],
+    })
     expect(result.changes).toEqual([])
+  })
+
+  it('accepts a reply that leaves out unchanged parts', async () => {
+    respondWith({
+      ...withCards(cardSortingDraft({ testTitle: '' }), [
+        'TV',
+        'Sink',
+        'Stove',
+        'Sofa',
+      ]),
+      changedSections: ['cards'],
+    })
+
+    const result = await callGenerate({ currentDraft: cardSortingDraft() })
+
+    expect(mockCreate).toHaveBeenCalledTimes(1)
+    expect(result.draft.clarificationNeeded).toBe(false)
+    expect(result.draft.testTitle).toBe('Home organization')
+    expect(result.changes).toEqual([
+      expect.objectContaining({ section: 'cards', added: ['Sofa'] }),
+    ])
+  })
+
+  it('merges a repaired reply so the repair cannot change other parts', async () => {
+    const withCategories = (titles, overrides) => {
+      const draft = cardSortingDraft(overrides)
+      draft.testStructure.cardSorting.categories = titles.map((title) => ({
+        title,
+        description: '',
+      }))
+      return draft
+    }
+    respondWith({
+      ...withCategories([]),
+      changedSections: [
+        { section: 'categories', removed: ['Living room', 'Kitchen'] },
+      ],
+    })
+    respondWith(
+      withCategories(['Bathroom'], { testTitle: 'Renamed by repair' }),
+    )
+
+    const result = await callGenerate({ currentDraft: cardSortingDraft() })
+
+    expect(mockCreate).toHaveBeenCalledTimes(2)
+    expect(result.draft.testTitle).toBe('Home organization')
+    expect(categoryTitles(result.draft)).toEqual(['Bathroom'])
+  })
+
+  it('refines a draft whose title was cleared by hand', async () => {
+    respondWith({
+      ...cardSortingDraft({ testTitle: 'Suggested title' }),
+      changedSections: [],
+    })
+
+    const result = await callGenerate({
+      currentDraft: cardSortingDraft({ testTitle: '' }),
+    })
+
+    expect(result.draft.testTitle).toBe('Suggested title')
+    expect(result.changes).toEqual([{ section: 'testTitle', kind: 'value' }])
   })
 
   it('rejects an invalid currentDraft before calling the model', async () => {

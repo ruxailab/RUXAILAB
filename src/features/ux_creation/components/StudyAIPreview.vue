@@ -181,8 +181,7 @@ const patchField = (field, value) => {
 
 <style scoped>
 .study-ai-preview {
-  height: 100%;
-  min-height: 420px;
+  min-height: max(420px, 100%);
   padding: 16px;
   background: #fff;
   border: 1px solid #e5e7eb;

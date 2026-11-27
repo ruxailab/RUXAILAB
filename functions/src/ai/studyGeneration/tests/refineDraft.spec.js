@@ -1,8 +1,9 @@
 import {
   InvalidCurrentDraftError,
   MAX_CURRENT_DRAFT_CHARS,
-  applyRefinement,
+  listRefinementChanges,
   mergeRefinedDraft,
+  mergeRefinementReply,
   sanitizeCurrentDraft,
 } from '../refinement/refineDraft.js'
 import { diffStudyDrafts } from '../refinement/diffDrafts.js'
@@ -11,6 +12,8 @@ import {
   cardTitles,
   clarificationDraft,
   focusGroupDraft,
+  heuristicDraft,
+  heuristicsWith,
   withCards,
 } from './helpers/drafts.js'
 
@@ -43,7 +46,7 @@ describe('sanitizeCurrentDraft', () => {
 
   it.each([
     ['not an object', ['draft']],
-    ['incomplete', cardSortingDraft({ testTitle: '' })],
+    ['incomplete', withCards(cardSortingDraft(), [])],
     [
       'too large',
       cardSortingDraft({
@@ -53,6 +56,12 @@ describe('sanitizeCurrentDraft', () => {
   ])('rejects a draft that is %s', (_label, raw) => {
     expect(() => sanitizeCurrentDraft(raw)).toThrow(InvalidCurrentDraftError)
   })
+})
+
+it('sanitizeCurrentDraft accepts a title cleared by hand', () => {
+  expect(
+    sanitizeCurrentDraft(cardSortingDraft({ testTitle: '' })).testTitle,
+  ).toBe('')
 })
 
 describe('mergeRefinedDraft', () => {
@@ -123,11 +132,95 @@ describe('mergeRefinedDraft', () => {
       undefined,
       ['TV', 'Sink', 'Stove'],
     ],
+    [
+      'removes every item when a declared list comes back empty',
+      [],
+      [{ section: 'cards' }],
+      [],
+    ],
+    [
+      'keeps every item when an undeclared list comes back empty',
+      [],
+      undefined,
+      ['TV', 'Sink', 'Stove'],
+    ],
   ])('cards: %s', (_label, refinedTitles, changedSections, expected) => {
     expect(cardTitles(refineCards(refinedTitles, changedSections))).toEqual(
       expected,
     )
   })
+
+  it('keeps value sections when the model sends no changedSections', () => {
+    const refinedDraft = withCards(
+      cardSortingDraft({ testTitle: 'Renamed by the model' }),
+      ['TV', 'Sink', 'Stove', 'Sofa'],
+    )
+    refinedDraft.testStructure.welcomeMessage = 'Rewritten'
+
+    const merged = mergeRefinedDraft({
+      currentDraft: cardSortingDraft(),
+      refinedDraft,
+      changedSections: undefined,
+    })
+
+    expect(merged.testTitle).toBe('Home organization')
+    expect(merged.testStructure.welcomeMessage).toBe('Welcome')
+    expect(cardTitles(merged)).toEqual(['TV', 'Sink', 'Stove', 'Sofa'])
+  })
+
+  it('fills a title cleared by hand from the reply', () => {
+    const merged = mergeRefinedDraft({
+      currentDraft: cardSortingDraft({ testTitle: '' }),
+      refinedDraft: cardSortingDraft({ testTitle: 'Suggested title' }),
+      changedSections: [],
+    })
+
+    expect(merged.testTitle).toBe('Suggested title')
+  })
+
+  it.each([
+    [
+      'heuristics',
+      heuristicDraft(),
+      (draft) => ({
+        ...draft,
+        testStructure: heuristicsWith([
+          [0, 'Visibility'],
+          [1, 'Errors'],
+        ]),
+      }),
+      (draft) => draft.testStructure,
+      [0, 2, 1],
+    ],
+    [
+      'discussion topics',
+      focusGroupDraft(),
+      (draft) => ({
+        ...draft,
+        discussionGuide: [{ ...draft.discussionGuide[0], title: 'Pricing' }],
+      }),
+      (draft) => draft.discussionGuide,
+      ['topic-1-2', 'topic-1'],
+    ],
+  ])(
+    'gives new %s an unused id',
+    (_label, currentDraft, refine, readItems, expectedIds) => {
+      const merged = mergeRefinedDraft({
+        currentDraft,
+        refinedDraft: refine(currentDraft),
+        changedSections: [
+          {
+            section:
+              currentDraft.testType === 'HEURISTIC'
+                ? 'heuristics'
+                : 'discussionGuide',
+          },
+        ],
+      })
+
+      expect(readItems(merged).map((item) => item.id)).toEqual(expectedIds)
+    },
+  )
 
   it('ignores a method switch the model did not declare', () => {
     const merged = mergeRefinedDraft({
@@ -191,49 +284,45 @@ describe('diffStudyDrafts', () => {
   })
 })
 
-describe('applyRefinement', () => {
-  const apply = (draft, changedSections) =>
-    applyRefinement({
+describe('mergeRefinementReply', () => {
+  const merge = (reply, changedSections) =>
+    mergeRefinementReply({
       currentDraft: cardSortingDraft(),
-      draft,
+      reply,
       changedSections,
-      locale: 'en-US',
     })
 
-  it('passes clarification drafts through with no changes', () => {
-    const draft = clarificationDraft()
-    expect(apply(draft, [])).toEqual({ draft, changes: [] })
-  })
-
-  it('returns a clarification when the merged draft is invalid', () => {
-    const refined = cardSortingDraft()
-    refined.testStructure.cardSorting.categories = []
-
-    const result = apply(refined, [
-      { section: 'categories', removed: ['Living room', 'Kitchen'] },
-    ])
-
-    expect(result.draft.clarificationNeeded).toBe(true)
-    expect(result.changes).toEqual([])
-  })
-
-  it('returns the merged draft with its changes', () => {
-    const refined = withCards(cardSortingDraft(), [
+  it('fills parts the reply left out from the current draft', () => {
+    const reply = withCards(cardSortingDraft({ testTitle: '' }), [
       'TV',
       'Sink',
       'Stove',
       'Sofa',
     ])
-    refined.clarificationQuestions = ['Done. Anything else?']
+    reply.clarificationQuestions = ['Done. Anything else?']
 
-    const result = apply(refined, ['cards'])
+    const merged = merge(reply, ['cards'])
 
-    expect(cardTitles(result.draft)).toEqual(['TV', 'Sink', 'Stove', 'Sofa'])
-    expect(result.draft.clarificationQuestions).toEqual([
-      'Done. Anything else?',
-    ])
-    expect(result.changes).toEqual([
-      expect.objectContaining({ section: 'cards', added: ['Sofa'] }),
-    ])
+    expect(merged.testTitle).toBe('Home organization')
+    expect(cardTitles(merged)).toEqual(['TV', 'Sink', 'Stove', 'Sofa'])
+    expect(merged.clarificationQuestions).toEqual(['Done. Anything else?'])
+  })
+
+  it('keeps the current draft for a clarification reply', () => {
+    const merged = merge(clarificationDraft(), [])
+
+    expect(merged).toEqual({
+      ...cardSortingDraft(),
+      clarificationNeeded: true,
+      clarificationQuestions: ['Which card do you mean?'],
+    })
+  })
+})
+
+describe('listRefinementChanges', () => {
+  it('lists no changes for a clarification', () => {
+    expect(
+      listRefinementChanges(cardSortingDraft(), clarificationDraft()),
+    ).toEqual([])
   })
 })

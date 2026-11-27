@@ -8,7 +8,8 @@ import {
 } from '../ai/studyGeneration/finalizeStudyDraft.js'
 import {
   InvalidCurrentDraftError,
-  applyRefinement,
+  listRefinementChanges,
+  mergeRefinementReply,
   sanitizeCurrentDraft,
 } from '../ai/studyGeneration/refinement/refineDraft.js'
 
@@ -100,24 +101,26 @@ function readCurrentDraft(raw) {
 }
 
 /**
- * @param {{
- *   currentDraft: object|null,
- *   finalizedDraft: object,
- *   changedSections: unknown,
- *   locale: string,
- * }} params
+ * @param {object|null} currentDraft
+ * @param {unknown} changedSections
+ * @returns {((draft: object) => object) | undefined}
+ */
+function buildRefinementPrepare(currentDraft, changedSections) {
+  if (!currentDraft) return undefined
+  return (reply) =>
+    mergeRefinementReply({ currentDraft, reply, changedSections })
+}
+
+/**
+ * @param {object|null} currentDraft
+ * @param {object} finalizedDraft
  * @returns {{ draft: object, changes?: Array<object> }}
  */
-function buildDraftResult({
-  currentDraft,
-  finalizedDraft,
-  changedSections,
-  locale,
-}) {
+function buildDraftResult(currentDraft, finalizedDraft) {
   const draft = { ...finalizedDraft }
   delete draft.changedSections
   if (!currentDraft) return { draft }
-  return applyRefinement({ currentDraft, draft, changedSections, locale })
+  return { draft, changes: listRefinementChanges(currentDraft, draft) }
 }
 
 /**
@@ -220,7 +223,8 @@ async function callOpenRouterChatCompletion({
  * Callable: generateStudyDraft
  * Generic for CARD_SORTING | USER | HEURISTIC | FOCUS_GROUP
  * Pipeline: generate → normalize → validate → repair → revalidate → clarification
- * With currentDraft (refinement): … → merge declared sections into currentDraft → diff
+ * With currentDraft (refinement): each normalized reply is merged into currentDraft
+ * before validation, then the changes are diffed
  */
 export const generateStudyDraft = functions.onCall({
   options: {
@@ -281,6 +285,7 @@ export const generateStudyDraft = functions.onCall({
         parsed,
         locale,
         userText: latestUserText,
+        prepare: buildRefinementPrepare(currentDraft, parsed?.changedSections),
         repairFn: ({ systemPrompt: repairSystem, messages: repairMessages }) =>
           callOpenRouterChatCompletion({
             apiKey,
@@ -297,12 +302,7 @@ export const generateStudyDraft = functions.onCall({
       ])
 
       return {
-        ...buildDraftResult({
-          currentDraft,
-          finalizedDraft: finalized.draft,
-          changedSections: parsed?.changedSections,
-          locale,
-        }),
+        ...buildDraftResult(currentDraft, finalized.draft),
         model: modelName,
         usage,
       }

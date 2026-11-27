@@ -1,17 +1,12 @@
 const MAX_LISTED_ITEMS = 5
 
-/**
- * @param {object|null} draft
- * @returns {boolean}
- */
 export function isCompleteDraft(draft) {
   return !!draft && !draft.clarificationNeeded
 }
 
 /**
- * Builds the generateStudyDraft payload. A complete draft, including any
- * edits made in the preview, is sent as currentDraft so the agent refines it
- * instead of generating a new one.
+ * Builds the generateStudyDraft payload. A complete draft, hand edits
+ * included, is sent as currentDraft so the agent refines it.
  *
  * @param {{
  *   messages: Array<{ role: 'user' | 'model', text: string }>,
@@ -59,14 +54,21 @@ function describeChange(change, i18n) {
 
 /**
  * Turns the change list returned by generateStudyDraft into a chat message.
+ * When nothing changed, the model's own message (often an answer) is shown.
  *
  * @param {Array<object>|undefined} changes
  * @param {{ t: Function, locale: string }} i18n
+ * @param {string} [modelMessage]
  * @returns {string}
  */
-export function summarizeDraftChanges(changes, i18n) {
+export function summarizeDraftChanges(changes, i18n, modelMessage = '') {
   const { t } = i18n
-  if (!changes?.length) return t('studyCreation.ai.refinement.noChanges')
+  if (!changes?.length) {
+    return [
+      t('studyCreation.ai.refinement.noChanges'),
+      modelMessage || t('studyCreation.ai.refinement.noChangesHint'),
+    ].join('\n\n')
+  }
 
   const lines = changes.map(
     (change) =>

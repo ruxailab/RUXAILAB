@@ -224,15 +224,8 @@ const onStarterClick = (text) => {
   overflow: hidden;
 }
 
-.study-ai-chat--conversation .study-ai-chat__messages {
-  padding-bottom: 132px;
-}
-
 .study-ai-chat--conversation .study-ai-chat__composer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 16px;
+  flex-shrink: 0;
   background: transparent;
 }
 

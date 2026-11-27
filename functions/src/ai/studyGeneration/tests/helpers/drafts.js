@@ -31,11 +31,6 @@ export const cardSortingDraft = (overrides = {}) => ({
   ...overrides,
 })
 
-/**
- * Returns a copy of the draft with the given card titles.
- * @param {object} draft
- * @param {string[]} titles
- */
 export const withCards = (draft, titles) => ({
   ...draft,
   testStructure: {
@@ -77,6 +72,28 @@ export const focusGroupDraft = (overrides = {}) => ({
   clarificationQuestions: [],
   ...overrides,
 })
+
+const heuristic = (id, title) => ({
+  id,
+  title,
+  questions: [{ id: 0, title: `${title}?`, descriptions: [], comparison: [] }],
+})
+
+export const heuristicDraft = (titles = ['Visibility', 'Consistency']) => ({
+  testType: 'HEURISTIC',
+  subType: null,
+  testTitle: 'Heuristic evaluation',
+  testDescription: 'Dashboard review',
+  isPublic: false,
+  status: 'active',
+  testOptions: [],
+  testStructure: titles.map((title, index) => heuristic(index, title)),
+  clarificationNeeded: false,
+  clarificationQuestions: [],
+})
+
+export const heuristicsWith = (pairs) =>
+  pairs.map(([id, title]) => heuristic(id, title))
 
 export const clarificationDraft = (overrides = {}) => ({
   testType: 'CARD_SORTING',

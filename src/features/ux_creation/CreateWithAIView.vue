@@ -338,14 +338,16 @@ const onDraftUpdate = (next) => {
 }
 
 const buildModelReply = ({ draft: nextDraft, changes }, isRefinement) => {
+  const modelMessage = (nextDraft.clarificationQuestions || []).join('\n\n')
   if (nextDraft.clarificationNeeded) {
-    return (
-      (nextDraft.clarificationQuestions || []).join('\n\n') ||
-      t('studyCreation.ai.needClarification')
-    )
+    return modelMessage || t('studyCreation.ai.needClarification')
   }
   if (!isRefinement) return t('studyCreation.ai.completedToPreview')
-  return summarizeDraftChanges(changes, { t, locale: locale.value || 'en-US' })
+  return summarizeDraftChanges(
+    changes,
+    { t, locale: locale.value || 'en-US' },
+    modelMessage,
+  )
 }
 
 const handleSend = async (text) => {
@@ -461,7 +463,7 @@ const confirmCreate = async () => {
 
 <style scoped>
 .create-study-view {
-  height: 100dvh;
+  height: calc(100dvh - var(--v-layout-top, 0px));
   overflow: hidden;
   background-color: #f8f9fa;
 }
@@ -469,11 +471,6 @@ const confirmCreate = async () => {
 .create-study-view__content {
   position: relative;
   height: 100%;
-  overflow: hidden;
-}
-
-.create-study-view--conversation {
-  height: 100vh;
   overflow: hidden;
 }
 
