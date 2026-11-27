@@ -78,22 +78,26 @@ export function sanitizeCurrentDraft(raw) {
 }
 
 /**
- * Reads the model's changedSections. Without it, only adds and edits to list
- * sections are applied, since a rewritten value section can't be trusted.
+ * Reads the model's changedSections. Without it, only a method switch and adds
+ * and edits to list sections are applied, since a rewritten value section
+ * can't be trusted.
  *
  * @param {unknown} changedSections
  * @param {string} testType
  * @returns {Map<string, { removed: string[], reordered: boolean, inferred: boolean }>}
  */
 export function readChangedSections(changedSections, testType) {
-  if (!Array.isArray(changedSections)) {
+  if (!Array.isArray(changedSections) || changedSections.length === 0) {
     return new Map(
-      sectionsForType(testType)
-        .filter((section) => section.kind === 'list')
-        .map((section) => [
-          section.key,
-          { removed: [], reordered: false, inferred: true },
-        ]),
+      [
+        TYPE_SECTION,
+        ...sectionsForType(testType).filter(
+          (section) => section.kind === 'list',
+        ),
+      ].map((section) => [
+        section.key,
+        { removed: [], reordered: false, inferred: true },
+      ]),
     )
   }
 

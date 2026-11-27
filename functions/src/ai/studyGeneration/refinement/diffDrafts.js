@@ -1,6 +1,5 @@
 import {
   TYPE_SECTION,
-  commonSections,
   keyItems,
   readSection,
   sectionsForType,
@@ -59,13 +58,15 @@ function diffList(section, before, after) {
  */
 export function diffStudyDrafts(before, after) {
   const switchedMethod = before?.testType !== after?.testType
-  const sections = switchedMethod
-    ? commonSections()
-    : sectionsForType(after.testType)
+  const beforeKeys = new Set(
+    sectionsForType(before?.testType).map((section) => section.key),
+  )
 
-  const changes = sections
+  const changes = sectionsForType(after?.testType)
     .map((section) => {
-      const previous = readSection(before, section)
+      const previous = beforeKeys.has(section.key)
+        ? readSection(before, section)
+        : undefined
       const next = readSection(after, section)
       if (section.kind === 'list') return diffList(section, previous, next)
       return isSame(previous, next)

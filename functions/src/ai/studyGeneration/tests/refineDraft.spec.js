@@ -246,6 +246,32 @@ describe('mergeRefinedDraft', () => {
     expect(merged.testTitle).toBe('My own title')
     expect(merged.discussionGuide).toEqual(focusGroupDraft().discussionGuide)
   })
+
+  it.each([
+    ['is missing', undefined],
+    ['is empty', []],
+  ])(
+    'switches method when changedSections %s and keeps the title and description',
+    (_label, changedSections) => {
+      const current = cardSortingDraft({
+        testTitle: 'My own title',
+        testDescription: 'My own description',
+      })
+      const merged = mergeRefinedDraft({
+        currentDraft: current,
+        refinedDraft: focusGroupDraft(),
+        changedSections,
+      })
+
+      expect(merged).toMatchObject({
+        testType: 'FOCUS_GROUP',
+        testTitle: 'My own title',
+        testDescription: 'My own description',
+        discussionGuide: focusGroupDraft().discussionGuide,
+      })
+      expect(merged.testStructure?.cardSorting).toBeUndefined()
+    },
+  )
 })
 
 describe('diffStudyDrafts', () => {
@@ -274,13 +300,16 @@ describe('diffStudyDrafts', () => {
     expect(diffStudyDrafts(cardSortingDraft(), cardSortingDraft())).toEqual([])
   })
 
-  it('reports a method switch first', () => {
+  it('reports a method switch first, then the new method sections', () => {
     const changes = diffStudyDrafts(cardSortingDraft(), focusGroupDraft())
     expect(changes.map((change) => change.section)).toEqual([
       'testType',
       'testTitle',
       'testDescription',
+      'discussionGuide',
+      'focusGroupConfig',
     ])
+    expect(changes[3]).toMatchObject({ added: ['First impressions'] })
   })
 })
 
