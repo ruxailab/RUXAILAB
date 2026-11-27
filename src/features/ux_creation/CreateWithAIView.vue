@@ -31,56 +31,68 @@
           </v-col>
         </v-row>
 
-        <v-row
-          v-else-if="!showFinalPreview"
-          key="ai-chat-only"
-          justify="center"
-          class="ai-chat-row"
-        >
-          <v-col cols="12" md="10" lg="8" class="ai-chat-col mx-auto">
-            <StudyAIChat
-              :messages="chatMessages"
-              :loading="isGenerating"
-              :loading-message="currentLoadingMessage"
-              :composer-disabled="false"
-              :show-conversation="true"
-              :conversation-starters="conversationStarters"
-              @send="handleSend"
-            />
-
-            <div
-              v-if="isConversationFinished"
-              class="d-flex justify-end align-center mt-6"
-            >
-              <v-btn color="primary" @click="goToPreview">
-                {{ $t('studyCreation.ai.goToPreview') }}
-              </v-btn>
-            </div>
-          </v-col>
-        </v-row>
-
-        <v-row v-else key="ai-final-preview" class="ai-final-row">
-          <v-col cols="12" md="10" lg="8" class="ai-preview-col mx-auto">
-            <StudyAIPreview :draft="draft" @update:draft="onDraftUpdate" />
-          </v-col>
-        </v-row>
-      </transition>
-
-      <div
-        v-if="showFinalPreview"
-        class="d-flex flex-wrap justify-end align-center ga-3 mt-6"
-      >
-        <div class="d-flex ga-3">
-          <v-btn
-            color="primary"
-            :loading="isCreating"
-            :disabled="!canConfirm"
-            @click="confirmCreate"
+        <div v-else key="ai-conversation" class="ai-conversation">
+          <v-tabs
+            v-if="hasCompleteDraft && !mdAndUp"
+            v-model="mobilePane"
+            grow
+            density="compact"
+            class="ai-pane-tabs mb-2"
           >
-            {{ $t('studyCreation.ai.confirm') }}
-          </v-btn>
+            <v-tab value="chat">
+              {{ $t('studyCreation.ai.refinement.chatTab') }}
+            </v-tab>
+            <v-tab value="preview">
+              {{ $t('studyCreation.ai.refinement.previewTab') }}
+            </v-tab>
+          </v-tabs>
+
+          <v-row justify="center" class="ai-conversation-row">
+            <v-col
+              v-show="showChatPane"
+              cols="12"
+              v-bind="chatColumnSize"
+              class="ai-chat-col"
+            >
+              <StudyAIChat
+                :messages="chatMessages"
+                :loading="isGenerating"
+                :loading-message="currentLoadingMessage"
+                :composer-disabled="false"
+                :show-conversation="true"
+                :conversation-starters="conversationStarters"
+                @send="handleSend"
+              />
+            </v-col>
+
+            <v-col
+              v-if="hasCompleteDraft"
+              v-show="showPreviewPane"
+              cols="12"
+              md="7"
+              class="ai-preview-col"
+            >
+              <div class="ai-preview-scroll">
+                <StudyAIPreview
+                  :draft="draft"
+                  :readonly="isGenerating"
+                  @update:draft="onDraftUpdate"
+                />
+              </div>
+              <div class="d-flex justify-end mt-4">
+                <v-btn
+                  color="primary"
+                  :loading="isCreating"
+                  :disabled="!canConfirm || isGenerating"
+                  @click="confirmCreate"
+                >
+                  {{ $t('studyCreation.ai.confirm') }}
+                </v-btn>
+              </div>
+            </v-col>
+          </v-row>
         </div>
-      </div>
+      </transition>
     </v-container>
   </v-container>
 </template>
@@ -90,10 +102,16 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useDisplay } from 'vuetify'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import StudyAIChat from '@/features/ux_creation/components/StudyAIChat.vue'
 import StudyAIPreview from '@/features/ux_creation/components/StudyAIPreview.vue'
 import { generateStudyDraft } from '@/ai/study-generation/StudyGenerationService'
+import {
+  buildStudyDraftRequest,
+  isCompleteDraft,
+  summarizeDraftChanges,
+} from '@/ai/study-generation/refinement'
 import { mapDraftToStudyRawData } from '@/ai/study-generation/mapDraftToStudyRawData'
 import { validateStudyDraft } from '@/ai/study-generation/validators'
 import {
@@ -106,6 +124,7 @@ import { showError } from '@/shared/utils/toast'
 const router = useRouter()
 const store = useStore()
 const { t, locale } = useI18n()
+const { mdAndUp } = useDisplay()
 
 const chatMessages = ref([])
 /** Messages sent to the Cloud Function (excludes local welcome). */
@@ -114,8 +133,7 @@ const draft = ref(null)
 const isGenerating = ref(false)
 const isCreating = ref(false)
 const hasConversationStarted = ref(false)
-const isConversationFinished = ref(false)
-const hasEnteredPreview = ref(false)
+const mobilePane = ref('chat')
 const loadingMessageIndex = ref(0)
 const loadingTicker = ref(null)
 const lockedRootElements = ref([])
@@ -198,11 +216,16 @@ const canConfirm = computed(() => {
   return validateStudyDraft(draft.value).valid
 })
 
-const showFinalPreview = computed(() => {
-  return (
-    hasEnteredPreview.value && isConversationFinished.value && !!draft.value
-  )
-})
+const hasCompleteDraft = computed(() => isCompleteDraft(draft.value))
+const showChatPane = computed(
+  () => !hasCompleteDraft.value || mdAndUp.value || mobilePane.value === 'chat',
+)
+const showPreviewPane = computed(
+  () => mdAndUp.value || mobilePane.value === 'preview',
+)
+const chatColumnSize = computed(() =>
+  hasCompleteDraft.value ? { md: 5 } : { md: 10, lg: 8 },
+)
 
 const loadingMessages = computed(() => [
   t('studyCreation.ai.loadingStages.connecting'),
@@ -314,37 +337,43 @@ const onDraftUpdate = (next) => {
   store.commit('SET_AI_STUDY_DRAFT', next)
 }
 
+const buildModelReply = ({ draft: nextDraft, changes }, isRefinement) => {
+  if (nextDraft.clarificationNeeded) {
+    return (
+      (nextDraft.clarificationQuestions || []).join('\n\n') ||
+      t('studyCreation.ai.needClarification')
+    )
+  }
+  if (!isRefinement) return t('studyCreation.ai.completedToPreview')
+  return summarizeDraftChanges(changes, { t, locale: locale.value || 'en-US' })
+}
+
 const handleSend = async (text) => {
   if (!hasConversationStarted.value) {
     hasConversationStarted.value = true
   }
 
+  const currentDraft = hasCompleteDraft.value ? draft.value : null
   chatMessages.value.push({ role: 'user', text })
   apiMessages.value.push({ role: 'user', text })
   isGenerating.value = true
 
   try {
-    const result = await generateStudyDraft({
-      messages: [...apiMessages.value],
-      locale: locale.value || 'en-US',
-      preferredMethod: preferredMethod.value,
-    })
+    const result = await generateStudyDraft(
+      buildStudyDraftRequest({
+        messages: apiMessages.value,
+        locale: locale.value || 'en-US',
+        preferredMethod: preferredMethod.value,
+        currentDraft,
+      }),
+    )
 
-    const nextDraft = result.draft
-    draft.value = nextDraft
-    store.commit('SET_AI_STUDY_DRAFT', nextDraft)
-
-    let modelText
-    if (nextDraft.clarificationNeeded) {
-      isConversationFinished.value = false
-      modelText =
-        (nextDraft.clarificationQuestions || []).join('\n\n') ||
-        t('studyCreation.ai.needClarification')
-    } else {
-      isConversationFinished.value = true
-      modelText = t('studyCreation.ai.completedToPreview')
+    // A clarification during refinement must not replace the current draft.
+    if (!currentDraft || !result.draft.clarificationNeeded) {
+      onDraftUpdate(result.draft)
     }
 
+    const modelText = buildModelReply(result, !!currentDraft)
     chatMessages.value.push({ role: 'model', text: modelText })
     apiMessages.value.push({ role: 'model', text: modelText })
   } catch (err) {
@@ -380,10 +409,6 @@ function extractCallableErrorMessage(err) {
     .replace(/\s*\([^)]*\)\.?\s*$/, '')
     .replace(/^functions\/[\w-]+\s*/i, '')
     .trim()
-}
-
-const goToPreview = () => {
-  hasEnteredPreview.value = true
 }
 
 const onStepperStepClick = (step) => {
@@ -457,8 +482,14 @@ const confirmCreate = async () => {
   flex-direction: column;
 }
 
-.ai-chat-row,
-.ai-final-row {
+.ai-conversation {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-conversation-row {
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -469,9 +500,24 @@ const confirmCreate = async () => {
 }
 
 .ai-chat-col,
-.ai-preview-col,
-.ai-final-row {
+.ai-preview-col {
   min-height: 0;
+  max-height: 100%;
+}
+
+.ai-preview-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-preview-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.ai-pane-tabs {
+  flex: 0 0 auto;
 }
 
 .create-study-view--conversation .ai-chat-col {

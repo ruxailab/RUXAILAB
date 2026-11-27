@@ -26,6 +26,7 @@
       <v-text-field
         :model-value="draft.testTitle"
         :label="$t('studyCreation.details.studyTitle')"
+        :readonly="readonly"
         variant="outlined"
         density="comfortable"
         class="mb-2"
@@ -34,6 +35,7 @@
       <v-textarea
         :model-value="draft.testDescription"
         :label="$t('studyCreation.details.studyDescription')"
+        :readonly="readonly"
         variant="outlined"
         density="comfortable"
         rows="2"
@@ -141,6 +143,10 @@ const props = defineProps({
   draft: {
     type: Object,
     default: null,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
 })
 
