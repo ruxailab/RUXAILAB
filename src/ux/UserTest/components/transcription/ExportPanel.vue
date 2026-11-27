@@ -776,7 +776,7 @@ function addPageNumbers(doc, M, COLORS, logo) {
     // logo on the left (centered vertically in footer)
     if (logo?.dataUrl) {
       const y = H - footerH + (footerH - logo.h) / 2
-      doc.addImage(logo.dataUrl, 'PNG', M, y, logo.w, logo.h)
+      doc.addImage(logo.dataUrl, 'PNG', M, y, logo.w, logo.h, undefined, 'FAST')
     }
 
     // page number on the right
@@ -787,42 +787,31 @@ function addPageNumbers(doc, M, COLORS, logo) {
   }
 }
 
-async function loadImageAsDataURL(url) {
-  try {
-    const res = await fetch(url, { mode: 'cors' })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    const blob = await res.blob()
-    // pick correct encoder
-    const isPng = (blob.type || '').includes('png')
-    const isJpg =
-      (blob.type || '').includes('jpeg') || (blob.type || '').includes('jpg')
-    if (!isPng && !isJpg) {
-    }
-    const reader = new FileReader()
-    const dataUrl = await new Promise((resolve, reject) => {
-      reader.onloadend = () => resolve(reader.result)
-      reader.onerror = reject
-      reader.readAsDataURL(blob)
-    })
-    return dataUrl // e.g. "data:image/png;base64,...."
-  } catch {
-    return null
-  }
-}
-
-async function loadLogo(url, targetH = 16) {
-  const dataUrl = await loadImageAsDataURL(url)
-  if (!dataUrl) return null
-  const { w, h } = await getImageSize(dataUrl)
-  const ratio = w / h || 1
-  return { dataUrl, w: targetH * ratio, h: targetH }
-}
-
-function getImageSize(dataUrl) {
+function loadLogo(url, targetH = 16) {
   return new Promise((resolve) => {
-    const img = new Image()
-    img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight })
-    img.src = dataUrl
+    const image = new Image()
+    image.onload = () => {
+      try {
+        if (!image.naturalWidth || !image.naturalHeight) return resolve(null)
+        const canvas = document.createElement('canvas')
+        // Avoid embedding a full-resolution bitmap for the small PDF footer logo.
+        canvas.width = Math.min(image.naturalWidth, 512)
+        canvas.height = Math.max(
+          1,
+          Math.round((image.naturalHeight * canvas.width) / image.naturalWidth),
+        )
+        const context = canvas.getContext('2d')
+        if (!context) return resolve(null)
+        context.drawImage(image, 0, 0, canvas.width, canvas.height)
+        const dataUrl = canvas.toDataURL('image/png')
+        const ratio = image.naturalWidth / image.naturalHeight || 1
+        resolve({ dataUrl, w: targetH * ratio, h: targetH })
+      } catch {
+        resolve(null)
+      }
+    }
+    image.onerror = () => resolve(null)
+    image.src = url
   })
 }
 </script>
