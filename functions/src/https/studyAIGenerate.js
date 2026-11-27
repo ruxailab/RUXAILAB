@@ -6,6 +6,12 @@ import {
   finalizeStudyDraft,
   mergeUsage,
 } from '../ai/studyGeneration/finalizeStudyDraft.js'
+import {
+  InvalidCurrentDraftError,
+  listRefinementChanges,
+  mergeRefinementReply,
+  sanitizeCurrentDraft,
+} from '../ai/studyGeneration/refinement/refineDraft.js'
 
 const error = (code, message) => new functions.https.HttpsError(code, message)
 
@@ -77,6 +83,44 @@ function sanitizeMessages(messages) {
   }
 
   return cleaned
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {object|null}
+ */
+function readCurrentDraft(raw) {
+  try {
+    return sanitizeCurrentDraft(raw)
+  } catch (err) {
+    if (err instanceof InvalidCurrentDraftError) {
+      throw error('invalid-argument', err.message)
+    }
+    throw err
+  }
+}
+
+/**
+ * @param {object|null} currentDraft
+ * @param {unknown} changedSections
+ * @returns {((draft: object) => object) | undefined}
+ */
+function buildRefinementPrepare(currentDraft, changedSections) {
+  if (!currentDraft) return undefined
+  return (reply) =>
+    mergeRefinementReply({ currentDraft, reply, changedSections })
+}
+
+/**
+ * @param {object|null} currentDraft
+ * @param {object} finalizedDraft
+ * @returns {{ draft: object, changes?: Array<object> }}
+ */
+function buildDraftResult(currentDraft, finalizedDraft) {
+  const draft = { ...finalizedDraft }
+  delete draft.changedSections
+  if (!currentDraft) return { draft }
+  return { draft, changes: listRefinementChanges(currentDraft, draft) }
 }
 
 /**
@@ -179,6 +223,8 @@ async function callOpenRouterChatCompletion({
  * Callable: generateStudyDraft
  * Generic for CARD_SORTING | USER | HEURISTIC | FOCUS_GROUP
  * Pipeline: generate → normalize → validate → repair → revalidate → clarification
+ * With currentDraft (refinement): each normalized reply is merged into currentDraft
+ * before validation, then the changes are diffed
  */
 export const generateStudyDraft = functions.onCall({
   options: {
@@ -207,9 +253,14 @@ export const generateStudyDraft = functions.onCall({
     }
 
     const messages = sanitizeMessages(request?.data?.messages)
+    const currentDraft = readCurrentDraft(request?.data?.currentDraft)
 
     const modelName = DEFAULT_MODEL
-    const systemPrompt = buildSystemPrompt({ locale, preferredMethod })
+    const systemPrompt = buildSystemPrompt({
+      locale,
+      preferredMethod,
+      currentDraft,
+    })
     const latestUserText =
       [...messages].reverse().find((message) => message.role === 'user')
         ?.text || ''
@@ -234,6 +285,7 @@ export const generateStudyDraft = functions.onCall({
         parsed,
         locale,
         userText: latestUserText,
+        prepare: buildRefinementPrepare(currentDraft, parsed?.changedSections),
         repairFn: ({ systemPrompt: repairSystem, messages: repairMessages }) =>
           callOpenRouterChatCompletion({
             apiKey,
@@ -250,7 +302,7 @@ export const generateStudyDraft = functions.onCall({
       ])
 
       return {
-        draft: finalized.draft,
+        ...buildDraftResult(currentDraft, finalized.draft),
         model: modelName,
         usage,
       }

@@ -1,0 +1,185 @@
+import { jest } from '@jest/globals'
+import {
+  cardSortingDraft,
+  cardTitles,
+  clarificationDraft,
+  withCards,
+} from './helpers/drafts.js'
+
+const mockCreate = jest.fn()
+
+jest.unstable_mockModule('openai', () => ({
+  default: jest.fn(() => ({ chat: { completions: { create: mockCreate } } })),
+}))
+
+jest.unstable_mockModule('../../../core/firebase/f.firebase.js', () => ({
+  functions: {
+    onCall: jest.fn(({ handler }) => handler),
+    https: {
+      HttpsError: class HttpsError extends Error {
+        constructor(code, message) {
+          super(message)
+          this.code = code
+        }
+      },
+    },
+  },
+}))
+
+process.env.CHAT_BUILDER_OPENROUTER_API_KEY = 'test-key'
+
+const { generateStudyDraft } = await import('../../../https/studyAIGenerate.js')
+
+let requestCount = 0
+
+const respondWith = (payload) =>
+  mockCreate.mockResolvedValueOnce({
+    choices: [{ message: { content: JSON.stringify(payload) } }],
+  })
+
+const callGenerate = (data) => {
+  requestCount += 1
+  return generateStudyDraft({
+    auth: { uid: `user-${requestCount}` },
+    data: {
+      locale: 'en-US',
+      messages: [{ role: 'user', text: 'Add a Sofa card' }],
+      ...data,
+    },
+  })
+}
+
+const sentSystemPrompt = () => mockCreate.mock.calls[0][0].messages[0].content
+
+const categoryTitles = (draft) =>
+  draft.testStructure.cardSorting.categories.map((category) => category.title)
+
+describe('generateStudyDraft refinement', () => {
+  beforeEach(() => {
+    mockCreate.mockReset()
+  })
+
+  it('generates a new draft without refinement data when no currentDraft is sent', async () => {
+    respondWith({ ...cardSortingDraft(), changedSections: ['cards'] })
+
+    const result = await callGenerate({})
+
+    expect(sentSystemPrompt()).not.toContain('REFINEMENT MODE')
+    expect(result).not.toHaveProperty('changes')
+    expect(result.draft).not.toHaveProperty('changedSections')
+    expect(result.draft.testTitle).toBe('Home organization')
+  })
+
+  it('sends the current draft with hand edits and keeps them in the result', async () => {
+    const currentDraft = cardSortingDraft({ testTitle: 'Edited by hand' })
+    respondWith({
+      ...withCards(cardSortingDraft(), ['TV', 'Stove', 'Sofa']),
+      changedSections: [{ section: 'cards' }],
+    })
+
+    const result = await callGenerate({ currentDraft })
+
+    expect(sentSystemPrompt()).toContain('REFINEMENT MODE')
+    expect(sentSystemPrompt()).toContain('"testTitle":"Edited by hand"')
+    expect(sentSystemPrompt()).toContain('is a question')
+    expect(sentSystemPrompt()).toContain('never mention JSON field names')
+    expect(result.draft.testTitle).toBe('Edited by hand')
+    expect(cardTitles(result.draft)).toEqual(['TV', 'Sink', 'Stove', 'Sofa'])
+    expect(result.changes).toEqual([
+      {
+        section: 'cards',
+        kind: 'list',
+        added: ['Sofa'],
+        removed: [],
+        updated: [],
+        reordered: false,
+      },
+    ])
+  })
+
+  it('answers a question without changing the draft or repairing it', async () => {
+    respondWith(
+      clarificationDraft({
+        clarificationQuestions: ['Closed, open and hybrid.'],
+      }),
+    )
+
+    const result = await callGenerate({ currentDraft: cardSortingDraft() })
+
+    expect(mockCreate).toHaveBeenCalledTimes(1)
+    expect(result.draft).toEqual({
+      ...cardSortingDraft(),
+      clarificationNeeded: true,
+      clarificationQuestions: ['Closed, open and hybrid.'],
+    })
+    expect(result.changes).toEqual([])
+  })
+
+  it('accepts a reply that leaves out unchanged parts', async () => {
+    respondWith({
+      ...withCards(cardSortingDraft({ testTitle: '' }), [
+        'TV',
+        'Sink',
+        'Stove',
+        'Sofa',
+      ]),
+      changedSections: ['cards'],
+    })
+
+    const result = await callGenerate({ currentDraft: cardSortingDraft() })
+
+    expect(mockCreate).toHaveBeenCalledTimes(1)
+    expect(result.draft.clarificationNeeded).toBe(false)
+    expect(result.draft.testTitle).toBe('Home organization')
+    expect(result.changes).toEqual([
+      expect.objectContaining({ section: 'cards', added: ['Sofa'] }),
+    ])
+  })
+
+  it('merges a repaired reply so the repair cannot change other parts', async () => {
+    const withCategories = (titles, overrides) => {
+      const draft = cardSortingDraft(overrides)
+      draft.testStructure.cardSorting.categories = titles.map((title) => ({
+        title,
+        description: '',
+      }))
+      return draft
+    }
+    respondWith({
+      ...withCategories([]),
+      changedSections: [
+        { section: 'categories', removed: ['Living room', 'Kitchen'] },
+      ],
+    })
+    respondWith(
+      withCategories(['Bathroom'], { testTitle: 'Renamed by repair' }),
+    )
+
+    const result = await callGenerate({ currentDraft: cardSortingDraft() })
+
+    expect(mockCreate).toHaveBeenCalledTimes(2)
+    expect(result.draft.testTitle).toBe('Home organization')
+    expect(categoryTitles(result.draft)).toEqual(['Bathroom'])
+  })
+
+  it('refines a draft whose title was cleared by hand', async () => {
+    respondWith({
+      ...cardSortingDraft({ testTitle: 'Suggested title' }),
+      changedSections: [],
+    })
+
+    const result = await callGenerate({
+      currentDraft: cardSortingDraft({ testTitle: '' }),
+    })
+
+    expect(result.draft.testTitle).toBe('Suggested title')
+    expect(result.changes).toEqual([{ section: 'testTitle', kind: 'value' }])
+  })
+
+  it('rejects an invalid currentDraft before calling the model', async () => {
+    await expect(
+      callGenerate({ currentDraft: cardSortingDraft({ testType: 'SURVEY' }) }),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+    expect(mockCreate).not.toHaveBeenCalled()
+  })
+})

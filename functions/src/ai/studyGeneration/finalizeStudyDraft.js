@@ -11,6 +11,7 @@ import {
 /**
  * Shared post-processing for any study method:
  * normalize → validate → (optional repair) → normalize → validate → clarification.
+ * `prepare` runs after each normalize (refinement merges into the current draft there).
  *
  * @param {{
  *   parsed: object,
@@ -20,6 +21,7 @@ import {
  *     systemPrompt: string,
  *     messages: Array<{ role: string, text: string }>,
  *   }) => Promise<{ text: string, usage?: object }>,
+ *   prepare?: (draft: object) => object,
  *   log?: (stage: string, context?: object) => void,
  * }} params
  */
@@ -28,8 +30,9 @@ export async function finalizeStudyDraft({
   locale,
   userText,
   repairFn,
+  prepare = (draft) => draft,
 }) {
-  let draft = normalizeStudyDraft(parsed)
+  let draft = prepare(normalizeStudyDraft(parsed))
   let validation = validateStudyDraft(draft)
   const usageParts = []
 
@@ -65,7 +68,7 @@ export async function finalizeStudyDraft({
       }
     }
 
-    draft = normalizeStudyDraft(repairedParsed)
+    draft = prepare(normalizeStudyDraft(repairedParsed))
     validation = validateStudyDraft(draft)
 
     if (validation.valid) {
