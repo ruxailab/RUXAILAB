@@ -9,10 +9,10 @@
       v-for="badge in badges"
       :key="badge.label"
       :color="color || badge.color"
-      size="small"
+      size="large"
       class="ma-1"
     >
-      <v-icon start size="14">{{ badge.icon }}</v-icon>
+      <v-icon start size="20">{{ badge.icon }}</v-icon>
       {{ badge.label }}
     </v-chip>
   </div>
