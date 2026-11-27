@@ -237,6 +237,9 @@ watch(media, () => {
 }
 
 .picker-video-wrap {
+  /* Cap the 16:9 demo by viewport height so the step fits without scrolling. */
+  max-width: calc(30vh * 16 / 9);
+  margin: 0 auto;
   overflow: hidden;
   border-radius: 12px;
   background: #fff;
