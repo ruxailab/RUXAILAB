@@ -40,106 +40,141 @@
             class="elevation-0 rounded-lg"
             style="background: #ffffff; border: 1px solid #e5e7eb"
             :no-data-text="$t('UserTestTable.messages.noTasks')"
+            :hide-default-body="allTasks.length > 0"
           >
-            <!-- Custom Column Templates -->
-            <template #item.taskType="{ item }">
-              <v-chip
-                v-if="item.taskType"
-                :color="getTaskTypeColor(item.taskType)"
-                size="small"
-                variant="flat"
-              >
-                <v-icon start size="small">
-                  {{ getTaskTypeIcon(item.taskType) }}
-                </v-icon>
-                {{ getTaskTypeLabel(item.taskType) }}
-              </v-chip>
-              <span v-else class="text-grey-400">{{
-                $t('UserTestTable.headers.na')
-              }}</span>
-            </template>
-
-            <template #item.taskDescription="{ item }">
-              <v-icon :color="item.taskDescription ? 'success' : 'error'">
-                {{
-                  item.taskDescription
-                    ? 'mdi-checkbox-marked-circle-outline'
-                    : 'mdi-close-circle-outline'
-                }}
-              </v-icon>
-            </template>
-
-            <template #item.taskTip="{ item }">
-              <v-icon :color="item.taskTip ? 'success' : 'error'">
-                {{
-                  item.taskTip
-                    ? 'mdi-checkbox-marked-circle-outline'
-                    : 'mdi-close-circle-outline'
-                }}
-              </v-icon>
-            </template>
-
-            <template #item.hasScreenRecord="{ item }">
-              <v-icon :color="item.hasScreenRecord ? 'success' : 'error'">
-                {{
-                  item.hasScreenRecord
-                    ? 'mdi-checkbox-marked-circle-outline'
-                    : 'mdi-close-circle-outline'
-                }}
-              </v-icon>
-            </template>
-
-            <template #item.hasCamRecord="{ item }">
-              <v-icon :color="item.hasCamRecord ? 'success' : 'error'">
-                {{
-                  item.hasCamRecord
-                    ? 'mdi-checkbox-marked-circle-outline'
-                    : 'mdi-close-circle-outline'
-                }}
-              </v-icon>
-            </template>
-
-            <template #item.hasEye="{ item }">
-              <v-icon :color="item.hasEye ? 'success' : 'error'">
-                {{
-                  item.hasEye
-                    ? 'mdi-checkbox-marked-circle-outline'
-                    : 'mdi-close-circle-outline'
-                }}
-              </v-icon>
-            </template>
-
-            <template #item.hasAudioRecord="{ item }">
-              <v-icon :color="item.hasAudioRecord ? 'success' : 'error'">
-                {{
-                  item.hasAudioRecord
-                    ? 'mdi-checkbox-marked-circle-outline'
-                    : 'mdi-close-circle-outline'
-                }}
-              </v-icon>
-            </template>
-
-            <!-- Actions Column -->
-            <template #item.actions="{ item }">
-              <v-btn
-                icon
-                variant="text"
-                color="accent"
-                class="mr-2"
+            <!-- Rows are rendered by Draggable so they can be reordered -->
+            <template #tbody="{ internalItems, page, itemsPerPage }">
+              <Draggable
+                v-if="allTasks.length > 0"
+                :model-value="internalItems"
+                tag="tbody"
+                item-key="index"
+                handle=".task-drag-handle"
+                ghost-class="task-row-ghost"
                 :disabled="isTemplate"
-                @click="editItem(item)"
+                @change="(event) => onDragChange(event, page, itemsPerPage)"
               >
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-btn
-                icon
-                variant="text"
-                color="error"
-                :disabled="isTemplate"
-                @click="deleteItem(item)"
-              >
-                <v-icon>mdi-trash-can-outline</v-icon>
-              </v-btn>
+                <template #item="{ element }">
+                  <v-data-table-row :item="element" :index="element.index">
+                    <template #item.drag>
+                      <v-icon
+                        v-if="!isTemplate"
+                        class="task-drag-handle"
+                        :title="$t('UserTestTable.buttons.dragToReorder')"
+                      >
+                        mdi-drag-vertical
+                      </v-icon>
+                    </template>
+
+                    <!-- Custom Column Templates -->
+                    <template #item.taskType="{ item }">
+                      <v-chip
+                        v-if="item.taskType"
+                        :color="getTaskTypeColor(item.taskType)"
+                        size="small"
+                        variant="flat"
+                      >
+                        <v-icon start size="small">
+                          {{ getTaskTypeIcon(item.taskType) }}
+                        </v-icon>
+                        {{ getTaskTypeLabel(item.taskType) }}
+                      </v-chip>
+                      <span v-else class="text-grey-400">{{
+                        $t('UserTestTable.headers.na')
+                      }}</span>
+                    </template>
+
+                    <template #item.taskDescription="{ item }">
+                      <v-icon
+                        :color="item.taskDescription ? 'success' : 'error'"
+                      >
+                        {{
+                          item.taskDescription
+                            ? 'mdi-checkbox-marked-circle-outline'
+                            : 'mdi-close-circle-outline'
+                        }}
+                      </v-icon>
+                    </template>
+
+                    <template #item.taskTip="{ item }">
+                      <v-icon :color="item.taskTip ? 'success' : 'error'">
+                        {{
+                          item.taskTip
+                            ? 'mdi-checkbox-marked-circle-outline'
+                            : 'mdi-close-circle-outline'
+                        }}
+                      </v-icon>
+                    </template>
+
+                    <template #item.hasScreenRecord="{ item }">
+                      <v-icon
+                        :color="item.hasScreenRecord ? 'success' : 'error'"
+                      >
+                        {{
+                          item.hasScreenRecord
+                            ? 'mdi-checkbox-marked-circle-outline'
+                            : 'mdi-close-circle-outline'
+                        }}
+                      </v-icon>
+                    </template>
+
+                    <template #item.hasCamRecord="{ item }">
+                      <v-icon :color="item.hasCamRecord ? 'success' : 'error'">
+                        {{
+                          item.hasCamRecord
+                            ? 'mdi-checkbox-marked-circle-outline'
+                            : 'mdi-close-circle-outline'
+                        }}
+                      </v-icon>
+                    </template>
+
+                    <template #item.hasEye="{ item }">
+                      <v-icon :color="item.hasEye ? 'success' : 'error'">
+                        {{
+                          item.hasEye
+                            ? 'mdi-checkbox-marked-circle-outline'
+                            : 'mdi-close-circle-outline'
+                        }}
+                      </v-icon>
+                    </template>
+
+                    <template #item.hasAudioRecord="{ item }">
+                      <v-icon
+                        :color="item.hasAudioRecord ? 'success' : 'error'"
+                      >
+                        {{
+                          item.hasAudioRecord
+                            ? 'mdi-checkbox-marked-circle-outline'
+                            : 'mdi-close-circle-outline'
+                        }}
+                      </v-icon>
+                    </template>
+
+                    <!-- Actions Column -->
+                    <template #item.actions="{ item }">
+                      <v-btn
+                        icon
+                        variant="text"
+                        color="accent"
+                        class="mr-2"
+                        :disabled="isTemplate"
+                        @click="editItem(item)"
+                      >
+                        <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                      <v-btn
+                        icon
+                        variant="text"
+                        color="error"
+                        :disabled="isTemplate"
+                        @click="deleteItem(item)"
+                      >
+                        <v-icon>mdi-trash-can-outline</v-icon>
+                      </v-btn>
+                    </template>
+                  </v-data-table-row>
+                </template>
+              </Draggable>
             </template>
           </v-data-table>
         </v-card-text>
@@ -187,6 +222,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import Draggable from 'vuedraggable'
 import FormDialog from './FormDialog.vue'
 import Task from '../models/Task'
 
@@ -204,6 +240,12 @@ const taskToDelete = ref(null)
 const taskDeleteLoading = ref(false)
 
 const headers = ref([
+  {
+    title: '',
+    value: 'drag',
+    sortable: false,
+    width: '48px',
+  },
   {
     title: t('UserTestTable.headers.name'),
     align: 'start',
@@ -305,6 +347,24 @@ const confirmTaskDeletion = async () => {
   }
 }
 
+const moveTask = async (fromIndex, toIndex) => {
+  if (props.isTemplate || fromIndex === toIndex) return
+  const lastIndex = allTasks.value.length - 1
+  if (fromIndex < 0 || toIndex < 0) return
+  if (fromIndex > lastIndex || toIndex > lastIndex) return
+  const [movedTask] = allTasks.value.splice(fromIndex, 1)
+  allTasks.value.splice(toIndex, 0, movedTask)
+  await store.dispatch('UserStudy/setTasks', allTasks.value)
+  emit('change')
+}
+
+const onDragChange = ({ moved }, page, itemsPerPage) => {
+  if (!moved) return
+  // Draggable gives positions on the current page, not in allTasks
+  const offset = (page - 1) * itemsPerPage
+  return moveTask(offset + moved.oldIndex, offset + moved.newIndex)
+}
+
 const addTask = async (newTask) => {
   if (props.isTemplate) return
   try {
@@ -403,5 +463,13 @@ onMounted(() => {
 
 .v-data-table :deep(.v-data-table__tr:hover) {
   background-color: #f8fafc;
+}
+
+.task-drag-handle {
+  cursor: grab;
+}
+
+.task-row-ghost {
+  opacity: 0.4;
 }
 </style>

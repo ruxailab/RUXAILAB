@@ -1628,7 +1628,8 @@
     "buttons": {
       "createNewVariable": "Crear una nueva variable",
       "createNewPost": "Crear una nueva pregunta posterior",
-      "addFirstOption": "Agregar la primera opción"
+      "addFirstOption": "Agregar la primera opción",
+      "dragToReorder": "Arrastrar para reordenar"
     },
     "headers": {
       "name": "Nombre",

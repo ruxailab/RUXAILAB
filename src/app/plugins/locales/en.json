@@ -1682,7 +1682,8 @@
     "buttons": {
       "createNewVariable": "Create a new variable",
       "createNewPost": "Create a new post question",
-      "addFirstOption": "Add First Option"
+      "addFirstOption": "Add First Option",
+      "dragToReorder": "Drag to reorder"
     },
     "headers": {
       "name": "Name",
