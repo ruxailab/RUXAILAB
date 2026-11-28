@@ -3829,7 +3829,7 @@
       "welcome": "Tell me what study you want to create. For example: a closed card sorting with categories Living room and Kitchen, and cards TV and Sink.",
       "placeholder": "Describe your study…",
       "send": "Send",
-      "conversationStartersTitle": "Iniciadors de converses",
+      "conversationStartersTitle": "Conversation Starters",
       "starters": {
         "cardSorting": {
           "title": "Card sorting",

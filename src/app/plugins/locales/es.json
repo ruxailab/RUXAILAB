@@ -3753,7 +3753,7 @@
       "welcome": "Cuéntame qué estudio quieres crear. Por ejemplo: un card sorting cerrado con categorías Sala y Cocina, y tarjetas TV y Fregadero.",
       "placeholder": "Describe tu estudio…",
       "send": "Enviar",
-      "conversationStartersTitle": "Iniciadors de converses",
+      "conversationStartersTitle": "Iniciadores de conversación",
       "starters": {
         "cardSorting": {
           "title": "Card sorting",
